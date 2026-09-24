@@ -121,6 +121,40 @@
   .bar-fill{ height:100%; border-radius:6px; transition: width .2s; }
   #hud .gold{ margin-top:4px; color:var(--gold); font-weight:bold; }
   #hudTitle{ font-size:11px; color:var(--gold); margin-bottom:4px; }
+  #letterOverlay{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:16px;
+    background:rgba(10,6,18,.62); animation:ltFade .25s ease; }
+  #letterOverlay[hidden]{ display:none; }
+  @keyframes ltFade{ from{ opacity:0; } to{ opacity:1; } }
+  .letter-paper{ position:relative; width:min(560px, 94vw); max-height:86vh; overflow:auto; padding:26px 30px 18px; border-radius:6px;
+    background:linear-gradient(180deg, #f6ecd2, #ecdcb4); color:#3b2a18; box-shadow:0 12px 40px rgba(0,0,0,.55), inset 0 0 60px rgba(150,110,50,.25);
+    border:1px solid #c9ad78; font-size:15px; line-height:1.75; animation:ltIn .35s ease; }
+  @keyframes ltIn{ from{ transform:translateY(14px) rotate(-.6deg); opacity:0; } to{ transform:none; opacity:1; } }
+  .letter-paper.cat-cult{ background:linear-gradient(180deg, #f1e8e6, #ddcfd0); border-color:#8a1f4a; }
+  .letter-paper.cat-spy{ background:linear-gradient(180deg, #efe9dc, #d9d0bd); border-color:#1f1a2e; }
+  .letter-paper .lt-cat{ font-size:12px; font-weight:bold; letter-spacing:.3px; margin-bottom:8px; }
+  .letter-paper .lt-head{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 16px; font-size:13px; color:#6b5236;
+    border-bottom:1px dashed rgba(107,82,54,.45); padding-bottom:8px; margin-bottom:10px; }
+  .letter-paper .lt-body p{ margin:0 0 6px; }
+  .letter-paper .lt-body b{ color:#7a3a10; }
+  .letter-paper .lt-ink{ color:#1a0e03; text-shadow:0 0 .5px rgba(26,14,3,.7); } /* the sealed letter: first words in slightly darker ink */
+  .letter-paper .lt-sign{ text-align:right; font-style:italic; margin-top:10px; color:#5a4028; }
+  .letter-paper .lt-note{ margin-top:10px; font-size:12px; color:#8a7658; font-style:italic; }
+  .letter-paper .lt-held{ margin-top:12px; font-size:12.5px; background:rgba(122,58,16,.1); border-radius:6px; padding:6px 10px; }
+  .letter-paper .lt-hint{ margin-top:12px; text-align:center; font-size:11.5px; color:#8a7658; opacity:0; transition:opacity .3s; }
+  #letterOverlay.ready .lt-hint{ opacity:1; }
+  .letter-paper .lt-back{ position:absolute; top:10px; right:12px; font-size:12px; padding:3px 10px; border-radius:14px; border:1px solid #c9ad78;
+    background:#fff6de; color:#5a4028; cursor:pointer; }
+  .letter-paper.book .lt-book-sub{ font-size:12.5px; color:#6b5236; margin-bottom:10px; }
+  .letter-paper .lt-sec{ margin-bottom:12px; }
+  .letter-paper .lt-sec-h{ font-size:13px; font-weight:bold; color:#5a4028; margin-bottom:4px; }
+  .letter-paper .lt-row{ display:flex; gap:8px; align-items:center; width:100%; text-align:left; font:inherit; font-size:13px; line-height:1.4;
+    padding:5px 8px; margin-bottom:3px; border-radius:5px; border:1px solid rgba(107,82,54,.25); background:rgba(255,250,235,.6); color:#3b2a18; cursor:pointer; }
+  .letter-paper .lt-row:hover{ background:#fff6de; border-color:#c9ad78; }
+  .letter-paper .lt-row .n{ font-weight:bold; color:#8a5a2b; min-width:22px; }
+  .letter-paper .lt-row .t{ flex:1; }
+  .letter-paper .lt-empty{ font-size:12px; color:#8a7658; font-style:italic; }
+  .letter-book-btn{ font-size:11.5px; padding:2px 9px; border-radius:12px; border:1px solid rgba(255,209,102,.45); background:rgba(0,0,0,.25); color:#ffe6a6; cursor:pointer; }
+  .letter-book-btn:hover{ border-color:#ffd166; }
   #storyTracker{ position:absolute; top:62px; right:12px; width:260px; z-index:9; cursor:pointer;
     background:linear-gradient(180deg, rgba(42,26,6,.86), rgba(20,16,40,.8)); border:1px solid rgba(255,209,102,.45);
     color:#fff; padding:8px 12px; border-radius:10px; font-size:12px; line-height:1.45; box-shadow:0 4px 14px rgba(0,0,0,.3); }
@@ -1168,6 +1202,7 @@
 
   <div id="discoveryBanner"></div>
   <div id="storyTracker" title="ภารกิจหลัก — คลิกเพื่อดูบันทึก"></div>
+  <div id="letterOverlay" hidden><div class="letter-paper" id="letterPaper"></div></div>
 
   <div id="hint">คลิกพื้นเพื่อเดิน · เดินชนมอนสเตอร์เพื่อเข้าสู้ · คลิก NPC เพื่อคุย · ปุ่มลัด C B K J</div>
   <div id="attackGauge" hidden>
@@ -1255,7 +1290,7 @@
         <div class="gear-summary" id="gearSummary"></div>
       </div>
       <div class="bag-col">
-        <div class="bag-head"><span>🎒 กระเป๋า <span id="bagCount">0/0</span></span><span class="bag-sub">📦 กล่องที่บ้าน <span id="bagStorageCount">0/0</span></span></div>
+        <div class="bag-head"><span>🎒 กระเป๋า <span id="bagCount">0/0</span></span><button class="letter-book-btn" id="letterBookBtn" type="button" title="อ่านจดหมายที่เก็บได้ทั้งหมด">✉️ จดหมาย</button><span class="bag-sub">📦 กล่องที่บ้าน <span id="bagStorageCount">0/0</span></span></div>
         <p class="storage-hint">คลิกไอเทมเพื่อดูรายละเอียด/เทียบกับของที่ใส่อยู่ · ลากอุปกรณ์ไปวางที่ช่องด้านซ้ายเพื่อสวม · ลากจากช่องกลับมาที่กระเป๋าเพื่อถอด · กระเป๋าเต็มแล้วของใหม่จะถูกส่งไปกล่องที่บ้านเอง</p>
         <div class="item-grid bag" id="bagGrid"></div>
         <div class="item-detail" id="bagDetail" hidden></div>
@@ -2059,6 +2094,7 @@ function npcQuestMarker(npc){
   const story = storyNpcState(npc.kind);
   if(story === "offer") return { ch:"!", color:"#ffb347" };
   if(story === "turnin") return { ch:"?", color:"#ffb347" };
+  if(npc.kind === "town_lord" && letterDeliverable().length) return { ch:"?", color:"#ffd166" };
   if(npc.kind === "town_lord"){
     const st = game.player.questState.junk_hunt || "available";
     if(st === "available") return { ch:"!", color:"#ffd166" };
@@ -2067,7 +2103,6 @@ function npcQuestMarker(npc){
       return have >= QUEST_DEFS.junk_hunt.required ? { ch:"?", color:"#ffd166" } : { ch:"?", color:"#c9c4d6" };
     }
   }
-  if(npc.kind === "merchant" && game.inventory.some(e => e.id === "old_letter")) return { ch:"?", color:"#ffd166" };
   if(npc.kind === "temple" && game.dimCleared && game.dimCleared[game.maxDimension]) return { ch:"!", color:"#d9a8ff" };
   return null;
 }
@@ -3117,7 +3152,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 8;
+const GAME_VERSION = 9;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -4132,6 +4167,7 @@ function continueGame(data){
   SAVE_GAME_FIELDS.forEach(k => { if(data[k] !== undefined) game[k] = data[k]; });
   SAVE_GAME_SETS.forEach(k => { game[k] = new Set(data[k] || []); });
   migrateTitleSave();
+  letterState();
   if(!game.player.story){ storyState(); setTimeout(()=> showDiscoveryBanner("📜 เนื้อเรื่องหลักมาแล้ว!", "ดูภารกิจที่มุมขวาบน — ย้อนเล่นได้ตั้งแต่บทที่ 1", 4000), 1500); }
   const tier = game.mapTier;
   const dim = game.dimension || 1;
@@ -4165,7 +4201,7 @@ const ITEM_TABLE = [
   { id: "wolf_fang", name: "เขี้ยวแปรพันธุ์", icon: "🦷", desc: "เขี้ยวหมาป่าที่ถูกเจตจำนงอื่นแทรกแซงจนงอกผิดรูป" },
   { id: "stone_fragment", name: "เศษศิลาบาเรีย", icon: "🪨", desc: "เศษหินเรืองแสงจางๆ ที่หลุดออกจากศิลาหลักบาเรียในอกของบอส" },
   { id: "secret_key", name: "กุญแจลับ", icon: "🔑", desc: "ใช้เปิดประตูดันเจี้ยนที่ถูกผนึกไว้" },
-  { id: "old_letter", name: "จดหมายเก่า", icon: "✉️", desc: "ไอเทมเควส — นำไปคุยกับพ่อค้าในเมืองเพื่อส่งมอบแทนการขาย" },
+  { id: "old_letter", name: "จดหมายที่ส่งไม่ถึง", icon: "✉️", desc: "จดหมายที่คนส่งสารไปไม่ถึงปลายทาง — เปิดอ่านได้จากปุ่ม ✉️ จดหมาย ในกระเป๋า แล้วนำไปส่งให้เจ้าเมือง" },
   { id: "junk_scrap", name: "เศษซากปนมานา", icon: "🔩", desc: "ข้าวของของผู้คนที่ถูกมานากลืน ทิ้งไว้นานอาจแปรปรวนต่อ — เจ้าเมืองรับไปเผาทำลาย" },
   { id: "mana_stone", name: "หินมานา", icon: "💠", desc: "มานาที่ตกผลึก ช่างตีเหล็กใช้ตีบวกอุปกรณ์" },
   // 🧪 research samples — one per map, bought by the researcher (price grows with the map, see CONSUMABLE_SELL_PRICE)
@@ -4471,6 +4507,7 @@ const SECRET_LOCATION_DEFS = {
   ancient_statue:  { name:"รูปปั้นโบราณ",   icon:"🗿", flavor:"รูปปั้นโบราณที่ถูกลืมเลือน มีบางอย่างซุกซ่อนอยู่ใต้ฐานของมัน",       grantType:"item" },
   strange_tree:    { name:"ต้นไม้ประหลาด",     icon:"🌳", flavor:"เจ้ารู้สึกถึงพลังบางอย่างจากภายในต้นไม้",                              grantType:"key" },
   abandoned_house: { name:"บ้านร้าง",  icon:"🏚️", flavor:"บ้านร้างที่ไม่มีใครกล้าเข้าไป ทันใดนั้นประตูก็เปิดออกเบาๆ...",         grantType:"monster" },
+  messenger_bag:   { name:"กระเป๋าคนส่งสาร", icon:"🎒", flavor:"กระเป๋าหนังขาดวิ่นตกอยู่ข้างรอยเลือดแห้ง… เจ้าของไม่อยู่แล้ว แต่ข้างในยังมีซองจดหมายที่ไม่เคยถูกเปิด", grantType:"quest" },
   ancient_ruins:   { name:"ซากปรักหักพังโบราณ",    icon:"🏛️", flavor:"ซากปรักหักพังของอารยธรรมเก่าแก่ ยังพบจดหมายเก่าเก็บอยู่ใต้เศษหิน",     grantType:"quest" }
 };
 const SECRET_LOCATION_TRIGGER_DIST = 34;
@@ -4667,8 +4704,8 @@ function interactWithLocation(loc){
 
   if(def.grantType === "quest"){
     loc.used = true;
-    addToInventory("old_letter");
-    showLocationDialog(def, def.flavor, "ได้รับ ✉️ จดหมายเก่า — ลองนำไปให้พ่อค้าในเมืองดูสิ", null);
+    showLocationDialog(def, def.flavor, "ได้รับ ✉️ จดหมายที่ส่งไม่ถึง — นำไปส่งให้เจ้าเมืองที่แดนมานาอรุณ", null);
+    letterGrant(false);
     return;
   }
 
@@ -4994,7 +5031,11 @@ const TITLE_DEFS = [
   mkTitle("mind_trainee",    "life", 1, "🧘", "ผู้ฝึกจิต",                    "ทำสมาธิจนสติเต็ม 10 ครั้ง",                10,    "meditations", { MEDITATE:3 }),
   mkTitle("still_water",     "life", 2, "💧", "จิตนิ่งดั่งผืนน้ำ",             "ทำสมาธิจนสติเต็ม 100 ครั้ง",               100,   "meditations", { MEDITATE:6 }),
   mkTitle("town_friend",     "life", 1, "🏙️", "มิตรแท้แห่งเจ้าเมือง",         "ทำภารกิจเก็บกวาดเศษซากของเจ้าเมืองสำเร็จ",        1,     "junkQuest",   { VIT:3 }),
-  mkTitle("courier",         "life", 1, "✉️", "ผู้ส่งสารต่างแดน",             "ส่งจดหมายเก่าให้พ่อค้า 3 ฉบับ",             3,     "letters",     { LUK:3 }),
+  mkTitle("letter_reader",   "life", 1, "📨", "ผู้อ่านเสียงที่หลงทาง",        "อ่านจดหมายที่ส่งไม่ถึง 15 ฉบับ",           15,    "lettersRead", { MEDITATE:3 }),
+  mkTitle("letter_keeper",   "life", 2, "📚", "ผู้เก็บถ้อยคำที่ไปไม่ถึง",      "อ่านจดหมายที่ส่งไม่ถึง 40 ฉบับ",           40,    "lettersRead", { MEDITATE:3, LUK:3 }),
+  mkTitle("letter_all",      "life", 3, "🕊️", "บุรุษไปรษณีย์แห่งแดนมานา",     "อ่านจดหมายที่ส่งไม่ถึงครบทุกฉบับ",          60,    "lettersRead", { LUK:5, VIT:5 }),
+  mkTitle("shadow_unmasker", "life", 3, "🕵️", "ผู้เปิดโปงเงาแห่งศาลาว่าการ",  "???",                                    1,     "spyUnmasked", { DEX:5, LUK:5 }, { secret:true, hint:"ฉายาลับ — บางจดหมายต้องอ่านแค่คำแรกของบรรทัด" }),
+  mkTitle("courier",         "life", 1, "✉️", "ผู้ส่งสารต่างแดน",             "ส่งจดหมายที่ส่งไม่ถึงให้เจ้าเมือง 3 ฉบับ",             3,     "letters",     { LUK:3 }),
   mkTitle("skill_student",   "life", 1, "📜", "ผู้ศึกษาวิชายุทธ์",             "ปลดสกิลอาวุธ 5 สกิล",                     5,     "skills",      { DEX:3 }),
   mkTitle("weapon_scholar",  "life", 2, "📖", "ผู้เชี่ยวชาญศาสตร์อาวุธ",       "ปลดสกิลอาวุธ 15 สกิล",                    15,    "skills",      { DEX:6 }),
   mkTitle("weapon_master",   "life", 3, "🥋", "ปรมาจารย์อาวุธ",               "ความชำนาญอาวุธถึงแรงค์ Master",           5,     "bestRank",    { DEX:5, STR:5 }),
@@ -5053,6 +5094,7 @@ function getTitleStats(){
     chests: st.chestsOpened || 0, dungeons: st.dungeons || 0, secrets: st.secrets || 0,
     refines: st.refines || 0, bestRefine, goldEarned: st.goldEarned || 0, meditations: st.meditations || 0, letters: st.letters || 0,
     junkQuest: p.questState && p.questState.junk_hunt === "completed" ? 1 : 0,
+    lettersRead: p.letters && Array.isArray(p.letters.found) ? p.letters.found.filter(id => LETTER_BY_ID[id]).length : 0, spyUnmasked: p.letters && p.letters.spy === 2 ? 1 : 0,
     chapters: storyPillarsLit(), listened: p.story && p.story.ch && p.story.ch.c2p === "listen" ? 1 : 0,
     level: p.level, reach: game.maxMapTierReached || 1, maxDim: game.maxDimension || 1,
     skills, bestRank, rankedWeapons, colPct: computeCollectionProgress().percent,
@@ -5521,7 +5563,7 @@ function updateMonsterWander(m, dt){
 
 function updateOverworld(dt){
   const p = game.player;
-  storyStatTick(); storyCheckSpots(); storyShowPendingScene();
+  storyStatTick(); storyCheckSpots(); storyShowPendingScene(); letterShowPending(); letterShowSpyScene();
 
   if(p.targetMonsterId != null){
     const m = game.monsters.find(mm => mm.id === p.targetMonsterId);
@@ -6818,7 +6860,7 @@ function exitBattle(result){
     const gs = game.stats;
     gs.kills = (gs.kills || 0) + 1;
     if(m.isElite) gs.eliteKills = (gs.eliteKills || 0) + 1;
-    if(b.isBoss && !m.isDungeonRoom){ gs.bossTiers = gs.bossTiers || {}; gs.bossTiers[game.mapTier] = 1; }
+    if(b.isBoss && !m.isDungeonRoom && !m.isSpyBoss){ gs.bossTiers = gs.bossTiers || {}; gs.bossTiers[game.mapTier] = 1; }
     gs.perfectHits = (gs.perfectHits || 0) + summary.perfectHits;
     gs.perfectDodges = (gs.perfectDodges || 0) + summary.perfectDodges;
     gs.counters = (gs.counters || 0) + summary.counters;
@@ -6827,7 +6869,10 @@ function exitBattle(result){
     gs.goldEarned = (gs.goldEarned || 0) + goldGained;
 
     const rolledDrops = rollLootTable(m.type, m.isElite ? ELITE_LOOT_CHANCE_MULT : 1);
-    if(b.isBoss) rolledDrops.push({ kind:"equipment", defId: pickTierKind(pickWeightedRarity(BOSS_WEAPON_RARITY_WEIGHTS)) }); // every boss: at least one rare+ weapon
+    if(b.isBoss){ // every boss: at least one rare+ weapon
+      const bw = pickTierKind(pickWeightedRarity(BOSS_WEAPON_RARITY_WEIGHTS));
+      rolledDrops.push({ kind:"equipment", defId: m.isSpyBoss ? resolveTierDefId(bw.replace(/_t\d+$/, ""), m.spyTier) : bw });
+    }
     else { const weaponDrop = rollWeaponDrop(m.isElite ? ELITE_LOOT_CHANCE_MULT : 1); if(weaponDrop) rolledDrops.push(weaponDrop); }
     const gearDrop = rollGearDrop(m.isElite ? ELITE_LOOT_CHANCE_MULT : 1); if(gearDrop) rolledDrops.push(gearDrop);
     // Town economy materials — a flat chance on every kill, independent of each monster's own loot table,
@@ -6836,11 +6881,12 @@ function exitBattle(result){
     if(Math.random() < MANA_STONE_DROP_CHANCE) rolledDrops.push({ kind:"consumable", id:"mana_stone" });
     if(game.mapTier >= 1 && game.mapTier <= MAP_TIER_COUNT && Math.random() < SAMPLE_DROP_CHANCE) rolledDrops.push({ kind:"consumable", id:"sample_t" + game.mapTier });
     storyExtraDrop(m, rolledDrops);
+    if((m.type === 2 || m.type === 4) && !b.isBoss && Math.random() < LETTER_DROP_CHANCE * (m.isElite ? 2 : 1)) rolledDrops.push({ kind:"consumable", id:"old_letter" });
     const resolvedDrops = [];
     for(const drop of rolledDrops){
       const isNew = registerDiscovery(drop);
       if(drop.kind === "consumable"){
-        const where = addToInventory(drop.id);
+        const where = drop.id === "old_letter" ? letterGrant(true).where : addToInventory(drop.id);
         resolvedDrops.push({ kind:"consumable", id:drop.id, isNew, where });
       } else if(drop.kind === "equipment"){
         const instance = rollEquipmentInstance(drop.defId);
@@ -6888,6 +6934,7 @@ function exitBattle(result){
     }
     if(bannerText) showDiscoveryBanner(bannerText.title, bannerText.sub);
     if(m.isDungeonRoom) advanceDungeonAfterWin(m);
+    else if(m.isSpyBoss) letterSpyWon();
     else if(b.isBoss && !game.bossDefeatedThisMap){
       // this was the current map's own boss (not a dungeon-room fight) — open the warp point, but never force the move
       game.bossDefeatedThisMap = true;
@@ -8171,7 +8218,7 @@ const TUTORIAL_STEPS = [
     "• มองหาจุดลับเรืองแสงและดันเจี้ยนระหว่างเดิน\n" +
     "• ปราบบอสประจำแมพเพื่อไปแมพถัดไปผ่านประตูเดินทาง\n" +
     "• ปราบบอสแมพ 10 แล้ว ทำพิธีที่ 🛕 โบสถ์ในเมือง เพื่อขึ้นมิติถัดไป (ของ/เลเวลอยู่ครบ มอนแกร่งขึ้น มีกฎหลอมรวม)\n" +
-    "• เมือง (แดนมานาอรุณ) = จุดปลอดภัย: ร้านค้า ช่างตีเหล็ก กล่องเก็บของ นักวิจัย หมอ พระ\n• 📜 ภารกิจหลัก (มุมขวาบน) = เนื้อเรื่อง ตามลูกศร 📜 บนจอ ได้เงิน EXP อุปกรณ์ และฉายา\n• 🧪 ตัวอย่างมานาจากแต่ละแมพ ขายให้นักวิจัยได้ (แมพไกล = ราคาดี)\n• เกมบันทึกอัตโนมัติ — เปิดใหม่แล้วกด \"เล่นต่อ\"" }
+    "• เมือง (แดนมานาอรุณ) = จุดปลอดภัย: ร้านค้า ช่างตีเหล็ก กล่องเก็บของ นักวิจัย หมอ พระ\n• 📜 ภารกิจหลัก (มุมขวาบน) = เนื้อเรื่อง ตามลูกศร 📜 บนจอ ได้เงิน EXP อุปกรณ์ และฉายา\n• 🧪 ตัวอย่างมานาจากแต่ละแมพ ขายให้นักวิจัยได้ (แมพไกล = ราคาดี)\n• ✉️ จดหมายที่ส่งไม่ถึง (กระเป๋าคนส่งสาร / ซากโบราณ / ก็อบลินขโมยมา) อ่านซ้ำได้ที่ปุ่ม ✉️ ในกระเป๋า แล้วนำไปส่งเจ้าเมือง\n• เกมบันทึกอัตโนมัติ — เปิดใหม่แล้วกด \"เล่นต่อ\"" }
 ];
 let tutorialStep = 0;
 
@@ -8436,7 +8483,7 @@ function openMerchantDialog(line, extraHtml){
   const sellable = game.inventory.filter(e => isSellable(e) && !e.equipped).length;
   let text = line;
   if(!text){
-    if(hasLetter) text = "หืม? นั่น **จดหมายเก่า** ที่เจ้าถือมาใช่ไหม... ลายมือนั่นคุ้นตาข้าเหลือเกิน ให้ข้าดูหน่อยได้ไหม?";
+    if(hasLetter) text = "หืม? นั่น **จดหมายที่ส่งไม่ถึง** ใช่ไหม… เอาไปให้ **เจ้าเมือง** สิ ท่านรวบรวมจดหมายพวกนี้ส่งต่อให้ถึงมือผู้รับ แถมมีรางวัลให้ด้วย";
     else if(p.gold < 20) text = "ดูท่ากระเป๋าเงินจะเบาไปหน่อยนะ นักผจญภัย... มีของอะไรจะขายให้ข้าก่อนไหมล่ะ?";
     else text = talkPickLine([
       "ยินดีต้อนรับ! ของดีราคาถูก มีครบทุกอย่างที่นักผจญภัยต้องใช้",
@@ -8449,12 +8496,12 @@ function openMerchantDialog(line, extraHtml){
     choices: [
       { icon:"🛒", label:"ซื้อของ", sub:"ยา สมุนไพร และอาวุธเริ่มต้น", cls:"primary", onPick: ()=> openServicePanel("buyPanel", ()=>{ renderBuyPanel(); renderBuyWeaponList(); }) },
       { icon:"💰", label:"ขายของ", sub: sellable ? `ขายได้ ${sellable} รายการในกระเป๋า` : "ยังไม่มีของที่ขายได้", onPick: ()=> openServicePanel("sellPanel", renderSellPanel) },
-      hasLetter && { icon:"✉️", label:"ส่งจดหมายเก่า", sub:"ภารกิจ · พ่อค้ามีรางวัลให้", cls:"gold", onPick: turnInOldLetter },
       { icon:"💬", label:"มีเรื่องน่าสนใจไหม?", sub:"ฟังคำแนะนำจากพ่อค้า", onPick: ()=> openMerchantDialog(talkPickLine(MERCHANT_TIPS)) },
       TALK_LEAVE
     ] });
 }
-function turnInOldLetter(){
+function turnInOldLetter(){ letterDeliverAll(); } // old name (test bots) — letters now go to the town lord
+function turnInOldLetterMerchantUnused(){
   const idx = game.inventory.findIndex(e => e.id === "old_letter");
   if(idx === -1) return;
   game.inventory[idx].qty -= 1;
@@ -9217,6 +9264,348 @@ function storyNpcDialog(kind, line){
   openTalk({ npcKind:kind, text: line || greet, choices, anchor: npcTalkAnchor(kind) });
 }
 
+
+/* ============================================================
+   LOST LETTERS (จดหมายที่ส่งไม่ถึง) — 60 letters, each from one person to another, lost on the way
+   (a goblin stole it, the messenger never made it). Found on random events → read at once → handed to the town lord.
+   cat: family (everyday lives, little bits of lore) · lore (the world, slowly) · cult (คณะหนึ่งเดียว, rare) · spy (one, rarest)
+   ============================================================ */
+const LETTER_CATS = {
+  family: { label:"จดหมายส่วนตัว",           icon:"✉️", weight:10,  color:"#8a5a2b" },
+  lore:   { label:"บันทึก & รายงาน",          icon:"📜", weight:4,   color:"#3a6ea5" },
+  cult:   { label:"สารลับคณะหนึ่งเดียว",       icon:"🕯️", weight:1,   color:"#8a1f4a" },
+  spy:    { label:"จดหมายที่ถูกผนึก",          icon:"🖋️", weight:0,   color:"#1f1a2e" }
+};
+const LETTER_DEFS = [
+  // ---------- ✉️ family ----------
+  { id:"L01", cat:"family", from:"พ่อ (ช่างไม้แห่งทุ่งหญ้า)", to:"ลูกสาว ดาวเรือง", sign:"พ่อ",
+    body:"ดาวเรืองลูกพ่อ\nทุ่งหญ้าหลังบ้านเราเปลี่ยนไปแล้ว หญ้าบางกอขยับได้เองตอนไม่มีลม ถ้าลูกเห็นหญ้ากอไหนหันตามตัว **อย่าเข้าใกล้เด็ดขาด**\nพ่อยังสบายดี แต่คิดถึงเสียงลูกร้องเพลงตอนเช้า อยู่ในเมืองให้ตั้งใจทำสมาธิทุกคืนเหมือนที่แม่สอนนะลูก" },
+  { id:"L02", cat:"family", from:"บัวแก้ว", to:"สามี ทหารยามประตูเหนือ", sign:"เมียรักของเจ้า บัวแก้ว",
+    body:"พี่จ๋า ลูกเราคลอดแล้วนะ เป็นผู้ชาย ตัวเล็กนิดเดียว ร้องเสียงดังเหมือนพี่ไม่มีผิด\nข้าตั้งชื่อว่า **ตะวัน** เพราะเขาเกิดตอนฟ้าเพิ่งกลับมาเป็นสีฟ้าหลังคืนสีม่วง\nป้าข้างบ้านมือขวาเริ่มเป็นเปลือกไม้แล้ว หมอบอกว่าให้เขานึกถึงชื่อตัวเองทุกเช้า… พี่เองก็อย่าลืมชื่อข้ากับลูกนะ" },
+  { id:"L03", cat:"family", from:"สามี (ยามคุ้มกันคาราวาน)", to:"ภรรยา แม่ค้าขนม", sign:"ผัวเจ้า ทองดี",
+    body:"แม่ขนมของข้า\nรอบนี้ข้าได้คุ้มกัน **ลังหนักที่ห้ามเปิด** นายกองบอกว่าเป็นของสำคัญของเมือง ห้ามใครแตะ ข้าเลยนอนกอดมันทั้งคืน\nระหว่างทางมีคนชุดขาวมาแจกขนมปังให้พวกเรา ยิ้มแย้มดีนัก แต่ไม่รู้ทำไมข้าขนลุกทุกครั้งที่พวกเขามองลังนั่น\nเก็บขนมไว้ให้ข้าสักห่อนะ อีกสิบวันข้าจะกลับ" },
+  { id:"L04", cat:"family", from:"ลุงเขียว (คนหาปลา)", to:"หลานชาย เจ้าโต", sign:"ลุงเขียว",
+    body:"เจ้าโต\nปลาในบึงหลังกระท่อมงอกขาออกมาเดินบนบกแล้ว ลุงเลยเลิกตกปลา เปลี่ยนมาไล่จับปลาแทน ขำก็ขำ กลัวก็กลัว\nลุงอยากบอกเจ้าว่า คนที่รอดจากวันนั้นมาได้ ล้วนมีอะไรสักอย่างที่ **รักจนหมดใจ** ลุงรักการตกปลา ส่วนเจ้า… หาให้เจอนะว่าเจ้ารักอะไร แล้วกอดมันไว้ให้แน่น" },
+  { id:"L05", cat:"family", from:"ทหารใหม่หน่วยกวาดล้าง", to:"แม่ที่ท่าเรือ", sign:"ลูกแม่ ต้นข้าว",
+    body:"แม่ครับ วันนี้ผมออกลาดตระเวนครั้งแรก ฆ่าสไลม์ได้สามตัว\nแปลกนะแม่ ทุกครั้งที่ฆ่า ใจผมมันเบาลงอย่างประหลาด เหมือนมีบางอย่างในหัวหลุดหายไปทีละนิด หัวหน้าบอกว่านั่นคือ **สติ** ที่สึกกร่อน ต้องนั่งสมาธิเติมให้เต็มทุกคืน\nผมจะไม่ลืมหน้าแม่แน่นอนครับ" },
+  { id:"L06", cat:"family", from:"พี่สาว ผกา", to:"น้องชาย ปิ่น", sign:"พี่ผกา (ที่ยังโกรธเจ้าอยู่)",
+    body:"ปิ่น! เลิกเล่นลูกเต๋าได้แล้ว!\nพี่ได้ข่าวว่าเจ้าเอาเงินค่าข้าวไปเสียพนันอีก ถ้าอยากได้เงินนัก **หอคอยวิจัย** รับซื้อตัวอย่างมานาจากนอกเมืองราคาดีมาก\nแต่ถ้าเจ้าจะออกไปเก็บ… ช่วยพกสมุนไพรไปด้วย และกลับมาให้ครบสามสิบสองนะ" },
+  { id:"L07", cat:"family", from:"คุณยายจันทร์", to:"หลานสาว ใบเตย", sign:"ยายจันทร์",
+    body:"ใบเตยจ๋า\nสมัยยายยังเด็ก ทวดเคยเล่านิทานว่า **พันปีก่อน** ฟ้าเคยร้องโดยไม่มีเมฆ ดินสั่นโดยไม่มีแผ่นดินไหว แล้วผู้คนก็กลายเป็นสัตว์ ยายนึกว่าเป็นแค่นิทานขู่เด็ก\nตอนนี้ยายรู้แล้วว่านิทานบางเรื่อง ก็คือบันทึกที่คนเล่าต่อกันมาจนลืมไปว่าเป็นเรื่องจริง" },
+  { id:"L08", cat:"family", from:"ช่างขุดแร่ ศิลา", to:"คนรัก น้ำฝน", sign:"ศิลา ผู้จะกลับไปขอเจ้าแต่งงาน",
+    body:"น้ำฝน\nข้าขุด **หินมานา** ในถ้ำได้เยอะมาก อีกไม่นานคงพอเป็นสินสอด\nแต่ช่วงนี้ข้าได้ยินเสียงกระซิบจากผนังหิน มันเรียกชื่อข้าด้วยเสียงของเจ้า… ข้ารู้ว่าไม่ใช่เจ้าหรอก ข้าเลยท่องชื่อเจ้าในใจทุกครั้งที่ลงถ้ำ ชื่อจริง เสียงจริงของเจ้า" },
+  { id:"L09", cat:"family", from:"น้ำฝน", to:"ศิลา (ช่างขุดแร่)", sign:"น้ำฝน",
+    body:"ศิลา\nเมื่อคืนข้าฝันว่าเจ้ากลายเป็นหินใส ข้าร้องไห้จนตื่น\nไม่ต้องมีสินสอดก็ได้ ไม่ต้องมีอะไรเลย **กลับมาเถอะ** ข้าไม่อยากแต่งงานกับคริสตัล\nถ้าผนังหินเรียกชื่อข้าอีก ให้ตอบมันไปว่า “นางรออยู่ที่บ้าน ไม่ได้อยู่ในถ้ำ”" },
+  { id:"L10", cat:"family", from:"พ่อค้าเร่ สายลม", to:"ภรรยา ที่เมืองแดนมานาอรุณ", sign:"สายลม",
+    body:"เมียข้า\nทะเลทรายร้อนกว่าที่เขาเล่ามาก ทรายบางผืนหลอมเป็นแก้วใสสีส้ม ข้าเก็บไว้ชิ้นหนึ่งจะเอาไปฝากเจ้า\nที่นี่มีมัมมี่เดินวนไปมา ชาวบ้านบอกว่า **ถ้าไม่เข้าใกล้ พวกมันก็ไม่ทำร้ายใคร** เหมือนพวกมันยังพยายามจำอะไรบางอย่างอยู่ ข้าเห็นแล้วใจหาย" },
+  { id:"L11", cat:"family", from:"เด็กชาย ข้าวตู", to:"พ่อ (ที่ไปรบ)", sign:"ข้าวตู อายุ 7 ขวบ",
+    body:"พ่อครับ\nผมวาดรูปพ่อถือดาบใหญ่ๆ สู้กับสไลม์ แม่บอกว่าวาดเหมือนมาก\nพ่อจะกลับมาเมื่อไหร่ครับ ตอนกลางคืนแม่ชอบร้องไห้เบาๆ นึกว่าผมหลับ\nผมทำสมาธิทุกคืนเลยนะครับ ผมจะได้ไม่กลายเป็นกระต่าย (ถึงกระต่ายจะน่ารักก็เถอะ)" },
+  { id:"L12", cat:"family", from:"แม่", to:"ลูกชาย นักกวาดล้าง ภูผา", sign:"แม่",
+    body:"ภูผา\nแม่ถักถุงเท้าให้สามคู่ ส่งมากับจดหมายนี้ (ถ้ามันไปถึงนะ)\nจำไว้นะลูก **สติคือเกราะที่มองไม่เห็น** ดาบคมแค่ไหนก็ไม่ช่วยถ้าใจลูกหลุดลอย\nกินข้าวให้ตรงเวลา และอย่าลืมว่าบ้านเรายังเปิดไฟหน้าประตูไว้ทุกคืน" },
+  { id:"L13", cat:"family", from:"ตาเหลือง", to:"เพื่อนเก่า ตาแดง", sign:"เพื่อนเจ้า เหลือง",
+    body:"แดง\nจำได้ไหมตอนหนุ่มๆ เราสองคนแอบขโมยมะม่วงวัด แล้วโดนหลวงพ่อไล่ตีรอบลาน\nตอนนี้เพื่อนเราอีกคน **กลายเป็นต้นไม้** ไปแล้ว ข้ารดน้ำให้มันทุกเช้า บางวันข้าว่ากิ่งมันเอนมาหาข้า\nเจ้าว่าต้นไม้จะจำเพื่อนได้ไหม… ข้าอยากเชื่อว่าจำได้" },
+  { id:"L14", cat:"family", from:"เด็กฝึกงานโรงตีเหล็ก", to:"อาจารย์ช่าง (ที่เดินทางไปต่างเมือง)", sign:"ลูกศิษย์ผู้ทำค้อนหัก",
+    body:"อาจารย์ครับ\nผมลองตีบวกดาบเองครั้งแรก พอหินมานาแตก ประกายไฟสีฟ้าพุ่งขึ้นไปติดเพดาน ดาบกลับบิดเป็นเกลียว\nผมเลยรู้ว่าหินมานาไม่ได้แค่ร้อน มัน **มีจังหวะ** ของมัน ต้องตีตามจังหวะนั้น ไม่ใช่ตีตามใจเรา\nกลับมาสอนผมเร็วๆ นะครับ ค้อนอาจารย์ผมทำด้ามหักไปแล้ว ขอโทษครับ" },
+  { id:"L15", cat:"family", from:"นักปีนเขา เมฆ", to:"น้องสาว หมอก", sign:"พี่เมฆ",
+    body:"หมอก\nบนยอดเขาหิมะมีคนยืนนิ่งเป็นรูปปั้นน้ำแข็งเรียงเป็นแถว หน้าตาเหมือนกำลังจะก้าวขาต่อ\nแต่หัวหน้าคณะของเราไม่เคยหยุดเดินเลย เขาบอกว่า **ถ้าหยุดเมื่อไหร่ ข้าจะกลายเป็นแบบนั้น** ข้าเลยเดินตามเขาไปเรื่อยๆ\nถ้าจดหมายฉบับนี้ไปถึงเจ้า แปลว่าพี่ยังเดินอยู่" },
+  { id:"L16", cat:"family", from:"ภรรยา กุหลาบ", to:"สามี (หน่วยสำรวจหนองน้ำ)", sign:"กุหลาบ",
+    body:"พี่ชาติ\nข่าวลือในเมืองบอกว่าหน่วยของพี่หายไปในหนองน้ำพิษ ข้าไม่เชื่อหรอก\nข้ายังเก็บผ้าห่มผืนโปรดของพี่ไว้บนเตียง ยังเก็บช้อนของพี่ไว้ข้างจาน\nถ้าพี่อ่านจดหมายนี้ ตอบกลับมาสักคำเถอะ คำเดียวก็ได้ **ข้ายังรออยู่**" },
+  { id:"L17", cat:"family", from:"ลูกสาว ระฆัง (ศิษย์โบสถ์แห่งบาเรีย)", to:"พ่อ (ชาวนา)", sign:"ระฆัง",
+    body:"พ่อจ๋า\nหนูได้เป็นศิษย์โบสถ์แห่งบาเรียแล้วนะ! งานแรกคือ **ร้องเพลงให้ศิลาบาเรียฟัง** ฟังดูบ้าใช่ไหม แต่พอหนูร้อง ศิลามันฮัมตอบด้วยเสียงทุ้มๆ เหมือนแมวครางเลย\nนักบวชบอกว่าศิลาจำเสียงคนได้ทุกคน… หนูเลยร้องเพลงที่พ่อชอบร้องตอนไถนาให้มันฟังทุกวัน" },
+  { id:"L18", cat:"family", from:"ส้มจี๊ด", to:"เพื่อนซี้ มะนาว", sign:"ส้มจี๊ด (เพื่อนที่สวยกว่า)",
+    body:"มะนาว!\nออร่าตอนทำสมาธิของเธอเป็น **สีทอง** ใช่ไหม? ของฉันเป็น **สีม่วง** อาจารย์บอกว่าแต่ละสีคือเจตจำนงที่เรายึดไว้คนละแบบ\nฉันว่าสีทองดูเหมาะกับเธอนะ เธอเชื่อในทุกคนมากเกินไปตลอด แต่นั่นแหละที่ทำให้เธอรอดมาได้\nคราวหน้าไปนั่งสมาธิด้วยกันนะ เดี๋ยวฉันเอาขนมไป" },
+  { id:"L19", cat:"family", from:"ชาวนา สมหวัง", to:"ลูกชาย (ที่ไปทำงานในเมือง)", sign:"พ่อเจ้า",
+    body:"ไอ้ลูกชาย\nฟักทองในไร่เรางอกฟันแล้ว พ่อเลยไม่กล้าเก็บ ปล่อยไว้กัดกันเองตามสบาย\nเรื่องดีคือ **นักวิจัยในเมืองขอซื้อ** ลูกละห้าเหรียญ บอกว่าเป็นตัวอย่างที่หายาก พ่อเลยรวยขึ้นมานิดหน่อย\nอย่าบอกแม่นะว่าพ่อโดนฟักทองกัดนิ้ว" },
+  { id:"L20", cat:"family", from:"พี่ชาย", to:"น้องสาว ดอกแก้ว", sign:"พี่ (ที่ยังจำชื่อเจ้าได้)",
+    body:"ดอกแก้ว\nพี่ขอโทษที่หายไป แขนซ้ายของพี่กลายเป็นขาหมาป่าแล้ว ขนขึ้นถึงไหล่ พี่ไม่อยากให้เจ้าเห็น\n**อย่ามาตามหาพี่** แต่ถ้าวันหนึ่งเจ้าเห็นหมาป่าที่ยืนสองขาและพันผ้าพันคอสีแดงผืนที่เจ้าถักให้… อย่าทำร้ายมันนะ มันอาจยังจำเจ้าได้อยู่" },
+  { id:"L21", cat:"family", from:"แม่ม่าย ละมุน", to:"ลูกสาว ที่หายตัวไป", sign:"แม่",
+    body:"ลูกรัก\nแม่ไม่รู้จะส่งจดหมายนี้ไปที่ไหน เลยฝากคนส่งสารไว้เผื่อเขาเจอลูกระหว่างทาง\nเพื่อนบ้านบอกว่าเห็นลูกเดินตามคนชุดขาวไปยิ้มๆ เหมือนไม่ได้ถูกบังคับ\nถ้าพวกเขาบอกว่าแม่ไม่เจ็บปวดแล้ว… **โกหกทั้งนั้นลูก** แม่เจ็บทุกวันที่ลูกไม่อยู่" },
+  { id:"L22", cat:"family", from:"ครูสมศรี", to:"ลูกศิษย์เก่า (ที่เป็นนักกวาดล้างแล้ว)", sign:"ครูสมศรี",
+    body:"ศิษย์รัก\nโรงเรียนของเรากลายเป็นที่พักผู้อพยพแล้ว ครูเลยสอนเด็กๆ ทำสมาธิเป็นเกม ใครนิ่งได้นานสุดได้ลูกอม\nเด็กคนหนึ่งถามครูว่า “ถ้าเราชอบหลายอย่าง เจตจำนงจะแตกเป็นหลายชิ้นไหม”\nครูตอบไม่ได้ เลยเขียนมาถามเธอ… ที่ข้างนอกนั่นเธอเจออะไรมาบ้าง" },
+  { id:"L23", cat:"family", from:"หญิงสาว ลำดวน", to:"คู่หมั้น (ที่ทะเลทรายศักดิ์สิทธิ์)", sign:"ลำดวน",
+    body:"พี่คะ\nจดหมายสามฉบับหลังของพี่ ลายมือยังเป็นของพี่ แต่ถ้อยคำไม่ใช่เลย\nพี่เขียนแต่เรื่อง **แสงสีทอง** กับ **เทพที่ตอบคำอธิษฐาน** ไม่ถามถึงข้าสักคำ\nถ้ายังมีพี่คนเดิมอยู่ในนั้น ช่วยเขียนชื่อเล่นที่พี่เคยเรียกข้ามาสักครั้ง ข้าจะได้รู้ว่าพี่ยังอยู่" },
+  { id:"L24", cat:"family", from:"ลุงคนเลี้ยงแกะ", to:"หลานสาว ปุยฝ้าย", sign:"ลุงแกะ",
+    body:"ปุยฝ้าย\nแกะของลุงกลายเป็นก้อนเมฆขนปุยลอยได้ ลุงต้องผูกเชือกไว้ทุกตัวเหมือนว่าว เวลาลมแรงลุงก็ลอยตามไปด้วย\nชาวบ้านหัวเราะกันทั้งหมู่บ้าน แต่ลุงว่ามันก็ยังเป็นแกะของลุงอยู่ดี มันยังร้องแบ๊ะๆ ตอนหิว\nบางอย่างเปลี่ยนรูปไปแล้ว แต่ **ใจยังเหมือนเดิม** นะหลาน" },
+  { id:"L25", cat:"family", from:"ทหารยามกำแพง", to:"แม่ที่หมู่บ้านริมป่า", sign:"ลูกชายแม่",
+    body:"แม่ครับ\nตอนเข้าเวรกลางคืน ผมเห็นแสงระยิบระยับทางทิศ **ดินแดนคริสตัล** ถ้ามองนานๆ มันเหมือนคนยืนโบกมือเรียก\nหัวหน้าสั่งว่าห้ามโบกตอบ ห้ามเดินเข้าไป ผมก็ไม่เข้าใจหรอก แต่ทำตาม\nแม่ไม่ต้องห่วง ผมยืนเวรกับเพื่อนตลอด เราผลัดกันเรียกชื่อกันทุกชั่วโมง" },
+  { id:"L26", cat:"family", from:"เด็กหญิง แพรวา", to:"เพื่อนรัก ขนุน", sign:"แพรวา ♥",
+    body:"ขนุน!!\nแมวของฉัน **ตัวเรืองแสง** แล้วนะ! ตอนกลางคืนไม่ต้องจุดตะเกียงเลย ฉันเลยเปลี่ยนชื่อมันเป็น “มานา”\nแม่บอกว่ามันยังเป็นแมวเหมือนเดิม เพราะมันขี้เกียจเหมือนเดิม นอนทั้งวันเหมือนเดิม\nมาดูมานาที่บ้านฉันนะ มันชอบให้เกาคางมาก" },
+  { id:"L27", cat:"family", from:"สามี", to:"ภรรยาและลูกๆ", sign:"พ่อของลูกๆ (ขณะที่ยังเขียนชื่อตัวเองได้)",
+    body:"ถึงเมียและลูกๆ\nช่วงนี้ข้าลืมง่ายขึ้น เมื่อวานข้าลืมว่าข้าชอบกินอะไร วันนี้ข้าต้องเปิดดูป้ายชื่อบนเสื้อตัวเอง\nถ้าวันหนึ่งข้ากลับไปที่บ้าน แล้ว **เรียกชื่อเจ้าไม่ได้ อย่าเปิดประตู**\nสอนลูกทำสมาธิทุกคืน และบอกลูกว่าพ่อรักพวกเขา… ข้าจะเขียนประโยคนี้ซ้ำไว้ตรงนี้ เผื่อข้าลืม: พ่อรักพวกเขา" },
+  { id:"L28", cat:"family", from:"พ่อครัวโรงเตี๊ยม", to:"ลูกศิษย์ครัว", sign:"เชฟเฒ่า",
+    body:"เจ้าลูกศิษย์\nสูตรแกงที่ข้าคิดใหม่: **สมุนไพรสามต้น** ต้มกับน้ำใส ใส่เกลือนิดหนึ่ง กินแล้วหัวโล่งเหมือนได้นั่งสมาธิครึ่งชั่วยาม\nหมอประจำเมืองชิมแล้วบอกว่าใช้ได้ คงจะเอาไปทำยาต่อ\nถ้าข้าไม่กลับไปทันงานเลี้ยงเดือนหน้า เจ้าทำแทนข้านะ ห้ามใส่พริกเกินห้าเม็ด" },
+  { id:"L29", cat:"family", from:"นักดนตรีพเนจร", to:"คนรัก (นักเต้นที่ท่าเรือ)", sign:"คนที่ยังติดค้างเพลงหนึ่งเพลงกับเจ้า",
+    body:"ที่รัก\nข้าพบว่าถ้าเป่าขลุ่ยทำนองช้าๆ มอนสเตอร์รอบกองไฟจะหยุดนิ่งไปครู่หนึ่ง เหมือนมันจำอะไรได้\nข้ากำลังแต่งเพลงเพลงหนึ่ง **สำหรับบาเรีย** นักบวชบอกว่าบาเรียสร้างจากเจตจำนงของผู้คน ถ้าอย่างนั้นเพลงก็คงช่วยได้บ้าง\nเพลงแรกที่เล่นเสร็จ ข้าจะเล่นให้เจ้าฟังก่อนใคร" },
+  { id:"L30", cat:"family", from:"หมอฝึกหัด", to:"แม่ที่หมู่บ้าน", sign:"ลูกแม่ (ที่ยังกลัวเลือดอยู่)",
+    body:"แม่คะ\nหนูได้เป็นผู้ช่วยหมอประจำเมืองแล้ว วันนี้หนูเห็นเรื่องแปลก: คนไข้ที่ผิวกลายเป็นไม้ พอเขา **จำชื่อตัวเองได้** และพูดออกมาดังๆ เปลือกไม้ก็หยุดลาม\nหมอบอกว่าชื่อคือสมอเรือของเจตจำนง… หนูเลยท่องชื่อแม่ทุกคืนก่อนนอน เผื่อหนูต้องใช้สมอ" },
+  { id:"L31", cat:"family", from:"ลูกชาย", to:"พ่อ (ช่างทอผ้า)", sign:"ลูกที่ดื้อที่สุดของพ่อ",
+    body:"พ่อ\nผมขอโทษที่หนีออกจากบ้านไปสมัคร **หน่วยกวาดล้าง** โดยไม่บอก\nตอนนั้นผมคิดว่าพ่อขี้ขลาดที่นั่งทอผ้าอยู่แต่ในบ้าน แต่พอออกมาข้างนอก ผมถึงรู้ว่าพ่อ **ทอผ้าทุกวันไม่เคยหยุด** นั่นแหละคือเหตุที่พ่อรอดมาได้\nผมจะกลับไปเรียนทอผ้ากับพ่อสักวันนะครับ" },
+  { id:"L32", cat:"family", from:"ยายแก้ว", to:"หลานสาว ปลายฝน", sign:"ยายแก้ว",
+    body:"ปลายฝน\nยายถักผ้าพันคอให้หลานเสร็จแล้ว สีม่วงเหมือนฟ้าวันนั้น\nหลานถามว่าวันนั้นยายทำอะไรอยู่ — ยายกำลังตากผ้า มันเป็น **วันธรรมดาที่สุดในโลก** ฟ้าเป็นสีม่วงแวบเดียว แล้วเสียงระฆังก็ดังมาจากทุกทิศ\nพอยายหันกลับไป ไก่ในเล้ากลายเป็นหินหมดทั้งเล้า… ยายยังไม่ได้เก็บผ้าเลยจนทุกวันนี้" },
+  { id:"L33", cat:"family", from:"คนส่งสาร ม้าเร็ว", to:"หัวหน้าไปรษณีย์ แดนมานาอรุณ", sign:"ม้าเร็ว (ถ้ายังมีชีวิตอยู่)",
+    body:"เรียนหัวหน้า\nเส้นทางช่วงนี้อันตรายเกินไป **ก็อบลินชอบขโมยซองที่มีตราประทับเงาๆ** มันคงนึกว่าเป็นของมีค่า ส่วนพวกคนที่กลายพันธุ์ก็ยังพกกระเป๋าส่งสารของตัวเองติดตัวทั้งที่จำไม่ได้แล้วว่าต้องส่งให้ใคร\nถ้าใครก็ตามเก็บจดหมายฉบับนี้ได้ **ช่วยนำไปส่งให้เจ้าเมือง** ท่านจะหาทางส่งต่อให้ถึงมือผู้รับเอง" },
+  { id:"L34", cat:"family", from:"ฝาแฝดคนพี่ ฟ้า", to:"ฝาแฝดคนน้อง ดิน", sign:"ฟ้า",
+    body:"ดิน\nเมื่อคืนข้าแหงนมองฟ้าที่ขอบทุ่ง แล้วเห็น **ท้องฟ้าซ้อนกันสองชั้น** ชั้นล่างเป็นดาวปกติ ชั้นบนเป็นดาวที่ไม่เคยมีใครเห็น เรียงกันเป็นวงกลมแตกๆ\nเจ้าเคยบอกว่าฝาแฝดมองเห็นสิ่งเดียวกันเสมอ… คืนนี้เจ้าช่วยมองฟ้าให้ข้าที ว่าเจ้าเห็นเหมือนข้าไหม" },
+
+  // ---------- 📜 lore ----------
+  { id:"L35", cat:"lore", from:"นักวิจัยประจำหอคอย (รุ่นก่อน)", to:"หอคอยวิจัย — รายงานตัวอย่างที่ 41", sign:"ผู้บันทึก ห.ว. 41",
+    body:"ผลการผ่าตัวอย่างสไลม์: **ไม่พบร่างเดิม**\nสไลม์ไม่เคยเป็นอะไรมาก่อน มันคือมานาเปล่าๆ ที่จับตัวเป็นก้อน ยังหาเจตจำนงเกาะไม่ได้ จึงกลิ้งไปมาเหมือนคนหลงทาง\nข้อสันนิษฐาน: ถ้าสไลม์ได้เจตจำนงที่แรงพอ มันอาจกลายเป็นอะไรก็ได้ — **รวมถึงเป็นคน**" },
+  { id:"L36", cat:"lore", from:"นักบวชอาวุโสแห่งบาเรีย", to:"ศิษย์โบสถ์ทุกคน", sign:"นักบวชแห่งบาเรีย",
+    body:"ศิษย์ทั้งหลาย\nจงจำไว้ว่า **ศิลาหลักบาเรียมีสิบก้อน** แต่ละก้อนคือเจตจำนงร่วมของผู้รอดชีวิตที่ถูกผนึกไว้ในหิน\nคัมภีร์รุ่นเก่ากล่าวถึงสิ่งที่เรียกว่า “ช่องระบาย” ข้าอ่านไม่ออกทั้งหมด แต่รู้เพียงว่าบาเรียที่ **แข็งเกินไป** จะไม่รอดคลื่นใหญ่\nจงสวดให้ศิลาทุกวัน เพราะศิลาที่ไม่มีใครจำ ก็คือศิลาที่ตายแล้ว" },
+  { id:"L37", cat:"lore", from:"ผู้บันทึกเหตุการณ์ประจำเมือง", to:"หอจดหมายเหตุ — บันทึกวันที่ศูนย์", sign:"ผู้บันทึก",
+    body:"บันทึกวันที่ศูนย์ (วันมานาระเบิด)\nเวลาเที่ยงตรง ท้องฟ้าเป็นสีม่วงหนึ่งอึดใจ เสียงคล้ายระฆังดังพร้อมกันทุกทิศ ผู้คนหยุดนิ่ง แล้วร่างกายก็เริ่มผสมกับสิ่งรอบตัว\nผู้ที่รอด: หญิงที่กำลังสวดมนต์, เด็กชายที่ซ้อมฟันดาบ, ช่างที่กำลังตีเหล็ก, **และนักพนันที่กำลังลุ้นลูกเต๋า**\nข้อสังเกต: เจตจำนงที่รอดไม่จำเป็นต้องดี ขอเพียง **แรงกล้า**" },
+  { id:"L38", cat:"lore", from:"หัวหน้าหน่วยกวาดล้างรุ่นก่อน", to:"นักวิจัยแห่งหอคอย", sign:"หัวหน้าหน่วยที่ 7",
+    body:"เพื่อนเอ๋ย\nหน่วยที่ 7 จะเข้าสำรวจ **ห้วงเงามืด** พรุ่งนี้เช้า ที่นั่นเงาของเรายาวกว่าตัวเรา และบางครั้งมันขยับช้ากว่าเราครึ่งจังหวะ\nถ้าไม่ได้ข่าวจากข้าภายในสิบวัน **อย่าส่งใครตามมาอีก**\nเก็บเหรียญประจำหน่วยของข้าไว้ในลิ้นชักนะ ถ้าวันหนึ่งมีใครพามันกลับมาได้ ให้เขาเก็บไว้เถอะ" },
+  { id:"L39", cat:"lore", from:"นักประวัติศาสตร์ เฒ่าคัมภีร์", to:"นักวิจัยแห่งหอคอย", sign:"เฒ่าคัมภีร์",
+    body:"ท่านนักวิจัย\nข้าเชื่อว่าเมืองโบราณใต้ **ทะเลทรายเพลิง** คือผู้รอดจากคลื่นมานาใหญ่เมื่อพันปีก่อน พวกเขาจารึกทุกอย่างลงแผ่นหิน และจารึกตัวเองลงบนผ้าพันแผล\nน่าคิดว่าทำไมพวกเขาต้องเขียนชื่อตัวเองไว้บนร่าง… คงเพราะรู้ว่าวันหนึ่งจะลืม\nถ้าท่านไปถึงที่นั่น ช่วยคัดลอกจารึกแผ่นที่มีวงกลมเว้นช่องมาให้ข้าด้วย" },
+  { id:"L40", cat:"lore", from:"หมอประจำเมือง", to:"นักวิจัยแห่งหอคอย", sign:"หมอ",
+    body:"เพื่อนนักวิจัย\nข้าสังเกตคนไข้มาสามเดือน พบรูปแบบบางอย่าง:\n• คนที่ **หวาดกลัว** มักถูกพืชแทรกแซง\n• คนที่ **โกรธ** มักถูกสัตว์แทรกแซง\n• คนที่ **โศกเศร้า** มักกลายเป็นหิน\nเหมือนมานาเลือกสิ่งที่เข้ากับรอยร้าวในใจเรา ถ้าจริง… การรักษาใจก็คือการรักษากาย" },
+  { id:"L41", cat:"lore", from:"นักสำรวจผลึก", to:"หอคอยวิจัย", sign:"นักสำรวจ (มือซ้ายเริ่มโปร่งใส)",
+    body:"รายงานจากดินแดนคริสตัล\nผลึกที่นี่ **ไม่ได้สะท้อนหน้าเรา แต่สะท้อนเจตจำนง** ข้าเห็นตัวเองในวัยเด็กกำลังวิ่งไล่ผีเสื้อ\nแต่มีผลึกก้อนหนึ่งสะท้อนภาพชายชุดขาวยืนยิ้มอ่อนโยน ทั้งที่ไม่มีใครยืนอยู่ตรงนั้นเลย\nข้าจ้องมันนานเกินไป… มือซ้ายของข้าเริ่มใสเหมือนแก้ว ข้าจะออกจากที่นี่พรุ่งนี้" },
+  { id:"L42", cat:"lore", from:"ช่างก่อบาเรีย", to:"สมาคมช่างก่อสร้าง", sign:"นายช่างใหญ่",
+    body:"เรียนสมาคม\nคืนที่บาเรียแตก ข้ายืนอยู่บนหอสังเกตการณ์ ข้านับแสงที่พุ่งออกจากยอดโบสถ์ได้ **สิบดวง** พุ่งไปคนละทิศเหมือนดาวตก\nดวงหนึ่งตกทางทุ่งหญ้า ดวงหนึ่งตกกลางป่า ดวงหนึ่งหายไปในทะเลทราย… ดวงสุดท้าย **พุ่งขึ้นฟ้า ไม่ตกลงมาเลย**\nถ้าจะสร้างบาเรียใหม่ เราต้องตามหาแสงทั้งสิบให้ครบ" },
+  { id:"L43", cat:"lore", from:"นักจาริกแสวงบุญ", to:"น้องชายที่บ้าน", sign:"พี่ผู้ยังไม่เชื่อสนิทใจ",
+    body:"น้องชาย\nที่ **ทะเลทรายศักดิ์สิทธิ์** ผู้คนสวดวันละร้อยครั้งต่อหน้าแสงสีทองที่ลอยอยู่กลางวิหาร พวกเขาเรียกมันว่าเทพ\nแต่ข้าสังเกตว่า ยิ่งคนสวดมาก แสงยิ่งใหญ่ขึ้น… เหมือน **เทพเกิดจากคำอธิษฐาน** ไม่ใช่คำอธิษฐานเกิดจากเทพ\nข้าไม่กล้าพูดเรื่องนี้กับใครที่นี่ เลยเขียนมาบอกเจ้า" },
+  { id:"L44", cat:"lore", from:"ทหารองครักษ์ศาลาว่าการ", to:"ภรรยา", sign:"ผัวเจ้า (ขอให้เผาจดหมายนี้หลังอ่าน)",
+    body:"เมียข้า\nตั้งแต่คืนที่บาเรียแตก **ท่านเจ้าเมืองเปลี่ยนไป** ท่านไม่แตะอาหารเลย ห้องทำงานไม่เคยจุดตะเกียงตอนกลางคืน แต่ข้ายังได้ยินเสียงกระซิบอยู่ข้างใน\nเมื่อวานข้ายื่นชาให้ ท่านรับด้วยมือซ้าย — ท่านถนัดขวามาทั้งชีวิต\nข้าคงคิดมากไปเอง อย่าเล่าให้ใครฟังนะ" },
+  { id:"L45", cat:"lore", from:"นักวิจัยแห่งหอคอย", to:"นักวิจัยต่างเมือง", sign:"นักวิจัย (ผู้นอนไม่พอ)",
+    body:"สหาย\nข้าคิดเรื่องหนึ่งไม่ตก: ถ้าบาเรียถูกสร้างเป็น **ชั้นๆ** เพื่อกันคลื่น โลกเราเองก็อาจเป็นชั้นเช่นกัน\nคลื่นมานาที่มาจากส่วนลึกของจักรวาล อาจไม่ได้มาจาก “ข้างนอก” แต่มาจาก **“ข้างบน”** — ชั้นที่อยู่เหนือโลกเราขึ้นไป\nถ้าวันหนึ่งมีใครขึ้นไปถึงชั้นนั้นได้ ข้าอยากให้เขาเขียนจดหมายกลับมาเล่าให้ข้าฟัง" },
+  { id:"L46", cat:"lore", from:"ผู้รอดชีวิตจากหมู่บ้านริมหนอง", to:"ท่านเจ้าเมือง", sign:"ชาวบ้านริมหนอง (ที่เหลืออยู่คนเดียว)",
+    body:"กราบเรียนท่านเจ้าเมือง\nทุกคืนเดือนมืด คนชุดขาวจะมาที่หมู่บ้าน แล้วพาชาวบ้านเดินเข้าไปใน **หนองน้ำพิษ** ไม่มีใครขัดขืน ทุกคนเดินตามไปยิ้มๆ\nข้าซ่อนอยู่ในโอ่งน้ำจึงรอดมาได้ ได้ยินพวกเขาพูดถึง “ห้องทดลอง” กับ “ฝนที่มีชีวิต”\nได้โปรดส่งหน่วยกวาดล้างมาช่วยพวกเราด้วย" },
+  { id:"L47", cat:"lore", from:"ศิษย์โบสถ์รุ่นเก่า", to:"เพื่อนร่วมรุ่น", sign:"ศิษย์ผู้ยังคิดถึงวันเก่า",
+    body:"เพื่อนเอ๋ย\nเจ้ายังจำ **ท่านนักบวชใหญ่รุ่นก่อน** ได้ไหม คนที่หัวเราะเสียงดังที่สุดในโบสถ์ ชอบแอบให้ขนมเด็กๆ ตอนสวดเสร็จ\nหลังวันที่ครอบครัวของท่าน… เปลี่ยนไป ท่านก็ไม่หัวเราะอีกเลย แล้ววันหนึ่งก็หายไปจากโบสถ์พร้อมคัมภีร์เล่มหนึ่ง\nนักบวชคนปัจจุบันห้ามพวกเราพูดชื่อท่าน ข้าเลยไม่เขียนไว้ตรงนี้" },
+  { id:"L48", cat:"lore", from:"ผู้เฝ้าท่าเรือ", to:"ลูกชายที่เป็นกะลาสี", sign:"พ่อผู้เฝ้าท่า",
+    body:"ลูกพ่อ\nเรือสำเภาออกจากท่าไม่ได้มาสามเดือนแล้ว คลื่นในทะเล **เรืองแสงเป็นจังหวะ** เหมือนมีหัวใจอยู่ใต้น้ำ\nชาวประมงเฒ่าบอกว่า ทะเลก็มีเจตจำนงของมัน และตอนนี้มันกำลังโกรธ\nรอให้บาเรียกลับมาก่อนแล้วค่อยกลับบ้านนะลูก ท่าเรือจะรอลูกเสมอ" },
+  { id:"L49", cat:"lore", from:"หัวหน้าคณะสำรวจยอดเขา", to:"ภรรยา", sign:"คนที่จะไปถึงยอดให้ได้",
+    body:"ที่รัก\nข้ารู้แล้วว่าทำไมข้ายังไม่กลายเป็นน้ำแข็งเหมือนลูกทีมคนอื่น เพราะข้ายังอยากไปถึงยอด **มากกว่าที่อยากมีชีวิต**\nนั่นแหละ **เจตจำนงแรงกล้า** มันไม่ได้สวยงามอย่างที่นักบวชพูดหรอก มันคือการหมกมุ่นจนลืมทุกอย่างรอบตัว… รวมถึงลืมกลับบ้าน\nขอโทษที่ข้ารักภูเขามากกว่าที่ควร" },
+  { id:"L50", cat:"lore", from:"หัวหน้าคาราวานขนศิลา", to:"ท่านเจ้าเมือง", sign:"หัวหน้าคาราวาน",
+    body:"กราบเรียนท่านเจ้าเมือง\nคาราวานขน **เศษศิลาบาเรีย** จะออกเดินทางผ่านทุ่งหญ้าในอีกสามวัน ขอกำลังคุ้มกันเพิ่มสักสิบนาย\nอีกเรื่องหนึ่ง: ในรายชื่อผู้โดยสาร มีคนหนึ่งที่ **ไม่มีชื่ออยู่ในบัญชีใดเลย** ขึ้นเกวียนมาตอนไหนก็ไม่มีใครจำได้ แต่นั่งเงียบๆ มองเศษศิลาไม่วางตา\nข้าจะคอยจับตาดูไว้ขอรับ" },
+
+  // ---------- 🕯️ cult (rare) ----------
+  { id:"L51", cat:"cult", from:"ผู้เผยแผ่ประจำทุ่งหญ้า", to:"สหายในเมือง", sign:"ด้วยความเมตตา — ผู้เผยแผ่ (ตราวงกลมหลอมรวม)",
+    body:"สหาย\nคาราวานขนเศษศิลาจะผ่านทุ่งหญ้าในอีกสามวัน **จงพลิกเกวียนที่โค้งหินใหญ่** เอาเศษศิลาไปทั้งหมด\nอย่าทำร้ายคนขับ ปล่อยให้ทุ่งหญ้าโอบกอดเขาเอง ทุ่งหญ้าไม่รู้จักความเจ็บปวด เขาจะไม่เจ็บปวดอีก\nส่วนผู้โดยสารที่ไม่มีชื่อ… ท่านผู้เมตตาสั่งว่า **อย่าแตะต้อง**" },
+  { id:"L52", cat:"cult", from:"หัวหน้ากลุ่มป่าเงามืด", to:"ผู้เผยแผ่", sign:"ผู้ดูแลป่า (ตราวงกลมหลอมรวม)",
+    body:"ผู้เผยแผ่\nก็อบลินรากไม้ชอบ **ยางไม้หวาน** มากกว่าทองเสียอีก เราทายางไว้บนตะเกียงบาเรียทุกดวงในป่าแล้ว\nพวกมันจะขโมยตะเกียงไปเองโดยไม่ต้องสั่ง และไม่มีใครสงสัยพวกเรา\nเมื่อป่ามืดสนิท คนหลงป่าก็จะเพิ่มขึ้น และคนหลงป่าก็คือคนที่พร้อมจะ **ถูกโอบกอด**" },
+  { id:"L53", cat:"cult", from:"พี่เลี้ยงแห่งคณะ", to:"ผู้ดูแลเด็กๆ", sign:"พี่เลี้ยง (ตราวงกลมหลอมรวม)",
+    body:"ผู้ดูแล\nเด็กๆ ที่รับมาใหม่ได้ผ้าคลุมสีขาวครบทุกคนแล้ว **เด็กยังไม่รู้จักความเจ็บปวดลึกซึ้ง จึงหลอมรวมได้ง่ายที่สุด**\nให้เด็กวางตุ๊กตาหรือรองเท้าไว้กลางทางสักชิ้น พ่อแม่จะได้พบ และคิดว่าลูกหลงป่า จะได้ไม่ตามมาไกล\nเด็กหญิงชื่อมิวถามหาพ่อทุกคืน จงบอกเธอว่า อีกไม่นาน **ทุกคนจะได้อยู่ด้วยกันตลอดไป**" },
+  { id:"L54", cat:"cult", from:"ผู้คุมห้องทดลองหนองน้ำ", to:"ท่านผู้เมตตา", sign:"ผู้คุมห้องทดลอง (ตราวงกลมหลอมรวม)",
+    body:"กราบเรียนท่านผู้เมตตา\nการหลอม **มนุษย์กับสายฝน** ครั้งที่เจ็ด: รอดสาม สลายสี่\nผู้ที่รอดไม่ร้องไห้อีกเลย ไม่หิว ไม่ง่วง ไม่ถามถึงครอบครัว **พวกเขายิ้มอยู่ตลอดเวลา** แม้ในยามหลับ\nข้าขอกำลังพลเพิ่มสำหรับครั้งที่แปด และขอฝนอีกสามพายุ" },
+  { id:"L55", cat:"cult", from:"ผู้เผยแผ่", to:"สมาชิกใหม่ของคณะ", sign:"คณะหนึ่งเดียว",
+    body:"ยินดีต้อนรับสู่ **คณะหนึ่งเดียว**\nจงท่องคำสอนนี้ทุกเช้า:\n“เจ็บ เพราะแยกจากกัน\nกลัว เพราะมีตัวตน\nสุข เพราะหลอมรวม\nเมื่อทุกสิ่งเป็นหนึ่ง จะไม่มีใครต้องเสียใครไปอีก”\nจงให้อภัยผู้ที่ยังไม่เข้าใจ พวกเขาแค่ยังเจ็บปวดอยู่ วันหนึ่ง **ท่านผู้เมตตาจะโอบกอดพวกเขาด้วย**" },
+  { id:"L56", cat:"cult", from:"หัวหน้าเหมืองลับ", to:"คณะหนึ่งเดียว", sign:"ผู้ขุด (ตราวงกลมหลอมรวม)",
+    body:"เรียนคณะ\nเดือนนี้ขุด **หินมานา** จากถ้ำใต้ดินได้สามร้อยเกวียน ส่งขึ้นไปยัง **บัลลังก์** ตามคำสั่งแล้ว\nคนงานที่ไม่ใช่สมาชิกเริ่มได้ยินเสียงจากผนังหิน เราบอกพวกเขาว่าเป็นเสียงบรรพบุรุษ\nเมื่อคลื่นลูกใหญ่มาถึง หินทั้งหมดจะกลายเป็นเชื้อไฟของ **วันแห่งการโอบกอด**" },
+  { id:"L57", cat:"cult", from:"สายข่าวในหน่วยกวาดล้าง", to:"คณะหนึ่งเดียว", sign:"เงาในหน่วย",
+    body:"รายงาน\nผู้โดยสารไร้ชื่อจากคาราวานศิลา **รอดชีวิต** และได้เข้าร่วมหน่วยกวาดล้างแล้ว เขาจำอะไรไม่ได้ แต่เจตจำนงของเขาแรงผิดธรรมดา\nเขากำลังตามหาศิลาหลักบาเรียทีละก้อน\nท่านผู้เมตตาตอบกลับมาเพียงประโยคเดียว: **“ปล่อยเขาไว้ก่อน ข้าอยากรู้ว่าเขายึดมั่นกับอะไร”**" },
+  { id:"L58", cat:"cult", from:"ผู้เฝ้าทะเลทราย", to:"คณะหนึ่งเดียว", sign:"ผู้เฝ้าเปลวไฟ (ตราวงกลมหลอมรวม)",
+    body:"เรียนคณะ\nการทดลอง **หลอมดวงอาทิตย์กับผืนทราย** สำเร็จแล้ว ร่างที่ได้แผดเผาทุกสิ่งในรัศมีหนึ่งลี้ เรามอบศิลาบาเรียก้อนที่สามให้มันเฝ้า\nท่านผู้เมตตาพอใจมาก กล่าวว่า “แสงอาทิตย์เองก็เหงา มันอยากมีเพื่อน”\nขั้นต่อไปคือ **ลม ฝน และแผ่นดิน**" },
+  { id:"L59", cat:"cult", from:"ปรมัตถ์ ผู้เมตตา", to:"ผู้ที่ยังเจ็บปวดทุกคน", sign:"ปรมัตถ์",
+    body:"ถึงเจ้า ผู้ที่ยังเจ็บปวด\nข้ารู้ว่าเจ้าเหนื่อย รู้ว่าเจ้าเคยเสียใครสักคนไป รู้ว่าทุกคืนเจ้าต้องนั่งท่องชื่อตัวเองเพื่อไม่ให้ลืม\nข้าเคยเป็นเหมือนเจ้า เคยสวด เคยหวัง เคยเชื่อว่าบาเรียจะปกป้องเรา แล้วข้าก็เห็นลูกของข้ากลายเป็นดอกไม้ในอ้อมแขน\nข้าไม่ได้โกรธใคร **ข้าแค่ไม่อยากให้ใครต้องเจ็บแบบนั้นอีก**\nรอข้าอีกนิดเถอะ อีกไม่นาน เราทุกคนจะได้กลับบ้าน — บ้านเดียวกัน ร่างเดียวกัน ใจเดียวกัน" },
+
+  // ---------- 🖋️ spy (one, the rarest) — an ordinary supply note; read only the first word of each line ----------
+  { id:"L60", cat:"spy", from:"ผู้ตรวจคลังสินค้า", to:"ท่านผู้ดูแลเสบียงทางเหนือ", sign:"— ม. (ตราประทับจางๆ รูปวงกลมหลายวงหลอมเป็นวงเดียว)",
+    acrostic:["ผู้ปกครอง","เมืองนี้","คือ","ร่าง","หลอม","ของ","เรา","ตัวจริง","อยู่","ใต้ดิน"],
+    body:"ผู้ปกครองกองคาราวานสั่งให้เลื่อนการขนเสบียงออกไปอีกเจ็ดวัน\nเมืองนี้ยังขาดเกลือกับผ้าพันแผลอีกราวสองเกวียน\nคือว่าข้าอยากขอให้ท่านเร่งส่งหินมานามาก่อนสิ่งอื่น\nร่างบัญชีฉบับใหม่ข้าแนบมาให้แล้ว ตรวจดูได้เลย\nหลอมเหล็กที่โรงตียังรอถ่านอยู่ ช่างบ่นทุกวัน\nของที่ท่านฝากไว้ ข้าเก็บในห้องเดิม ไม่มีใครแตะ\nเราจะนัดส่งของกันที่ประตูใต้ตอนเที่ยงคืนเหมือนเดิม\nตัวจริงของสัญญาซื้อขาย ข้าจะเผาทิ้งตามที่สั่ง\nอยู่ให้ห่างจากหอคอยวิจัยไว้ ช่วงนี้นักวิจัยช่างสอดรู้นัก\nใต้ดินชื้นมาก ของที่เก็บไว้ต้องให้อาหารวันละครั้ง อย่าให้ตาย",
+    note:"(หมึกที่คำแรกของทุกบรรทัด ดูเข้มกว่าส่วนอื่นเล็กน้อย…)" }
+];
+const LETTER_BY_ID = Object.fromEntries(LETTER_DEFS.map(l => [l.id, l]));
+
+const LETTER_DROP_CHANCE = 0.04;       // goblins (slot 2) steal letters, the mutated (slot 4) still carry theirs
+const LETTER_SPY_MIN_FOUND = 15;       // the sealed letter can't show up before this many letters were found
+const LETTER_SPY_CHANCE = 0.03;        // …and then only this often per letter found (it still comes once every other letter is found)
+const LETTER_TOTAL = LETTER_DEFS.length;
+// state (saved with the player): { found:[ids, in order], held:[ids not yet handed in], spy: 0 none · 1 holding it · 2 unmasked }
+function letterState(){
+  const p = game.player;
+  if(!p.letters || typeof p.letters !== "object") p.letters = { found:[], held:[], spy:0 };
+  const s = p.letters;
+  if(!Array.isArray(s.found)) s.found = [];
+  if(!Array.isArray(s.held)) s.held = [];
+  // old saves: plain "จดหมายเก่า" in the bag get a letter each (quietly)
+  const have = storyItemCount("old_letter");
+  while(s.held.length < have){ const L = letterPick(); if(!s.found.includes(L.id)) s.found.push(L.id); s.held.push(L.id); if(L.cat === "spy") s.spy = 1; }
+  if(s.held.length > have) s.held.length = have;
+  return s;
+}
+function letterPick(){
+  const s = game.player.letters || { found:[], spy:0 };
+  const unseen = LETTER_DEFS.filter(l => !s.found.includes(l.id) && l.cat !== "spy");
+  const spy = LETTER_DEFS.find(l => l.cat === "spy");
+  const spyOk = !s.found.includes(spy.id) && s.spy !== 2 && s.found.length >= LETTER_SPY_MIN_FOUND;
+  if(spyOk && (!unseen.length || Math.random() < LETTER_SPY_CHANCE)) return spy;
+  if(!unseen.length){ const fam = LETTER_DEFS.filter(l => l.cat === "family"); return fam[randInt(0, fam.length - 1)]; } // all read: copies of everyday letters
+  let roll = Math.random() * unseen.reduce((sum, l) => sum + LETTER_CATS[l.cat].weight, 0);
+  for(const l of unseen){ if((roll -= LETTER_CATS[l.cat].weight) < 0) return l; }
+  return unseen[unseen.length - 1];
+}
+// a new letter comes into the bag; later=true → show it once the fight's reward window is closed
+let letterPendingShow = null;
+function letterGrant(later){
+  const s = letterState();
+  const L = letterPick();
+  const isNew = !s.found.includes(L.id);
+  const where = addToInventory("old_letter");
+  if(isNew) s.found.push(L.id);
+  if(where) s.held.push(L.id);
+  if(L.cat === "spy" && where) s.spy = 1;
+  if(later) letterPendingShow = L.id; else letterOpen(L.id);
+  return { L, where };
+}
+function letterShowPending(){
+  if(!letterPendingShow || game.inBattle || document.getElementById("tutorialOverlay").classList.contains("show")) return;
+  if(!document.getElementById("victoryPanel").hidden || !document.getElementById("defeatPanel").hidden) return;
+  const id = letterPendingShow; letterPendingShow = null;
+  letterOpen(id);
+}
+
+// ---- the reader (parchment overlay): click anywhere to close, but only after 1 s ----
+const letterView = { openedAt:0, mode:null };
+function letterBodyHtml(L){
+  const lines = L.body.split("\n");
+  if(L.acrostic) return lines.map((line, i) => { const w = line.startsWith(L.acrostic[i] || "\u0000") ? L.acrostic[i] : "";
+    return `<p><span class="lt-ink">${netEsc(w)}</span>${netEsc(line.slice(w.length))}</p>`; }).join("");
+  return lines.map(line => `<p>${talkMarkup(line)}</p>`).join("");
+}
+function letterOpen(id, fromBook){
+  const L = LETTER_BY_ID[id];
+  if(!L) return;
+  const c = LETTER_CATS[L.cat], s = letterState();
+  const el = document.getElementById("letterOverlay");
+  const held = s.held.includes(id);
+  document.getElementById("letterPaper").className = "letter-paper cat-" + L.cat;
+  document.getElementById("letterPaper").innerHTML = `
+    ${fromBook ? '<button class="lt-back" id="letterBackBtn" type="button">‹ กล่องจดหมาย</button>' : ""}
+    <div class="lt-cat" style="color:${c.color}">${c.icon} ${c.label} · ฉบับที่ ${L.id.slice(1)}</div>
+    <div class="lt-head"><span>จาก: <b>${netEsc(L.from)}</b></span><span>ถึง: <b>${netEsc(L.to)}</b></span></div>
+    <div class="lt-body">${letterBodyHtml(L)}</div>
+    <div class="lt-sign">${netEsc(L.sign)}</div>
+    ${L.note ? `<div class="lt-note">${netEsc(L.note)}</div>` : ""}
+    ${held ? `<div class="lt-held">📮 ยังไม่ได้ส่ง — ${L.cat === "spy" ? "จดหมายฉบับนี้… อาจไม่ควรยื่นให้ใครง่ายๆ" : "นำไปส่งให้ <b>เจ้าเมือง</b> ที่แดนมานาอรุณ"}</div>` : ""}
+    <div class="lt-hint">คลิกที่ไหนก็ได้เพื่อปิด</div>`;
+  const back = document.getElementById("letterBackBtn");
+  if(back) back.addEventListener("click", (e)=>{ e.stopPropagation(); letterOpenBook(); });
+  letterView.openedAt = performance.now(); letterView.mode = "letter";
+  el.classList.remove("ready");
+  el.hidden = false;
+  setTimeout(()=> el.classList.add("ready"), 1000);
+  sfx.click();
+}
+function letterOpenBook(){
+  const s = letterState();
+  const el = document.getElementById("letterOverlay");
+  const byCat = Object.keys(LETTER_CATS).map(cat => {
+    const all = LETTER_DEFS.filter(l => l.cat === cat), got = all.filter(l => s.found.includes(l.id));
+    if(cat === "spy" && !got.length) return "";
+    const rows = got.map(l => `<button class="lt-row" type="button" data-letter="${l.id}"><span class="n">${l.id.slice(1)}</span><span class="t">${netEsc(l.from)} → ${netEsc(l.to)}</span>${s.held.includes(l.id) ? '<span class="h">📮</span>' : ""}</button>`).join("");
+    return `<div class="lt-sec"><div class="lt-sec-h">${LETTER_CATS[cat].icon} ${LETTER_CATS[cat].label} <b>${got.length}/${all.length}</b></div>${rows || '<div class="lt-empty">ยังไม่พบ</div>'}</div>`;
+  }).join("");
+  document.getElementById("letterPaper").className = "letter-paper book";
+  document.getElementById("letterPaper").innerHTML = `<div class="lt-cat">✉️ กล่องจดหมายที่ส่งไม่ถึง</div>
+    <div class="lt-book-sub">พบแล้ว <b>${s.found.length}/${LETTER_TOTAL}</b> ฉบับ · 📮 = ยังไม่ได้ส่งให้เจ้าเมือง (${s.held.length} ฉบับในกระเป๋า)</div>
+    <div class="lt-list">${byCat}</div><div class="lt-hint">คลิกฉบับที่อยากอ่าน · คลิกนอกกล่องเพื่อปิด</div>`;
+  document.querySelectorAll("#letterPaper .lt-row").forEach(b => b.addEventListener("click", (e)=>{ e.stopPropagation(); letterOpen(b.dataset.letter, true); }));
+  letterView.openedAt = performance.now() - 1000; letterView.mode = "book";
+  el.classList.add("ready");
+  el.hidden = false;
+}
+function letterClose(){
+  document.getElementById("letterOverlay").hidden = true;
+  letterView.mode = null;
+}
+document.getElementById("letterOverlay").addEventListener("click", (e)=>{
+  if(performance.now() - letterView.openedAt < 1000) return; // a moment to start reading before a stray click closes it
+  if(letterView.mode === "book" && e.target.closest && e.target.closest(".letter-paper")) return;
+  letterClose();
+});
+document.getElementById("letterBookBtn").addEventListener("click", ()=> letterOpenBook());
+
+// ---- handing letters to the town lord ----
+function letterRollGear(tier, rarity){
+  const pool = NORMAL_EQUIPMENT_IDS.filter(id => !EQUIPMENT_DEFS[id].cosmeticOnly && !EQUIPMENT_DEFS[id].weaponType && (EQUIPMENT_DEFS[id].tier || 1) === tier);
+  if(!rarity){
+    const roll = Math.random() * 100; let cum = 0;
+    rarity = ANCIENT_STATUE_RARITY_WEIGHTS[ANCIENT_STATUE_RARITY_WEIGHTS.length - 1].rarity;
+    for(const w of ANCIENT_STATUE_RARITY_WEIGHTS){ cum += w.weight; if(roll < cum){ rarity = w.rarity; break; } }
+  }
+  const ids = pool.filter(id => EQUIPMENT_DEFS[id].rarity === rarity);
+  const list = ids.length ? ids : pool;
+  const defId = list[randInt(0, list.length - 1)];
+  registerDiscovery({ kind:"equipment", defId });
+  addEquipmentToInventory(rollEquipmentInstance(defId));
+  return EQUIPMENT_DEFS[defId];
+}
+function letterDeliverable(){ const s = letterState(); return s.held.filter(id => LETTER_BY_ID[id] && LETTER_BY_ID[id].cat !== "spy"); }
+function letterDeliverAll(){
+  const s = letterState(), list = letterDeliverable();
+  if(!list.length) return;
+  const tier = Math.max(1, Math.min(MAP_TIER_COUNT, game.maxMapTierReached || 1));
+  let gold = 0, cult = 0; const gear = [];
+  for(const id of list){
+    const L = LETTER_BY_ID[id];
+    storyTakeItems("old_letter", 1);
+    s.held.splice(s.held.indexOf(id), 1);
+    game.stats.letters = (game.stats.letters || 0) + 1;
+    const g = L.cat === "cult" ? 60 : randInt(30, 60);
+    gold += g;
+    if(L.cat === "cult"){ cult++; gear.push(letterRollGear(tier, "rare")); }
+    else if(Math.random() < (L.cat === "lore" ? 0.6 : 0.35)) gear.push(letterRollGear(tier));
+  }
+  game.player.gold += gold;
+  game.stats.goldEarned = (game.stats.goldEarned || 0) + gold;
+  sfx.levelUp(); updateHud(); checkTitles(false); saveGameNow();
+  const unmasked = s.spy === 2;
+  const line = unmasked
+    ? `(เจ้าเมืองอ่านทีละฉบับอย่างตั้งใจ) ข้าจะส่งให้ถึงมือผู้รับ หรือครอบครัวของพวกเขาให้ได้ **ทุกฉบับ** — คราวนี้ข้าสัญญา`
+    : cult ? `(เจ้าเมืองรับจดหมายไป… มือหยุดค้างที่ฉบับที่มีตราวงกลมสีขาว) อันนี้… **ข้าจะเก็บไว้เอง** ส่วนที่เหลือ ข้าจะหาทางส่งต่อให้`
+    : `ขอบใจ นักกวาดล้าง จดหมายเหล่านี้ข้าจะหาทางส่งให้ถึงมือผู้รับ หรือครอบครัวของพวกเขา`;
+  renderTownLordDialog(line, `<div class="tk-reward"><span class="big">📮</span><span>ส่งจดหมาย ${list.length} ฉบับ · ได้รับ 💰${gold}${gear.length ? " และ " + gear.map(e => e.icon + " " + netEsc(e.name)).join(", ") : ""}</span></div>`);
+}
+
+// ---- the sealed letter: the town lord is a fused impostor ----
+function letterSpyTier(){ return Math.max(1, Math.min(MAP_TIER_COUNT, getDimReach(game.dimension || 1))); }
+function letterSpyConfront(){
+  const tier = letterSpyTier(), defs = getMapMonsterDefs(tier), boss = defs[5];
+  openTalk({ npcKind:"town_lord", name:"เจ้าเมือง…?", text:"(เจ้ายื่นจดหมายที่ถูกผนึกให้เจ้าเมืองดู… สายตาเขาไล่ลงตาม **คำแรกของทุกบรรทัด** แล้วหยุดนิ่ง)\n“…เจ้าอ่านออกด้วยหรือ” เสียงของเขาแตกออกเป็นสองชั้น ชั้นหนึ่งเป็นเสียงเจ้าเมือง อีกชั้นเป็น **เสียงกระซิบนับร้อย**\n“น่าเสียดาย ท่านผู้เมตตาอยากให้เจ้าอยู่จนถึง **วันแห่งการโอบกอด** แท้ๆ”",
+    extra:`<div class="tk-card"><h5><span>⚠️ ร่างหลอมที่สวมหน้าเจ้าเมือง</span><span class="tk-tag warn">บอส</span></h5><div>แข็งแกร่งพอๆ กับบอสแมพ ${tier} (Lv.${boss.level}) — ถ้าแพ้ จดหมายยังอยู่กับเจ้า ลองใหม่ได้</div></div>`,
+    anchor: npcTalkAnchor("town_lord"), choices:[
+      { icon:"⚔️", label:"เปิดโปงมัน!", sub:"เข้าสู่การต่อสู้", cls:"primary", onPick: ()=>{ closeTalk(); letterSpyFight(); } },
+      { icon:"↩️", label:"ถอยก่อน", sub:"เตรียมตัวให้พร้อมแล้วค่อยกลับมา", leave:true } ] });
+}
+function letterSpyFight(){
+  const tier = letterSpyTier();
+  MONSTER_DEFS = getMapMonsterDefs(tier);
+  Object.assign(MONSTER_DEFS[5], { name:"เจ้าเมือง (ร่างหลอม)", color:"#5b2a86" });
+  const m = createDungeonMonster(5, false);
+  m.isDungeonRoom = false; m.isSpyBoss = true; m.spyTier = tier;
+  enterBattle(m);
+}
+let letterSpyScene = null;
+function letterSpyWon(){
+  const s = letterState();
+  s.spy = 2;
+  const i = s.held.indexOf("L60");
+  if(i >= 0){ s.held.splice(i, 1); storyTakeItems("old_letter", 1); game.stats.letters = (game.stats.letters || 0) + 1; }
+  game.player.gold += 60; game.stats.goldEarned = (game.stats.goldEarned || 0) + 60;
+  letterSpyScene = 0;
+}
+const LETTER_SPY_PAGES = [
+  { emoji:"🗝️", name:"กุญแจคุกใต้ดิน", text:"ร่างของเจ้าเมืองจอมปลอมแตกออก ครึ่งหนึ่งเป็นเนื้อหนัง อีกครึ่งเป็นเงาดำที่สลายไปกับลม…\nเหลือเพียง **กุญแจเหล็กสนิมเขรอะ** ตกอยู่บนพื้น ด้ามสลักคำเดียวว่า “ใต้ดิน”" },
+  { emoji:"⛓️", name:"คุกใต้ศาลาว่าการ", text:"บันไดลับหลังบัลลังก์พาเจ้าลงไปในความมืดที่อับชื้น กลิ่นเหล็กเก่าคละคลุ้ง\nในห้องขังสุดทางเดิน ชายผอมโซถูกล่ามโซ่ไว้กับผนัง ใบหน้าเหมือนเจ้าเมืองทุกประการ ต่างกันแค่ **แววตาที่ยังเป็นของมนุษย์**\nกุญแจหมุนเสียงดังกริ๊ก — โซ่คลายออก" },
+  { npcKind:"town_lord", name:"เจ้าเมือง (ตัวจริง)", text:"ข้า… ถูกขังมาตั้งแต่คืนที่บาเรียแตก พวกชุดขาวลากข้าลงมาที่นี่ แล้ว **หลอมเงาของสมาชิกคนหนึ่งเข้ากับใบหน้าและเสียงของข้า**\nมันนั่งบัลลังก์ของข้า ใช้ตราของข้า ส่งข่าวทุกอย่างของเมืองออกไป… แล้วลงมาป้อนข้าวข้าทุกคืน เพื่อให้ **ต้นแบบ** ยังมีชีวิตอยู่" },
+  { npcKind:"town_lord", name:"เจ้าเมือง (ตัวจริง)", text:"ทุกคืนมันชอบเล่าให้ข้าฟังถึง **ท่านผู้เมตตา** — คนที่รออยู่บน **บัลลังก์สวรรค์**\nเขาไม่ได้ต้องการแค่ทำลายบาเรีย เขากำลังรอ **คลื่นมานาใหญ่ลูกถัดไป** แล้วจะใช้หัวใจของบาเรียหลอมทุกชีวิตในโลกให้เป็นหนึ่งเดียว มันเรียกวันนั้นว่า **“วันแห่งการโอบกอด”**\nและข้าคิดว่าข้ารู้จักเสียงหัวเราะของเขา… เขาเคยเป็นคนของเมืองนี้ เคยสวดอยู่ในโบสถ์หลังนั้นเอง" },
+  { npcKind:"town_lord", name:"เจ้าเมือง (ตัวจริง)", text:"ขอบใจ นักกวาดล้าง… ข้าติดหนี้ชีวิตเจ้า\nจากนี้ไปข้าจะกลับไปทำหน้าที่เจ้าเมืองให้สมกับที่เจ้าช่วยไว้ จดหมายที่ส่งไม่ถึงทุกฉบับ ยังเอามาให้ข้าได้เหมือนเดิม — **คราวนี้ข้าจะส่งมันให้ถึงมือผู้รับจริงๆ**", reward:true }
+];
+function letterShowSpyScene(){
+  if(letterSpyScene == null || game.inBattle || talk.open) return;
+  if(!document.getElementById("victoryPanel").hidden || !document.getElementById("defeatPanel").hidden) return;
+  const i = letterSpyScene, pg = LETTER_SPY_PAGES[i];
+  letterSpyScene = null;
+  const last = i === LETTER_SPY_PAGES.length - 1;
+  openTalk({ npcKind: pg.npcKind, emoji: pg.emoji, name: pg.name, role:"🖋️ จดหมายที่ถูกผนึก", bg:["#5b2a86", "#140a22"], text: pg.text,
+    extra: pg.reward ? `<div class="tk-reward"><span class="big">🕵️</span><span>เปิดโปงเงาแห่งศาลาว่าการสำเร็จ · ได้รับ 💰60 และปลดล็อกฉายาลับ</span></div>` : "",
+    choices:[ last ? { icon:"👑", label:"ยินดีที่ได้พบท่านตัวจริง", leave:true } : { icon:"▶", label:"ต่อ", cls:"primary", onPick: ()=>{ closeTalk(); letterSpyScene = i + 1; letterShowSpyScene(); } } ] });
+  if(last){ checkTitles(false); saveGameNow(); }
+}
+
 function renderTownLordDialog(line, extraHtml){
   const quest = QUEST_DEFS.junk_hunt;
   const state = game.player.questState.junk_hunt || "available";
@@ -9256,6 +9645,9 @@ function renderTownLordDialog(line, extraHtml){
   } else {
     text = text || "ขอบคุณอีกครั้งสำหรับความช่วยเหลือนะ เมืองของเราสงบสุขขึ้นมากเพราะเจ้า";
   }
+  const letters = letterDeliverable().length;
+  if(letters) choices.push({ icon:"📮", label:"ส่งจดหมายที่ส่งไม่ถึง", sub:`${letters} ฉบับ · มีรางวัลเล็กๆ น้อยๆ`, cls:"gold", onPick: letterDeliverAll });
+  if(letterState().spy === 1 && letterState().held.includes("L60")) choices.push({ icon:"🕵️", label:"ยื่นจดหมายที่ถูกผนึกให้ดู", sub:"เปิดเผยตัวตนที่แท้จริงของเจ้าเมือง?", onPick: letterSpyConfront });
   choices.push({ icon:"💬", label:"เล่าเรื่องเมืองให้ฟังหน่อย", sub:"คำแนะนำจากเจ้าเมือง", onPick: ()=> renderTownLordDialog(talkPickLine(TOWN_LORD_LORE)) });
   choices.push(TALK_LEAVE);
   openTalk({ npcKind:"town_lord", text, extra: (extraHtml || "") + card, choices, anchor: npcTalkAnchor("town_lord") });
@@ -9373,6 +9765,7 @@ function renderTravelPanel(){
 }
 let travelDimView = 0; // which layer tab the travel panel shows (0 = follow the current layer)
 document.getElementById("storyTracker").addEventListener("click", ()=> openStoryLog());
+window.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && !document.getElementById("letterOverlay").hidden && performance.now() - letterView.openedAt >= 1000) letterClose(); });
 document.getElementById("closeTravelBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("travelPanel").hidden = true; });
 
 function itemLabel(entry){
@@ -9649,7 +10042,14 @@ function renderBagDetail(entry){
     `;
   } else {
     const def = ITEM_TABLE.find(i => i.id === entry.id);
-    detail.innerHTML = `<h4>${def.icon} ${def.name} x${entry.qty}</h4><div class="effect-line">ไอเทมสำหรับพักฟื้น — ฝากไว้กับ NPC ได้จากช่องฝากของ</div>`;
+    detail.innerHTML = `<h4>${def.icon} ${def.name} x${entry.qty}</h4><div class="effect-line">${netEsc(def.desc || "ไอเทมสำหรับพักฟื้น — ฝากไว้กับ NPC ได้จากช่องฝากของ")}</div>`;
+    if(entry.id === "old_letter"){
+      const btn = document.createElement("button");
+      btn.className = "btn-primary"; btn.style.cssText = "padding:8px 14px; font-size:13px;";
+      btn.textContent = "📖 อ่านจดหมาย";
+      btn.addEventListener("click", ()=> letterOpenBook());
+      detail.appendChild(btn);
+    }
   }
 }
 
@@ -11527,7 +11927,7 @@ alter table public.saves_archive enable row level security;
 revoke all on public.econ_flags, public.saves_archive from anon, authenticated;
 
 -- ECON_DATA_BEGIN
-create or replace function public.econ_data() returns jsonb language sql immutable as $$ select '{"tiers":{"1":{"g":[9,16,28,46,70,263],"x":[21,35,56,84,123,385]},"2":{"g":[86,102,116,131,147,431],"x":[149,173,200,224,250,735]},"3":{"g":[163,177,193,208,224,648],"x":[275,301,326,352,376,1089]},"4":{"g":[238,254,270,285,299,863],"x":[403,427,453,478,504,1446]},"5":{"g":[315,331,347,361,376,1073],"x":[529,555,579,606,630,1799]},"6":{"g":[392,408,422,438,453,1288],"x":[656,681,707,732,758,2156]},"7":{"g":[469,483,499,515,530,1505],"x":[782,809,833,859,884,2510]},"8":{"g":[544,560,576,592,606,1720],"x":[910,935,961,985,1012,2867]},"9":{"g":[621,637,653,667,683,1930],"x":[1036,1062,1087,1113,1138,3220]},"10":{"g":[698,714,728,744,760,2146],"x":[1164,1188,1215,1239,1265,3577]}},"dimStep":0.3,"items":{"kings_armor":["epic",0],"collector_medal":["legendary",1],"sword_1":["common",0],"sword_2":["common",0],"sword_3":["uncommon",0],"sword_4":["uncommon",0],"sword_5":["rare",0],"sword_6":["rare",0],"sword_7":["epic",0],"sword_8":["epic",0],"sword_9":["legendary",0],"sword_10":["legendary",0],"heavy_1":["common",0],"heavy_2":["common",0],"heavy_3":["uncommon",0],"heavy_4":["uncommon",0],"heavy_5":["rare",0],"heavy_6":["rare",0],"heavy_7":["epic",0],"heavy_8":["epic",0],"heavy_9":["legendary",0],"heavy_10":["legendary",0],"bow_1":["common",0],"bow_2":["common",0],"bow_3":["uncommon",0],"bow_4":["uncommon",0],"bow_5":["rare",0],"bow_6":["rare",0],"bow_7":["epic",0],"bow_8":["epic",0],"bow_9":["legendary",0],"bow_10":["legendary",0],"orb_1":["common",0],"orb_2":["common",0],"orb_3":["uncommon",0],"orb_4":["uncommon",0],"orb_5":["rare",0],"orb_6":["rare",0],"orb_7":["epic",0],"orb_8":["epic",0],"orb_9":["legendary",0],"orb_10":["legendary",0],"armor_1":["common",0],"armor_2":["uncommon",0],"armor_3":["rare",0],"armor_4":["epic",0],"armor_5":["legendary",0],"headgear_1":["common",0],"headgear_2":["uncommon",0],"headgear_3":["rare",0],"headgear_4":["epic",0],"headgear_5":["legendary",0],"accessory_1":["common",0],"accessory_2":["uncommon",0],"accessory_3":["rare",0],"accessory_4":["epic",0],"accessory_5":["legendary",0]},"pts":{"common":1.2,"uncommon":1.7,"rare":2.4,"epic":3.4,"legendary":4.4},"eliteMult":2,"price":{"herb":3,"potion":5,"slime_jelly":4,"wolf_fang":6,"stone_fragment":8,"secret_key":20,"junk_scrap":2,"mana_stone":12,"sample_t1":7,"sample_t2":23,"sample_t3":39,"sample_t4":54,"sample_t5":69,"sample_t6":85,"sample_t7":100,"sample_t8":115,"sample_t9":130,"sample_t10":146,"green_slime_card":11,"pink_slime_card":11,"goblin_card":25,"wolf_card":25,"skeleton_card":56,"stone_king_card":280,"kings_oath_secret":280},"eqPrice":{"common":15,"uncommon":35,"rare":80,"epic":180,"legendary":400},"starter":["sword_1","heavy_1","bow_1","orb_1"],"shopOnly":["herb","potion"],"stack":["herb","potion","slime_jelly","wolf_fang","stone_fragment","secret_key","old_letter","junk_scrap","mana_stone","sample_t1","sample_t2","sample_t3","sample_t4","sample_t5","sample_t6","sample_t7","sample_t8","sample_t9","sample_t10","bark_tag","barrier_lantern","inscribed_wrap","green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"cards":["green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"rankExp":[0,500,1500,3500,7000,13000,23000,40000,70000,120000],"skill":{"sword":[[1,2],[3,2],[5,2],[7,2],[9,2]],"heavy":[[1,2],[3,2],[5,2],[7,2],[9,2]],"bow":[[1,2],[3,2],[5,2],[7,2],[9,2]],"orb":[[1,2],[3,2],[5,2],[7,2],[9,2]]},"titles":{"first_blood":["kills",100],"reaper":["kills",1000],"death_walker":["kills",5000],"calamity":["kills",20000],"slime_hunter":["slimeKills",100],"one_beat":["perfectHits",300],"flawless_blade":["perfectHits",3000],"rhythm_sage":["perfectHits",15000],"perfect_warrior":["bestPerfectStreak",50],"swaying_shadow":["perfectDodges",50],"formless_wind":["perfectDodges",500],"shadowless":["perfectDodges",2500],"counter_art":["counters",50],"mirror_blade":["counters",500],"keen_eye":["crits",500],"fortune_chosen":["crits",5000],"star_assassin":["crits",25000],"unscathed":["flawless",50],"invisible_armor":["flawless",500],"survivor":["survivor",1],"never_give_up":["deaths",25],"elite_hunter":["eliteKills",10],"star_breaker":["eliteKills",100],"elite_bane":["eliteKills",500],"boss_slayer":["bossKills",10],"throne_hunter":["bossKills",50],"king_of_kings":["bossKills",200],"untouchable":["untouchable",1],"five_realms":["bossTiers",5],"ten_kings":["bossTiers",10],"wanderer":["reach",3],"pathfinder":["reach",6],"worlds_edge":["reach",10],"story_c1":["chapters",1],"story_c2":["chapters",2],"story_c3":["chapters",3],"whisper_listener":["listened",1],"secret_seeker":["secrets",5],"secret_keeper":["secrets",30],"dungeon_diver":["dungeons",1],"labyrinth_lord":["dungeons",10],"underworld_ruler":["dungeons",30],"treasure_hunter":["chests",10],"rising_hero":["level",25],"menalars_hero":["level",50],"peak":["level",100],"barrier_breaker":["maxDim",2],"dimension_walker":["maxDim",3],"void_voyager":["maxDim",5],"novice_collector":["colPct",10],"monster_hunter":["monstersHalf",1],"monster_master":["monstersAll",1],"card_collector":["cards",3],"full_deck":["allCards",1],"half_collector":["colPct",50],"curator":["colPct",75],"full_collector":["colPct",100],"treasure_bearer":["epics",5],"legend_chosen":["legends",1],"legend_vault":["legends",10],"apprentice_smith":["refines",10],"artisan":["bestRefine",5],"forge_master":["bestRefine",10],"new_rich":["goldEarned",10000],"tycoon":["goldEarned",100000],"gold_king":["goldEarned",1000000],"mind_trainee":["meditations",10],"still_water":["meditations",100],"town_friend":["junkQuest",1],"courier":["letters",3],"skill_student":["skills",5],"weapon_scholar":["skills",15],"weapon_master":["bestRank",5],"four_arms":["rankedWeapons",4],"transcender":["bestRank",9]},"quests":{"c1_wake":[40,60,0,1,0],"c1_town":[50,95,0,1,0],"c1_squad":[50,95,0,1,0],"c1_test":[100,190,0,1,0],"c1_wreck":[100,190,0,1,0],"c1_bark":[100,190,0,1,0],"c1_mind":[100,190,0,1,0],"c1_counter":[100,190,0,1,0],"c1_boss":[270,510,1,1,1],"c2_child":[350,600,0,2,0],"c2_lantern":[350,600,0,2,0],"c2_incense":[350,600,0,2,0],"c2_preacher":[350,600,0,2,0],"c2_lost":[350,600,0,2,0],"c2_boss":[930,1600,1,2,1],"c3_tablets":[580,980,0,3,0],"c3_wrap":[580,980,0,3,0],"c3_vent":[580,980,0,3,0],"c3_heat":[580,980,0,3,0],"c3_boss":[1540,2600,1,3,1]},"totals":{"mon":6,"card":7,"eq":561},"base":{"atk":6,"hp":50,"atkLv":2,"hpLv":10,"spLv":3,"spDim":3,"masteryMax":100,"refineMax":10,"sanityMax":100,"tierMax":10,"bag":48,"storage":100}}'::jsonb $$;
+create or replace function public.econ_data() returns jsonb language sql immutable as $$ select '{"tiers":{"1":{"g":[9,16,28,46,70,263],"x":[21,35,56,84,123,385]},"2":{"g":[86,102,116,131,147,431],"x":[149,173,200,224,250,735]},"3":{"g":[163,177,193,208,224,648],"x":[275,301,326,352,376,1089]},"4":{"g":[238,254,270,285,299,863],"x":[403,427,453,478,504,1446]},"5":{"g":[315,331,347,361,376,1073],"x":[529,555,579,606,630,1799]},"6":{"g":[392,408,422,438,453,1288],"x":[656,681,707,732,758,2156]},"7":{"g":[469,483,499,515,530,1505],"x":[782,809,833,859,884,2510]},"8":{"g":[544,560,576,592,606,1720],"x":[910,935,961,985,1012,2867]},"9":{"g":[621,637,653,667,683,1930],"x":[1036,1062,1087,1113,1138,3220]},"10":{"g":[698,714,728,744,760,2146],"x":[1164,1188,1215,1239,1265,3577]}},"dimStep":0.3,"items":{"kings_armor":["epic",0],"collector_medal":["legendary",1],"sword_1":["common",0],"sword_2":["common",0],"sword_3":["uncommon",0],"sword_4":["uncommon",0],"sword_5":["rare",0],"sword_6":["rare",0],"sword_7":["epic",0],"sword_8":["epic",0],"sword_9":["legendary",0],"sword_10":["legendary",0],"heavy_1":["common",0],"heavy_2":["common",0],"heavy_3":["uncommon",0],"heavy_4":["uncommon",0],"heavy_5":["rare",0],"heavy_6":["rare",0],"heavy_7":["epic",0],"heavy_8":["epic",0],"heavy_9":["legendary",0],"heavy_10":["legendary",0],"bow_1":["common",0],"bow_2":["common",0],"bow_3":["uncommon",0],"bow_4":["uncommon",0],"bow_5":["rare",0],"bow_6":["rare",0],"bow_7":["epic",0],"bow_8":["epic",0],"bow_9":["legendary",0],"bow_10":["legendary",0],"orb_1":["common",0],"orb_2":["common",0],"orb_3":["uncommon",0],"orb_4":["uncommon",0],"orb_5":["rare",0],"orb_6":["rare",0],"orb_7":["epic",0],"orb_8":["epic",0],"orb_9":["legendary",0],"orb_10":["legendary",0],"armor_1":["common",0],"armor_2":["uncommon",0],"armor_3":["rare",0],"armor_4":["epic",0],"armor_5":["legendary",0],"headgear_1":["common",0],"headgear_2":["uncommon",0],"headgear_3":["rare",0],"headgear_4":["epic",0],"headgear_5":["legendary",0],"accessory_1":["common",0],"accessory_2":["uncommon",0],"accessory_3":["rare",0],"accessory_4":["epic",0],"accessory_5":["legendary",0]},"pts":{"common":1.2,"uncommon":1.7,"rare":2.4,"epic":3.4,"legendary":4.4},"eliteMult":2,"price":{"herb":3,"potion":5,"slime_jelly":4,"wolf_fang":6,"stone_fragment":8,"secret_key":20,"junk_scrap":2,"mana_stone":12,"sample_t1":7,"sample_t2":23,"sample_t3":39,"sample_t4":54,"sample_t5":69,"sample_t6":85,"sample_t7":100,"sample_t8":115,"sample_t9":130,"sample_t10":146,"green_slime_card":11,"pink_slime_card":11,"goblin_card":25,"wolf_card":25,"skeleton_card":56,"stone_king_card":280,"kings_oath_secret":280},"eqPrice":{"common":15,"uncommon":35,"rare":80,"epic":180,"legendary":400},"starter":["sword_1","heavy_1","bow_1","orb_1"],"shopOnly":["herb","potion"],"stack":["herb","potion","slime_jelly","wolf_fang","stone_fragment","secret_key","old_letter","junk_scrap","mana_stone","sample_t1","sample_t2","sample_t3","sample_t4","sample_t5","sample_t6","sample_t7","sample_t8","sample_t9","sample_t10","bark_tag","barrier_lantern","inscribed_wrap","green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"cards":["green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"rankExp":[0,500,1500,3500,7000,13000,23000,40000,70000,120000],"skill":{"sword":[[1,2],[3,2],[5,2],[7,2],[9,2]],"heavy":[[1,2],[3,2],[5,2],[7,2],[9,2]],"bow":[[1,2],[3,2],[5,2],[7,2],[9,2]],"orb":[[1,2],[3,2],[5,2],[7,2],[9,2]]},"titles":{"first_blood":["kills",100],"reaper":["kills",1000],"death_walker":["kills",5000],"calamity":["kills",20000],"slime_hunter":["slimeKills",100],"one_beat":["perfectHits",300],"flawless_blade":["perfectHits",3000],"rhythm_sage":["perfectHits",15000],"perfect_warrior":["bestPerfectStreak",50],"swaying_shadow":["perfectDodges",50],"formless_wind":["perfectDodges",500],"shadowless":["perfectDodges",2500],"counter_art":["counters",50],"mirror_blade":["counters",500],"keen_eye":["crits",500],"fortune_chosen":["crits",5000],"star_assassin":["crits",25000],"unscathed":["flawless",50],"invisible_armor":["flawless",500],"survivor":["survivor",1],"never_give_up":["deaths",25],"elite_hunter":["eliteKills",10],"star_breaker":["eliteKills",100],"elite_bane":["eliteKills",500],"boss_slayer":["bossKills",10],"throne_hunter":["bossKills",50],"king_of_kings":["bossKills",200],"untouchable":["untouchable",1],"five_realms":["bossTiers",5],"ten_kings":["bossTiers",10],"wanderer":["reach",3],"pathfinder":["reach",6],"worlds_edge":["reach",10],"story_c1":["chapters",1],"story_c2":["chapters",2],"story_c3":["chapters",3],"whisper_listener":["listened",1],"secret_seeker":["secrets",5],"secret_keeper":["secrets",30],"dungeon_diver":["dungeons",1],"labyrinth_lord":["dungeons",10],"underworld_ruler":["dungeons",30],"treasure_hunter":["chests",10],"rising_hero":["level",25],"menalars_hero":["level",50],"peak":["level",100],"barrier_breaker":["maxDim",2],"dimension_walker":["maxDim",3],"void_voyager":["maxDim",5],"novice_collector":["colPct",10],"monster_hunter":["monstersHalf",1],"monster_master":["monstersAll",1],"card_collector":["cards",3],"full_deck":["allCards",1],"half_collector":["colPct",50],"curator":["colPct",75],"full_collector":["colPct",100],"treasure_bearer":["epics",5],"legend_chosen":["legends",1],"legend_vault":["legends",10],"apprentice_smith":["refines",10],"artisan":["bestRefine",5],"forge_master":["bestRefine",10],"new_rich":["goldEarned",10000],"tycoon":["goldEarned",100000],"gold_king":["goldEarned",1000000],"mind_trainee":["meditations",10],"still_water":["meditations",100],"town_friend":["junkQuest",1],"letter_reader":["lettersRead",15],"letter_keeper":["lettersRead",40],"letter_all":["lettersRead",60],"shadow_unmasker":["spyUnmasked",1],"courier":["letters",3],"skill_student":["skills",5],"weapon_scholar":["skills",15],"weapon_master":["bestRank",5],"four_arms":["rankedWeapons",4],"transcender":["bestRank",9]},"quests":{"c1_wake":[40,60,0,1,0],"c1_town":[50,95,0,1,0],"c1_squad":[50,95,0,1,0],"c1_test":[100,190,0,1,0],"c1_wreck":[100,190,0,1,0],"c1_bark":[100,190,0,1,0],"c1_mind":[100,190,0,1,0],"c1_counter":[100,190,0,1,0],"c1_boss":[270,510,1,1,1],"c2_child":[350,600,0,2,0],"c2_lantern":[350,600,0,2,0],"c2_incense":[350,600,0,2,0],"c2_preacher":[350,600,0,2,0],"c2_lost":[350,600,0,2,0],"c2_boss":[930,1600,1,2,1],"c3_tablets":[580,980,0,3,0],"c3_wrap":[580,980,0,3,0],"c3_vent":[580,980,0,3,0],"c3_heat":[580,980,0,3,0],"c3_boss":[1540,2600,1,3,1]},"letters":["L01","L02","L03","L04","L05","L06","L07","L08","L09","L10","L11","L12","L13","L14","L15","L16","L17","L18","L19","L20","L21","L22","L23","L24","L25","L26","L27","L28","L29","L30","L31","L32","L33","L34","L35","L36","L37","L38","L39","L40","L41","L42","L43","L44","L45","L46","L47","L48","L49","L50","L51","L52","L53","L54","L55","L56","L57","L58","L59","L60"],"totals":{"mon":6,"card":7,"eq":561},"base":{"atk":6,"hp":50,"atkLv":2,"hpLv":10,"spLv":3,"spDim":3,"masteryMax":100,"refineMax":10,"sanityMax":100,"tierMax":10,"bag":48,"storage":100}}'::jsonb $$;
 -- ECON_DATA_END
 
 create or replace function public.econ_n(v jsonb) returns numeric language sql immutable as $$
@@ -11582,6 +11982,9 @@ begin
     'junkQuest', case when public.econ_obj(p -> 'questState') ->> 'junk_hunt' = 'completed' then 1 else 0 end,
     'chapters', (select count(distinct x) from jsonb_array_elements_text(public.econ_arr(public.econ_obj(p -> 'story') -> 'done')) x
                   where C -> 'quests' -> x ->> 4 = '1'),
+    'lettersRead', (select count(distinct x) from jsonb_array_elements_text(public.econ_arr(public.econ_obj(p -> 'letters') -> 'found')) x
+                     where (C -> 'letters') ? x),
+    'spyUnmasked', case when public.econ_n(public.econ_obj(p -> 'letters') -> 'spy') = 2 then 1 else 0 end,
     'listened', case when public.econ_obj(public.econ_obj(p -> 'story') -> 'ch') ->> 'c2p' = 'listen' then 1 else 0 end,
     'level', public.econ_n(p -> 'level'), 'reach', greatest(public.econ_n(d -> 'maxMapTierReached'), 1), 'maxDim', greatest(public.econ_n(d -> 'maxDimension'), 1),
     'skills', skills, 'bestRank', best, 'rankedWeapons', ranked,
@@ -11606,7 +12009,7 @@ declare
   lim_g numeric; lim_x numeric; k record; tstats jsonb; flags jsonb := '[]'::jsonb;
   rk numeric := 0.3; ru numeric := 4; rb numeric := 1.0 / 30; bank_k numeric; bank_u numeric; bank_b numeric; bank_e numeric; bank_l numeric; acc numeric;
   luck numeric := 0; dboss numeric; neq numeric := 0; nstarter numeric := 0; nshop numeric := 0;
-  qg numeric := 0; qx numeric := 0; qgear numeric := 0;
+  qg numeric := 0; qx numeric := 0; qgear numeric := 0; lgone numeric := 0;
 begin
   np := public.econ_obj(d -> 'player');
   if jsonb_typeof(o) is distinct from 'object' or jsonb_typeof(o -> 'player') is distinct from 'object' then o := '{}'::jsonb; end if;
@@ -11715,6 +12118,7 @@ begin
            oq as (select x ->> 'id' id, sum(public.econ_n(x -> 'qty')) q from public.econ_items(o) x where coalesce(x ->> 'kind', '') <> 'equipment' and (C -> 'stack') ? coalesce(x ->> 'id', '') group by 1)
       select coalesce(nq.id, oq.id) id, coalesce(nq.q, 0) nqq, coalesce(oq.q, 0) oqq from nq full join oq on nq.id = oq.id
     loop
+      if k.id = 'old_letter' and k.oqq > k.nqq then lgone := k.oqq - k.nqq; end if;   -- letters handed in (v9: many at once)
       if k.id = 'mana_stone' then newmana := greatest(k.nqq - k.oqq + rmana, 0);   -- refining spent some
         units := units + newmana;
       elsif (C -> 'shopOnly') ? k.id then nshop := nshop + greatest(k.nqq - k.oqq, 0);
@@ -11743,7 +12147,7 @@ begin
        or public.econ_n(st -> 'chestsOpened') - public.econ_n(ost -> 'chestsOpened') > dk + 1 then bad := 'dungeon';
     elsif public.econ_n(st -> 'secrets') - public.econ_n(ost -> 'secrets') > 5 + floor(greatest(dt, 0) / 10)
        or public.econ_n(st -> 'meditations') - public.econ_n(ost -> 'meditations') > 1 + floor(greatest(dt, 0) / 20)
-       or public.econ_n(st -> 'letters') - public.econ_n(ost -> 'letters') > 1 + floor(greatest(dt, 0) / 30)
+       or public.econ_n(st -> 'letters') - public.econ_n(ost -> 'letters') > greatest(1 + floor(greatest(dt, 0) / 30), lgone + 1)
        or public.econ_n(st -> 'deaths') - public.econ_n(ost -> 'deaths') > 1 + floor(greatest(dt, 0) / 3)
        or public.econ_n(st -> 'refines') - public.econ_n(ost -> 'refines') > rsteps + 3 then bad := 'counters';
     elsif exists (select 1 from jsonb_each(public.econ_obj(st -> 'bossTiers')) x where x.key !~ '^[0-9]+$' or x.key::numeric > reach) then bad := 'counters';
@@ -11846,7 +12250,7 @@ begin
             + (case when public.econ_arr(d -> 'unlockedMilestones') ? 'collection_50' and not (public.econ_arr(o -> 'unlockedMilestones') ? 'collection_50') then 1 else 0 end) + qgear then
     return jsonb_build_object('ok', false, 'reason', 'econ', 'detail', 'items', 'n', neq, 'max', 3 * dk);
   end if;
-  units := units + neq;
+  units := units + greatest(neq - greatest(public.econ_n(st -> 'letters') - public.econ_n(ost -> 'letters'), 0) - qgear, 0); -- gear handed out for letters / story quests doesn't need kills
   if units > 5 * dk + 3 then return jsonb_build_object('ok', false, 'reason', 'econ', 'detail', 'items', 'n', units, 'max', 5 * dk + 3); end if;
   -- bosses / elites can't be farmed faster than they appear; rare+ gear needs kills that could have dropped it
   dboss := greatest(public.econ_n(public.econ_obj(d -> 'huntCounts') -> '5') - public.econ_n(public.econ_obj(o -> 'huntCounts') -> '5'), 0);
