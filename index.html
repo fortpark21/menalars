@@ -787,6 +787,162 @@
   #netBlock h2{ margin:6px 0 8px; font-size:19px; color:#fff; }
   #netBlock p{ margin:0 0 16px; font-size:13.5px; line-height:1.6; color:#b9b1d6; }
   #netBlock .btn-primary{ width:100%; }
+
+  /* ================= UI v5 — one window frame for every panel + the NPC conversation window ================= */
+  :root{ --frame:#2e2a4a; --trim:#c9a24a; --parch:#fff8ee; --parch2:#f5ead2; }
+  .panel{
+    background:linear-gradient(180deg, var(--parch) 0%, var(--parch2) 100%);
+    border:3px solid var(--frame); box-shadow:0 0 0 1px var(--trim), 0 24px 60px rgba(0,0,0,.55);
+    scrollbar-width:thin; scrollbar-color:#cbbd98 transparent;
+  }
+  .panel:not([hidden]){ animation:panelIn .16s ease-out; }
+  @keyframes panelIn{ from{ opacity:0; scale:.965; } to{ opacity:1; scale:1; } }
+  .panel::-webkit-scrollbar{ width:10px; }
+  .panel::-webkit-scrollbar-thumb{ background:#cbbd98; border-radius:6px; border:2px solid var(--parch2); }
+  .panel::-webkit-scrollbar-track{ background:transparent; }
+  /* title bar: dark band with gold text, stays pinned while the window scrolls; the ✕ lives inside it */
+  .panel > h2{
+    position:sticky; top:-18px; z-index:3; display:flex; align-items:center; gap:8px; min-height:46px;
+    margin:-18px -20px 14px; padding:10px 50px 9px 18px;
+    background:linear-gradient(180deg,#403a6b,#29244a); color:#ffe6a6; border-bottom:2px solid var(--trim);
+    font-size:17px; letter-spacing:.2px; text-shadow:0 1px 0 rgba(0,0,0,.45);
+  }
+  #victoryPanel > h2, #defeatPanel > h2{ justify-content:center; padding-right:18px; }
+  .panel .close-x{
+    position:absolute; top:9px; right:10px; z-index:4; width:30px; height:30px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:15px; line-height:1;
+    color:#ffe6a6; background:rgba(255,255,255,.08); border:1px solid rgba(255,230,166,.25); transition:background .12s, color .12s;
+  }
+  .panel > h2 > .close-x{ top:50%; transform:translateY(-50%); }
+  .panel .close-x:hover{ background:#ef476f; color:#fff; border-color:#ef476f; }
+  .panel > .rk-back{ z-index:4; }
+  .panel-back{ flex:0 0 auto; border:1px solid rgba(255,209,102,.55); background:rgba(255,255,255,.08); color:#ffe6a6;
+    border-radius:8px; font-size:12px; padding:4px 10px; font-weight:bold; text-shadow:none; }
+  .panel-back:hover{ background:rgba(255,209,102,.22); }
+  .panel-back[hidden]{ display:none; }
+  .hdr-chip{ margin-left:auto; flex:0 0 auto; font-size:12px; color:#ffd166; background:rgba(0,0,0,.28); border:1px solid rgba(255,209,102,.3);
+    border-radius:20px; padding:3px 10px; font-weight:bold; text-shadow:none; }
+  .hdr-chip + .hdr-chip{ margin-left:0; }
+  .panel h4{ color:#6a5f7e; }
+  .slot-item{ transition:border-color .15s, box-shadow .15s; }
+  .slot-item:hover{ border-color:#cdbb8a; box-shadow:0 2px 8px rgba(90,70,20,.08); }
+  .slot-item button{ transition:filter .12s, transform .08s; }
+  .slot-item button:hover:not(:disabled){ filter:brightness(1.18); }
+  .slot-item button:active:not(:disabled){ transform:translateY(1px); }
+  .slot-item button:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn-primary{ transition:filter .15s, transform .08s, box-shadow .15s; box-shadow:0 3px 0 #2c2462; }
+  .btn-primary:hover:not(:disabled){ filter:brightness(1.14); }
+  .btn-primary:active:not(:disabled){ transform:translateY(2px); box-shadow:0 1px 0 #2c2462; }
+  .btn-primary:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-secondary{ transition:border-color .15s, background .15s; }
+  .btn-secondary:hover{ border-color:#4b3f8f; background:#fbf8ff; }
+  .choice-btn{ transition:border-color .12s, background .12s; }
+  .choice-btn:hover{ border-color:#9d8fd9; }
+  #creation-screen .btn-secondary:hover{ background:rgba(255,255,255,.12); }
+
+  /* top menu: hover lift, gold ring on the button whose window is open, hotkey letter */
+  .menu-btn{ border:1px solid rgba(255,209,102,.16); transition:background .15s, border-color .15s, transform .08s, box-shadow .15s; }
+  .menu-btn:hover{ border-color:rgba(255,209,102,.6); transform:translateY(-1px); }
+  .menu-btn.active{ background:linear-gradient(180deg,#5a4bb0,#3b3180); border-color:var(--gold); box-shadow:0 0 12px rgba(255,209,102,.35); }
+  .menu-btn .hk{ display:inline-block; margin-left:5px; font-size:9px; line-height:13px; min-width:13px; padding:0 3px; border-radius:3px;
+    background:rgba(255,255,255,.14); color:#d8d3e8; vertical-align:1px; font-weight:bold; }
+  #toast{ box-shadow:0 8px 22px rgba(0,0,0,.3); border:1px solid rgba(120,90,0,.25); }
+
+  /* shop rows (merchant) */
+  .shop-row{ padding:6px 8px 6px 6px; }
+  .shop-row .shop-ic{ flex:0 0 36px; height:36px; border-radius:9px; background:#f4efe0; border:1px solid #e4dcc4; display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .shop-row .shop-nm{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .shop-row .shop-nm b{ font-size:13px; }
+  .shop-row .shop-nm small{ font-size:11px; color:#8a8196; }
+  .shop-row .shop-price{ flex:0 0 auto; font-weight:bold; color:#8a6412; font-size:13px; min-width:58px; text-align:right; }
+  .shop-row .shop-price.no{ color:#c0392b; }
+  .shop-row button{ min-width:46px; padding:6px 10px; }
+  .shop-row button.alt{ background:#7a5fd9; }
+
+  /* ---- NPC conversation window ---- */
+  #talkDialog{
+    position:absolute; left:50%; bottom:106px; transform:translateX(-50%); z-index:11;
+    width:min(700px, 94vw); display:flex; gap:14px; align-items:flex-start; padding:16px 16px 14px;
+    background:linear-gradient(180deg, rgba(40,34,74,.97), rgba(22,18,42,.97));
+    border:2px solid var(--trim); border-radius:14px; color:#f3ecff;
+    box-shadow:0 0 0 3px rgba(20,16,40,.85), 0 18px 44px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
+    animation:talkIn .2s ease-out;
+  }
+  #talkDialog[hidden]{ display:none; }
+  @keyframes talkIn{ from{ opacity:0; translate:0 14px; } to{ opacity:1; translate:0 0; } }
+  .talk-portrait{ flex:0 0 112px; height:124px; border-radius:12px; position:relative; overflow:hidden;
+    border:2px solid var(--trim); box-shadow:inset 0 0 0 2px rgba(0,0,0,.35), 0 4px 12px rgba(0,0,0,.45);
+    background:radial-gradient(circle at 50% 30%, var(--pbg1,#6a55c9) 0%, var(--pbg2,#1c1636) 78%); }
+  .talk-portrait canvas{ width:100%; height:100%; display:block; }
+  .talk-portrait canvas[hidden], .talk-portrait .talk-emoji[hidden]{ display:none; }
+  .talk-portrait .talk-emoji{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:58px;
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); animation:emojiFloat 3s ease-in-out infinite; }
+  @keyframes emojiFloat{ 0%,100%{ translate:0 0; } 50%{ translate:0 -4px; } }
+  .talk-main{ flex:1; min-width:0; position:relative; max-height:calc(100vh - 230px); overflow-y:auto; overflow-x:hidden; padding-right:2px;
+    scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.2) transparent; }
+  .talk-nameplate{ display:flex; align-items:center; gap:8px; margin:-2px 34px 7px 0; flex-wrap:wrap; }
+  .talk-nameplate b{ font-size:17px; color:#ffd166; letter-spacing:.3px; text-shadow:0 2px 0 rgba(0,0,0,.45); }
+  .talk-nameplate span{ font-size:11px; color:#c9c1e6; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.13); border-radius:20px; padding:2px 9px; }
+  .talk-x{ position:absolute; top:-4px; right:0; width:28px; height:28px; border-radius:8px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.06); color:#d8d3e8; font-size:13px; }
+  .talk-x:hover{ background:#ef476f; color:#fff; border-color:#ef476f; }
+  .talk-text{ font-size:15px; line-height:1.65; color:#f3ecff; min-height:48px; white-space:pre-line; cursor:pointer; }
+  .talk-text .hl{ color:#ffd166; font-weight:bold; }
+  .talk-text .caret{ display:inline-block; width:7px; height:14px; margin-left:2px; vertical-align:-2px; background:#ffd166; animation:caretBlink .5s steps(1) infinite; }
+  @keyframes caretBlink{ 50%{ opacity:0; } }
+  .talk-extra{ margin-top:10px; display:flex; flex-direction:column; gap:8px; }
+  .talk-extra:empty{ display:none; }
+  .talk-choices{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:7px; margin-top:12px; }
+  .talk-choice{ display:flex; align-items:center; gap:9px; text-align:left; padding:7px 10px; border-radius:10px; min-height:46px;
+    border:1px solid rgba(255,209,102,.25); background:rgba(255,255,255,.05); color:#f3ecff; font-size:14px; font-weight:bold;
+    transition:background .12s, border-color .12s, transform .08s; animation:choiceIn .22s ease-out backwards; }
+  .talk-choice:nth-child(2){ animation-delay:.04s; } .talk-choice:nth-child(3){ animation-delay:.08s; }
+  .talk-choice:nth-child(4){ animation-delay:.12s; } .talk-choice:nth-child(n+5){ animation-delay:.16s; }
+  @keyframes choiceIn{ from{ opacity:0; translate:0 6px; } to{ opacity:1; translate:0 0; } }
+  .talk-choice:hover:not(:disabled){ background:rgba(255,209,102,.14); border-color:#ffd166; transform:translateX(2px); }
+  .talk-choice:active:not(:disabled){ transform:translateY(1px); }
+  .talk-choice:disabled{ opacity:.42; cursor:not-allowed; }
+  .talk-choice .k{ flex:0 0 20px; height:20px; border-radius:5px; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.2);
+    font-size:11px; color:#ffd166; display:flex; align-items:center; justify-content:center; }
+  .talk-choice .ic{ flex:0 0 auto; font-size:20px; line-height:1; }
+  .talk-choice .lb{ display:flex; flex-direction:column; min-width:0; }
+  .talk-choice .lb small{ font-weight:normal; font-size:11px; color:#b9b1d6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .talk-choice.primary{ background:linear-gradient(180deg, rgba(122,95,217,.6), rgba(75,63,143,.6)); border-color:#9d88ff; }
+  .talk-choice.gold{ background:linear-gradient(180deg, rgba(255,209,102,.32), rgba(255,150,60,.18)); border-color:#ffd166; box-shadow:0 0 14px rgba(255,209,102,.18); }
+  .talk-choice.danger{ background:linear-gradient(180deg, rgba(239,71,111,.45), rgba(150,30,70,.4)); border-color:#ff7a9a; }
+  .talk-choice.leave{ background:transparent; border-style:dashed; border-color:rgba(255,255,255,.2); color:#c9c1e6; }
+  .talk-choice.wide{ grid-column:1 / -1; }
+  /* cards inside the conversation (quest, ritual, destination, reward) */
+  .tk-card{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.13); border-radius:10px; padding:9px 12px; font-size:13px; line-height:1.5; }
+  .tk-card h5{ margin:0 0 5px; font-size:13px; color:#ffd166; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .tk-tag{ flex:0 0 auto; font-size:10px; padding:2px 8px; border-radius:20px; background:#5a4bb0; color:#fff; font-weight:bold; }
+  .tk-tag.ok{ background:#1f8f5f; } .tk-tag.done{ background:#6c6a78; } .tk-tag.warn{ background:#b5543a; } .tk-tag.new{ background:#c98f1a; }
+  .tk-bar{ height:8px; background:rgba(255,255,255,.12); border-radius:5px; overflow:hidden; margin:5px 0 2px; }
+  .tk-bar i{ display:block; height:100%; background:linear-gradient(90deg,#06d6a0,#7CFFB2); border-radius:5px; }
+  .tk-chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .tk-card .tk-chips{ margin-top:6px; }
+  .tk-chip{ font-size:12px; padding:3px 9px; border-radius:20px; background:rgba(0,0,0,.3); border:1px solid rgba(255,209,102,.3); color:#ffe6a6; }
+  .tk-chip.no{ border-color:rgba(255,122,154,.5); color:#ffb3c3; }
+  .tk-rows{ display:flex; flex-direction:column; gap:3px; }
+  .tk-row{ display:flex; gap:7px; align-items:flex-start; }
+  .tk-row .i{ flex:0 0 18px; text-align:center; }
+  .tk-row.no{ color:#ffb3c3; } .tk-row.yes{ color:#a6f3cf; }
+  .tk-reward{ display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; font-weight:bold; color:#ffe6a6;
+    background:linear-gradient(90deg, rgba(255,209,102,.24), rgba(255,209,102,.04)); border:1px solid rgba(255,209,102,.6); animation:rewardPop .45s ease-out; }
+  .tk-reward .big{ font-size:24px; }
+  @keyframes rewardPop{ 0%{ scale:.9; opacity:0; } 60%{ scale:1.03; opacity:1; } 100%{ scale:1; } }
+  @media (max-width: 640px){
+    #talkDialog{ bottom:96px; padding:12px; gap:10px; }
+    .talk-portrait{ flex-basis:72px; height:84px; }
+    .talk-portrait .talk-emoji{ font-size:40px; }
+    .talk-choices{ grid-template-columns:1fr; }
+    .talk-text{ font-size:14px; }
+    .menu-btn .hk{ display:none; }
+  }
+  @media (hover: none){ .menu-btn .hk{ display:none; } }
+  @media (prefers-reduced-motion: reduce){
+    .panel:not([hidden]), #talkDialog, .talk-choice, .tk-reward, .talk-portrait .talk-emoji{ animation:none; }
+  }
 </style>
 </head>
 <body>
@@ -937,7 +1093,7 @@
 
   <div id="discoveryBanner"></div>
 
-  <div id="hint">คลิกพื้นเพื่อเดิน · เดินชนมอนสเตอร์เพื่อเข้าสู้ · คลิก NPC เพื่อคุย</div>
+  <div id="hint">คลิกพื้นเพื่อเดิน · เดินชนมอนสเตอร์เพื่อเข้าสู้ · คลิก NPC เพื่อคุย · ปุ่มลัด C B K J</div>
   <div id="attackGauge" hidden>
     <div id="attackGaugeFill"></div>
     <div id="attackGaugePerfect"></div>
@@ -956,24 +1112,15 @@
   </div>
   <div id="toast"></div>
 
-  <div class="dialog-box" id="npcDialog" hidden>
-    <h3 id="npcDialogTitle">พ่อค้าประจำเมือง</h3>
-    <p>สวัสดี! วันนี้จะซื้อหรือขายอะไรดีล่ะ?</p>
-    <div class="row" id="npcQuestRow" hidden style="margin-bottom:8px;">
-      <button class="btn-primary" id="turnInQuestBtn" type="button">✉️ ส่งจดหมายเก่าให้พ่อค้า</button>
+  <div id="talkDialog" hidden role="dialog" aria-live="polite">
+    <div class="talk-portrait" id="talkPortraitBox"><canvas id="talkPortrait" width="224" height="248"></canvas><div class="talk-emoji" id="talkEmoji" hidden></div></div>
+    <div class="talk-main">
+      <div class="talk-nameplate"><b id="talkName"></b><span id="talkRole"></span></div>
+      <button class="talk-x" id="talkCloseX" type="button" title="ปิด (Esc)">✕</button>
+      <div class="talk-text" id="talkText" title="คลิกเพื่ออ่านทั้งหมด"></div>
+      <div class="talk-extra" id="talkExtra"></div>
+      <div class="talk-choices" id="talkChoices"></div>
     </div>
-    <div class="row">
-      <button class="btn-primary" id="openBuyBtn" type="button">🛒 ซื้อของ</button>
-      <button class="btn-primary" id="openSellBtn" type="button">💰 ขายของ</button>
-      <button class="btn-secondary" id="closeDialogBtn" type="button">ปิด</button>
-    </div>
-  </div>
-
-  <div class="dialog-box" id="locationDialog" hidden>
-    <h3 id="locationDialogTitle"></h3>
-    <p id="locationDialogFlavor"></p>
-    <p id="locationDialogResult" style="color:#4b3f8f; font-weight:bold;" hidden></p>
-    <div class="row" id="locationDialogActions"></div>
   </div>
 
   <div id="dungeonPanel" hidden>
@@ -988,7 +1135,7 @@
 
   <div class="panel" id="storagePanel" hidden>
     <button class="close-x" id="closeStorageBtn" type="button">✕</button>
-    <h2>กล่องฝากของ</h2>
+    <h2>📦 กล่องฝากของ</h2>
     <p class="storage-hint">ลากไอเทมข้ามไปอีกฝั่งเพื่อย้าย · กด Alt ค้างแล้วคลิกซ้ายเพื่อย้ายทั้งกอง · กด Ctrl ค้างแล้วคลิกซ้ายเพื่อย้ายทีละ 1 ชิ้น</p>
     <div class="panel-cols">
       <div class="panel-col">
@@ -1005,7 +1152,7 @@
 
   <div class="panel" id="statusPanel" hidden style="width:640px;">
     <button class="close-x" id="closeStatusBtn" type="button">✕</button>
-    <h2>สถานะตัวละคร</h2>
+    <h2>📋 สถานะตัวละคร</h2>
     <div class="panel-cols">
       <div class="panel-col">
         <div class="slot-list" id="statusList"></div>
@@ -1025,7 +1172,7 @@
 
   <div class="panel bag-panel" id="bagPanel" hidden>
     <button class="close-x" id="closeBagBtn" type="button">✕</button>
-    <h2>กระเป๋า &amp; อุปกรณ์</h2>
+    <h2>🎒 กระเป๋า &amp; อุปกรณ์<span class="hdr-chip" data-hdr="gold"></span></h2>
     <div class="bag-layout">
       <div class="doll-col">
         <div class="doll" id="equipSlotList"></div>
@@ -1042,7 +1189,7 @@
 
   <div class="panel" id="sellPanel" hidden>
     <button class="close-x" id="closeSellBtn" type="button">✕</button>
-    <h2>ขายของให้พ่อค้า</h2>
+    <h2><button class="panel-back" type="button" data-back="merchant">‹ คุยต่อ</button>💰 ขายของให้พ่อค้า<span class="hdr-chip" data-hdr="gold"></span></h2>
     <p class="storage-hint">กด Alt ค้างแล้วคลิกซ้ายเพื่อขายทั้งกอง · กด Ctrl ค้างแล้วคลิกซ้ายเพื่อขายทีละ 1 ชิ้น · หรือลากไอเทมมาวางกล่องด้านล่าง</p>
     <div class="item-grid" id="sellGrid"></div>
     <div class="sell-drop-zone" id="sellDropZone">💰 ลากไอเทมมาวางที่นี่เพื่อขายด่วน</div>
@@ -1051,7 +1198,7 @@
 
   <div class="panel" id="buyPanel" hidden>
     <button class="close-x" id="closeBuyBtn" type="button">✕</button>
-    <h2>🛒 ซื้อของจากพ่อค้า</h2>
+    <h2><button class="panel-back" type="button" data-back="merchant">‹ คุยต่อ</button>🛒 ซื้อของจากพ่อค้า<span class="hdr-chip" data-hdr="gold"></span></h2>
     <div class="slot-list" id="buyList"></div>
     <h4 style="margin:14px 0 8px; color:#7a7186;">⚔️ อาวุธเริ่มต้น — ลองอาวุธอื่นได้โดยไม่ต้องสร้างตัวใหม่</h4>
     <div class="slot-list" id="buyWeaponList"></div>
@@ -1059,7 +1206,7 @@
 
   <div class="panel" id="refinePanel" hidden>
     <button class="close-x" id="closeRefineBtn" type="button">✕</button>
-    <h2>🔨 ตีบวกอุปกรณ์</h2>
+    <h2><button class="panel-back" type="button" data-back="blacksmith">‹ คุยต่อ</button>🔨 ตีบวกอุปกรณ์<span class="hdr-chip" data-hdr="mana"></span><span class="hdr-chip" data-hdr="gold"></span></h2>
     <p class="storage-hint">เลือกอุปกรณ์ที่จะตีบวก ใช้ 💠 หินมานา + เงิน ต่อครั้ง เพิ่มค่า ATK/DEF/HP ของชิ้นนั้น</p>
     <div class="item-grid" id="refineGrid"></div>
     <div class="item-detail" id="refineDetail" hidden></div>
@@ -1827,6 +1974,43 @@ function drawHallOfFameAt(ctx, cx, cy){
   ctx.beginPath(); ctx.arc(-15, -53, 4, Math.PI*0.5, Math.PI*1.5); ctx.stroke();
   ctx.beginPath(); ctx.arc(5, -53, 4, -Math.PI*0.5, Math.PI*0.5); ctx.stroke();
   ctx.fillStyle = `rgba(255,255,255,${0.4 + glow*0.5})`; ctx.fillRect(-11, -56, 3, 7); // shine
+  ctx.restore();
+}
+
+// "!" = something new for you here, "?" = ready to hand in (gold) — the classic quest-giver markers.
+function npcQuestMarker(npc){
+  if(!game || !game.player) return null;
+  if(npc.kind === "town_lord"){
+    const st = game.player.questState.junk_hunt || "available";
+    if(st === "available") return { ch:"!", color:"#ffd166" };
+    if(st === "active"){
+      const have = (game.inventory.find(e => e.id === QUEST_DEFS.junk_hunt.itemId) || {}).qty || 0;
+      return have >= QUEST_DEFS.junk_hunt.required ? { ch:"?", color:"#ffd166" } : { ch:"?", color:"#c9c4d6" };
+    }
+  }
+  if(npc.kind === "merchant" && game.inventory.some(e => e.id === "old_letter")) return { ch:"?", color:"#ffd166" };
+  if(npc.kind === "temple" && game.dimCleared && game.dimCleared[game.maxDimension]) return { ch:"!", color:"#d9a8ff" };
+  return null;
+}
+function drawQuestMarker(ctx, x, y, mk){
+  const bob = Math.sin(performance.now() / 260) * 3;
+  ctx.save();
+  ctx.font = "bold 24px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.lineWidth = 5; ctx.strokeStyle = "rgba(40,24,0,.85)"; ctx.fillStyle = mk.color;
+  ctx.shadowColor = mk.color; ctx.shadowBlur = 10;
+  ctx.strokeText(mk.ch, x, y + bob); ctx.fillText(mk.ch, x, y + bob);
+  ctx.restore();
+}
+function drawTalkBubble(ctx, x, y){
+  const t = performance.now() / 300;
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,.95)"; ctx.strokeStyle = "rgba(40,30,70,.8)"; ctx.lineWidth = 1.5;
+  roundRect(ctx, x - 17, y - 11, 34, 20, 9); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 4, y + 9); ctx.lineTo(x, y + 15); ctx.lineTo(x + 4, y + 9); ctx.closePath(); ctx.fill();
+  for(let i = 0; i < 3; i++){
+    ctx.fillStyle = `rgba(75,63,143,${0.35 + 0.65 * Math.max(0, Math.sin(t - i * 0.7))})`;
+    ctx.beginPath(); ctx.arc(x - 8 + i * 8, y - 1, 2.6, 0, Math.PI * 2); ctx.fill();
+  }
   ctx.restore();
 }
 
@@ -2772,7 +2956,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 4;
+const GAME_VERSION = 5;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -4240,8 +4424,10 @@ function cancelDungeonRun(){
 document.getElementById("dungeonProceedBtn").addEventListener("click", proceedDungeonRoom);
 document.getElementById("dungeonLeaveBtn").addEventListener("click", cancelDungeonRun);
 
+let lastTalkLocation = null; // the secret spot the next showLocationDialog belongs to (walking away closes it)
 function interactWithLocation(loc){
   const def = SECRET_LOCATION_DEFS[loc.defId];
+  lastTalkLocation = loc;
   loc.discovered = true;
 
   if(loc.used && def.grantType !== "portal"){
@@ -4289,61 +4475,41 @@ function interactWithLocation(loc){
 }
 
 function showLocationDialog(def, flavorText, resultText, portalOptions){
-  document.getElementById("locationDialogTitle").textContent = def.icon + " " + def.name;
-  document.getElementById("locationDialogFlavor").textContent = flavorText;
-  const resultEl = document.getElementById("locationDialogResult");
-  if(resultText){ resultEl.textContent = resultText; resultEl.hidden = false; }
-  else resultEl.hidden = true;
-
-  const actions = document.getElementById("locationDialogActions");
-  actions.innerHTML = "";
+  const loc = lastTalkLocation;
+  const choices = [];
+  let extra = "";
+  if(resultText) extra += `<div class="tk-reward"><span class="big">🎁</span><span>${netEsc(resultText)}</span></div>`;
   if(portalOptions){
-    if(portalOptions.hasKey){
-      const enterBtn = document.createElement("button");
-      enterBtn.className = "btn-primary"; enterBtn.textContent = "🔑 เข้าดันเจี้ยน";
-      enterBtn.addEventListener("click", ()=> enterDungeon(portalOptions.loc));
-      actions.appendChild(enterBtn);
-    } else {
-      const msg = document.createElement("p");
-      msg.textContent = "ต้องมี 🔑 Secret Key ก่อนถึงจะเข้าได้ — ลองไปสำรวจที่อื่นดู";
-      msg.style.cssText = "font-size:12px; color:#c0392b; margin:0 0 8px;";
-      actions.appendChild(msg);
-    }
+    const keys = getKeyCount();
+    extra += `<div class="tk-chips"><span class="tk-chip${keys ? "" : " no"}">🔑 Secret Key ×${keys}</span><span class="tk-chip">🏰 4 ห้อง · บอสท้ายสุดดรอปอาวุธ Epic+</span></div>`;
+    choices.push(portalOptions.hasKey
+      ? { icon:"🔑", label:"เข้าดันเจี้ยน", sub:"ใช้ Secret Key 1 ดอก", cls:"gold", onPick: ()=> enterDungeon(portalOptions.loc) }
+      : { icon:"🔒", label:"ประตูถูกผนึก", sub:"ต้องมี 🔑 Secret Key — ลองสำรวจจุดลับอื่นดู", disabled:true });
   }
-  const closeBtn = document.createElement("button");
-  closeBtn.className = "btn-secondary"; closeBtn.textContent = "ปิด";
-  closeBtn.addEventListener("click", closeLocationDialog);
-  actions.appendChild(closeBtn);
-
-  document.getElementById("locationDialog").hidden = false;
+  choices.push({ icon:"👣", label: portalOptions ? "ไว้ก่อน" : "ออกไปสำรวจต่อ", leave:true });
+  openTalk({ emoji: def.icon, name: def.name, role: "📍 จุดลับ", bg: ["#3f7a6a", "#0f2420"],
+    text: flavorText, extra, choices, anchor: loc ? { x: loc.x, y: loc.y, r: SECRET_LOCATION_TRIGGER_DIST + 140 } : null });
 }
-function closeLocationDialog(){ document.getElementById("locationDialog").hidden = true; }
+function closeLocationDialog(){ closeTalk(); }
 
 function interactWithWarpPoint(){
-  const nextTier = game.mapTier + 1;
-  document.getElementById("locationDialogTitle").textContent = "🌀 ประตูวาป";
-  document.getElementById("locationDialogResult").hidden = true;
-  const actions = document.getElementById("locationDialogActions");
-  actions.innerHTML = "";
-
+  const nextTier = game.mapTier + 1, wp = game.warpPoint;
+  const choices = [];
+  let text, extra = "";
   if(nextTier > MAP_TIER_COUNT){
-    document.getElementById("locationDialogFlavor").textContent = "คุณมาถึงสุดขอบของโลกที่เปิดให้สำรวจตอนนี้แล้ว ยังไม่มีเส้นทางถัดไป — แต่การเดินทางยังไม่จบแค่นี้แน่นอน";
+    text = "คุณมาถึงสุดขอบของโลกที่เปิดให้สำรวจตอนนี้แล้ว ยังไม่มีเส้นทางถัดไป — แต่การเดินทางยังไม่จบแค่นี้แน่นอน";
   } else {
-    const mapDef = MAP_DEFS[nextTier-1];
-    document.getElementById("locationDialogFlavor").textContent =
-      `พร้อมเดินทางไปยังแมพ ${nextTier}: ${mapDef.name} หรือยัง? มอนสเตอร์และจุดต่างๆ ในแมพนี้จะถูกแทนที่เมื่อออกเดินทาง`;
-    const goBtn = document.createElement("button");
-    goBtn.className = "btn-primary"; goBtn.textContent = "🌀 ไปแมพถัดไป";
-    goBtn.addEventListener("click", ()=>{ sfx.click(); closeLocationDialog(); warpToMap(nextTier); });
-    actions.appendChild(goBtn);
+    const mapDef = getMapDisplayDef(nextTier), defs = generateMapMonsterDefs(nextTier);
+    const mobs = defs.filter(d => !d.isBoss).map(d => d.level), boss = defs.find(d => d.isBoss);
+    const lo = Math.min(...mobs), hi = Math.max(...mobs), lv = game.player.level, low = lv < lo;
+    text = `พร้อมเดินทางไปยัง **แมพ ${nextTier}: ${mapDef.name}** หรือยัง?\nมอนสเตอร์และจุดต่างๆ ในแมพนี้จะถูกแทนที่เมื่อออกเดินทาง`;
+    extra = `<div class="tk-card"><h5><span>🗺️ แมพ ${nextTier}: ${netEsc(mapDef.name)}</span>${low ? '<span class="tk-tag warn">เลเวลยังต่ำ</span>' : '<span class="tk-tag ok">พร้อม</span>'}</h5>
+      <div class="tk-chips"><span class="tk-chip">👾 มอนสเตอร์ Lv.${lo}–${hi}</span>${boss ? `<span class="tk-chip">👑 ${netEsc(boss.name)} Lv.${boss.level}</span>` : ""}<span class="tk-chip${low ? " no" : ""}">🧍 คุณ Lv.${lv}</span></div></div>`;
+    choices.push({ icon:"🌀", label:"ไปแมพถัดไป", sub:`แมพ ${nextTier}: ${mapDef.name}`, cls:"primary", onPick: ()=>{ closeTalk(); warpToMap(nextTier); } });
   }
-  const closeBtn = document.createElement("button");
-  closeBtn.className = "btn-secondary"; closeBtn.textContent = "ยังไม่ไป";
-  closeBtn.addEventListener("click", ()=>{ sfx.click(); closeLocationDialog(); });
-  actions.appendChild(closeBtn);
-
-  sfx.talk();
-  document.getElementById("locationDialog").hidden = false;
+  choices.push({ icon:"👣", label:"ยังไม่ไป", leave:true });
+  openTalk({ emoji:"🌀", name:"ประตูวาป", role:`🗺️ แมพ ${game.mapTier} → ${nextTier > MAP_TIER_COUNT ? "—" : nextTier}`, bg:["#4a78d9", "#101a3a"],
+    text, extra, choices, anchor: wp ? { x: wp.x, y: wp.y, r: 170 } : null });
 }
 
 
@@ -4947,6 +5113,7 @@ function updateOverworld(dt){
     else if(p.path === null){ setPlayerDestination(m.x, m.y); } // repath once the previous leg finishes, tracking the monster's movement
   }
   movePlayerToward(p, dt);
+  if(talk.open && talk.anchor && dist(p.x, p.y, talk.anchor.x, talk.anchor.y) > talk.anchor.r) closeTalk(); // walked away mid-conversation
 
   if(p.pendingNpcId != null){
     const npc = game.npcs.find(n => n.id === p.pendingNpcId);
@@ -5124,12 +5291,12 @@ function renderOverworld(){
   ctx.textAlign = "center";
   const playerNameY = p.y - 78 * PLAYER_OVERWORLD_SCALE / 1.1;
   const rank = getPlayerRankTier();
-  const nameColor = hof.rainbow ? `hsl(${(performance.now()/12) % 360},85%,65%)` : hof.color;
-  ctx.font = hof.minTier >= 7 ? "bold 13px 'Trebuchet MS', sans-serif" : "12px 'Trebuchet MS', sans-serif";
-  if(hof.glow > 0){
-    const pulse = (hof.pulse || hof.rainbow) ? 0.7 + 0.3 * Math.sin(performance.now()/260) : 1;
+  const nameColor = rank.rainbow ? `hsl(${(performance.now()/12) % 360},85%,65%)` : rank.color;
+  ctx.font = rank.minTier >= 7 ? "bold 13px 'Trebuchet MS', sans-serif" : "12px 'Trebuchet MS', sans-serif";
+  if(rank.glow > 0){
+    const pulse = (rank.pulse || rank.rainbow) ? 0.7 + 0.3 * Math.sin(performance.now()/260) : 1;
     ctx.shadowColor = nameColor;
-    ctx.shadowBlur = hof.glow * pulse;
+    ctx.shadowBlur = rank.glow * pulse;
   }
   ctx.fillStyle = nameColor; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.lineWidth = 3;
   const shownName = (net.admin ? "[GM] " : "") + p.name; // online GM accounts only — offline net.admin is always false
@@ -5149,6 +5316,8 @@ function renderOverworld(){
     ctx.strokeText(npc.name, npc.x, labelY); ctx.fillText(npc.name, npc.x, labelY);
     if(hover){ ctx.fillStyle = "#fff"; ctx.font = "10px 'Trebuchet MS', sans-serif"; ctx.strokeText("คลิกเพื่อคุย", npc.x, labelY + 13); ctx.fillText("คลิกเพื่อคุย", npc.x, labelY + 13); ctx.restore(); }
     if(npc.kind === "vote" && vb.pending > 0) drawVoteBadge(ctx, npc.x, labelY - 22, vb.pending);
+    if(talk.open && talk.npcKind === npc.kind) drawTalkBubble(ctx, npc.x, labelY - 20);
+    else { const mk = npcQuestMarker(npc); if(mk) drawQuestMarker(ctx, npc.x, labelY - 22, mk); }
   }
 
   for(const m of game.monsters){
@@ -6111,6 +6280,7 @@ function renderAttackGauge(){
 function enterBattle(monster){
   if(game.inBattle) return;
   game.inBattle = true;
+  if(talk.open) closeTalk();
   game.player.targetX = null; game.player.targetY = null;
   game.player.path = null; game.player.destinationMarker = null; // the walk ended here — don't leave the pin behind after the fight
   game.player.targetMonsterId = null; game.player.pendingNpcId = null;
@@ -6342,7 +6512,7 @@ function returnToOverworldView(){
   document.getElementById("minimapCanvas").style.display = "block";
   document.getElementById("skillBar").hidden = true;
   document.getElementById("attackGauge").hidden = true;
-  document.getElementById("hint").textContent = "คลิกพื้นเพื่อเดิน · เดินชนมอนสเตอร์เพื่อเข้าสู้ · คลิก NPC เพื่อคุย";
+  document.getElementById("hint").textContent = "คลิกพื้นเพื่อเดิน · เดินชนมอนสเตอร์เพื่อเข้าสู้ · คลิก NPC เพื่อคุย · ปุ่มลัด C B K J";
   if(game.dungeon){ document.getElementById("dungeonPanel").hidden = false; renderDungeonPanel(); }
   updateHud();
 }
@@ -7440,6 +7610,7 @@ function updateHud(){
   sanityBarEl.style.width = clamp(p.sanity/SANITY_MAX,0,1)*100 + "%";
   sanityBarEl.style.background = p.sanity < SANITY_SAFE_THRESHOLD ? "#e05fd0" : "#c15ce0";
   document.getElementById("hudGold").textContent = p.gold;
+  updateHeaderChips();
   const statBadge = document.getElementById("statPointsBadge");
   if(p.statPoints.available > 0){ statBadge.textContent = p.statPoints.available; statBadge.hidden = false; }
   else statBadge.hidden = true;
@@ -7632,20 +7803,199 @@ function interactWithNpc(npc){
     sfx.click();
     openVoteBoard();
   } else if(npc.kind === "blacksmith"){
-    sfx.talk();
-    renderRefinePanel();
-    document.getElementById("refinePanel").hidden = false;
+    openBlacksmithDialog();
   }
 }
 
-function openMerchantDialog(){
-  sfx.talk();
-  const hasLetter = game.inventory.some(e => e.id === "old_letter");
-  document.getElementById("npcQuestRow").hidden = !hasLetter;
-  document.getElementById("npcDialog").hidden = false;
+/* ============================================================
+   NPC CONVERSATION WINDOW — portrait, name plate, typewriter line, numbered choices (1-9), Esc/✕ to close.
+   Every town NPC and every map spot (secret places, warp gate) talks through openTalk().
+   Text: "**word**" = gold highlight, "\n" = new line. Choices: { icon, label, sub, cls, leave, disabled, onPick }.
+   ============================================================ */
+const talk = { open:false, kind:null, anchor:null, segs:[], total:0, shown:0, timer:null, choices:[], npcKind:null, tick:0 };
+const NPC_TALK_PROFILE = {
+  merchant:   { name:"พ่อค้าประจำเมือง",  role:"🛒 ร้านค้า · ซื้อ–ขาย",            bg:["#c98f3a", "#2e1a08"] },
+  blacksmith: { name:"ช่างตีเหล็ก",        role:"🔨 โรงตีเหล็ก · ตีบวกอุปกรณ์",      bg:["#d0643a", "#260c08"] },
+  town_lord:  { name:"เจ้าเมือง",          role:"👑 ผู้ปกครองเมือง · ภารกิจ",        bg:["#7a5fd9", "#191230"] },
+  temple:     { name:"นักบวชแห่งบาเรีย",   role:"🛕 โบสถ์แห่งบาเรีย · พิธีข้ามมิติ",  bg:["#b7a8f0", "#221c48"] }
+};
+const TALK_CPS_MS = 18; // one letter every 18 ms (~55/s) — fast enough never to feel like waiting
+function talkGraphemes(t){ return String(t).match(/[\s\S][ัิ-ฺ็-๎️‍]*/gu) || []; } // Thai vowels/tones stay on their letter
+function talkParse(text){
+  const out = [];
+  String(text || "").split(/(\*\*[^*]+\*\*)/).forEach(part => {
+    if(!part) return;
+    const hl = part.length > 4 && part.startsWith("**") && part.endsWith("**");
+    out.push({ hl, g: talkGraphemes(hl ? part.slice(2, -2) : part) });
+  });
+  return out;
 }
-document.getElementById("turnInQuestBtn").addEventListener("click", ()=>{
+function talkTextHtml(n){
+  let left = n, html = "";
+  for(const sg of talk.segs){
+    if(left <= 0) break;
+    const part = netEsc(sg.g.slice(0, left).join(""));
+    left -= sg.g.length;
+    html += sg.hl ? `<span class="hl">${part}</span>` : part;
+  }
+  return html + (talk.shown < talk.total ? '<span class="caret"></span>' : "");
+}
+function talkRenderText(){
+  document.getElementById("talkText").innerHTML = talkTextHtml(talk.shown);
+  if(talk.npcKind) drawTalkPortrait(talk.npcKind, talk.shown < talk.total && (talk.tick >> 2) % 2 === 0);
+}
+function talkFinishTyping(){
+  if(talk.timer){ clearInterval(talk.timer); talk.timer = null; }
+  talk.shown = talk.total;
+  talkRenderText();
+}
+function talkStartTyping(text){
+  if(talk.timer){ clearInterval(talk.timer); talk.timer = null; }
+  talk.segs = talkParse(text);
+  talk.total = talk.segs.reduce((a, sg) => a + sg.g.length, 0);
+  talk.shown = 0; talk.tick = 0;
+  const reduce = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){ talkFinishTyping(); return; }
+  talkRenderText();
+  talk.timer = setInterval(()=>{
+    talk.tick++;
+    talk.shown = Math.min(talk.total, talk.shown + 1);
+    if(talk.tick % 5 === 0 && talk.shown < talk.total) tone(520 + (talk.tick % 3) * 60, 0.025, "triangle", 0.018); // soft "blip" while speaking
+    if(talk.shown >= talk.total) talkFinishTyping(); else talkRenderText();
+  }, TALK_CPS_MS);
+}
+// Bust of a town NPC for the portrait frame — the same sprite as on the map, 2.35× bigger, plus a trademark item.
+function drawTalkPortrait(kind, mouthOpen){
+  const cv = document.getElementById("talkPortrait");
+  const c = cv.getContext("2d"), k = cv.width / 112;
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.clearRect(0, 0, cv.width, cv.height);
+  c.save();
+  c.scale(k, k);
+  c.translate(56, 172); c.scale(2.35, 2.35);
+  drawNpcAt(c, 0, 0, NPC_ROBE_COLORS[kind]);
+  if(kind === "town_lord"){        // gold crown with a ruby
+    c.fillStyle = "#f2b632"; c.strokeStyle = "#a8781a"; c.lineWidth = 0.6;
+    c.beginPath(); c.moveTo(-10,-66); c.lineTo(-11,-75); c.lineTo(-5.5,-70); c.lineTo(0,-78); c.lineTo(5.5,-70); c.lineTo(11,-75); c.lineTo(10,-66); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = "#e0314f"; c.beginPath(); c.arc(0, -69.5, 1.6, 0, Math.PI*2); c.fill();
+  } else if(kind === "temple"){    // soft halo
+    c.shadowColor = "#fff4c4"; c.shadowBlur = 6; c.strokeStyle = "#ffe9a8"; c.lineWidth = 1.6;
+    c.beginPath(); c.ellipse(0, -69.5, 12.5, 2.6, 0, 0, Math.PI*2); c.stroke(); c.shadowBlur = 0;
+  } else if(kind === "blacksmith"){ // red headband + moustache
+    c.fillStyle = "#c0392b"; c.fillRect(-13.5, -62, 27, 3.6);
+    c.fillStyle = "#4a2c14"; c.beginPath(); c.ellipse(0, -48.2, 4.6, 1.5, 0, 0, Math.PI*2); c.fill();
+  } else if(kind === "merchant"){  // trader's hat with a gold band
+    c.fillStyle = "#6e4a22"; c.beginPath(); c.ellipse(0, -64, 17, 3.6, 0, 0, Math.PI*2); c.fill();
+    c.fillRect(-9.5, -77, 19, 13);
+    c.fillStyle = "#ffd166"; c.fillRect(-9.5, -68.5, 19, 2.6);
+  }
+  c.fillStyle = "#8a3b2e";
+  if(mouthOpen){ c.beginPath(); c.ellipse(0, -45.6, 2.1, 1.5, 0, 0, Math.PI*2); c.fill(); }
+  else c.fillRect(-2, -46, 4, 0.9);
+  c.restore();
+}
+function npcTalkAnchor(kind){
+  const npc = game.npcs.find(n => n.kind === kind);
+  return npc ? { x: npc.x, y: npc.y, r: npcTalkRange(npc) + 90 } : null;
+}
+// o: { npcKind | emoji, name, role, bg:[inner, outer], text, extra(html), choices, anchor:{x,y,r} }
+function openTalk(o){
+  const el = document.getElementById("talkDialog");
+  const prof = o.npcKind ? NPC_TALK_PROFILE[o.npcKind] : null;
+  if(el.hidden) sfx.talk();
+  talk.open = true;
+  talk.kind = o.npcKind || o.name;
+  talk.npcKind = o.npcKind || null;
+  talk.anchor = o.anchor || null;
+  const bg = o.bg || (prof && prof.bg) || ["#6a55c9", "#1c1636"];
+  const box = document.getElementById("talkPortraitBox");
+  box.style.setProperty("--pbg1", bg[0]); box.style.setProperty("--pbg2", bg[1]);
+  const emo = document.getElementById("talkEmoji"), cv = document.getElementById("talkPortrait");
+  emo.hidden = !!o.npcKind; cv.hidden = !o.npcKind;
+  if(!o.npcKind) emo.textContent = o.emoji || "💬";
+  document.getElementById("talkName").textContent = o.name || (prof && prof.name) || "";
+  const roleEl = document.getElementById("talkRole");
+  roleEl.textContent = o.role || (prof && prof.role) || "";
+  roleEl.hidden = !roleEl.textContent;
+  document.getElementById("talkExtra").innerHTML = o.extra || "";
+  talk.choices = (o.choices || []).filter(Boolean);
+  const box2 = document.getElementById("talkChoices");
+  box2.innerHTML = "";
+  talk.choices.forEach((ch, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "talk-choice" + (ch.cls ? " " + ch.cls : "") + (ch.leave ? " leave" : "") + (ch.leave && talk.choices.length % 2 === 1 ? " wide" : "");
+    b.disabled = !!ch.disabled;
+    b.innerHTML = `<span class="k">${i + 1}</span><span class="ic">${ch.icon || "▸"}</span><span class="lb">${netEsc(ch.label)}${ch.sub ? `<small>${netEsc(ch.sub)}</small>` : ""}</span>`;
+    b.addEventListener("click", ()=> talkPick(i));
+    box2.appendChild(b);
+  });
+  el.hidden = false;
+  talkStartTyping(o.text);
+}
+function talkPick(i){
+  const ch = talk.choices[i];
+  if(!ch || ch.disabled) return;
   sfx.click();
+  if(talk.shown < talk.total) talkFinishTyping();
+  if(ch.leave){ closeTalk(); return; }
+  if(ch.onPick) ch.onPick();
+}
+function closeTalk(){
+  if(talk.timer){ clearInterval(talk.timer); talk.timer = null; }
+  talk.open = false; talk.kind = null; talk.npcKind = null; talk.anchor = null; talk.choices = [];
+  document.getElementById("talkDialog").hidden = true;
+}
+document.getElementById("talkText").addEventListener("click", ()=>{ if(talk.shown < talk.total) talkFinishTyping(); });
+document.getElementById("talkCloseX").addEventListener("click", ()=>{ sfx.click(); closeTalk(); });
+const TALK_LEAVE = { icon:"👋", label:"ลาก่อน", leave:true };
+function talkPickLine(lines){ return lines[Math.floor(Math.random() * lines.length)]; }
+// Opening a shop/forge from a conversation: the window's "‹ คุยต่อ" button goes back to the same NPC.
+function openServicePanel(panelId, render){
+  closeAllPanels();
+  render();
+  updateHeaderChips();
+  document.getElementById(panelId).hidden = false;
+}
+document.querySelectorAll(".panel-back[data-back]").forEach(b => b.addEventListener("click", ()=>{
+  sfx.click();
+  closeAllPanels();
+  if(b.dataset.back === "merchant") openMerchantDialog();
+  else if(b.dataset.back === "blacksmith") openBlacksmithDialog();
+}));
+
+/* ---- Merchant ---- */
+const MERCHANT_TIPS = [
+  "ของที่ไม่ได้ใช้อย่าเก็บไว้ให้หนักกระเป๋า เอามาขายข้าได้ทุกเมื่อ — กด **Alt ค้างแล้วคลิก** เพื่อขายทั้งกองเลยก็ได้",
+  "อยากลองอาวุธแบบอื่นไหม? ข้ามี **อาวุธเริ่มต้นครบทั้ง 4 แบบ** ราคาแค่ 10 เหรียญ ลองได้โดยไม่ต้องสร้างตัวใหม่",
+  "ได้ยินมาว่าตามแมพผจญภัยมี **จุดลับ** ซ่อนอยู่ บางที่มีกุญแจ บางที่มีอุปกรณ์โบราณ... ลองเดินสำรวจดูสิ",
+  "ถ้ากระเป๋าเต็ม ของใหม่จะถูกส่งไป **กล่องฝากของ** ที่บ้านเอง อย่าลืมแวะไปจัดการด้วยล่ะ"
+];
+function openMerchantDialog(line, extraHtml){
+  const p = game.player;
+  const hasLetter = game.inventory.some(e => e.id === "old_letter");
+  const sellable = game.inventory.filter(e => isSellable(e) && !e.equipped).length;
+  let text = line;
+  if(!text){
+    if(hasLetter) text = "หืม? นั่น **จดหมายเก่า** ที่เจ้าถือมาใช่ไหม... ลายมือนั่นคุ้นตาข้าเหลือเกิน ให้ข้าดูหน่อยได้ไหม?";
+    else if(p.gold < 20) text = "ดูท่ากระเป๋าเงินจะเบาไปหน่อยนะ นักผจญภัย... มีของอะไรจะขายให้ข้าก่อนไหมล่ะ?";
+    else text = talkPickLine([
+      "ยินดีต้อนรับ! ของดีราคาถูก มีครบทุกอย่างที่นักผจญภัยต้องใช้",
+      `โอ้ ${p.name}! กลับมาจากการผจญภัยอีกแล้วเหรอ วันนี้จะซื้อหรือขายอะไรดีล่ะ?`,
+      "เข้ามาเลย เข้ามาดูก่อนได้ ไม่ซื้อไม่ว่ากัน!"
+    ]);
+  }
+  openTalk({ npcKind:"merchant", text, anchor: npcTalkAnchor("merchant"),
+    extra: (extraHtml || "") + `<div class="tk-chips"><span class="tk-chip">💰 ${p.gold}</span><span class="tk-chip">🎒 ของที่ขายได้ ${sellable} รายการ</span></div>`,
+    choices: [
+      { icon:"🛒", label:"ซื้อของ", sub:"ยา สมุนไพร และอาวุธเริ่มต้น", cls:"primary", onPick: ()=> openServicePanel("buyPanel", ()=>{ renderBuyPanel(); renderBuyWeaponList(); }) },
+      { icon:"💰", label:"ขายของ", sub: sellable ? `ขายได้ ${sellable} รายการในกระเป๋า` : "ยังไม่มีของที่ขายได้", onPick: ()=> openServicePanel("sellPanel", renderSellPanel) },
+      hasLetter && { icon:"✉️", label:"ส่งจดหมายเก่า", sub:"ภารกิจ · พ่อค้ามีรางวัลให้", cls:"gold", onPick: turnInOldLetter },
+      { icon:"💬", label:"มีเรื่องน่าสนใจไหม?", sub:"ฟังคำแนะนำจากพ่อค้า", onPick: ()=> openMerchantDialog(talkPickLine(MERCHANT_TIPS)) },
+      TALK_LEAVE
+    ] });
+}
+function turnInOldLetter(){
   const idx = game.inventory.findIndex(e => e.id === "old_letter");
   if(idx === -1) return;
   game.inventory[idx].qty -= 1;
@@ -7656,12 +8006,35 @@ document.getElementById("turnInQuestBtn").addEventListener("click", ()=>{
   const isNew = registerDiscovery({ kind:"equipment", defId });
   addEquipmentToInventory(rollEquipmentInstance(defId));
   updateHud();
-  showToast(`พ่อค้าขอบคุณ! ได้รับ 💰${goldReward} และ ${EQUIPMENT_DEFS[defId].icon} ${EQUIPMENT_DEFS[defId].name}${isNew ? " (ใหม่!)" : ""}`);
-  document.getElementById("npcQuestRow").hidden = true;
-});
-function closeDialog(){
-  document.getElementById("npcDialog").hidden = true;
+  sfx.levelUp();
+  const eq = EQUIPMENT_DEFS[defId];
+  showToast(`พ่อค้าขอบคุณ! ได้รับ 💰${goldReward} และ ${eq.icon} ${eq.name}${isNew ? " (ใหม่!)" : ""}`);
+  openMerchantDialog("นี่มัน... จดหมายจากพี่ชายข้าที่หายไปเมื่อหลายปีก่อน! ขอบคุณจริงๆ นักผจญภัย รับของพวกนี้ไว้เถอะ",
+    `<div class="tk-reward"><span class="big">🎁</span><span>ได้รับ 💰${goldReward} และ ${eq.icon} ${netEsc(eq.name)}${isNew ? " (ใหม่!)" : ""}</span></div>`);
 }
+
+/* ---- Blacksmith ---- */
+const BLACKSMITH_TIPS = [
+  "**หินมานา** 💠 ได้จากการล่ามอนสเตอร์ได้ทุกแมพ ยิ่งบวกสูง ยิ่งต้องใช้หินกับเงินมากขึ้น",
+  "ของที่สวมอยู่ก็เอามาตีได้เลย ไม่ต้องถอด ข้าตีได้สูงสุดถึง **+10** — และข้าไม่เคยตีพลาดสักครั้ง!",
+  "ตีบวกแต่ละขั้นเพิ่มค่า **ATK / DEF / HP** ของชิ้นนั้น 8% ของค่าพื้นฐาน อาวุธดีๆ ยิ่งคุ้มที่จะตี"
+];
+function openBlacksmithDialog(line){
+  const p = game.player;
+  const mana = (game.inventory.find(e => e.id === "mana_stone") || {}).qty || 0;
+  const gear = game.inventory.filter(e => e.kind === "equipment" && (e.refineLevel || 0) < REFINE_MAX).length;
+  const text = line || (mana
+    ? talkPickLine(["ค้อนข้าร้อนพอดี! เอาอุปกรณ์มาสิ ข้าจะตีให้แข็งแกร่งขึ้น", `เห็น **หินมานา ${mana} ก้อน** ในกระเป๋าเจ้าแล้ว... มาเลย ข้ามือว่างพอดี`])
+    : "ไม่มี **หินมานา** ข้าก็ตีให้ไม่ได้หรอกนะ ไปล่ามอนสเตอร์มาก่อน แล้วค่อยกลับมาหาข้า");
+  openTalk({ npcKind:"blacksmith", text, anchor: npcTalkAnchor("blacksmith"),
+    extra: `<div class="tk-chips"><span class="tk-chip${mana ? "" : " no"}">💠 หินมานา ${mana}</span><span class="tk-chip">💰 ${p.gold}</span><span class="tk-chip">🛡️ อุปกรณ์ที่ตีได้ ${gear} ชิ้น</span></div>`,
+    choices: [
+      { icon:"🔨", label:"ตีบวกอุปกรณ์", sub:"ใช้ 💠 หินมานา + เงิน ต่อครั้ง", cls:"primary", onPick: ()=> openServicePanel("refinePanel", renderRefinePanel) },
+      { icon:"💬", label:"ขอคำแนะนำ", sub:"เรื่องการตีบวก", onPick: ()=> openBlacksmithDialog(talkPickLine(BLACKSMITH_TIPS)) },
+      TALK_LEAVE
+    ] });
+}
+function closeDialog(){ closeTalk(); }
 function closeAllPanels(){
   if(typeof hideSkillTip === "function") hideSkillTip(true);
   closeDialog();
@@ -7686,7 +8059,6 @@ function closeAllPanels(){
   document.getElementById("reportPanel").hidden = true;
   if(typeof socCloseMenu === "function") socCloseMenu();
 }
-document.getElementById("closeDialogBtn").addEventListener("click", ()=>{ sfx.click(); closeDialog(); });
 document.getElementById("closeStorageBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("storagePanel").hidden = true; });
 
 /* ---- Buy panel (merchant NPC) ---- */
@@ -7694,18 +8066,38 @@ const SHOP_BUY_ITEMS = [
   { id:"herb", price: 8 },
   { id:"potion", price: 15 }
 ];
+function shopRow(iconHtml, name, sub, price, onBuy, onBuy5){
+  const row = document.createElement("div"); row.className = "slot-item shop-row";
+  const poor = game.player.gold < price;
+  row.innerHTML = `<span class="shop-ic">${iconHtml}</span><span class="shop-nm"><b>${netEsc(name)}</b><small>${netEsc(sub)}</small></span><span class="shop-price${poor ? " no" : ""}">💰${price}</span>`;
+  const btn = document.createElement("button"); btn.type = "button"; btn.textContent = "ซื้อ"; btn.disabled = poor;
+  btn.addEventListener("click", ()=>{ onBuy(); refreshBuyPanel(); });
+  row.appendChild(btn);
+  if(onBuy5){
+    const b5 = document.createElement("button"); b5.type = "button"; b5.className = "alt"; b5.textContent = "×5"; b5.title = "ซื้อทีละ 5 ชิ้น"; b5.disabled = poor;
+    b5.addEventListener("click", ()=>{ onBuy5(); refreshBuyPanel(); });
+    row.appendChild(b5);
+  }
+  return row;
+}
+function refreshBuyPanel(){ if(!document.getElementById("buyPanel").hidden){ renderBuyPanel(); renderBuyWeaponList(); updateHeaderChips(); } }
 function renderBuyPanel(){
   const list = document.getElementById("buyList");
   list.innerHTML = "";
   SHOP_BUY_ITEMS.forEach(shopItem => {
     const def = ITEM_TABLE.find(i => i.id === shopItem.id);
-    const row = document.createElement("div"); row.className = "slot-item";
-    row.innerHTML = `<span>${def.icon} ${def.name} — 💰${shopItem.price}</span>`;
-    const btn = document.createElement("button"); btn.textContent = "ซื้อ";
-    btn.addEventListener("click", ()=> buyItem(shopItem.id, shopItem.price));
-    row.appendChild(btn);
-    list.appendChild(row);
+    const have = (game.inventory.find(e => e.id === shopItem.id) || {}).qty || 0;
+    list.appendChild(shopRow(def.icon, def.name, `มีอยู่ ${have}`, shopItem.price,
+      ()=> buyItem(shopItem.id, shopItem.price), ()=> buyItemMany(shopItem.id, shopItem.price, 5)));
   });
+}
+function buyItemMany(itemId, price, n){
+  sfx.click();
+  let got = 0;
+  while(got < n && game.player.gold >= price && addToInventory(itemId)){ game.player.gold -= price; got++; }
+  updateHud();
+  const def = ITEM_TABLE.find(i => i.id === itemId);
+  showToast(got ? `ซื้อ ${def.icon} ${def.name} ×${got} สำเร็จ!` : "เงินไม่พอ!");
 }
 function buyItem(itemId, price){
   sfx.click();
@@ -7728,14 +8120,11 @@ const SHOP_WEAPON_ITEMS = [
 function renderBuyWeaponList(){
   const list = document.getElementById("buyWeaponList");
   list.innerHTML = "";
+  const cat = { sword:"ดาบ · สมดุล", heavy:"อาวุธหนัก · ชาร์จแรง", bow:"ธนู · เล็งจุดอ่อน", orb:"สื่อเวทย์ · วาดเวท" };
   SHOP_WEAPON_ITEMS.forEach(shopItem => {
     const def = EQUIPMENT_DEFS[shopItem.defId];
-    const row = document.createElement("div"); row.className = "slot-item";
-    row.innerHTML = `<span>${equipIconHtml(def)} ${def.name} — 💰${shopItem.price}</span>`;
-    const btn = document.createElement("button"); btn.textContent = "ซื้อ";
-    btn.addEventListener("click", ()=> buyStarterWeapon(shopItem.defId, shopItem.price));
-    row.appendChild(btn);
-    list.appendChild(row);
+    const type = Object.keys(STARTER_WEAPON_DEF_ID).find(k => STARTER_WEAPON_DEF_ID[k] === shopItem.defId);
+    list.appendChild(shopRow(equipIconHtml(def), def.name, cat[type] || "อาวุธเริ่มต้น", shopItem.price, ()=> buyStarterWeapon(shopItem.defId, shopItem.price)));
   });
 }
 function buyStarterWeapon(defId, price){
@@ -7748,13 +8137,6 @@ function buyStarterWeapon(defId, price){
   updateHud();
   showToast(`ซื้อ ${EQUIPMENT_DEFS[defId].icon} ${EQUIPMENT_DEFS[defId].name} สำเร็จ!`);
 }
-document.getElementById("openBuyBtn").addEventListener("click", ()=>{
-  sfx.click();
-  document.getElementById("npcDialog").hidden = true;
-  renderBuyPanel();
-  renderBuyWeaponList();
-  document.getElementById("buyPanel").hidden = false;
-});
 document.getElementById("closeBuyBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("buyPanel").hidden = true; });
 
 /* ---- Refine panel (blacksmith NPC) ---- */
@@ -7857,7 +8239,7 @@ function refineEquipment(idx){
 }
 document.getElementById("closeRefineBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("refinePanel").hidden = true; });
 
-/* ---- Town lord dialog — simple accept/turn-in quest, reuses the generic locationDialog UI ---- */
+/* ---- Town lord — accept/turn-in quest + town lore, through the conversation window (openTalk) ---- */
 const QUEST_DEFS = {
   junk_hunt: {
     name: "กำจัดขยะในป่า",
@@ -7869,97 +8251,92 @@ const QUEST_DEFS = {
     npcCompleteText: "เยี่ยมมาก! เมืองสะอาดขึ้นเยอะเลย นี่รางวัลของเจ้า"
   }
 };
-function renderTownLordDialog(){
-  sfx.talk();
+const TOWN_LORD_LORE = [
+  "แต่ละแมพผจญภัยมีมอนสเตอร์ **เลเวลสูงขึ้นทีละ 10** — แมพ 1 คือ Lv.1–10 แมพ 2 คือ Lv.10–20 ไล่ไปเรื่อยๆ อย่าบุกเร็วเกินตัวล่ะ",
+  "ถ้ารู้สึกว่า **สติ** (แถบสีม่วง) ใกล้หมด ให้หยุดพักแล้ว **ทำสมาธิ** ก่อน นักรบที่ใจไม่นิ่งตีอะไรก็พลาด",
+  "เมืองนี้เป็น **เขตปลอดภัย** ไม่มีมอนสเตอร์กล้าย่างกรายเข้ามา จะพักหรือจัดของก็ตามสบาย",
+  "ทางใต้ของลานเมืองมี **ช่างตีเหล็ก** ฝีมือดีที่สุดในแดนนี้ เอาอุปกรณ์ไปให้เขาตีบวกดูสิ"
+];
+function renderTownLordDialog(line, extraHtml){
   const quest = QUEST_DEFS.junk_hunt;
   const state = game.player.questState.junk_hunt || "available";
-  document.getElementById("locationDialogTitle").textContent = "👑 เจ้าเมือง";
-  document.getElementById("locationDialogResult").hidden = true;
-  const actions = document.getElementById("locationDialogActions");
-  actions.innerHTML = "";
-  let flavor;
-
+  const have = game.inventory.find(e => e.id === quest.itemId);
+  const haveQty = have ? have.qty : 0, ready = state === "active" && haveQty >= quest.required;
+  const tag = state === "available" ? '<span class="tk-tag new">ภารกิจใหม่</span>' : state === "completed" ? '<span class="tk-tag done">สำเร็จแล้ว</span>'
+    : ready ? '<span class="tk-tag ok">พร้อมส่ง</span>' : '<span class="tk-tag">กำลังทำ</span>';
+  const pct = Math.min(100, Math.round(haveQty / quest.required * 100));
+  const card = `<div class="tk-card"><h5><span>📜 ${netEsc(quest.name)}</span>${tag}</h5>
+    <div>เก็บ 🗑️ ขยะเก่า (ดรอปจากมอนสเตอร์ทุกแมพ) <b>${state === "completed" ? quest.required : Math.min(haveQty, quest.required)}/${quest.required}</b></div>
+    ${state === "active" ? `<div class="tk-bar"><i style="width:${pct}%"></i></div>` : ""}
+    <div class="tk-chips"><span class="tk-chip">💰 ${quest.rewardGold}</span><span class="tk-chip">✨ ${quest.rewardExp} EXP</span></div></div>`;
+  let text = line;
+  const choices = [];
   if(state === "available"){
-    flavor = quest.npcGiveText;
-    const acceptBtn = document.createElement("button");
-    acceptBtn.className = "btn-primary"; acceptBtn.textContent = "✅ รับเควส: " + quest.name;
-    acceptBtn.addEventListener("click", ()=>{
-      sfx.click();
+    text = text || quest.npcGiveText;
+    choices.push({ icon:"✅", label:"รับภารกิจ", sub: quest.name, cls:"primary", onPick: ()=>{
       game.player.questState.junk_hunt = "active";
       showToast("รับเควสแล้ว: " + quest.name);
-      renderTownLordDialog();
-    });
-    actions.appendChild(acceptBtn);
+      renderTownLordDialog(`ขอบใจมาก! ขยะเก่าตกจากมอนสเตอร์ได้ทุกแมพ เก็บให้ครบ **${quest.required} ชิ้น** แล้วกลับมาหาข้านะ`);
+    } });
   } else if(state === "active"){
-    const have = game.inventory.find(e => e.id === quest.itemId);
-    const haveQty = have ? have.qty : 0;
-    flavor = `เก็บ 🗑️ ขยะเก่า ให้ได้ ${quest.required} ชิ้น แล้วนำมาส่งที่นี่ (สะสมแล้ว ${haveQty}/${quest.required})`;
-    if(haveQty >= quest.required){
-      const turnInBtn = document.createElement("button");
-      turnInBtn.className = "btn-primary"; turnInBtn.textContent = "📬 ส่งเควส";
-      turnInBtn.addEventListener("click", ()=>{
-        sfx.click();
-        have.qty -= quest.required;
-        if(have.qty <= 0){ const hi = game.inventory.indexOf(have); game.inventory.splice(hi, 1); }
-        game.player.gold += quest.rewardGold;
-        gainExp(quest.rewardExp);
-        game.player.questState.junk_hunt = "completed";
-        updateHud();
-        showDiscoveryBanner("✅ ภารกิจสำเร็จ!", quest.name);
-        showToast(`${quest.npcCompleteText} (+💰${quest.rewardGold} +${quest.rewardExp} EXP)`);
-        renderTownLordDialog();
-      });
-      actions.appendChild(turnInBtn);
-    }
+    text = text || (ready ? "โอ้! เก็บมาครบแล้วสินะ ข้ามองเห็นกองขยะจากตรงนี้เลย ส่งมาได้เลย"
+      : `ยังเก็บไม่ครบเหรอ? อีกแค่ **${quest.required - haveQty} ชิ้น** เอง ขยะเก่าตกจากมอนสเตอร์ได้ทุกแมพ`);
+    if(ready) choices.push({ icon:"📬", label:"ส่งภารกิจ", sub:`+💰${quest.rewardGold} · +${quest.rewardExp} EXP`, cls:"gold", onPick: ()=>{
+      have.qty -= quest.required;
+      if(have.qty <= 0){ const hi = game.inventory.indexOf(have); game.inventory.splice(hi, 1); }
+      game.player.gold += quest.rewardGold;
+      gainExp(quest.rewardExp);
+      game.player.questState.junk_hunt = "completed";
+      updateHud();
+      showDiscoveryBanner("✅ ภารกิจสำเร็จ!", quest.name);
+      showToast(`${quest.npcCompleteText} (+💰${quest.rewardGold} +${quest.rewardExp} EXP)`);
+      renderTownLordDialog(quest.npcCompleteText, `<div class="tk-reward"><span class="big">🏅</span><span>ได้รับ 💰${quest.rewardGold} และ ✨ ${quest.rewardExp} EXP</span></div>`);
+    } });
   } else {
-    flavor = "ขอบคุณอีกครั้งสำหรับความช่วยเหลือนะ เมืองของเราสงบสุขขึ้นมากเพราะเจ้า";
+    text = text || "ขอบคุณอีกครั้งสำหรับความช่วยเหลือนะ เมืองของเราสงบสุขขึ้นมากเพราะเจ้า";
   }
-  document.getElementById("locationDialogFlavor").style.whiteSpace = "";
-  document.getElementById("locationDialogFlavor").textContent = flavor;
-
-  const closeBtn = document.createElement("button");
-  closeBtn.className = "btn-secondary"; closeBtn.textContent = "ลาก่อน";
-  closeBtn.addEventListener("click", closeLocationDialog);
-  actions.appendChild(closeBtn);
-
-  document.getElementById("locationDialog").hidden = false;
+  choices.push({ icon:"💬", label:"เล่าเรื่องเมืองให้ฟังหน่อย", sub:"คำแนะนำจากเจ้าเมือง", onPick: ()=> renderTownLordDialog(talkPickLine(TOWN_LORD_LORE)) });
+  choices.push(TALK_LEAVE);
+  openTalk({ npcKind:"town_lord", text, extra: (extraHtml || "") + card, choices, anchor: npcTalkAnchor("town_lord") });
 }
 
 /* ---- Temple of the Barrier — the ritual that opens the next dimension layer ---- */
-function renderTempleDialog(){
-  sfx.talk();
+function renderTempleDialog(mode){
   const next = game.maxDimension + 1;
   const ready = !!game.dimCleared[game.maxDimension];
-  document.getElementById("locationDialogTitle").textContent = "🛕 โบสถ์แห่งบาเรีย";
-  document.getElementById("locationDialogResult").hidden = true;
-  const actions = document.getElementById("locationDialogActions");
-  actions.innerHTML = "";
   const laws = getDimRuleList(next);
   const gain = Math.round(DIM_PLAYER_STEP * 100), harder = Math.round(DIM_MONSTER_STEP * 100);
-  let flavor = `นักบวช: "บาเรียแต่ละชั้นกั้นโลกที่มานาหนาแน่นกว่าไว้ ผู้ที่ปราบราชันย์ครบทั้ง 10 แดน จะได้ยินเสียงชั้นถัดไปเรียก"\n\n`;
-  flavor += `มิติที่ปลดแล้ว: ${game.maxDimension}\n`;
-  if(!ready){
-    flavor += `ยังไม่พร้อม — ต้องปราบบอสแมพ ${MAP_TIER_COUNT} ในมิติ ${game.maxDimension} ก่อน`;
-  } else {
-    flavor += `\nพิธีข้ามสู่มิติ ${next}:\n` +
-      `• ของทุกชิ้น เลเวล คลัง และสกิล อยู่ครบ\n` +
-      `• รีเซ็ตแต้มสเตตัสคืนให้จัดใหม่ + แต้มถาวรอีก ${DIM_RITUAL_STAT_POINTS}\n` +
-      `• ในมิติ ${next}: มอน HP/ดาเมจ +${harder}%/ชั้น พลังคุณ +${gain}%/ชั้น EXP/ทอง +${Math.round(DIM_REWARD_STEP*100)}%/ชั้น\n` +
-      `• กฎหลอมรวม: ${laws.map(r => r.icon + " " + r.name + " (" + r.desc + ")").join(", ")}\n` +
-      `• กลับมามิติเดิมได้ทุกเมื่อผ่านประตูเดินทาง`;
-    const ritualBtn = document.createElement("button");
-    ritualBtn.className = "btn-primary"; ritualBtn.textContent = `✨ ทำพิธีข้ามสู่มิติ ${next}`;
-    ritualBtn.addEventListener("click", ()=>{ sfx.click(); closeLocationDialog(); performDimensionRitual(); });
-    actions.appendChild(ritualBtn);
+  const choices = [];
+  let text, extra;
+  if(mode === "confirm"){
+    text = `เมื่อพิธีเริ่ม เจ้าจะถูกส่งไปยัง **แมพ 1 ของมิติ ${next}** ทันที และแต้มสเตตัสทั้งหมดจะถูกคืนให้จัดใหม่\nพร้อมแล้วหรือยัง?`;
+    extra = `<div class="tk-card"><div class="tk-rows">
+      <div class="tk-row yes"><span class="i">✔</span><span>ของทุกชิ้น เลเวล คลัง และสกิล อยู่ครบ</span></div>
+      <div class="tk-row yes"><span class="i">✔</span><span>กลับมามิติเดิมได้ทุกเมื่อผ่านประตูเดินทาง</span></div></div></div>`;
+    choices.push({ icon:"✨", label:"เริ่มพิธีเลย", sub:`ข้ามสู่มิติ ${next}`, cls:"gold", onPick: ()=>{ closeTalk(); performDimensionRitual(); } });
+    choices.push({ icon:"↩️", label:"ขอคิดดูก่อน", onPick: ()=> renderTempleDialog() });
+    openTalk({ npcKind:"temple", text, extra, choices, anchor: npcTalkAnchor("temple") });
+    return;
   }
-  const el = document.getElementById("locationDialogFlavor");
-  el.style.whiteSpace = "pre-line";
-  el.textContent = flavor;
-  const closeBtn = document.createElement("button");
-  closeBtn.className = "btn-secondary"; closeBtn.textContent = "ลาก่อน";
-  closeBtn.addEventListener("click", closeLocationDialog);
-  actions.appendChild(closeBtn);
-  document.getElementById("locationDialog").hidden = false;
+  if(mode === "lore"){
+    text = `บาเรียแต่ละชั้นกั้นโลกที่ **มานาหนาแน่นกว่า** ไว้ ยิ่งลึก มอนสเตอร์ยิ่งแกร่ง (+${harder}%/ชั้น) แต่พลังของเจ้าก็จะเพิ่มตาม (+${gain}%/ชั้น) และทุกชั้นมี **กฎหลอมรวม** ของตัวเอง`;
+  } else if(!ready){
+    text = `"ผู้ที่ปราบราชันย์ครบทั้ง ${MAP_TIER_COUNT} แดน จะได้ยินเสียงชั้นถัดไปเรียก"\nเสียงนั้นยังไม่ดังถึงเจ้า... กลับมาหาข้าเมื่อพร้อม`;
+  } else {
+    text = `เจ้าได้ยินมันแล้วใช่ไหม... **เสียงของมิติ ${next}** กำลังเรียกเจ้าอยู่ บาเรียชั้นนี้เปิดทางให้แล้ว`;
+  }
+  extra = `<div class="tk-card"><h5><span>🌌 มิติที่ปลดแล้ว: ${game.maxDimension}</span>${ready ? '<span class="tk-tag ok">พร้อมทำพิธี</span>' : '<span class="tk-tag warn">ยังไม่พร้อม</span>'}</h5><div class="tk-rows">
+    <div class="tk-row ${ready ? "yes" : "no"}"><span class="i">${ready ? "✔" : "✖"}</span><span>ปราบบอสแมพ ${MAP_TIER_COUNT} ในมิติ ${game.maxDimension}</span></div>`;
+  if(ready){
+    extra += `<div class="tk-row"><span class="i">📈</span><span>รีเซ็ตแต้มสเตตัสคืนให้จัดใหม่ + แต้มถาวรอีก ${DIM_RITUAL_STAT_POINTS}</span></div>
+      <div class="tk-row"><span class="i">⚔️</span><span>มิติ ${next}: มอน HP/ดาเมจ +${harder}%/ชั้น · พลังคุณ +${gain}%/ชั้น · EXP/ทอง +${Math.round(DIM_REWARD_STEP*100)}%/ชั้น</span></div>`;
+    if(laws.length) extra += `<div class="tk-row"><span class="i">📜</span><span>กฎหลอมรวม: ${laws.map(r => netEsc(r.icon + " " + r.name + " (" + r.desc + ")")).join(", ")}</span></div>`;
+  }
+  extra += `</div></div>`;
+  if(ready) choices.push({ icon:"✨", label:`ทำพิธีข้ามสู่มิติ ${next}`, sub:"ต้องยืนยันอีกครั้ง", cls:"gold", onPick: ()=> renderTempleDialog("confirm") });
+  if(mode !== "lore") choices.push({ icon:"💬", label:"บาเรียคืออะไร?", sub:"ฟังนักบวชอธิบาย", onPick: ()=> renderTempleDialog("lore") });
+  choices.push(TALK_LEAVE);
+  openTalk({ npcKind:"temple", text, extra, choices, anchor: npcTalkAnchor("temple") });
 }
 function performDimensionRitual(){
   const p = game.player;
@@ -8494,12 +8871,6 @@ function quickSellItem(idx){
   sellItem(idx, entry.kind === "equipment" ? 1 : entry.qty); // full stack for stackables, the one piece for equipment
 }
 
-document.getElementById("openSellBtn").addEventListener("click", ()=>{
-  sfx.click();
-  document.getElementById("npcDialog").hidden = true;
-  renderSellPanel();
-  document.getElementById("sellPanel").hidden = false;
-});
 document.getElementById("closeSellBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("sellPanel").hidden = true; });
 
 const sellDropZone = document.getElementById("sellDropZone");
@@ -8727,11 +9098,11 @@ function renderWeaponSkillPanel(){
   const rank = WEAPON_RANK_LADDER[rankIdx];
   const nextRank = WEAPON_RANK_LADDER[rankIdx + 1];
   const points = getWeaponSkillPointsAvailable(type);
-  const pct = nextRank ? clamp((entry.exp - hof.expNeeded) / (nextRank.expNeeded - hof.expNeeded), 0, 1) : 1;
+  const pct = nextRank ? clamp((entry.exp - rank.expNeeded) / (nextRank.expNeeded - rank.expNeeded), 0, 1) : 1;
   const sub = !categoryHasEquipment(type) ? "ยังไม่มีอาวุธประเภทนี้"
     : nextRank ? `${entry.exp} / ${nextRank.expNeeded} EXP · ถัดไป ${nextRank.name}` : "Rank สูงสุดแล้ว";
   document.getElementById("weaponSkillRankInfo").innerHTML = `<div class="skt-rank">
-      <div class="bar"><div class="name">${WEAPON_CATEGORIES[type].icon} ${hof.name}</div>
+      <div class="bar"><div class="name">${WEAPON_CATEGORIES[type].icon} ${rank.name}</div>
         <div class="sub">${sub}</div><div class="track"><div class="fill" style="width:${Math.round(pct*100)}%"></div></div></div>
       <div class="skt-points${points > 0 ? " has" : ""}"><b>${points}</b><span>แต้มสกิล</span></div>
     </div>`;
@@ -9935,6 +10306,56 @@ window.addEventListener("keydown", e => {
   if(tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON") return;
   e.preventDefault();
   chatOpen();
+});
+
+/* ---- UI v5 window chrome ---- */
+function updateHeaderChips(){
+  if(!game || !game.player) return;
+  const mana = (game.inventory.find(e => e.id === "mana_stone") || {}).qty || 0;
+  document.querySelectorAll(".hdr-chip[data-hdr]").forEach(el => {
+    el.textContent = el.dataset.hdr === "mana" ? "💠 " + mana : "💰 " + game.player.gold;
+  });
+}
+// every panel's ✕ moves into its (sticky) title bar so it stays reachable while the window scrolls
+document.querySelectorAll(".panel").forEach(p => {
+  const x = p.querySelector(":scope > .close-x"), h = p.querySelector(":scope > h2");
+  if(x && h){ x.title = x.title || "ปิด (Esc)"; h.appendChild(x); }
+});
+const MENU_PANELS = { statusBtn:"statusPanel", bagBtn:"bagPanel", collectionBtn:"collectionPanel", weaponSkillBtn:"weaponSkillPanel",
+  meditateBtn:"meditatePanel", friendsBtn:"friendsPanel", accountBtn:"accountPanel", gmBtn:"gmPanel" };
+const MENU_HOTKEYS = { c:"statusBtn", b:"bagBtn", i:"bagBtn", k:"weaponSkillBtn", j:"collectionBtn" };
+function syncMenuActive(){
+  for(const [btnId, panelId] of Object.entries(MENU_PANELS)){
+    const b = document.getElementById(btnId), pn = document.getElementById(panelId);
+    if(b && pn) b.classList.toggle("active", !pn.hidden);
+  }
+}
+if(typeof MutationObserver !== "undefined"){
+  const mo = new MutationObserver(syncMenuActive);
+  Object.values(MENU_PANELS).forEach(id => { const el = document.getElementById(id); if(el) mo.observe(el, { attributes:true, attributeFilter:["hidden"] }); });
+}
+[["statusBtn","C","สถานะ"],["bagBtn","B","กระเป๋า"],["weaponSkillBtn","K","สกิลอาวุธ"],["collectionBtn","J","คอลเลกชัน"]].forEach(([id, k, label]) => {
+  const b = document.getElementById(id);
+  if(!b || !b.insertBefore) return;
+  const hk = document.createElement("span"); hk.className = "hk"; hk.textContent = k;
+  const badge = b.querySelector(".stat-badge");
+  if(badge && badge.parentNode === b) b.insertBefore(hk, badge); else b.appendChild(hk);
+  b.title = label + " (ปุ่มลัด " + k + ")";
+});
+window.addEventListener("keydown", e => {
+  if(!game || game.inBattle || e.ctrlKey || e.altKey || e.metaKey) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if(tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if(document.getElementById("game-screen").style.display === "none") return;
+  if(talk.open && e.key >= "1" && e.key <= "9"){ e.preventDefault(); talkPick(parseInt(e.key, 10) - 1); return; }
+  if(talk.open && e.key === " " && talk.shown < talk.total){ e.preventDefault(); talkFinishTyping(); return; }
+  const btnId = MENU_HOTKEYS[e.key.toLowerCase()];
+  if(!btnId || game.player.isMeditating) return;
+  const btn = document.getElementById(btnId), pn = document.getElementById(MENU_PANELS[btnId]);
+  if(!btn || btn.hidden) return;
+  e.preventDefault();
+  if(pn && !pn.hidden){ sfx.click(); closeAllPanels(); }
+  else btn.click();
 });
 
 /* ============================================================
