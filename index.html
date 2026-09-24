@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mini Ragnarok - เกมผจญภัยโลกเปิด</title>
+<title>Menalars</title>
 <style>
   :root{
     --panel: #2E2A4A;
@@ -1993,9 +1993,10 @@ const PLAYER_BATTLE_SCALE = 2.6 * 1.5;
 const MONSTER_BATTLE_SCALE = 2.2 * 1.5;
 const BOSS_BATTLE_SCALE = 3.6;
 const DODGE_LANE_OFFSET = 90;
-// Perfect Zone: a fixed window of the attack gauge (percent of cooldown charge), not a time window.
-// The end is pinned at 98% per design; concentration only ever pulls the start earlier.
-const PERFECT_ZONE_BASE_START_PCT = 0.95;
+// Perfect Zone: ends at 98% of the attack gauge; its base width is a fixed TIME window (was 3% of the gauge —
+// only ~7-14 ms once attack speed tops out, under one screen frame). Concentration/MEDITATE/DEX/แรงเหวี่ยง
+// widen it on top (as % of the gauge, pulling the start earlier) exactly as before.
+const PERFECT_ZONE_BASE_MS = 60;
 const PERFECT_ZONE_END_PCT = 0.98;
 const PERFECT_ZONE_STEP_PER_POINT = 0.001; // -0.1 percentage point per point of concentration
 const PERFECT_ZONE_MIN_START_PCT = 0.5;    // safety floor so the zone can't swallow the whole gauge
@@ -2146,7 +2147,7 @@ function orbArcFacesRightWay(g, requiredShape){
 }
 function getOrbRequiredDeg(shape){
   const need = ORB_REQUIRED_DEG[shape];
-  return shape === "circle" ? Math.round(need - fx("true_circle")) : need;
+  return Math.round(need - fx("true_circle"));
 }
 function matchesOrbShape(points, requiredShape){
   const g = analyzeOrbGesture(points);
@@ -2182,8 +2183,8 @@ const STUN_RESIST = { boss: 0.5, elite: 0.75 };  // fill multiplier
 const STUN_DECAY_DELAY_MS = 2000;       // bar starts draining after this long without a hit...
 const STUN_DECAY_PER_SEC = 5;           // ...at this rate
 const STUN_DURATION_MS = { normal: 2000, boss: 1500 };
-const STUN_FLURRY_DMG_MULT = 0.45;      // of a normal hit's roll, per flurry hit (can still crit) — tuned so mashing
-                                        // adds ~+45% DPS for hammer … ~+20% for bow/orb; holding ≈ normal DPS but safe
+const STUN_FLURRY_DMG_MULT = 0.6;      // of a normal hit's roll, per flurry hit (can still crit) — was 0.45; at late-game attack speed a
+                                        // stun then cost DPS, so every stun skill was a trap pick (skill-balance sim)
 const STUN_FLURRY_MIN_GAP_MS = 100;     // mash cap: 10 hits/sec max
 const STUN_HOLD_INTERVAL_MS = 500;      // holding the button: 1 hit every 0.5s
 const GRID_SIZE = 40;
@@ -2432,8 +2433,18 @@ function setDimension(dim){
   getDimRuleList(dim).forEach(r => { game.dimRuleCounts[r.id] = (game.dimRuleCounts[r.id] || 0) + 1; });
 }
 // Map monster defs for the current layer — layer 1 returns the original defs untouched.
+// Fight length — sim-calibrated (see the skill-balance simulation notes): with the raw level curve an
+// on-level player killed map monsters in ~0.1 s and bosses in <1 s, so no monster ever got to attack and the
+// dodge / stun / skill systems never came into play. Targets for an average on-level player: monster ~4 s,
+// boss ~12 s. Rewards rise a little so EXP/gold per minute (walking + summary screens included) stays close.
+const MONSTER_HP_MULT_BY_TIER = [0, 13.9, 14.2, 18.3, 21.2, 22.9, 23.9, 23.8, 24, 24.3, 24.4]; // [map tier] — normal monsters
+const BOSS_HP_MULT_BY_TIER    = [0, 4.3, 6.6, 10.5, 13, 14.6, 15.7, 15.8, 15.4, 16.3, 17.6];   // [map tier] — bosses (on top of BOSS_HP_MULT)
+const MONSTER_REWARD_MULT = 1.75; // ~5 s of walking/summary per kill: (4 + 5) / (0.1 + 5) ≈ 1.75× the time per kill
 function getMapMonsterDefs(tier){
-  const defs = generateMapMonsterDefs(tier);
+  const defs = generateMapMonsterDefs(tier).map(def => Object.assign({}, def, {
+    maxHp: Math.round(def.maxHp * (def.isBoss ? BOSS_HP_MULT_BY_TIER[tier] : MONSTER_HP_MULT_BY_TIER[tier])),
+    exp: Math.round(def.exp * MONSTER_REWARD_MULT), gold: Math.round(def.gold * MONSTER_REWARD_MULT)
+  }));
   const d = game.dimension;
   if(d <= 1) return defs;
   const hpMult = (1 + (d - 1) * DIM_MONSTER_STEP) * dimRuleMult("stoneskin");
@@ -5178,36 +5189,36 @@ const SKILL_PROFICIENCY_EXP_PER_LEVEL = 150; // flat per level — landing that 
 const WEAPON_SKILL_TREES = {
   sword: { tiers: [
     { unlockRankIndex:1, points:2, skills:[ { id:"triple_slash", active:true },
-      { id:"riposte",        name:"ปัดป้อง",      icon:"💨", desc:"ขยายเวลาหน้าต่างโต้กลับหลังหลบสมบูรณ์แบบ", effectPerLevel:8, suffix:"%" },
-      { id:"swift_blade",    name:"ดาบไว",        icon:"⚡", desc:"ได้ Speed Boost อัตโนมัติหลังตี Perfect", effectPerLevel:1200, suffix:"ms" } ]},
+      { id:"riposte",        name:"ปัดป้อง",      icon:"💨", desc:"หลบสมบูรณ์แบบแล้ว หน้าต่างโต้กลับนานขึ้น + สวนกลับแรงขึ้น", effectPerLevel:40, suffix:"%" },
+      { id:"swift_blade",    name:"ดาบไว",        icon:"⚡", desc:"ได้ Speed Boost อัตโนมัติหลังตี Perfect", effectPerLevel:900, suffix:"ms" } ]},
     { unlockRankIndex:3, points:2, skills:[ { id:"parry_stance", active:true },
       { id:"double_riposte", name:"สวนสองจังหวะ", icon:"✌️", desc:"สวนกลับฟันซ้ำอีกครั้ง", effectPerLevel:30, suffix:"% ดาเมจครั้งที่ 2" },
       { id:"wind_step",      name:"ลมใต้ดาบ",     icon:"🍃", desc:"Perfect Slash ลดคูลดาวน์หลบ", effectPerLevel:200, suffix:"ms" } ]},
     { unlockRankIndex:5, points:2, skills:[ { id:"blink_step", active:true },
       { id:"flow_rhythm",    name:"จังหวะไหล",    icon:"🌊", desc:"หลบสมบูรณ์แบบแต่ละครั้งเพิ่ม ATK สะสม (สูงสุด 3 ชั้น) หายเมื่อโดนตี", effectPerLevel:4, suffix:"% ATK/ชั้น" },
-      { id:"keen_edge",      name:"คมกริบ",       icon:"🔪", desc:"Perfect Slash มีโอกาสคริเพิ่ม", effectPerLevel:8, suffix:"%" } ]},
+      { id:"keen_edge",      name:"คมกริบ",       icon:"🔪", desc:"Perfect Slash มีโอกาสคริเพิ่ม", effectPerLevel:12, suffix:"%" } ]},
     { unlockRankIndex:7, points:2, skills:[ { id:"expose_weakness", active:true },
-      { id:"rapid_flurry",   name:"ฟันรัว",       icon:"💫", desc:"ฮิตรัวตอนมอนสตั้นแรงขึ้น (ปกติ 45%)", effectPerLevel:5, suffix:"% ต่อฮิต" },
+      { id:"rapid_flurry",   name:"ฟันรัว",       icon:"💫", desc:"ฮิตรัวตอนมอนสตั้นแรงขึ้น (ปกติ 60%)", effectPerLevel:2.3, suffix:"% ต่อฮิต" },
       { id:"read_intent",    name:"อ่านทาง",      icon:"👁️", desc:"สัญญาณเตือนการโจมตีของมอนยาวขึ้น", effectPerLevel:30, suffix:"ms" } ]},
     { unlockRankIndex:9, points:2, skills:[ { id:"thousand_blades", active:true },
-      { id:"lethal_counter", name:"สวนสังหาร",    icon:"☠️", desc:"สวนกลับคริแน่นอน และแรงขึ้น", effectPerLevel:5, suffix:"% ดาเมจ" },
-      { id:"shadowless",     name:"ดาบไร้เงา",    icon:"🌑", desc:"หน้าต่าง EMPOWERED ยาวขึ้น (ปกติ 1.5 วิ)", effectPerLevel:800, suffix:"ms" } ]}
+      { id:"lethal_counter", name:"สวนสังหาร",    icon:"☠️", desc:"สวนกลับคริแน่นอน และแรงขึ้น", effectPerLevel:8, suffix:"% ดาเมจ" },
+      { id:"shadowless",     name:"ดาบไร้เงา",    icon:"🌑", desc:"หน้าต่าง EMPOWERED ยาวขึ้น (ปกติ 1.5 วิ)", effectPerLevel:1500, suffix:"ms" } ]}
   ]},
   heavy: { tiers: [
     { unlockRankIndex:1, points:2, skills:[ { id:"ground_slam", active:true },
-      { id:"juggernaut",     name:"ทะลวง",        icon:"🛡️", desc:"ลดดาเมจที่ได้รับ 2.5 วิ หลังใช้โจมตีหนัก", effectPerLevel:4, suffix:"%" },
+      { id:"juggernaut",     name:"ทะลวง",        icon:"🛡️", desc:"ลดดาเมจที่ได้รับ 2.5 วิ หลังใช้โจมตีหนัก", effectPerLevel:9, suffix:"%" },
       { id:"armor_break",    name:"ทลายเกราะ",    icon:"💥", desc:"ศัตรูรับดาเมจเพิ่ม 2.5 วิ หลังโดนโจมตีหนัก", effectPerLevel:3, suffix:"%" } ]},
     { unlockRankIndex:3, points:2, skills:[ { id:"war_cry", active:true },
       { id:"stone_skin",     name:"ผิวหิน",       icon:"🪨", desc:"ระหว่างกดค้างชาร์จ ลดดาเมจที่ได้รับ", effectPerLevel:8, suffix:"%" },
       { id:"earthshaker",    name:"สั่นสะเทือน",  icon:"🌍", desc:"Charged Strike เติมหลอดสตั้นเพิ่ม", effectPerLevel:15, suffix:"% สตั้น" } ]},
     { unlockRankIndex:5, points:2, skills:[ { id:"brace", active:true },
-      { id:"momentum",       name:"แรงเหวี่ยง",   icon:"🌀", desc:"Perfect Zone กว้างขึ้น", effectPerLevel:1, suffix:"% ของหลอด", always:true },
-      { id:"pound",          name:"ทุบซ้ำ",       icon:"🔨", desc:"มอนติดสตั้นรับดาเมจเพิ่ม", effectPerLevel:10, suffix:"%" } ]},
+      { id:"momentum",       name:"แรงเหวี่ยง",   icon:"🌀", desc:"Perfect Zone กว้างขึ้น", effectPerLevel:1.5, suffix:"% ของหลอด", always:true },
+      { id:"pound",          name:"ทุบซ้ำ",       icon:"🔨", desc:"มอนติดสตั้นรับดาเมจเพิ่ม", effectPerLevel:6, suffix:"%" } ]},
     { unlockRankIndex:7, points:2, skills:[ { id:"quake_slam", active:true },
       { id:"stand_firm",     name:"ยืนหยัด",      icon:"🗿", desc:"HP ต่ำกว่า 30% ได้ DEF เพิ่ม", effectPerLevel:15, suffix:"% DEF" },
       { id:"crush",          name:"ขยี้",         icon:"🫳", desc:"มอนมึนนานขึ้น", effectPerLevel:150, suffix:"ms" } ]},
     { unlockRankIndex:9, points:2, skills:[ { id:"sky_breaker", active:true },
-      { id:"mountain",       name:"ภูผา",         icon:"⛰️", desc:"หลอดสตั้นไม่ลดลงเอง + เหลือค้างไว้หลังมึนจบ", effectPerLevel:5, suffix:"% หลอดคงเหลือ", always:true },
+      { id:"mountain",       name:"ภูผา",         icon:"⛰️", desc:"หลอดสตั้นไม่ลดลงเอง + เหลือค้างไว้หลังมึนจบ", effectPerLevel:14, suffix:"% หลอดคงเหลือ", always:true },
       { id:"rift",           name:"แผ่นดินแยก",   icon:"🕳️", desc:"บอสต้านสตั้นน้อยลง (ปกติเติมได้ 50%)", effectPerLevel:13, suffix:"% เติมเพิ่ม", always:true } ]}
   ]},
   bow: { tiers: [
@@ -5218,28 +5229,28 @@ const WEAPON_SKILL_TREES = {
       { id:"quick_eye",      name:"สายตาไว",      icon:"🔎", desc:"จุดเป้าบนตัวมอนใหญ่ขึ้น", effectPerLevel:10, suffix:"% ขนาด", always:true },
       { id:"twin_arrow",     name:"ลูกดอกคู่",    icon:"🏹", desc:"โอกาสยิงซ้ำลูกที่ 2 (50% ดาเมจ)", effectPerLevel:6, suffix:"% โอกาส" } ]},
     { unlockRankIndex:5, points:2, skills:[ { id:"pinning_arrow", active:true },
-      { id:"safe_range",     name:"ระยะปลอดภัย",  icon:"📏", desc:"6 วิหลังตรึง ลดดาเมจที่ได้รับ", effectPerLevel:10, suffix:"%" },
-      { id:"steady_breath",  name:"ลมหายใจนิ่ง",  icon:"🫁", desc:"Called Shot ติดกัน ดาเมจสะสม (สูงสุด 3 ชั้น)", effectPerLevel:5, suffix:"%/ชั้น" } ]},
+      { id:"safe_range",     name:"ระยะปลอดภัย",  icon:"📏", desc:"6 วิหลังตรึง ลดดาเมจที่ได้รับ", effectPerLevel:21, suffix:"%" },
+      { id:"steady_breath",  name:"ลมหายใจนิ่ง",  icon:"🫁", desc:"Called Shot ติดกัน ดาเมจสะสม (สูงสุด 3 ชั้น)", effectPerLevel:4.6, suffix:"%/ชั้น" } ]},
     { unlockRankIndex:7, points:2, skills:[ { id:"true_sight", active:true },
       { id:"hunter",         name:"นักล่า",       icon:"🐺", desc:"มอน HP ต่ำกว่า 30% รับดาเมจเพิ่ม", effectPerLevel:8, suffix:"%" },
       { id:"shadow_veil",    name:"เงาเร้น",      icon:"🌫️", desc:"โอกาสหลบอัตโนมัติเมื่อกำลังจะโดนตี", effectPerLevel:4, suffix:"% โอกาส" } ]},
     { unlockRankIndex:9, points:2, skills:[ { id:"will_arrow", active:true },
-      { id:"shatter_arrow",  name:"ศรแตก",        icon:"✨", desc:"ยิงคริแล้วแตกเป็นฮิตเสริม", effectPerLevel:25, suffix:"% ดาเมจ" },
-      { id:"heaven_eye",     name:"ตาสวรรค์",     icon:"🌟", desc:"Called Shot เติมหลอดสตั้นเพิ่ม", effectPerLevel:55, suffix:"% สตั้น" } ]}
+      { id:"shatter_arrow",  name:"ศรแตก",        icon:"✨", desc:"ยิงคริแล้วแตกเป็นฮิตเสริม", effectPerLevel:12, suffix:"% ดาเมจ" },
+      { id:"heaven_eye",     name:"ตาสวรรค์",     icon:"🌟", desc:"Called Shot แรงขึ้น + เติมหลอดสตั้นเพิ่ม 3 เท่าของค่านี้", effectPerLevel:19, suffix:"% ดาเมจ" } ]}
   ]},
   orb: { tiers: [
     { unlockRankIndex:1, points:2, skills:[ { id:"mana_surge", active:true },
       { id:"barrier_ward",   name:"เกราะมานา",    icon:"🔵", desc:"โล่ดูดดาเมจ แตกแล้วฟื้นใหม่ทุก 12 วิ", effectPerLevel:4, suffix:"% Max HP" },
       { id:"mana_flow",      name:"กระแสมานา",    icon:"🌊", desc:"คูลดาวน์สกิลทุกตัวลดลง", effectPerLevel:3, suffix:"%", always:true } ]},
     { unlockRankIndex:3, points:2, skills:[ { id:"calm_mind", active:true },
-      { id:"still_mind",     name:"จิตนิ่ง",      icon:"🪷", desc:"สติลดลงช้าลง", effectPerLevel:8, suffix:"%", always:true },
-      { id:"true_circle",    name:"วงแม่น",       icon:"⭕", desc:"โจทย์วงกลมใช้องศาน้อยลง (ปกติ 270°)", effectPerLevel:10, suffix:"°", always:true } ]},
+      { id:"still_mind",     name:"จิตนิ่ง",      icon:"🪷", desc:"สติลดลงช้าลง", effectPerLevel:12, suffix:"%", always:true },
+      { id:"true_circle",    name:"วงแม่น",       icon:"⭕", desc:"โจทย์วาดทุกแบบใช้องศาน้อยลง (ปกติ วงกลม 270° / ครึ่งวง 130°)", effectPerLevel:16, suffix:"°", always:true } ]},
     { unlockRankIndex:5, points:2, skills:[ { id:"reverse_flow", active:true },
       { id:"mana_drain",     name:"ดูดมานา",      icon:"💧", desc:"Arcane Circle ฟื้น HP", effectPerLevel:2, suffix:"% Max HP" },
       { id:"unified_mind",   name:"ผสานจิต",      icon:"🧠", desc:"สติ 90% ขึ้นไป ATK เพิ่ม", effectPerLevel:5, suffix:"% ATK", always:true } ]},
     { unlockRankIndex:7, points:2, skills:[ { id:"mana_seal", active:true },
-      { id:"layered_circle", name:"วงซ้อน",       icon:"🔁", desc:"Arcane Circle ติดกันตั้งแต่ครั้งที่ 2 ลดคูลดาวน์สกิลสื่อเวทย์", effectPerLevel:400, suffix:"ms" },
-      { id:"storm_eye",      name:"ใจกลางพายุ",   icon:"🌩️", desc:"โล่เกราะมานาแตก ปล่อยดาเมจสวน (ต้องมีเกราะมานา)", effectPerLevel:60, suffix:"% ดาเมจ" } ]},
+      { id:"layered_circle", name:"วงซ้อน",       icon:"🔁", desc:"Arcane Circle ติดกันตั้งแต่ครั้งที่ 2 ลดคูลดาวน์สกิลสื่อเวทย์", effectPerLevel:360, suffix:"ms" },
+      { id:"storm_eye",      name:"ใจกลางพายุ",   icon:"🌩️", desc:"โล่เกราะมานาแตก ปล่อยดาเมจสวน (ต้องมีเกราะมานา)", effectPerLevel:140, suffix:"% ดาเมจ" } ]},
     { unlockRankIndex:9, points:2, skills:[ { id:"mana_storm", active:true },
       { id:"true_will",      name:"เจตจำนงแท้",   icon:"🔥", desc:"บทลงโทษจากสติต่ำลดลง", effectPerLevel:50, suffix:"%", always:true },
       { id:"overflow",       name:"มานาล้น",      icon:"🫧", desc:"EMPOWERED แรงขึ้น (ปกติ x1.5)", effectPerLevel:0.27, suffix:"x" } ]}
@@ -5407,11 +5418,9 @@ function computePlayerBattleStats(level){
   const perfectZoneEnd = PERFECT_ZONE_END_PCT;
   const zoneWiden = eq.concentration * PERFECT_ZONE_STEP_PER_POINT
     + sp.MEDITATE * PERFECT_ZONE_STEP_PER_POINT
-    + sp.DEX * (PERFECT_ZONE_STEP_PER_POINT * STAT_RATES.DEX_ZONE_FRACTION);
-  const perfectZoneStart = clamp(
-    PERFECT_ZONE_BASE_START_PCT - zoneWiden - fx("momentum")/100,
-    PERFECT_ZONE_MIN_START_PCT, PERFECT_ZONE_END_PCT - 0.001
-  );
+    + sp.DEX * (PERFECT_ZONE_STEP_PER_POINT * STAT_RATES.DEX_ZONE_FRACTION)
+    + fx("momentum")/100;
+  const perfectZoneStart = getPerfectZoneStart(zoneWiden, cooldown);
 
   return {
     cooldown,                                                    // attack speed (ms), equipment+AGI-adjusted
@@ -5423,12 +5432,17 @@ function computePlayerBattleStats(level){
     finalAtk,
     def: (eq.def + sp.VIT * STAT_RATES.VIT_DEF) * sanityMult * getDimPlayerMult(),
     concentration: eq.concentration,
-    perfectZoneStart, perfectZoneEnd,
+    perfectZoneStart, perfectZoneEnd, zoneWiden,
     lifesteal: eq.lifesteal,
     lightningChance: eq.lightningChance,
     rareDropBonus: sp.LUK * STAT_RATES.LUK_RARE_DROP_PCT/100, // small relative boost applied in rollLootTable
     dodgeCooldownMs: Math.max(400, DODGE_COOLDOWN - sp.AGI * STAT_RATES.AGI_DODGE_CD_MS)
   };
+}
+
+// Zone start for the gauge actually running (haste shortens it — the base window stays 60 ms regardless).
+function getPerfectZoneStart(zoneWiden, cooldownMs){
+  return clamp(PERFECT_ZONE_END_PCT - PERFECT_ZONE_BASE_MS / cooldownMs - zoneWiden, PERFECT_ZONE_MIN_START_PCT, PERFECT_ZONE_END_PCT - 0.001);
 }
 
 const SKILL_DEFS = {
@@ -5448,35 +5462,35 @@ const SKILL_DEFS = {
                   desc: "รีเซ็ตคูลดาวน์หลบ + เปิดหน้าต่างสวนกลับทันที" },
   expose_weakness: { name: "เปิดช่องโหว่", icon: "🔍", cooldown: 14000, weaponType: "sword", utility: true, amount: 3,
                   desc: "ฮิตถัดไปเติมหลอดสตั้น x3" },
-  thousand_blades: { name: "พันดาบ", icon: "✴️", cooldown: 20000, weaponType: "sword", hits: 5, mult: 0.8, perCombo: 1,
-                  desc: "ฟัน 5 ครั้ง ครั้งละ 80% +1 ครั้งต่อคอมโบ Perfect ที่ค้างอยู่ (สูงสุด +4)" },
-  ground_slam:  { name: "ทุบแผ่นดิน",   icon: "🌋", cooldown: 12000, weaponType: "heavy", hits: 1, mult: 3.3,
-                  desc: "ทุบครั้งเดียว 330% ดาเมจ ช้าแต่หนักที่สุด" },
+  thousand_blades: { name: "พันดาบ", icon: "✴️", cooldown: 20000, weaponType: "sword", hits: 5, mult: 0.52, perCombo: 1,
+                  desc: "ฟัน 5 ครั้ง ครั้งละ 52% +1 ครั้งต่อคอมโบ Perfect ที่ค้างอยู่ (สูงสุด +4)" },
+  ground_slam:  { name: "ทุบแผ่นดิน",   icon: "🌋", cooldown: 12000, weaponType: "heavy", hits: 1, mult: 1.95,
+                  desc: "ทุบครั้งเดียว 195% ดาเมจ ช้าแต่หนักที่สุด" },
   war_cry:      { name: "คำรามศึก", icon: "📯", cooldown: 15000, weaponType: "heavy", utility: true, charges: 3, amount: 1.4,
                   desc: "การโจมตี 3 ครั้งถัดไปของมอน สัญญาณเตือนยาวขึ้น 40%" },
   brace:        { name: "ตั้งหลัก", icon: "🧱", cooldown: 16000, weaponType: "heavy", utility: true, durationMs: 3000, amount: 0.6, holdBy: 0.6,
                   desc: "3 วิ ดาเมจที่ได้รับเหลือ 60% และเริ่มชาร์จ Charged Strike ได้ถึง 60% ของหลอด (ปกติ 30%)" },
   quake_slam:   { name: "ทุบสะเทือน", icon: "💢", cooldown: 18000, weaponType: "heavy", utility: true, amount: 50,
                   desc: "เติมหลอดสตั้น 50 ทันที (บอส/Elite ต้านตามปกติ) ไม่มีดาเมจ" },
-  sky_breaker:  { name: "ทลายฟ้า", icon: "☄️", cooldown: 20000, weaponType: "heavy", hits: 1, mult: 2.5, stunnedMult: 3,
-                  desc: "ทุบ 250% ดาเมจ — ถ้ามอนติดสตั้นอยู่ x3 (750%)" },
+  sky_breaker:  { name: "ทลายฟ้า", icon: "☄️", cooldown: 20000, weaponType: "heavy", hits: 1, mult: 2.5, stunnedMult: 2.1,
+                  desc: "ทุบ 250% ดาเมจ — ถ้ามอนติดสตั้นอยู่ x2.1 (525%)" },
   deadeye_shot: { name: "ยิงจุดตาย",    icon: "🎯", cooldown: 10000, weaponType: "bow",   hits: 1, mult: 1.3, alwaysCrit: true,
                   desc: "ยิง 130% ดาเมจ คริติคอลแน่นอน" },
   retreat_shot: { name: "ถอยหลังยิง", icon: "🍃", cooldown: 12000, weaponType: "bow", utility: true, durationMs: 4000, mult: 0.8,
                   desc: "4 วิ ถ้ากำลังจะโดนตี หลบให้อัตโนมัติ 1 ครั้ง + ยิงสวน 80%" },
-  pinning_arrow:{ name: "ธนูตรึง", icon: "📌", cooldown: 14000, weaponType: "bow", utility: true, delayMs: 2500, durationMs: 6000,
-                  desc: "ยกเลิกการโจมตีที่กำลังมา และเลื่อนการโจมตีถัดไปออกไป 2.5 วิ" },
+  pinning_arrow:{ name: "ธนูตรึง", icon: "📌", cooldown: 14000, weaponType: "bow", utility: true, delayMs: 2200, durationMs: 6000,
+                  desc: "ยกเลิกการโจมตีที่กำลังมา และเลื่อนการโจมตีถัดไปออกไป 2.2 วิ" },
   true_sight:   { name: "ตาทะลุ", icon: "👁️‍🗨️", cooldown: 16000, weaponType: "bow", utility: true, charges: 3, amount: 2,
                   desc: "3 นัดถัดไป จุดเป้า Called Shot ใหญ่ขึ้น x2" },
-  will_arrow:   { name: "ศรเจตจำนง", icon: "🌠", cooldown: 20000, weaponType: "bow", hits: 1, mult: 6, minRatio: 0.25,
-                  desc: "ใช้หลอดโจมตีทั้งหลอด: 150% ตอนหลอดว่าง → 600% ตอนหลอดเต็ม (ยิ่งรอยิ่งแรง)" },
+  will_arrow:   { name: "ศรเจตจำนง", icon: "🌠", cooldown: 20000, weaponType: "bow", hits: 1, mult: 5.4, minRatio: 0.25,
+                  desc: "ใช้หลอดโจมตีทั้งหลอด: 135% ตอนหลอดว่าง → 540% ตอนหลอดเต็ม (ยิ่งรอยิ่งแรง)" },
   mana_surge:   { name: "คลื่นมานา",    icon: "🌀", cooldown: 11000, weaponType: "orb",   hits: 1, mult: 2.0, healPct: 30,
                   desc: "ปล่อยมานา 200% ดาเมจ ดูดกลับเป็น HP 30% ของดาเมจ" },
-  calm_mind:    { name: "สงบจิต", icon: "🧘", cooldown: 30000, weaponType: "orb", utility: true, amount: 3,
-                  desc: "ฟื้นสติ 3% ทันที (ไม่แทนการนั่งสมาธิ)" },
+  calm_mind:    { name: "สงบจิต", icon: "🧘", cooldown: 33000, weaponType: "orb", utility: true, amount: 2,
+                  desc: "ฟื้นสติ 2% ทันที (ไม่แทนการนั่งสมาธิ)" },
   reverse_flow: { name: "ย้อนกระแส", icon: "🔄", cooldown: 15000, weaponType: "orb", utility: true, durationMs: 5000, mult: 1.5,
                   desc: "5 วิ การโจมตีที่โดนครั้งถัดไปถูกสะท้อน: ไม่เสียเลือด + สวนกลับ 150%" },
-  mana_seal:    { name: "ผนึกมานา", icon: "🔒", cooldown: 18000, weaponType: "orb", utility: true,
+  mana_seal:    { name: "ผนึกมานา", icon: "🔒", cooldown: 24000, weaponType: "orb", utility: true,
                   desc: "การโจมตีครั้งถัดไปของมอนสลายไป (ไม่มีดาเมจ ไม่เสียสติ)" },
   mana_storm:   { name: "พายุมานา", icon: "⛈️", cooldown: 22000, weaponType: "orb", hits: 1, mult: 3, perStreak: 1.5, maxStreak: 3,
                   desc: "ระเบิด 300% +150% ต่อ Arcane Circle ติดกันที่สะสมไว้ (สูงสุด 3 = 750%) ใช้แล้วรีเซ็ต" }
@@ -5503,6 +5517,8 @@ function spawnEffect(type, x, y, crit, masteryGlow, style){
   game.battle.effects.push({ type, x, y, start: performance.now(), duration: type === "impact" ? 260 : 200, crit: !!crit, masteryGlow: !!masteryGlow, style: style || null });
 }
 
+// usable during a boss's 3-hit combo (attacks + damage skills stay locked until it ends) — plus every utility:true weapon skill
+const COMBO_SAFE_SKILLS = new Set(["guard", "heal", "haste"]);
 function usePlayerSkill(skillId){
   if(!game || !game.inBattle) return;
   const skillDef = SKILL_DEFS[skillId];
@@ -5514,7 +5530,7 @@ function usePlayerSkill(skillId){
     return;
   }
   const p = game.player, b = game.battle, m = b.monster;
-  if(b.isBoss && b.comboActive){ showToast("ต้องหลบท่าผสมของบอสก่อน!"); return; }
+  if(b.isBoss && b.comboActive && !COMBO_SAFE_SKILLS.has(skillId) && !skillDef.utility){ showToast("ระหว่างท่าผสมบอส ใช้ได้แค่สกิลป้องกัน/ยูทิลิตี้"); return; }
   if(skillDef.weaponType){
     if(getEquippedWeaponMasteryType() !== skillDef.weaponType){
       showToast(`ต้องถือ${WEAPON_CATEGORIES[skillDef.weaponType].name}ถึงจะใช้ ${skillDef.name} ได้`);
@@ -5834,6 +5850,7 @@ function renderAttackGauge(){
   const stats = computePlayerBattleStats(p.level);
   const cooldown = now < b.hasteUntil ? stats.cooldown * 0.6 : stats.cooldown;
   const progress = clamp((now - b.lastPlayerAttack) / cooldown, 0, 1);
+  const zoneStart = getPerfectZoneStart(stats.zoneWiden, cooldown);
 
   const fillEl = document.getElementById("attackGaugeFill");
   fillEl.style.width = (progress * 100) + "%";
@@ -5841,12 +5858,12 @@ function renderAttackGauge(){
     fillEl.style.background = "#ff6b35"; // distinct from the normal blue/green/gold — unmistakably "charging"
     updateChargeTonePitch(progress);
   }
-  else if(progress >= stats.perfectZoneStart && progress <= stats.perfectZoneEnd) fillEl.style.background = "#4CD97B";
+  else if(progress >= zoneStart && progress <= stats.perfectZoneEnd) fillEl.style.background = "#4CD97B";
   else if(progress > stats.perfectZoneEnd) fillEl.style.background = "var(--gold)";
   else fillEl.style.background = "#3a7bd5";
 
   const perfectEl = document.getElementById("attackGaugePerfect");
-  const startPct = stats.perfectZoneStart * 100, endPct = stats.perfectZoneEnd * 100;
+  const startPct = zoneStart * 100, endPct = stats.perfectZoneEnd * 100;
   perfectEl.style.left = startPct + "%";
   perfectEl.style.width = (endPct - startPct) + "%";
 
@@ -6273,6 +6290,8 @@ function battleAttack(){
     if(now < m.armorBrokenUntil) dmg = Math.round(dmg * (1 + m.armorBrokenBonus/100));
     dmg = Math.round(dmg * COUNTER_DAMAGE_MULT * gapMult);
     if(lethal){ dmg = Math.round(dmg * (1 + lethal/100)); train("lethal_counter"); }
+    const riposte = fx("riposte"); // ปัดป้อง: the same % also strengthens the counter
+    if(riposte) dmg = Math.round(dmg * (1 + riposte/100));
     dmg = applyNextHitBonuses(dmg);
 
     m.hp -= dmg;
@@ -6304,16 +6323,17 @@ function battleAttack(){
   const cooldown = now < b.hasteUntil ? stats.cooldown * 0.6 : stats.cooldown;
   const elapsed = now - b.lastPlayerAttack;
   const chargeRatio = elapsed / cooldown; // fraction of the gauge filled when clicked
+  const zoneStart = getPerfectZoneStart(stats.zoneWiden, cooldown);
   const orbDrawing = getEquippedWeaponMasteryType() === "orb" && battleDragTrail.length >= 8 && b.orbGestureShape;
   const recordOrbFeedback = timingNote => { // shows the player how their drawing scored — see renderBattle
     const g = analyzeOrbGesture(battleDragTrail);
     b.orbFeedback = { at: now, shape: b.orbGestureShape, g, ...describeOrbGesture(g, b.orbGestureShape, timingNote) };
   };
-  if(chargeRatio < stats.perfectZoneStart){ // still charging — too early to swing at all
+  if(chargeRatio < zoneStart){ // still charging — too early to swing at all
     if(orbDrawing) recordOrbFeedback("เกจยังไม่ถึงโซน — ยังโจมตีไม่ได้");
     return;
   }
-  const isPerfect = chargeRatio >= stats.perfectZoneStart && chargeRatio <= stats.perfectZoneEnd;
+  const isPerfect = chargeRatio >= zoneStart && chargeRatio <= stats.perfectZoneEnd;
   if(orbDrawing) recordOrbFeedback(isPerfect ? null : "จังหวะไม่ Perfect");
   b.lastPlayerAttack = now;
   const requiredSwipeDirection = b.swordSwipeDirection; // captured before reroll — this cycle's actual target
@@ -6391,7 +6411,7 @@ function battleAttack(){
         const breath = fx("steady_breath");
         if(breath){ dmg = Math.round(dmg * (1 + b.calledStreak * breath/100)); train("steady_breath"); }
         const heaven = fx("heaven_eye");
-        if(heaven){ stunSkillMult *= 1 + heaven/100; train("heaven_eye"); }
+        if(heaven){ dmg = Math.round(dmg * (1 + heaven/100)); stunSkillMult *= 1 + heaven * 3/100; train("heaven_eye"); }
       }
     }
     if(getEquippedWeaponMasteryType() === "orb" && requiredOrbShape && matchesOrbShape(battleDragTrail, requiredOrbShape)){
@@ -7273,7 +7293,7 @@ const TUTORIAL_STEPS = [
     "มีสัญญาณเตือนซ้ายหรือขวา → กด A หลบซ้าย / D หลบขวา (ต้องหลบใหม่ทุกครั้ง)\n\n" +
     "• หลบช่วง 0.3 วิสุดท้าย = หลบเฉียบขาด → คลิกภายใน 1.2 วิ ได้สวนกลับ x1.3 โดนแน่นอน\n" +
     "• ระวังคำว่า \"หลอก!\" มอนสลับฝั่งกลางทาง แต่จะมีเวลาให้หลบใหม่เสมอ\n" +
-    "• มอนเลเวลสูงกว่า / แมพลึก สัญญาณเตือนสั้นลง\n• บอสมีท่าผสม 3 จังหวะ ช่วงนั้นหลบได้อย่างเดียว" },
+    "• มอนเลเวลสูงกว่า / แมพลึก สัญญาณเตือนสั้นลง\n• บอสมีท่าผสม 3 จังหวะ ช่วงนั้นตีไม่ได้ — หลบ หรือใช้สกิลป้องกัน/ยูทิลิตี้" },
   { title: "ทำให้มอนติดสตั้น", text: // STUN_* constants
     "ทุกฮิตเติมหลอดสีส้มใต้เลือดมอน (Perfect x1.5, อินพุตอาวุธ x1.5, สกิล x2, สวนกลับ x1.5) หยุดตี 2 วิ หลอดจะค่อยๆ ลด\n\n" +
     "หลอดเต็ม = มอนมึน 2 วิ (บอส 1.5 วิ) ตีกลับไม่ได้:\n• รัวคลิกซ้าย (สูงสุด 10 ฮิต/วิ) หรือกดค้าง\n\n" +
@@ -8294,7 +8314,7 @@ function renderStatusPanel(){
     statusRow("ความแม่นยำ", `${Math.round(stats.accuracy*100)}%`),
     statusRow("อัตราคริติคอล", `${Math.round(stats.critRate*100)}%`),
     statusRow("แรงคริติคอล", `x${stats.critMult.toFixed(2)}`),
-    statusRow("ช่วง Perfect Zone", `${(stats.perfectZoneStart*100).toFixed(1)}% - ${(stats.perfectZoneEnd*100).toFixed(1)}%`)
+    statusRow("ช่วง Perfect Zone", `${(stats.perfectZoneStart*100).toFixed(1)}% - ${(stats.perfectZoneEnd*100).toFixed(1)}% (${Math.round((stats.perfectZoneEnd - stats.perfectZoneStart) * stats.cooldown)} ms)`)
   ];
   document.getElementById("statusList").innerHTML = rows.join("");
   renderStatPointsSection();
