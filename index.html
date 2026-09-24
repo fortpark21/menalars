@@ -723,6 +723,45 @@
   .vb-form h4{ margin:0 0 8px; font-size:14px; color:#4b3f8f; }
   .vb-form input{ width:100%; box-sizing:border-box; border:2px solid #d8cdb0; border-radius:8px; padding:7px 9px; font:inherit; font-size:13px; margin-bottom:6px; }
   .vb-form .vb-optin{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  /* 🛡️ GM console + player moderation (reuses the vote board's .vb-tabs / .vb-card / .vb-row look) */
+  #gmPanel{ width:860px; border:2px solid var(--gold); }
+  #gmPlayerPanel{ width:720px; border:2px solid var(--gold); }
+  .gm-sec{ background:#fff; border:2px solid #e4dcc4; border-radius:14px; padding:10px 12px; margin-bottom:10px; }
+  .gm-sec h4{ margin:0 0 8px; font-size:14px; color:#4b3f8f; }
+  .gm-line{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:6px; font-size:12.5px; color:#2a2346; }
+  .gm-line label{ min-width:118px; color:#7a7186; }
+  .gm-line input, .gm-line select, #gmConfirm select, #gmConfirm input, #gmConfirm textarea, .gm-sec textarea{ border:2px solid #d8cdb0; border-radius:8px; padding:5px 7px; font:inherit; font-size:12.5px; background:#fff; }
+  .gm-line input[type=number]{ width:84px; }
+  .gm-line button, .gm-sec button, .gm-act button{ border:none; border-radius:8px; padding:6px 11px; background:#4b3f8f; color:#fff; font-size:12.5px; font-weight:bold; }
+  .gm-line button.warn, .gm-act button.warn{ background:#c9401f; } .gm-line button.ok, .gm-act button.ok{ background:#2f9e5b; }
+  .gm-items{ display:grid; grid-template-columns:repeat(auto-fill, minmax(118px, 1fr)); gap:6px; max-height:260px; overflow-y:auto; padding:2px; }
+  .gm-item{ display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 4px; border:2px solid; border-radius:10px; background:#fbf8ef; text-align:center; cursor:pointer; }
+  .gm-item:hover{ transform:translateY(-1px); box-shadow:0 3px 8px rgba(0,0,0,.12); }
+  .gm-item.sel{ outline:3px solid #4b3f8f; background:#f1ecff; }
+  .gm-item .pf-ic{ width:32px; height:32px; font-size:24px; }
+  .gm-item b{ font-size:11px; line-height:1.2; color:#2a2346; }
+  .gm-item small{ font-size:10px; color:#7a7186; line-height:1.2; }
+  .gm-row{ display:flex; align-items:center; gap:8px; padding:7px 10px; border:2px solid #e4dcc4; border-radius:10px; background:#fff; margin-bottom:5px; font-size:12.5px; }
+  .gm-row .grow{ flex:1; min-width:0; } .gm-row b{ color:#2a2346; } .gm-row small{ color:#7a7186; display:block; }
+  .gm-chip{ display:inline-block; border-radius:8px; padding:1px 7px; font-size:11px; font-weight:bold; margin-left:4px; }
+  .gm-chip.ban{ background:#ffe0da; color:#a3260b; } .gm-chip.mute{ background:#ffeccc; color:#8a5a00; } .gm-chip.guest{ background:#eee; color:#666; } .gm-chip.gmc{ background:#fff1c7; color:#8a6a00; }
+  .gm-act{ display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin:10px 0; }
+  .gm-act button{ padding:10px 6px; font-size:13.5px; }
+  .gm-act button:disabled{ opacity:.4; cursor:default; }
+  #gmConfirm, #gmNotice{ position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; background:rgba(8,6,20,.72); }
+  #gmConfirm[hidden], #gmNotice[hidden]{ display:none; }
+  #gmConfirm .card, #gmNotice .card{ width:440px; max-width:92vw; background:var(--cream); border-radius:14px; padding:18px 20px; box-shadow:0 20px 60px rgba(0,0,0,.6); border:3px solid #c9401f; }
+  #gmNotice .card{ border-color:var(--gold); text-align:center; }
+  #gmConfirm h3, #gmNotice h3{ margin:0 0 8px; color:#2a2346; }
+  #gmConfirm .gm-line label{ min-width:90px; }
+  #gmConfirm .gm-go{ width:100%; margin-top:10px; padding:11px; border:none; border-radius:10px; background:#c9401f; color:#fff; font-size:15px; font-weight:bold; }
+  #gmConfirm .gm-go.safe{ background:#4b3f8f; }
+  #gmConfirm .gm-cancel{ width:100%; margin-top:6px; padding:8px; border:none; border-radius:10px; background:#e4dcc4; color:#4b3f8f; font-weight:bold; }
+  #gmNotice p{ white-space:pre-line; font-size:14px; color:#2a2346; }
+  #annBanner{ position:fixed; top:112px; left:50%; transform:translateX(-50%); z-index:56; max-width:80vw; padding:10px 18px; border-radius:14px;
+    background:rgba(28,24,56,.96); color:#fff; font-size:15px; border:2px solid var(--gold); box-shadow:0 0 22px rgba(255,209,102,.6); text-align:center; }
+  #annBanner[hidden]{ display:none; }
+  #annBanner b{ color:var(--gold); }
   .rk-back{ position:absolute; top:12px; right:44px; border:none; border-radius:8px; padding:5px 10px; background:#f7df7a; color:#5b3a1a; font-size:12px; font-weight:bold; }
   .rk-back[hidden]{ display:none; }
   .report-chat{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:#4b3f8f; margin:8px 0 4px; }
@@ -893,6 +932,7 @@
     <button class="menu-btn" id="tutorialBtn" type="button">❓ วิธีเล่น</button>
     <button class="menu-btn" id="friendsBtn" type="button" style="position:relative;" hidden>👥 เพื่อน<span id="friendsBadge" class="stat-badge" hidden>0</span></button>
     <button class="menu-btn" id="accountBtn" type="button" hidden>👤 บัญชี</button>
+    <button class="menu-btn" id="gmBtn" type="button" hidden style="border:2px solid var(--gold);">🛡️ GM</button>
   </div>
 
   <div id="discoveryBanner"></div>
@@ -1032,52 +1072,17 @@
     <div class="slot-list" id="travelList"></div>
   </div>
 
-  <div class="panel" id="debugPanel" hidden style="width:360px; border:2px dashed #c9401f;">
-    <button class="close-x" id="closeDebugBtn" type="button">✕</button>
-    <h2>🛠️ Debug Panel</h2>
-    <p class="storage-hint">สำหรับทดสอบเกมเท่านั้น — ห้ามมีในตัวเกมจริง (ปิดได้ที่ DEBUG_MODE ต้นไฟล์)</p>
-    <div class="slot-list">
-      <div class="slot-item"><span>ตั้งเลเวล</span><span>
-        <input type="number" id="debugLevelInput" value="10" min="1" max="999" style="width:56px;">
-        <button class="menu-btn" id="debugSetLevelBtn" type="button">ตั้งค่า</button>
-      </span></div>
-      <div class="slot-item"><span>เพิ่มเงิน</span><span>
-        <input type="number" id="debugGoldInput" value="1000" min="0" style="width:70px;">
-        <button class="menu-btn" id="debugGiveGoldBtn" type="button">เพิ่ม</button>
-      </span></div>
-      <div class="slot-item"><span>Stat Points +10</span>
-        <button class="menu-btn" id="debugGiveStatBtn" type="button">เพิ่ม</button>
-      </div>
-      <div class="slot-item"><span>วาปไปแมพ</span><span>
-        <select id="debugWarpSelect"></select>
-        <button class="menu-btn" id="debugWarpBtn" type="button">ไป</button>
-      </span></div>
-      <div class="slot-item"><span>ปลดล็อกทุกแมพในประตูเดินทาง</span>
-        <button class="menu-btn" id="debugUnlockMapsBtn" type="button">ปลดล็อก</button>
-      </div>
-      <div class="slot-item"><span>God Mode (โดนดาเมจสูงสุด 1)</span><span>
-        <input type="checkbox" id="debugGodModeCheck">
-      </span></div>
-      <div class="slot-item"><span>ฮีลเต็ม</span>
-        <button class="menu-btn" id="debugFullHealBtn" type="button">ฮีล</button>
-      </div>
-      <div class="slot-item"><span>Mastery เต็ม (ดาบ+อาวุธหนัก)</span>
-        <button class="menu-btn" id="debugMaxMasteryBtn" type="button">Max</button>
-      </div>
-      <div class="slot-item"><span>บังคับ Elite ทุกตัวในแมพนี้</span>
-        <button class="menu-btn" id="debugForceEliteBtn" type="button">บังคับ</button>
-      </div>
-      <div class="slot-item"><span>เพิ่มอุปกรณ์ทุกชิ้นในเกม</span>
-        <button class="menu-btn" id="debugGiveAllEquipBtn" type="button">เพิ่ม</button>
-      </div>
-      <div class="slot-item"><span>ปลด Achievement/Milestone/Title ทั้งหมด</span>
-        <button class="menu-btn" id="debugUnlockRewardsBtn" type="button">ปลดล็อก</button>
-      </div>
-      <div class="slot-item"><span>Discover All (สำหรับเทสหน้า Collection)</span>
-        <button class="menu-btn" id="debugDiscoverAllBtn" type="button">ปลดล็อก</button>
-      </div>
-    </div>
-    <p style="font-size:11px; color:#7a7186; margin-top:8px;">หรือพิมพ์คำสั่งผ่าน Console ได้เลย: <code>debug.help()</code></p>
+  <div class="panel" id="gmPanel" hidden>
+    <button class="close-x" id="closeGmBtn" type="button">✕</button>
+    <h2>🛡️ GM Console</h2>
+    <div class="vb-tabs" id="gmTabs"></div>
+    <div id="gmBody"></div>
+  </div>
+
+  <div class="panel" id="gmPlayerPanel" hidden>
+    <button class="close-x" id="closeGmPlayerBtn" type="button">✕</button>
+    <h2>🛡️ จัดการผู้เล่น</h2>
+    <div id="gmPlayerBody"></div>
   </div>
 
   <div class="panel" id="collectionPanel" hidden style="width:640px;">
@@ -1202,6 +1207,10 @@
 <div id="sanityVignette"></div>
 
 <!-- Online: a save the server refused / a dead login covers the whole game (see netBlock) -->
+<div id="gmConfirm" hidden><div class="card" id="gmConfirmCard"></div></div>
+<div id="gmNotice" hidden><div class="card"><div style="font-size:40px" id="gmNoticeIcon">⚠️</div><h3 id="gmNoticeTitle"></h3><p id="gmNoticeText"></p>
+  <button class="btn-primary" id="gmNoticeOk" type="button">รับทราบ</button></div></div>
+<div id="annBanner" hidden>📢 <b>ประกาศจากทีมงาน</b><br><span id="annText"></span></div>
 <div id="updateBanner" hidden>
   <span>✨ Menalars มีเวอร์ชันใหม่แล้ว</span>
   <button class="btn-primary" id="updateNowBtn" type="button">🔄 อัปเดตเลย</button>
@@ -2763,7 +2772,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 3;
+const GAME_VERSION = 4;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -2771,7 +2780,7 @@ const NET_IDLE_SEND_MS = 5000;  // keep-alive while standing still
 const NET_STALE_MS = 12000;     // a player not heard from this long has left
 const NET_HEARTBEAT_MS = 25000;
 const NET_CHAT_MAX_LEN = 80, NET_CHAT_COOLDOWN_MS = 1200, NET_CHAT_BUBBLE_MS = 5000, NET_CHAT_FADE_MS = 30000;
-const net = { session:null, user:null, sessionId:null, rev:0, saveJson:null, admin:false,
+const net = { mute: null, muted: new Set(),  session:null, user:null, sessionId:null, rev:0, saveJson:null, admin:false,
               saving:false, pendingJson:null, blocked:false, connected:true, lastSavedAt:0, refreshing:null, refreshTimer:0, myBubble:null, staff:new Set() };
 const rt = { ws:null, ref:0, topic:null, joinRef:null, joined:false, retryMs:1000, reconnectAt:0, rejoinAt:0, hb:0,
              lastSent:0, lastKey:"", lastX:0, lastY:0, force:false, hello:false, joinedAt:0, peers:new Map(), lastChatAt:0, fadeCheckAt:0 };
@@ -2958,6 +2967,7 @@ async function netAfterLogin(){
   net.sessionId = netUuid();
   try{
     const r = await netRpc("claim_session", JSON.stringify({ p_session: net.sessionId }));
+    if(r.banned){ netBlock("banned", modText(r.banned, "ระงับ")); return; }
     net.rev = r.rev || 0; net.admin = !!r.admin;
     if(GAME_VERSION < (+r.mv || 0)){ netBlock("version"); return; }
     net.saveJson = r.data ? JSON.stringify(r.data) : null;
@@ -2969,6 +2979,7 @@ async function netAfterLogin(){
   document.getElementById("creationAcctName").textContent = "👤 " + netAccountLabel();
   document.getElementById("accountBtn").hidden = false;
   document.getElementById("friendsBtn").hidden = false;
+  document.getElementById("gmBtn").hidden = !net.admin;
   socRefreshList();
   document.getElementById("chatBox").hidden = false;
   showContinueOption();
@@ -3020,6 +3031,8 @@ const NET_BLOCK_TEXT = {
   dupe:    ["⚠️", "ตรวจพบไอเทมซ้ำ", "อุปกรณ์บางชิ้นเคยออกจากตัวคุณไปแล้ว หรือมีชิ้นเดียวกันสองที่ — บาเรียปฏิเสธการบันทึกครั้งนี้"],
   nouid:   ["⚠️", "ตรวจพบอุปกรณ์ผิดปกติ", "อุปกรณ์บางชิ้นไม่มีรหัสประจำชิ้น — บาเรียปฏิเสธการบันทึกครั้งนี้"],
   auth:    ["🔑", "การเข้าสู่ระบบหมดอายุ", "เข้าสู่ระบบใหม่เพื่อเล่นต่อ ความคืบหน้าล่าสุดที่บันทึกไว้ยังอยู่ครบ"],
+  kicked:  ["👢", "คุณถูกทีมงานเตะออกจากเกม", "โหลดใหม่เพื่อเข้าเล่นอีกครั้ง"],
+  banned:  ["⛔", "บัญชีนี้ถูกระงับการเล่น", "ติดต่อทีมงานหากคิดว่าเป็นความผิดพลาด"],
   version: ["✨", "มีอัปเดตสำคัญของ Menalars", "เวอร์ชันที่เปิดอยู่เก่าเกินไปแล้ว — โหลดใหม่เพื่อเล่นต่อ ความคืบหน้าที่บันทึกไว้อยู่ครบ"]
 };
 // Reload that skips the browser's cached copy of the page (GitHub Pages lets browsers keep it ~10 min).
@@ -3028,7 +3041,8 @@ function netReloadFresh(){ location.replace(location.pathname + "?v=" + Date.now
 function netBlock(reason, detail){
   if(net.blocked) return;
   net.blocked = true;
-  const t = NET_BLOCK_TEXT[reason] || ["⚠️", "บันทึกไม่สำเร็จ", detail || "บาเรียปฏิเสธการบันทึก (" + (reason || "?") + ")"];
+  const base = NET_BLOCK_TEXT[reason];
+  const t = base ? [base[0], base[1], detail || base[2]] : ["⚠️", "บันทึกไม่สำเร็จ", detail || "บาเรียปฏิเสธการบันทึก (" + (reason || "?") + ")"];
   document.getElementById("netBlockIcon").textContent = t[0];
   document.getElementById("netBlockTitle").textContent = t[1];
   document.getElementById("netBlockText").textContent = t[2];
@@ -3149,7 +3163,7 @@ function rtHandle(m){
   else if(m.payload.event === "bye") rtRemovePeer(d.id);
   else if(m.payload.event === "chat"){
     const text = String(d.text || "").replace(/\s+/g, " ").trim().slice(0, NET_CHAT_MAX_LEN);
-    if(!text || soc.blocked.has(d.id)) return; // blocked: no line, no bubble
+    if(!text || soc.blocked.has(d.id) || net.muted.has(d.id)) return; // blocked / muted by a GM: no line, no bubble
     const o = rt.peers.get(d.id);
     const name = o ? o.name : String(d.name || "?").slice(0, 20);
     const gm = net.staff.has(d.id);
@@ -3263,6 +3277,7 @@ function chatSend(){
     socSendWhisper(text).then(done => { if(done){ input.value = ""; chatClose(); } });
     return;
   }
+  if(modMuted()){ chatAddLine("sys", "", "🔇 " + modText(net.mute, "ปิดการแชท")); return; }
   const now = performance.now();
   if(now - rt.lastChatAt < NET_CHAT_COOLDOWN_MS) return; // too fast — the text stays, press Enter again
   if(!rt.joined){ chatAddLine("sys", "", "ยังไม่ได้เชื่อมต่อ — ส่งข้อความไม่ได้ตอนนี้"); return; }
@@ -3321,7 +3336,7 @@ function socName(id, fallback){
 function socRpcMsg(r){
   return { offline:"ผู้เล่นนี้ออฟไลน์อยู่ — กระซิบได้เฉพาะตอนออนไลน์", blocked:"ส่งไม่ได้ — มีการบล็อกกันอยู่",
            fast:"ช้าลงหน่อย — ส่งถี่เกินไป", full:"รายชื่อเพื่อนเต็มแล้ว (100 คน)", invalid:"ทำรายการนี้ไม่ได้",
-           nosave:"ผู้เล่นนี้ยังไม่มีข้อมูลบนเซิร์ฟเวอร์" }[r && r.reason] || "ทำรายการไม่สำเร็จ";
+           nosave:"ผู้เล่นนี้ยังไม่มีข้อมูลบนเซิร์ฟเวอร์", muted:"🔇 คุณถูกปิดการแชทอยู่ — ส่งข้อความไม่ได้" }[r && r.reason] || "ทำรายการไม่สำเร็จ";
 }
 async function socPoll(){
   soc.polling = true;
@@ -3330,6 +3345,7 @@ async function socPoll(){
     const r = await netRpc("net_poll", JSON.stringify({ p_dim: game.dimension || 1, p_map: game.mapTier, p_x: Math.round(p.x), p_y: Math.round(p.y) }));
     if(GAME_VERSION < (+r.mv || 0)) netBlock("version");
     vb.pending = Math.max(0, Math.floor(+r.pv) || 0);
+    modPollResult(r);
     (r.w || []).forEach(w => {
       if(soc.blocked.has(w.from)) return;
       socRemember(w.from, "[กระซิบ] " + w.body);
@@ -3405,7 +3421,8 @@ function renderPlayerMenu(){
     ${friendItem}
     ${canGo ? item("goto", "🧭", "ไปหาเพื่อน") : ""}
     ${st === "blocked" ? item("unblock", "✔️", "เลิกบล็อก") : item("block", "🚫", soc.menuConfirm === "block" ? "ยืนยันบล็อก" : "บล็อก", ' class="warn"')}
-    ${item("report", "🚩", "รายงานผู้เล่น", ' class="warn"')}`;
+    ${item("report", "🚩", "รายงานผู้เล่น", ' class="warn"')}
+    ${net.admin && !gm ? item("gm", "🛡️", "จัดการผู้เล่น (GM)") : ""}`;
 }
 async function socMenuAction(act, id, name){
   name = socName(id, name);
@@ -3417,6 +3434,7 @@ async function socMenuAction(act, id, name){
   if(act === "whisper") return socStartWhisper(id, name);
   if(act === "report") return openReport(id, name);
   if(act === "goto") return socGoTo(soc.friends.get(id));
+  if(act === "gm") return openGmPlayer(id);
   try{
     let r;
     if(act === "addfriend"){
@@ -3469,7 +3487,7 @@ function socGoTo(f){
   if(game.inBattle){ showToast("ออกจากการต่อสู้ก่อน"); return; }
   if(game.dungeon){ showToast("ออกจากดันเจี้ยนก่อน"); return; }
   const town = f.map === TOWN_TIER;
-  if(!town && (f.dim > game.maxDimension || f.map > getDimReach(f.dim))){
+  if(!town && !net.admin && (f.dim > game.maxDimension || f.map > getDimReach(f.dim))){ // GMs may go anywhere
     showToast(`ยังไปไม่ได้ — ต้องปลดล็อก มิติ ${f.dim} แมพ ${f.map} ด้วยตัวเองก่อน`); return;
   }
   closeAllPanels();
@@ -3479,7 +3497,7 @@ function socGoTo(f){
     const free = findNearestFreeCell(c.gx, c.gy), pos = cellToWorld(free.gx, free.gy);
     game.player.x = pos.x; game.player.y = pos.y;
   }
-  showToast(`🧭 มาหา ${f.name} แล้ว`);
+  showToast(`🧭 มาหา ${f.name || "ผู้เล่น"} แล้ว`);
 }
 
 /* profile card / full inspect */
@@ -3554,7 +3572,7 @@ function renderProfile(){
       <small>${wtype && WEAPON_CATEGORIES[wtype] ? WEAPON_CATEGORIES[wtype].icon + " " + WEAPON_CATEGORIES[wtype].name + " · Rank " + rankName : ""}</small></div>` : `<small>ไม่ได้ถืออาวุธ</small>`}</div>
     ${inspect}
     ${net.user && id === net.user.id ? "" : `<div class="pf-actions">${st === "blocked" ? "" : `<button type="button" data-act="whisper">💬 กระซิบ</button>`}${friendBtn}
-      <button type="button" data-act="report" class="warn">🚩 รายงาน</button></div>`}`;
+      <button type="button" data-act="report" class="warn">🚩 รายงาน</button>${net.admin && !d.gm ? `<button type="button" data-act="gm">🛡️ จัดการ (GM)</button>` : ""}</div>`}`;
   const cv = document.getElementById("profileAvatar");
   const c2 = cv.getContext("2d");
   drawMeditationAura(c2, 48, 96, will.color);
@@ -7657,7 +7675,8 @@ function closeAllPanels(){
   document.getElementById("buyPanel").hidden = true;
   document.getElementById("refinePanel").hidden = true;
   document.getElementById("travelPanel").hidden = true;
-  document.getElementById("debugPanel").hidden = true;
+  document.getElementById("gmPanel").hidden = true;
+  document.getElementById("gmPlayerPanel").hidden = true;
   document.getElementById("weaponSkillPanel").hidden = true;
   document.getElementById("accountPanel").hidden = true;
   document.getElementById("friendsPanel").hidden = true;
@@ -9174,8 +9193,7 @@ if(DEBUG_MODE){
     },
     godMode(on){
       debugGodMode = !!on;
-      const check = document.getElementById("debugGodModeCheck");
-      if(check) check.checked = debugGodMode;
+      if(!document.getElementById("gmPanel").hidden) renderGmConsole();
       console.log("[DEBUG] God Mode " + (debugGodMode ? "เปิด — โดนดาเมจสูงสุด 1 ต่อฮิต" : "ปิด"));
     },
     fullHeal(){
@@ -9196,10 +9214,63 @@ if(DEBUG_MODE){
     },
     maxMastery(){
       if(!debugRequireGame()) return;
-      game.player.mastery.sword = 100;
-      game.player.mastery.heavy = 100;
+      Object.keys(WEAPON_CATEGORIES).forEach(t => game.player.mastery[t] = MASTERY_MAX);
       updateHud();
-      console.log("[DEBUG] Mastery ดาบ+อาวุธหนัก เต็ม 100 แล้ว");
+      console.log("[DEBUG] Mastery ทุกอาวุธเต็ม 100 แล้ว");
+    },
+    // Equipment with exact settings — refine +0..+10, bonus roll: "rand" | "min" | "max" | "none"
+    giveEquipCustom(defId, refine, quality, qty, equipNow){
+      if(!debugRequireGame()) return 0;
+      const base = EQUIPMENT_DEFS[defId];
+      if(!base){ console.warn("[DEBUG] ไม่รู้จักอุปกรณ์ id:", defId); return 0; }
+      let given = 0;
+      for(let i = 0; i < clamp(Math.floor(+qty) || 1, 1, 20); i++){
+        const e = rollEquipmentInstance(defId);
+        e.refineLevel = clamp(Math.floor(+refine) || 0, 0, REFINE_MAX);
+        const keys = Object.keys(e.rolledStats), roll = STAT_ROLL_BY_RARITY[base.rarity];
+        if(quality === "none"){ e.rolledStats = {}; e.rollQuality = null; }
+        else if((quality === "min" || quality === "max") && keys.length && roll){
+          const tier = base.tier || 1, total = Math.max(keys.length, Math.round(roll.pts[quality === "max" ? 1 : 0] * tier));
+          keys.forEach((k, j) => e.rolledStats[k] = Math.floor(total / keys.length) + (j < total % keys.length ? 1 : 0));
+          e.rollQuality = quality === "max" ? 100 : 0;
+        }
+        if(!addEquipmentToInventory(e)) break;
+        registerDiscovery({ kind:"equipment", defId });
+        given++;
+        if(equipNow && i === 0) equipItem(e.instanceId);
+      }
+      updateHud();
+      return given;
+    },
+    setSanity(n){ if(!debugRequireGame()) return; game.player.sanity = clamp(+n || 0, SANITY_FLOOR, SANITY_MAX); checkSanityWarning(); updateHud(); },
+    setSkillProficiency(level){ // every unlocked weapon skill of every category → Lv.level
+      if(!debugRequireGame()) return;
+      const exp = (clamp(Math.floor(+level) || 1, 1, SKILL_PROFICIENCY_MAX) - 1) * SKILL_PROFICIENCY_EXP_PER_LEVEL;
+      Object.values(game.player.weaponRank).forEach(r => Object.keys(r.unlockedSkills).forEach(id => r.unlockedSkills[id] = exp));
+    },
+    resetSkills(type){ const r = game && game.player.weaponRank[type]; if(r) r.unlockedSkills = {}; },
+    resetCooldowns(){ if(game) game.player.skillCooldowns = {}; },
+    unlockDimensions(n){
+      if(!debugRequireGame()) return;
+      n = clamp(Math.floor(+n) || 1, 1, 99);
+      game.maxDimension = Math.max(game.maxDimension || 1, n);
+      for(let d = 2; d <= n; d++) game.dimReach[d] = MAP_TIER_COUNT;
+      game.maxMapTierReachedDim1 = MAP_TIER_COUNT; game.maxMapTierReached = MAP_TIER_COUNT;
+      updateHud();
+    },
+    warpDim(dim, tier){
+      if(!debugRequireGame() || game.inBattle) return;
+      dim = clamp(Math.floor(+dim) || 1, 1, 99); tier = clamp(Math.floor(+tier) || 0, 0, MAP_TIER_COUNT);
+      if(dim > (game.maxDimension || 1)) window.debug.unlockDimensions(dim);
+      warpToMap(tier, dim);
+    },
+    fightBoss(){
+      if(!debugRequireGame() || game.inBattle || game.mapTier === TOWN_TIER) return false;
+      const def = MONSTER_DEFS[5];
+      closeAllPanels();
+      enterBattle({ id: "debug_boss", type: 5, x: 0, y: 0, maxHp: def.maxHp, hp: def.maxHp, alive: true, isElite: false,
+                    expReward: def.exp, goldReward: def.gold, hitFlash: 0, shake: 0 });
+      return true;
     },
     discoverAll(){
       if(!debugRequireGame()) return;
@@ -9234,31 +9305,11 @@ if(DEBUG_MODE){
   console.log("%c🛠️ DEBUG MODE ACTIVE", "font-weight:bold;color:#4b3f8f;font-size:16px;background:#ffe9a8;padding:4px 8px;border-radius:4px;");
   console.log("พิมพ์ debug.help() เพื่อดูคำสั่งทั้งหมด หรือกด Ctrl+Shift+D เพื่อเปิด Debug Panel");
 
-  const debugWarpSelect = document.getElementById("debugWarpSelect");
-  debugWarpSelect.innerHTML = '<option value="0">เมือง</option>' +
-    Array.from({length: MAP_TIER_COUNT}, (_, i) => i+1).map(t => '<option value="' + t + '">แมพ ' + t + '</option>').join("");
-
-  document.getElementById("closeDebugBtn").addEventListener("click", ()=>{ document.getElementById("debugPanel").hidden = true; });
-  document.getElementById("debugSetLevelBtn").addEventListener("click", ()=> window.debug.setLevel(document.getElementById("debugLevelInput").value));
-  document.getElementById("debugGiveGoldBtn").addEventListener("click", ()=> window.debug.giveGold(document.getElementById("debugGoldInput").value));
-  document.getElementById("debugGiveStatBtn").addEventListener("click", ()=> window.debug.giveStatPoints(10));
-  document.getElementById("debugWarpBtn").addEventListener("click", ()=> window.debug.warpTo(debugWarpSelect.value));
-  document.getElementById("debugUnlockMapsBtn").addEventListener("click", ()=> window.debug.unlockAllMaps());
-  document.getElementById("debugGodModeCheck").addEventListener("change", (e)=> window.debug.godMode(e.target.checked));
-  document.getElementById("debugFullHealBtn").addEventListener("click", ()=> window.debug.fullHeal());
-  document.getElementById("debugMaxMasteryBtn").addEventListener("click", ()=> window.debug.maxMastery());
-  document.getElementById("debugForceEliteBtn").addEventListener("click", ()=> window.debug.forceElite());
-  document.getElementById("debugGiveAllEquipBtn").addEventListener("click", ()=> window.debug.giveAllEquip());
-  document.getElementById("debugUnlockRewardsBtn").addEventListener("click", ()=> window.debug.unlockAllRewards());
-  document.getElementById("debugDiscoverAllBtn").addEventListener("click", ()=> window.debug.discoverAll());
-
   window.addEventListener("keydown", (e)=>{
     if(!(e.ctrlKey && e.shiftKey && (e.key === "D" || e.key === "d"))) return;
     e.preventDefault();
     if(!game || (NET_ONLINE && !net.admin)) return; // online: admins only (public.admins table)
-    const panel = document.getElementById("debugPanel");
-    if(panel.hidden){ closeAllPanels(); panel.hidden = false; }
-    else panel.hidden = true;
+    if(document.getElementById("gmPanel").hidden) openGmConsole(); else document.getElementById("gmPanel").hidden = true;
   });
 }
 
@@ -9339,7 +9390,7 @@ const VOTE_REFRESH_MS = 20000;
 const VOTE_REASON = { guest: "ต้องผูกบัญชีกับอีเมลหรือ Google ก่อน (เมนู 👤 บัญชี) — กันการปั๊มเสียงด้วย Guest",
                       level: "ต้องเลเวล 10 ขึ้นไปถึงจะโหวต/เสนอหัวข้อได้", closed: "โหวตนี้ปิดไปแล้ว — กำลังโหลดใหม่",
                       invalid: "ข้อมูลไม่ครบ: คำถาม 4–120 ตัวอักษร, ตัวเลือก 2–4 ข้อ ข้อละไม่เกิน 40 ตัว และห้ามซ้ำกัน",
-                      limit: "รอบนี้คุณเสนอไปแล้ว 1 หัวข้อ — รอรอบถัดไปนะ", gm: "เฉพาะ GM" };
+                      limit: "รอบนี้คุณเสนอไปแล้ว 1 หัวข้อ — รอรอบถัดไปนะ", gm: "เฉพาะ GM", muted: "🔇 คุณถูกปิดการแชทอยู่ — เสนอหัวข้อไม่ได้" };
 const vb = { data: null, at: 0, loading: false, err: "", tab: "open", pending: 0, busy: false, skew: 0, gmForm: false };
 
 function openVoteBoard(){
@@ -9474,6 +9525,388 @@ function drawVoteBadge(ctx, x, y, n){
   ctx.fillText(n > 9 ? "9+" : "!" + (n > 1 ? n : ""), 0, 1);
   ctx.restore();
 }
+
+/* ============================================================
+   🛡️ GM CONSOLE — 🧪 test tools (also the offline dev build's debug panel) + online moderation:
+   find players, reports inbox, running sanctions, announcements. The server decides everything
+   (public.admins, see MODERATION in the SQL block); this is only the control surface.
+   ============================================================ */
+const GM_DURATIONS = [["10","10 นาที"],["30","30 นาที"],["60","1 ชั่วโมง"],["360","6 ชั่วโมง"],["1440","1 วัน"],["4320","3 วัน"],
+                      ["10080","7 วัน"],["43200","30 วัน"],["0","ถาวร (ตลอดไป)"],["custom","กำหนดเอง…"]];
+const GM_KICK_DURATIONS = [["0","เตะออกเฉยๆ — กลับเข้าได้ทันที"],["10","+ ห้ามกลับ 10 นาที"],["60","+ ห้ามกลับ 1 ชั่วโมง"],["1440","+ ห้ามกลับ 1 วัน"],["custom","+ ห้ามกลับ (กำหนดเอง…)"]];
+const GM_KIND = { ban:["⛔","แบน"], mute:["🔇","ใบ้ (ปิดแชท)"], kick:["👢","เตะออก"], warn:["⚠️","คำเตือน"] };
+const GM_REPORT_REASON = { chat:"💬 ชื่อ/แชท", cheat:"🛠️ โกง/บั๊ก", spam:"📢 สแปม", other:"❓ อื่นๆ" };
+const gm = { tab: "test", eq: { cat: "all", tier: "all", rar: "all", q: "", sel: null, refine: 0, quality: "rand", qty: 1, item: "potion", itemQty: 1 },
+             search: "", players: null, reports: null, reportsAll: false, sanctions: null, busy: false, player: null, playerId: null };
+
+// "until" from the server: an ISO time, or "infinity" = permanent
+function modUntilText(until){
+  const t = Date.parse(until);
+  if(!Number.isFinite(t)) return "ถาวร";
+  const ms = t - Date.now(), d = new Date(t).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" });
+  if(ms <= 0) return d;
+  const h = Math.floor(ms / 3600000), m = Math.ceil(ms % 3600000 / 60000);
+  return `${d} (อีก ${h >= 24 ? Math.floor(h / 24) + " วัน " + (h % 24) + " ชม." : h ? h + " ชม. " + m + " นาที" : m + " นาที"})`;
+}
+function modText(s, what){ return s ? `${what}${Number.isFinite(Date.parse(s.until)) ? "ถึง " + modUntilText(s.until) : "ถาวร"}${s.reason ? " — เหตุผล: " + String(s.reason).slice(0, 200) : ""}` : ""; }
+function modMuted(){ return !!(net.mute && (!Number.isFinite(Date.parse(net.mute.until)) || Date.parse(net.mute.until) > Date.now())); }
+// What net_poll says about me: kicked / banned → cover the game; mute; warnings; announcements; who's muted
+function modPollResult(r){
+  if(r.kick != null){ netBlock("kicked", "เหตุผล: " + (String(r.kick).slice(0, 200) || "-") + " — โหลดใหม่เพื่อเข้าเล่นอีกครั้ง"); return; }
+  if(r.ban){ netBlock("banned", modText(r.ban, "ระงับ")); return; }
+  const wasMuted = modMuted();
+  net.mute = r.mute || null;
+  if(!wasMuted && modMuted()) chatAddLine("sys", "", "🔇 ทีมงานปิดการแชทของคุณ" + modText(net.mute, " "));
+  net.muted = new Set(Array.isArray(r.muted) ? r.muted : []);
+  (Array.isArray(r.warns) ? r.warns : []).forEach(w => showGmNotice("⚠️", "คำเตือนจากทีมงาน", String(w).slice(0, 200)));
+  if(r.ann && r.ann.id) showAnnouncement(r.ann);
+}
+const gmNoticeQueue = [];
+function showGmNotice(icon, title, text){
+  gmNoticeQueue.push([icon, title, text]);
+  if(document.getElementById("gmNotice").hidden) nextGmNotice();
+}
+function nextGmNotice(){
+  const n = gmNoticeQueue.shift();
+  document.getElementById("gmNotice").hidden = !n;
+  if(!n) return;
+  document.getElementById("gmNoticeIcon").textContent = n[0];
+  document.getElementById("gmNoticeTitle").textContent = n[1];
+  document.getElementById("gmNoticeText").textContent = n[2];
+  sfx.levelUp();
+}
+document.getElementById("gmNoticeOk").addEventListener("click", ()=>{ sfx.click(); nextGmNotice(); });
+const ANN_SEEN_KEY = "menalars_ann_seen";
+let annTimer = 0;
+function showAnnouncement(a){
+  let seen = 0; try{ seen = +localStorage.getItem(ANN_SEEN_KEY) || 0; }catch(err){ /* private mode */ }
+  if(+a.id <= seen) return;
+  try{ localStorage.setItem(ANN_SEEN_KEY, String(a.id)); }catch(err){ /* private mode — may show again next load */ }
+  const body = String(a.body || "").slice(0, 200);
+  document.getElementById("annText").textContent = body;
+  document.getElementById("annBanner").hidden = false;
+  chatAddLine("sys", "📢 ประกาศ", body);
+  sfx.levelUp();
+  clearTimeout(annTimer);
+  annTimer = setTimeout(()=>{ document.getElementById("annBanner").hidden = true; }, 15000);
+}
+document.getElementById("annBanner").addEventListener("click", ()=>{ document.getElementById("annBanner").hidden = true; });
+
+// ---- confirm dialog: every sanction goes through here; the red button always spells out exactly what happens ----
+let gmAskState = null;
+function gmAsk(opts){ // { kind, target, name, durations, needText, textLabel, placeholder, onConfirm(minutes, text) }
+  gmAskState = opts;
+  const card = document.getElementById("gmConfirmCard"), esc = netEsc;
+  const durs = opts.durations;
+  card.innerHTML = `<h3>${opts.icon} ${esc(opts.title)}</h3>
+    <div class="vb-note warn" style="margin-bottom:10px">ผู้เล่น: <b>${esc(opts.name)}</b></div>
+    ${durs ? `<div class="gm-line"><label>ระยะเวลา</label><select id="gmAskDur">${durs.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select>
+      <input type="number" id="gmAskCustom" min="1" placeholder="นาที" hidden></div>` : ""}
+    ${opts.textLabel ? `<div class="gm-line"><label>${esc(opts.textLabel)}</label><input type="text" id="gmAskText" maxlength="200" placeholder="${esc(opts.placeholder || "")}" style="flex:1"></div>` : ""}
+    <button type="button" class="gm-go${opts.safe ? " safe" : ""}" id="gmAskGo"></button>
+    <button type="button" class="gm-cancel" id="gmAskCancel">ยกเลิก</button>`;
+  document.getElementById("gmConfirm").hidden = false;
+  gmAskRefresh();
+  const first = document.getElementById("gmAskText") || document.getElementById("gmAskDur");
+  if(first) first.focus();
+}
+function gmAskMinutes(){
+  const sel = document.getElementById("gmAskDur");
+  if(!sel) return 0;
+  if(sel.value === "custom") return Math.max(0, Math.floor(+document.getElementById("gmAskCustom").value) || 0);
+  return +sel.value;
+}
+function gmAskRefresh(){
+  const o = gmAskState; if(!o) return;
+  const sel = document.getElementById("gmAskDur"), custom = document.getElementById("gmAskCustom");
+  if(custom) custom.hidden = !sel || sel.value !== "custom";
+  const min = gmAskMinutes(), text = (document.getElementById("gmAskText") || {}).value || "";
+  const dur = !sel ? "" : sel.value === "custom" && !min ? " (ใส่จำนวนนาที)" : min ? ` ${gmMinutesText(min)}` : o.kind === "kick" ? "" : " ถาวร";
+  const go = document.getElementById("gmAskGo");
+  go.textContent = `${o.icon} ยืนยัน${o.verb} ${o.name}${o.kind === "kick" && min ? " + ห้ามกลับ" : ""}${dur}`;
+  go.disabled = (sel && sel.value === "custom" && !min) || (o.needText && !text.trim());
+}
+function gmMinutesText(min){ return min >= 1440 && min % 1440 === 0 ? (min / 1440) + " วัน" : min >= 60 && min % 60 === 0 ? (min / 60) + " ชั่วโมง" : min + " นาที"; }
+document.getElementById("gmConfirmCard").addEventListener("input", gmAskRefresh);
+document.getElementById("gmConfirmCard").addEventListener("change", gmAskRefresh);
+document.getElementById("gmConfirmCard").addEventListener("click", async e => {
+  if(e.target.id === "gmAskCancel"){ sfx.click(); document.getElementById("gmConfirm").hidden = true; gmAskState = null; return; }
+  if(e.target.id !== "gmAskGo" || e.target.disabled || !gmAskState) return;
+  sfx.click();
+  const o = gmAskState, min = gmAskMinutes(), text = ((document.getElementById("gmAskText") || {}).value || "").trim();
+  e.target.disabled = true; e.target.textContent = "กำลังส่ง…";
+  await o.onConfirm(min, text);
+  document.getElementById("gmConfirm").hidden = true; gmAskState = null;
+});
+async function gmRpc(fn, args, okMsg){
+  try{
+    const r = await netRpc(fn, JSON.stringify(args || {}));
+    if(r && r.ok === false){ showToast({ gm:"เฉพาะ GM", target:"ทำกับบัญชี GM หรือตัวเองไม่ได้", nosave:"ผู้เล่นนี้ไม่มีข้อมูลบนเซิร์ฟเวอร์", invalid:"ข้อมูลไม่ครบ" }[r.reason] || "ทำรายการไม่สำเร็จ"); return null; }
+    if(okMsg) showToast(okMsg);
+    return r;
+  }catch(err){ showToast(err.message); return null; }
+}
+
+// ---- console ----
+function openGmConsole(tab){
+  closeAllPanels();
+  if(tab) gm.tab = tab;
+  if(!NET_ONLINE || !net.admin) gm.tab = "test";
+  document.getElementById("gmPanel").hidden = false;
+  renderGmConsole();
+  gmLoadTab();
+}
+async function gmLoadTab(){
+  if(!NET_ONLINE || !net.admin) return;
+  if(gm.tab === "players" && !gm.players) await gmSearch();
+  else if(gm.tab === "reports"){ const r = await gmRpc("gm_reports", { p_all: gm.reportsAll }); if(r) gm.reports = r.reports; }
+  else if(gm.tab === "sanctions"){ const r = await gmRpc("gm_sanctions"); if(r) gm.sanctions = r; }
+  if(!document.getElementById("gmPanel").hidden) renderGmConsole();
+}
+async function gmSearch(){ const r = await gmRpc("gm_search", { p_query: gm.search }); gm.players = r ? r.players : []; }
+function gmEquipCategory(def){ return def.slot === "weapon" ? def.weaponType : def.slot; }
+function gmEquipSummary(def){
+  const out = [];
+  if(def.baseAtk) out.push("ATK " + def.baseAtk);
+  if(def.baseDef) out.push("DEF " + def.baseDef);
+  if(def.baseMaxHp) out.push("HP " + def.baseMaxHp);
+  if(def.baseAtkSpeedMod) out.push("SPD " + (def.baseAtkSpeedMod > 0 ? "+" : "") + def.baseAtkSpeedMod + "%");
+  if(def.baseCritRate) out.push("CRI " + def.baseCritRate + "%");
+  if(def.uniqueEffect === "vampire") out.push("🩸ดูดเลือด"); if(def.uniqueEffect === "lightning") out.push("⚡สายฟ้า");
+  if(def.cosmeticOnly) out.push("คอสเมติก");
+  return out.join(" · ");
+}
+function renderGmConsole(){
+  const online = NET_ONLINE && net.admin, esc = netEsc;
+  const tabs = [["test","🧪 ทดสอบ"]].concat(online ? [["players","👥 ผู้เล่น"],["reports","🚩 รายงาน"],["sanctions","⛔ บทลงโทษ"],["announce","📢 ประกาศ"]] : []);
+  document.getElementById("gmTabs").innerHTML = tabs.map(([id, l]) => `<button type="button" data-gtab="${id}" class="${gm.tab === id ? "on" : ""}">${l}</button>`).join("");
+  const body = document.getElementById("gmBody");
+  if(gm.tab === "test") body.innerHTML = gmTestHtml();
+  else if(gm.tab === "players"){
+    body.innerHTML = `<div class="gm-line"><input type="text" id="gmSearchInput" placeholder="ชื่อผู้เล่น (เว้นว่าง = คนที่เข้าเกมล่าสุด)" value="${esc(gm.search)}" style="flex:1">
+        <button type="button" data-gact="search">🔍 ค้นหา</button></div>` +
+      (!gm.players ? `<div class="empty-note">กำลังโหลด…</div>` : gm.players.length ? gm.players.map(p => `<div class="gm-row">
+        <span class="net-dot${p.online ? "" : " off"}"></span>
+        <div class="grow"><b>${esc(String(p.name || "?").slice(0, 20))}</b>${p.gm ? '<span class="gm-chip gmc">GM</span>' : ""}${p.guest ? '<span class="gm-chip guest">Guest</span>' : ""}${p.ban ? '<span class="gm-chip ban">⛔ แบน</span>' : ""}${p.mute ? '<span class="gm-chip mute">🔇 ใบ้</span>' : ""}
+          <small>Lv.${Math.floor(+p.level) || 1} · ${p.online ? "ออนไลน์" : p.lastSeen ? "เห็นล่าสุด " + new Date(p.lastSeen).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" }) : "ยังไม่เคยออนไลน์"}</small></div>
+        <button type="button" data-gact="player" data-id="${esc(p.id)}">🛡️ จัดการ</button></div>`).join("") : `<div class="empty-note">ไม่พบผู้เล่น</div>`);
+  } else if(gm.tab === "reports"){
+    body.innerHTML = `<div class="gm-line"><label><input type="checkbox" id="gmReportsAll"${gm.reportsAll ? " checked" : ""}> แสดงเรื่องที่ปิดแล้วด้วย</label></div>` +
+      (!gm.reports ? `<div class="empty-note">กำลังโหลด…</div>` : gm.reports.length ? gm.reports.map(r => `<div class="gm-row" style="${r.handled ? "opacity:.55" : ""}">
+        <div class="grow"><b>${esc(String(r.targetName || "?").slice(0, 20))}</b> <span class="gm-chip mute">${GM_REPORT_REASON[r.reason] || esc(r.reason)}</span>
+          <small>โดย ${esc(String(r.by || "?").slice(0, 20))} · ${new Date(r.at).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" })}${r.note ? " · “" + esc(String(r.note).slice(0, 300)) + "”" : ""}</small>
+          ${Array.isArray(r.chat) && r.chat.length ? `<small>💬 ${r.chat.slice(0, 10).map(c => esc(String(c).slice(0, 120))).join(" / ")}</small>` : ""}</div>
+        <button type="button" data-gact="player" data-id="${esc(r.target)}">🛡️ จัดการ</button>
+        <button type="button" class="${r.handled ? "" : "ok"}" data-gact="handle" data-id="${Math.floor(+r.id)}" data-h="${r.handled ? 0 : 1}">${r.handled ? "เปิดใหม่" : "✔ ปิดเรื่อง"}</button></div>`).join("")
+      : `<div class="empty-note">ไม่มีรายงานค้าง 🎉</div>`);
+  } else if(gm.tab === "sanctions"){
+    const sc = gm.sanctions;
+    const row = (x, act) => `<div class="gm-row"><span style="font-size:18px">${(GM_KIND[x.kind] || ["•"])[0]}</span>
+        <div class="grow"><b>${esc(String(x.name || "?").slice(0, 20))}</b> <span class="gm-chip ${x.kind === "ban" ? "ban" : "mute"}">${(GM_KIND[x.kind] || ["", x.kind])[1]}</span>${x.revoked ? '<span class="gm-chip guest">ยกเลิกแล้ว</span>' : ""}
+          <small>${x.kind === "ban" || x.kind === "mute" ? "ถึง " + modUntilText(x.until) + " · " : ""}โดย ${esc(String(x.by || "?").slice(0, 20))} · ${new Date(x.at).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" })}${x.reason ? " · " + esc(String(x.reason).slice(0, 200)) : ""}</small></div>
+        <button type="button" data-gact="player" data-id="${esc(x.user)}">🛡️ จัดการ</button>${act ? `<button type="button" class="ok" data-gact="revoke" data-id="${esc(x.user)}" data-kind="${esc(x.kind)}" data-name="${esc(String(x.name || "?").slice(0, 20))}">✅ ยกเลิก</button>` : ""}</div>`;
+    body.innerHTML = !sc ? `<div class="empty-note">กำลังโหลด…</div>` : `<div class="gm-sec"><h4>กำลังมีผลอยู่ (${sc.active.length})</h4>${sc.active.length ? sc.active.map(x => row(x, true)).join("") : `<div class="empty-note">ไม่มีใครโดนแบน/ใบ้อยู่ตอนนี้</div>`}</div>
+      <div class="gm-sec"><h4>ประวัติล่าสุด</h4>${sc.history.map(x => row(x, false)).join("") || `<div class="empty-note">ยังไม่มีประวัติ</div>`}</div>`;
+  } else if(gm.tab === "announce"){
+    body.innerHTML = `<div class="gm-sec"><h4>📢 ประกาศถึงผู้เล่นทุกคนที่ออนไลน์</h4>
+      <textarea id="gmAnnText" maxlength="200" rows="3" style="width:100%;box-sizing:border-box" placeholder="เช่น อีก 10 นาทีจะอัปเดตเกม กรุณาหาที่ปลอดภัย"></textarea>
+      <div class="vb-note" style="margin-top:6px">ขึ้นเป็นป้ายกลางจอ + ในแชท ของทุกคนที่ออนไลน์ภายใน ~3 วิ (คนที่เข้ามาภายใน 15 นาทีหลังประกาศก็จะเห็น)</div>
+      <button type="button" data-gact="announce">📢 ส่งประกาศ</button></div>`;
+  }
+}
+function gmTestHtml(){
+  const e = gm.eq, esc = netEsc, p = game && game.player;
+  if(!p) return `<div class="empty-note">เข้าเกมก่อน</div>`;
+  const cats = [["all","ทุกหมวด"],["sword","🗡️ ดาบ"],["heavy","🔨 อาวุธหนัก"],["bow","🏹 ธนู"],["orb","🪄 สื่อเวทย์"],["armor","🛡️ ชุดเกราะ"],["headgear","⛑️ หมวก"],["accessory","💍 เครื่องประดับ"]];
+  const defs = Object.entries(EQUIPMENT_DEFS).filter(([id, d]) =>
+    (e.cat === "all" || gmEquipCategory(d) === e.cat) && (e.tier === "all" || String(d.tier || 1) === e.tier) &&
+    (e.rar === "all" || d.rarity === e.rar) && (!e.q || (d.name + " " + id).toLowerCase().includes(e.q.toLowerCase())));
+  const shown = defs.slice(0, 120);
+  const opt = (list, cur) => list.map(([v, l]) => `<option value="${v}"${String(cur) === String(v) ? " selected" : ""}>${l}</option>`).join("");
+  const sel = e.sel && EQUIPMENT_DEFS[e.sel];
+  const items = ITEM_TABLE.map(i => ["i:" + i.id, i.icon + " " + i.name]).concat(Object.entries(CARD_DEFS).map(([id, c]) => ["c:" + id, c.icon + " " + c.name]));
+  const types = Object.keys(WEAPON_CATEGORIES);
+  const dimMax = Math.max(game.maxDimension || 1, 1) + 5;
+  return `
+  <div class="gm-sec"><h4>🗡️ เสกอุปกรณ์ (${defs.length} ชิ้นตรงเงื่อนไข${defs.length > shown.length ? ` · แสดง ${shown.length}` : ""})</h4>
+    <div class="gm-line"><select data-eq="cat">${opt(cats, e.cat)}</select>
+      <select data-eq="tier">${opt([["all","ทุกแมพ"]].concat([...Array(MAP_TIER_COUNT)].map((_, i) => [String(i + 1), "แมพ " + (i + 1)])), e.tier)}</select>
+      <select data-eq="rar">${opt([["all","ทุกความหายาก"]].concat(Object.entries(RARITY_DEFS).map(([k, r]) => [k, r.label])), e.rar)}</select>
+      <input type="text" data-eq="q" value="${esc(e.q)}" placeholder="ค้นหาชื่อ…" style="flex:1"></div>
+    <div class="gm-items">${shown.map(([id, d]) => `<div class="gm-item${e.sel === id ? " sel" : ""}" data-eqsel="${id}" style="border-color:${RARITY_DEFS[d.rarity].color}" title="${esc(id)}">
+        <span class="pf-ic">${equipIconHtml(d)}</span><b>${esc(d.name)}</b><small style="color:${RARITY_DEFS[d.rarity].color};font-weight:bold">${RARITY_DEFS[d.rarity].label} · แมพ ${d.tier || 1}</small><small>${esc(gmEquipSummary(d))}</small></div>`).join("") || `<div class="empty-note">ไม่พบ</div>`}</div>
+    <div class="gm-line" style="margin-top:8px"><label>${sel ? "เลือก: <b style='color:#2a2346'>" + esc(sel.name) + "</b>" : "คลิกเลือกอุปกรณ์ด้านบน"}</label>
+      ตีบวก <select data-eq="refine">${opt([...Array(REFINE_MAX + 1)].map((_, i) => [i, "+" + i]), e.refine)}</select>
+      โบนัส <select data-eq="quality">${opt([["rand","สุ่มปกติ"],["max","สูงสุด ✦"],["min","ต่ำสุด"],["none","ไม่มีโบนัส"]], e.quality)}</select>
+      จำนวน <input type="number" data-eq="qty" min="1" max="20" value="${e.qty}" style="width:56px">
+      <button type="button" data-gact="giveEq"${sel ? "" : " disabled"}>🎁 เข้ากระเป๋า</button>
+      <button type="button" class="ok" data-gact="giveEqWear"${sel ? "" : " disabled"}>⚔️ เสกแล้วสวมเลย</button></div></div>
+  <div class="gm-sec"><h4>🎒 ไอเทม & การ์ด</h4>
+    <div class="gm-line"><select data-eq="item">${opt(items, e.item)}</select> จำนวน <input type="number" data-eq="itemQty" min="1" max="99" value="${e.itemQty}" style="width:56px">
+      <button type="button" data-gact="giveItem">🎁 เสก</button></div></div>
+  <div class="gm-sec"><h4>🧍 ตัวละคร (ตอนนี้ Lv.${p.level} · 💰${p.gold} · สติ ${Math.round(p.sanity)}%)</h4>
+    <div class="gm-line"><label>ตั้งเลเวล</label><input type="number" id="gmLevel" min="1" max="999" value="${p.level}"><button type="button" data-gact="level">ตั้ง</button>
+      <label style="min-width:auto;margin-left:10px">เพิ่มทอง</label><input type="number" id="gmGold" value="10000"><button type="button" data-gact="gold">เพิ่ม</button></div>
+    <div class="gm-line"><label>แต้มสเตตัส</label><input type="number" id="gmStat" value="10"><button type="button" data-gact="stat">เพิ่ม</button>
+      <label style="min-width:auto;margin-left:10px">ตั้งสติ %</label><input type="number" id="gmSanity" min="25" max="100" value="100"><button type="button" data-gact="sanity">ตั้ง</button>
+      <button type="button" class="ok" data-gact="heal">❤️ ฮีลเต็ม</button></div>
+    <div class="gm-line"><label>Rank อาวุธ</label><select id="gmRankType">${types.map(t => `<option value="${t}">${WEAPON_CATEGORIES[t].icon} ${WEAPON_CATEGORIES[t].name}</option>`).join("")}</select>
+      <select id="gmRankIdx">${WEAPON_RANK_LADDER.map((r, i) => `<option value="${i}"${i === WEAPON_RANK_LADDER.length - 1 ? " selected" : ""}>${r.name}</option>`).join("")}</select>
+      <button type="button" data-gact="rank">ตั้ง</button><button type="button" data-gact="resetSkills" class="warn">ล้างสกิลที่เลือกของอาวุธนี้</button></div>
+    <div class="gm-line"><label>ความชำนาญสกิล</label><select id="gmProf">${[...Array(SKILL_PROFICIENCY_MAX)].map((_, i) => `<option value="${i + 1}"${i === SKILL_PROFICIENCY_MAX - 1 ? " selected" : ""}>Lv.${i + 1}</option>`).join("")}</select>
+      <button type="button" data-gact="prof">ตั้งให้ทุกสกิลที่ปลดแล้ว</button><button type="button" data-gact="mastery">Mastery ทุกอาวุธเต็ม</button><button type="button" data-gact="cd">รีเซ็ตคูลดาวน์</button></div></div>
+  <div class="gm-sec"><h4>🌍 โลก & การต่อสู้ (ตอนนี้ มิติ ${game.dimension || 1} · ${game.mapTier === TOWN_TIER ? "เมือง" : "แมพ " + game.mapTier})</h4>
+    <div class="gm-line"><label>วาป</label><select id="gmDim">${[...Array(dimMax)].map((_, i) => `<option value="${i + 1}"${i + 1 === (game.dimension || 1) ? " selected" : ""}>มิติ ${i + 1}</option>`).join("")}</select>
+      <select id="gmTier"><option value="0">🏙️ เมือง</option>${[...Array(MAP_TIER_COUNT)].map((_, i) => `<option value="${i + 1}">แมพ ${i + 1}: ${esc(MAP_DEFS[i].name)}</option>`).join("")}</select>
+      <button type="button" data-gact="warp">🌀 ไป</button><button type="button" data-gact="unlockMaps">ปลดทุกแมพ/มิติถึงที่เลือก</button></div>
+    <div class="gm-line"><label><input type="checkbox" id="gmGod"${debugGodMode ? " checked" : ""}> God Mode (โดนสูงสุด 1)</label>
+      <button type="button" data-gact="boss">👑 สู้บอสแมพนี้เลย</button><button type="button" data-gact="elite">⚡ บังคับ Elite ทั้งแมพ</button>
+      ${game.inBattle ? `<button type="button" class="ok" data-gact="win">🏆 ชนะไฟต์นี้ทันที</button>` : ""}</div>
+    <div class="gm-line"><button type="button" data-gact="rewards">ปลด Achievement/ยศ/ออร่าทั้งหมด</button><button type="button" data-gact="discover">ปลดคอลเลกชันทั้งหมด</button></div></div>
+  <p style="font-size:11px;color:#7a7186">ใช้กับบัญชีทดสอบ — ของที่เสกบันทึกขึ้นเซิร์ฟเวอร์จริง · คำสั่ง console: <code>debug.help()</code></p>`;
+}
+document.getElementById("gmTabs").addEventListener("click", e => {
+  const b = e.target.closest("[data-gtab]"); if(!b) return;
+  sfx.click(); gm.tab = b.dataset.gtab; renderGmConsole(); gmLoadTab();
+});
+document.getElementById("gmBody").addEventListener("change", e => {
+  const k = e.target.dataset.eq;
+  if(k && k !== "q"){ gm.eq[k] = e.target.type === "number" ? Math.max(1, Math.floor(+e.target.value) || 1) : e.target.value; if(k !== "qty" && k !== "itemQty") renderGmConsole(); return; }
+  if(e.target.id === "gmGod") window.debug.godMode(e.target.checked);
+  if(e.target.id === "gmReportsAll"){ gm.reportsAll = e.target.checked; gm.reports = null; renderGmConsole(); gmLoadTab(); }
+});
+document.getElementById("gmBody").addEventListener("input", e => {
+  if(e.target.dataset.eq !== "q") return;
+  gm.eq.q = e.target.value;
+  const pos = e.target.selectionStart; renderGmConsole();
+  const inp = document.querySelector('#gmBody [data-eq="q"]'); if(inp){ inp.focus(); inp.setSelectionRange(pos, pos); }
+});
+document.getElementById("gmBody").addEventListener("keydown", e => { if(e.key === "Enter" && e.target.id === "gmSearchInput"){ e.preventDefault(); document.querySelector('#gmBody [data-gact="search"]').click(); } });
+document.getElementById("gmBody").addEventListener("click", async e => {
+  const pick = e.target.closest("[data-eqsel]");
+  if(pick){ gm.eq.sel = pick.dataset.eqsel; renderGmConsole(); return; }
+  const b = e.target.closest("button[data-gact]"); if(!b || b.disabled) return;
+  sfx.click();
+  const a = b.dataset.gact, v = id => document.getElementById(id).value, d = window.debug;
+  if(a === "giveEq" || a === "giveEqWear"){
+    const n = d.giveEquipCustom(gm.eq.sel, gm.eq.refine, gm.eq.quality, gm.eq.qty, a === "giveEqWear");
+    showToast(n ? `🎁 เสก ${EQUIPMENT_DEFS[gm.eq.sel].name} x${n}${a === "giveEqWear" ? " (สวมแล้ว)" : ""}` : "กระเป๋าและกล่องเต็ม");
+  }
+  else if(a === "giveItem"){
+    const [t, id] = gm.eq.item.split(":"), q = clamp(gm.eq.itemQty, 1, 99);
+    if(t === "i") d.giveItem(id, q); else for(let i = 0; i < q; i++) addCardToInventory(id);
+    showToast("🎁 เสกแล้ว x" + q);
+  }
+  else if(a === "level") d.setLevel(v("gmLevel"));
+  else if(a === "gold") d.giveGold(v("gmGold"));
+  else if(a === "stat") d.giveStatPoints(v("gmStat"));
+  else if(a === "sanity") d.setSanity(v("gmSanity"));
+  else if(a === "heal") d.fullHeal();
+  else if(a === "rank") d.setWeaponRank(v("gmRankType"), v("gmRankIdx"));
+  else if(a === "resetSkills") d.resetSkills(v("gmRankType"));
+  else if(a === "prof") d.setSkillProficiency(v("gmProf"));
+  else if(a === "mastery") d.maxMastery();
+  else if(a === "cd") d.resetCooldowns();
+  else if(a === "warp") d.warpDim(v("gmDim"), v("gmTier"));
+  else if(a === "unlockMaps") d.unlockDimensions(v("gmDim"));
+  else if(a === "boss"){ if(!d.fightBoss()) showToast("ไปแมพที่มีบอสก่อน (ไม่ใช่เมือง) และต้องไม่อยู่ในไฟต์"); return; }
+  else if(a === "elite") d.forceElite();
+  else if(a === "win") d.killMonster();
+  else if(a === "rewards") d.unlockAllRewards();
+  else if(a === "discover") d.discoverAll();
+  else if(a === "search"){ gm.search = v("gmSearchInput").trim(); gm.players = null; renderGmConsole(); await gmSearch(); }
+  else if(a === "player") return openGmPlayer(b.dataset.id);
+  else if(a === "handle"){ await gmRpc("gm_report_handle", { p_id: +b.dataset.id, p_handled: b.dataset.h === "1" }); return gmLoadTab(); }
+  else if(a === "revoke") return gmAskRevoke(b.dataset.id, b.dataset.kind, b.dataset.name, gmLoadTab);
+  else if(a === "announce"){
+    const text = v("gmAnnText").trim(); if(!text){ showToast("พิมพ์ข้อความก่อน"); return; }
+    gmAsk({ kind: "announce", icon: "📢", title: "ส่งประกาศถึงทุกคน", name: "“" + text.slice(0, 60) + (text.length > 60 ? "…" : "") + "”", verb: "ส่งประกาศ", safe: true,
+            onConfirm: async ()=>{ if(await gmRpc("gm_announce", { p_body: text }, "📢 ส่งประกาศแล้ว")) document.getElementById("gmAnnText").value = ""; } });
+    return;
+  }
+  if(!document.getElementById("gmPanel").hidden) renderGmConsole();
+});
+document.getElementById("closeGmBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("gmPanel").hidden = true; });
+document.getElementById("gmBtn").addEventListener("click", ()=>{ sfx.click(); openGmConsole(); });
+
+// ---- one player: full view + actions ----
+async function openGmPlayer(id){
+  if(!NET_ONLINE || !net.admin) return;
+  closeAllPanels();
+  gm.playerId = id; gm.player = null;
+  document.getElementById("gmPlayerPanel").hidden = false;
+  renderGmPlayer();
+  const r = await gmRpc("gm_player", { p_target: id });
+  if(gm.playerId !== id) return;
+  gm.player = r || { ok: false };
+  renderGmPlayer();
+}
+function renderGmPlayer(){
+  const body = document.getElementById("gmPlayerBody"), d = gm.player, esc = netEsc;
+  if(!d){ body.innerHTML = `<div class="empty-note">กำลังโหลด…</div>`; return; }
+  if(!d.ok){ body.innerHTML = `<div class="empty-note">โหลดข้อมูลผู้เล่นไม่ได้</div><div class="vb-row"><button type="button" data-pact="back">← GM Console</button></div>`; return; }
+  const name = String(d.name || "?").slice(0, 20), acc = d.account || {}, st = d.status;
+  const maxDim = Math.max(1, Math.floor(+d.maxDimension) || 1), reach = maxDim === 1 ? (+d.maxMapTierReachedDim1 || 1) : (+(d.dimReach || {})[maxDim] || 1);
+  const byId = new Map((Array.isArray(d.equipped) ? d.equipped : []).map(e => [e && e.instanceId, socSafeEntry(e)]));
+  const tile = (e, label) => { const def = e && EQUIPMENT_DEFS[e.defId];
+    if(!def) return `<div class="pf-slot empty"><span class="pf-ic">·</span><small>${label}</small></div>`;
+    const rc = RARITY_DEFS[e.rarity].color;
+    return `<div class="pf-slot" style="border-color:${rc}" title="${esc(formatStatLine(e))}"><span class="pf-ic">${equipIconHtml(def)}</span><b>${esc(equipDisplayName(e))}</b><small>${label}</small></div>`; };
+  const sp = d.statPoints || {};
+  const when = t => t ? new Date(t).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" }) : "-";
+  const where = st && d.online ? (st.map === TOWN_TIER ? "🏙️ เมือง" : `🌌 มิติ ${st.dim} · 🗺️ แมพ ${st.map}`) : "";
+  body.innerHTML = `
+    <div class="pf-hero"><canvas id="gmAvatar" width="96" height="112"></canvas>
+      <div class="pf-main"><div class="pf-name">${esc(name)}</div>
+        <div class="pf-badges"><span>Lv.${Math.floor(+d.level) || 1}</span><span>🌌 มิติ ${maxDim} · 🗺️ แมพ ${reach}</span><span>💰 ${Math.floor(+d.gold) || 0}</span><span>🧠 สติ ${Math.round(+d.sanity) || 0}%</span></div>
+        <div class="pf-will">${acc.guest ? "👤 Guest (ยังไม่ผูกบัญชี)" : "🔗 ผูกบัญชีแล้ว"} · สมัคร ${when(acc.created)} · ไอเทม ${Math.floor(+d.invCount) || 0} + คลัง ${Math.floor(+d.storageCount) || 0} · เกมเวอร์ชัน ${Math.floor(+d.gv) || "-"}</div></div>
+      <div class="pf-status"><span class="net-dot${d.online ? "" : " off"}"></span>${d.online ? "ออนไลน์<br><small>" + where + "</small>" : "ออฟไลน์<br><small>เห็นล่าสุด " + when(st && st.lastSeen) + "</small>"}</div></div>
+    ${d.ban ? `<div class="vb-note warn">⛔ ถูกแบน${Number.isFinite(Date.parse(d.ban.until)) ? "ถึง " + modUntilText(d.ban.until) : "ถาวร"} — ${esc(d.ban.reason || "-")}</div>` : ""}
+    ${d.mute ? `<div class="vb-note warn">🔇 ถูกใบ้${Number.isFinite(Date.parse(d.mute.until)) ? "ถึง " + modUntilText(d.mute.until) : "ถาวร"} — ${esc(d.mute.reason || "-")}</div>` : ""}
+    ${d.gm ? `<div class="vb-note">บัญชีนี้เป็น GM — ลงโทษไม่ได้</div>` : ""}
+    <div class="gm-act">
+      <button type="button" data-pact="warn"${d.gm ? " disabled" : ""}>⚠️ ส่งคำเตือน</button>
+      <button type="button" class="warn" data-pact="mute"${d.gm ? " disabled" : ""}>🔇 ใบ้</button>
+      <button type="button" class="warn" data-pact="kick"${d.gm ? " disabled" : ""}>👢 เตะออก</button>
+      <button type="button" class="warn" data-pact="ban"${d.gm ? " disabled" : ""}>⛔ แบน</button>
+      <button type="button" class="ok" data-pact="unmute"${d.mute ? "" : " disabled"}>✅ ยกเลิกใบ้</button>
+      <button type="button" class="ok" data-pact="unban"${d.ban ? "" : " disabled"}>✅ ยกเลิกแบน</button>
+      <button type="button" data-pact="goto"${d.online && st ? "" : " disabled"}>🧭 วาปไปหา</button>
+      <button type="button" data-pact="back">← GM Console</button></div>
+    <h4 style="margin:10px 0 6px;color:#7a7186">🛡️ อุปกรณ์ที่สวม</h4><div class="pf-gear">${EQUIPMENT_SLOTS.map(sk => tile(byId.get((d.equipment || {})[sk]), SLOT_LABELS[sk])).join("")}</div>
+    <h4 style="margin:10px 0 6px;color:#7a7186">📊 แต้มสเตตัส</h4><div class="pf-stats">${Object.keys(STAT_INFO).map(k => `<span><small>${STAT_INFO[k].label}</small><b>${Math.max(0, Math.floor(+sp[k]) || 0)}</b></span>`).join("")}</div>
+    <h4 style="margin:12px 0 6px;color:#7a7186">🚩 ถูกรายงาน ${Math.floor(+d.reportCount) || 0} ครั้ง</h4>
+    ${(d.reports || []).slice(0, 10).map(r => `<div class="gm-row"><div class="grow"><b>${GM_REPORT_REASON[r.reason] || esc(r.reason)}</b>${r.handled ? '<span class="gm-chip guest">ปิดแล้ว</span>' : ""}<small>โดย ${esc(String(r.by || "?").slice(0, 20))} · ${when(r.at)}${r.note ? " · “" + esc(String(r.note).slice(0, 300)) + "”" : ""}</small>${Array.isArray(r.chat) && r.chat.length ? `<small>💬 ${r.chat.slice(0, 10).map(c => esc(String(c).slice(0, 120))).join(" / ")}</small>` : ""}</div></div>`).join("") || `<div class="empty-note">ไม่มี</div>`}
+    <h4 style="margin:12px 0 6px;color:#7a7186">📜 ประวัติการลงโทษ</h4>
+    ${(d.sanctions || []).map(x => `<div class="gm-row"><span style="font-size:18px">${(GM_KIND[x.kind] || ["•"])[0]}</span><div class="grow"><b>${(GM_KIND[x.kind] || ["", x.kind])[1]}</b>${x.active && (x.kind === "ban" || x.kind === "mute") ? '<span class="gm-chip ban">มีผลอยู่</span>' : ""}${x.revoked ? '<span class="gm-chip guest">ยกเลิกแล้ว</span>' : ""}
+      <small>${when(x.at)} โดย ${esc(String(x.by || "?").slice(0, 20))}${x.kind === "ban" || x.kind === "mute" ? " · ถึง " + modUntilText(x.until) : ""}${x.reason ? " · " + esc(String(x.reason).slice(0, 200)) : ""}</small></div></div>`).join("") || `<div class="empty-note">ไม่มี</div>`}`;
+  const c2 = document.getElementById("gmAvatar").getContext("2d");
+  drawMeditationAura(c2, 48, 96, (WILL_COLORS.find(c => c.id === d.willColor) || WILL_COLORS[0]).color);
+  drawCharacterAt(c2, 48, 100, socSafeLook(d.look), 1.2, "down", null);
+}
+function gmAskRevoke(id, kind, name, after){
+  gmAsk({ kind: "revoke", icon: "✅", title: kind === "ban" ? "ยกเลิกการแบน" : "ยกเลิกการใบ้", name, verb: kind === "ban" ? "ยกเลิกแบน" : "ยกเลิกใบ้", safe: true,
+          onConfirm: async ()=>{ await gmRpc("gm_revoke", { p_target: id, p_kind: kind }, "✅ ยกเลิกแล้ว"); if(after) after(); } });
+}
+document.getElementById("gmPlayerBody").addEventListener("click", e => {
+  const b = e.target.closest("button[data-pact]"); if(!b || b.disabled) return;
+  sfx.click();
+  const d = gm.player, a = b.dataset.pact, name = String((d && d.name) || "?").slice(0, 20), id = gm.playerId;
+  const reload = () => openGmPlayer(id);
+  const sanction = (kind, minutes, text, okMsg) => gmRpc("gm_sanction", { p_target: id, p_kind: kind, p_minutes: minutes, p_reason: text }, okMsg).then(reload);
+  if(a === "back") return openGmConsole();
+  if(a === "goto"){ const st = d.status; return socGoTo({ online: true, name, map: st.map, dim: st.dim, x: st.x, y: st.y }); }
+  if(a === "unmute" || a === "unban") return gmAskRevoke(id, a === "unban" ? "ban" : "mute", name, reload);
+  if(a === "warn") return gmAsk({ kind: "warn", icon: "⚠️", title: "ส่งคำเตือน", name, verb: "ส่งคำเตือนถึง", safe: true, needText: true, textLabel: "ข้อความ", placeholder: "เช่น กรุณาใช้คำสุภาพในแชท",
+    onConfirm: (m, t) => sanction("warn", 0, t, "⚠️ ส่งคำเตือนแล้ว — ผู้เล่นจะเห็นทันทีที่ออนไลน์") });
+  if(a === "mute") return gmAsk({ kind: "mute", icon: "🔇", title: "ใบ้ (ปิดแชท/กระซิบ/เสนอหัวข้อโหวต)", name, verb: "ใบ้", durations: GM_DURATIONS, textLabel: "เหตุผล", placeholder: "ผู้เล่นจะเห็นข้อความนี้",
+    onConfirm: (m, t) => sanction("mute", m, t, "🔇 ใบ้แล้ว") });
+  if(a === "kick") return gmAsk({ kind: "kick", icon: "👢", title: "เตะออกจากเกม", name, verb: "เตะ", durations: GM_KICK_DURATIONS, textLabel: "เหตุผล", placeholder: "ผู้เล่นจะเห็นข้อความนี้",
+    onConfirm: (m, t) => sanction("kick", m, t, "👢 เตะแล้ว — หลุดภายในไม่กี่วินาที") });
+  if(a === "ban") return gmAsk({ kind: "ban", icon: "⛔", title: "แบน (ห้ามเข้าเล่น)", name, verb: "แบน", durations: GM_DURATIONS, textLabel: "เหตุผล", placeholder: "ผู้เล่นจะเห็นข้อความนี้",
+    onConfirm: (m, t) => sanction("ban", m, t, "⛔ แบนแล้ว — หลุดภายในไม่กี่วินาที") });
+});
+document.getElementById("closeGmPlayerBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("gmPlayerPanel").hidden = true; });
 
 document.getElementById("rankBody").addEventListener("click", e => {
   if(e.target.closest("#rankRefreshBtn")){
@@ -9615,8 +10048,11 @@ declare
   r public.saves;
 begin
   if me is null then raise exception 'not signed in'; end if;
-  insert into public.saves (user_id, session_id) values (me, p_session)
-    on conflict (user_id) do update set session_id = excluded.session_id
+  if public.mod_active(me, 'ban') is not null then   -- banned: no session, no save
+    return jsonb_build_object('banned', public.mod_active(me, 'ban'), 'mv', public.min_game_version());
+  end if;
+  insert into public.saves (user_id, session_id, claimed_at) values (me, p_session, now())
+    on conflict (user_id) do update set session_id = excluded.session_id, claimed_at = now()
     returning * into r;
   return jsonb_build_object('data', r.data, 'rev', r.rev, 'mv', public.min_game_version(),
                             'admin', exists (select 1 from public.admins a where a.user_id = me));
@@ -9639,6 +10075,8 @@ begin
     return jsonb_build_object('ok', false, 'reason', 'session');
   end if;
   if r.rev <> p_rev then return jsonb_build_object('ok', false, 'reason', 'rev'); end if;
+  if public.mod_active(me, 'ban') is not null then return jsonb_build_object('ok', false, 'reason', 'banned'); end if;
+  if public.mod_kicked(me) is not null then return jsonb_build_object('ok', false, 'reason', 'kicked'); end if;
   if public.lb_num(p_data -> 'gv') < public.min_game_version() then return jsonb_build_object('ok', false, 'reason', 'version'); end if;
   if octet_length(p_data::text) > 1500000 then return jsonb_build_object('ok', false, 'reason', 'size'); end if;
   if jsonb_typeof(p_data -> 'inventory') is distinct from 'array'
@@ -9751,7 +10189,7 @@ revoke execute on function public.soc_name(uuid), public.soc_online(uuid), publi
 -- and returns the counters the game uses to notice new friend requests / accepted friends.
 create or replace function public.net_poll(p_dim int, p_map int, p_x int, p_y int)
 returns jsonb language plpgsql security definer set search_path = public as $$
-declare me uuid := auth.uid(); w jsonb;
+declare me uuid := auth.uid(); w jsonb; warns jsonb;
 begin
   if me is null then raise exception 'not signed in'; end if;
   insert into public.player_status (user_id, last_seen, dim, map, x, y) values (me, now(), p_dim, p_map, p_x, p_y)
@@ -9760,7 +10198,14 @@ begin
   with gone as (delete from public.whispers where to_id = me returning from_id, body, created_at)
   select coalesce(jsonb_agg(jsonb_build_object('from', from_id, 'name', public.soc_name(from_id), 'body', body) order by created_at), '[]')
     into w from gone;
+  with sent as (update public.sanctions set delivered = true
+                 where user_id = me and kind = 'warn' and not delivered and revoked_at is null returning reason, created_at)
+  select coalesce(jsonb_agg(reason order by created_at), '[]') into warns from sent;
   return jsonb_build_object('w', w,
+    'ban', public.mod_active(me, 'ban'), 'mute', public.mod_active(me, 'mute'), 'kick', public.mod_kicked(me), 'warns', warns,
+    'muted', (select coalesce(jsonb_agg(distinct user_id), '[]') from public.sanctions where kind = 'mute' and revoked_at is null and until > now()),
+    'ann', (select jsonb_build_object('id', id, 'body', body, 'at', created_at) from public.announcements
+             where created_at > now() - interval '15 minutes' order by id desc limit 1),
     'req', (select coalesce(jsonb_agg(jsonb_build_object('id', f.user_id, 'name', public.soc_name(f.user_id))), '[]')
               from public.friends f where f.friend_id = me and not f.accepted),
     'fc', (select count(*) from public.friends where user_id = me and accepted),
@@ -9775,6 +10220,7 @@ declare me uuid := auth.uid(); body text := btrim(regexp_replace(coalesce(p_body
 begin
   if me is null then raise exception 'not signed in'; end if;
   if p_to = me or char_length(body) = 0 or char_length(body) > 120 then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if public.mod_active(me, 'mute') is not null then return jsonb_build_object('ok', false, 'reason', 'muted'); end if;
   if public.soc_blocked(me, p_to) then return jsonb_build_object('ok', false, 'reason', 'blocked'); end if;
   if not public.soc_online(p_to) then return jsonb_build_object('ok', false, 'reason', 'offline'); end if;
   if exists (select 1 from public.player_status where user_id = me and last_whisper > now() - interval '1 second') then
@@ -9886,7 +10332,8 @@ begin
     with ranked as (
       select s.user_id, s.data, k, row_number() over (order by k desc, s.progress_at asc nulls last, s.user_id) rn
         from public.saves s cross join lateral (select public.lb_key(s.data) k) kk
-       where s.data is not null and not exists (select 1 from public.admins a where a.user_id = s.user_id)),
+       where s.data is not null and not exists (select 1 from public.admins a where a.user_id = s.user_id)
+         and public.mod_active(s.user_id, 'ban') is null),
     rw as (
       select user_id, rn, jsonb_build_object('id', user_id, 'rank', rn, 'name', data -> 'player' -> 'name', 'title', data -> 'player' -> 'title',
                'dim', k[1], 'map', k[2], 'level', k[3], 'look', data -> 'player' -> 'look', 'willColor', data -> 'player' -> 'willColor') j
@@ -10053,6 +10500,7 @@ begin
   why := public.poll_ineligible(me);
   if why is not null then return jsonb_build_object('ok', false, 'reason', why); end if;
   if q is null or char_length(q) < 4 or o is null then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if public.mod_active(me, 'mute') is not null then return jsonb_build_object('ok', false, 'reason', 'muted'); end if;
   if exists (select 1 from public.polls where created_by = me and status = 'proposal' and round = cur) then
     return jsonb_build_object('ok', false, 'reason', 'limit');
   end if;
@@ -10100,6 +10548,186 @@ revoke execute on function public.poll_board(), public.poll_vote(bigint, int), p
   public.poll_gm_create(text, jsonb, int), public.poll_gm_remove(bigint) from public, anon;
 grant execute on function public.poll_board(), public.poll_vote(bigint, int), public.poll_propose(text, jsonb), public.poll_support(bigint, boolean),
   public.poll_gm_create(text, jsonb, int), public.poll_gm_remove(bigint) to authenticated;
+-- ============================================================
+-- MODERATION (🛡️ GM console) — ban / mute / kick / warn, server announcements, player lookup, reports.
+-- Every action is checked here (caller must be in public.admins, target must not be); the sanctions
+-- table doubles as the audit log. until = 'infinity' means permanent.
+-- ============================================================
+create table if not exists public.sanctions (
+  id         bigserial primary key,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  kind       text not null check (kind in ('ban', 'mute', 'kick', 'warn')),
+  until      timestamptz not null default 'infinity',
+  reason     text not null default '',
+  by         uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now(),
+  delivered  boolean not null default false,   -- warn: shown to the player yet
+  revoked_at timestamptz,
+  revoked_by uuid references auth.users(id) on delete set null
+);
+create index if not exists sanctions_user_idx on public.sanctions (user_id, kind);
+create table if not exists public.announcements (
+  id         bigserial primary key,
+  body       text not null,
+  by         uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+alter table public.saves add column if not exists claimed_at timestamptz; -- a kick after this = that device is out
+alter table public.sanctions enable row level security;
+alter table public.announcements enable row level security;
+revoke all on public.sanctions, public.announcements from anon, authenticated;
+
+-- helpers (not callable from the game)
+create or replace function public.is_gm(p uuid) returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.admins where user_id = p) $$;
+create or replace function public.mod_active(p uuid, k text) returns jsonb language sql stable security definer set search_path = public as $$
+  select jsonb_build_object('until', until, 'reason', reason) from public.sanctions
+   where user_id = p and kind = k and revoked_at is null and until > now()
+   order by until desc limit 1 $$;
+create or replace function public.mod_kicked(p uuid) returns text language sql stable security definer set search_path = public as $$
+  select s.reason from public.sanctions s join public.saves v on v.user_id = s.user_id
+   where s.user_id = p and s.kind = 'kick' and s.revoked_at is null and s.created_at > coalesce(v.claimed_at, '-infinity')
+   order by s.created_at desc limit 1 $$;
+revoke execute on function public.is_gm(uuid), public.mod_active(uuid, text), public.mod_kicked(uuid) from public, anon, authenticated;
+
+-- GM: find players by name (empty = most recently seen)
+create or replace function public.gm_search(p_query text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); q text := btrim(coalesce(p_query, ''));
+begin
+  if me is null or not public.is_gm(me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  return jsonb_build_object('ok', true, 'players', (select coalesce(jsonb_agg(x.j order by x.seen desc nulls last), '[]') from (
+    select st.last_seen seen, jsonb_build_object('id', s.user_id, 'name', s.data -> 'player' -> 'name', 'level', public.lb_num(s.data -> 'player' -> 'level'),
+             'online', public.soc_online(s.user_id), 'lastSeen', st.last_seen, 'guest', u.is_anonymous, 'gm', public.is_gm(s.user_id),
+             'ban', public.mod_active(s.user_id, 'ban'), 'mute', public.mod_active(s.user_id, 'mute')) j
+      from public.saves s join auth.users u on u.id = s.user_id left join public.player_status st on st.user_id = s.user_id
+     where s.data is not null
+       and (q = '' or s.data -> 'player' ->> 'name' ilike '%' || replace(replace(q, '%', '\%'), '_', '\_') || '%' or s.user_id::text = q)
+     order by st.last_seen desc nulls last limit 30) x));
+end $$;
+
+-- GM: everything about one player (full save view, account, status, sanctions, reports against them)
+create or replace function public.gm_player(p_target uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); d jsonb; eq jsonb; u auth.users; st public.player_status; sv public.saves;
+begin
+  if me is null or not public.is_gm(me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  select * into sv from public.saves where user_id = p_target;
+  if not found or sv.data is null then return jsonb_build_object('ok', false, 'reason', 'nosave'); end if;
+  d := sv.data;
+  select * into u from auth.users where id = p_target;
+  select * into st from public.player_status where user_id = p_target;
+  select coalesce(jsonb_agg(e), '[]') into eq from jsonb_array_elements(coalesce(d -> 'inventory', '[]')) e
+   where e ->> 'kind' = 'equipment'
+     and e ->> 'instanceId' in (select value from jsonb_each_text(coalesce(d -> 'player' -> 'equipment', '{}')));
+  return jsonb_build_object('ok', true, 'id', p_target, 'gm', public.is_gm(p_target), 'online', public.soc_online(p_target),
+    'name', d -> 'player' -> 'name', 'title', d -> 'player' -> 'title', 'level', d -> 'player' -> 'level', 'gold', d -> 'player' -> 'gold',
+    'look', d -> 'player' -> 'look', 'willColor', d -> 'player' -> 'willColor', 'weaponRank', d -> 'player' -> 'weaponRank',
+    'sanity', d -> 'player' -> 'sanity', 'statPoints', d -> 'player' -> 'statPoints',
+    'maxDimension', d -> 'maxDimension', 'dimReach', d -> 'dimReach', 'maxMapTierReachedDim1', d -> 'maxMapTierReachedDim1',
+    'equipment', d -> 'player' -> 'equipment', 'equipped', eq,
+    'invCount', jsonb_array_length(coalesce(d -> 'inventory', '[]')), 'storageCount', jsonb_array_length(coalesce(d -> 'storage', '[]')),
+    'savedAt', sv.updated_at, 'gv', d -> 'gv',
+    'account', jsonb_build_object('guest', u.is_anonymous, 'created', u.created_at, 'lastSignIn', u.last_sign_in_at,
+                 'providers', coalesce(u.raw_app_meta_data -> 'providers', '[]')),
+    'status', case when st.user_id is null then null else jsonb_build_object('lastSeen', st.last_seen, 'dim', st.dim, 'map', st.map, 'x', st.x, 'y', st.y) end,
+    'ban', public.mod_active(p_target, 'ban'), 'mute', public.mod_active(p_target, 'mute'),
+    'sanctions', (select coalesce(jsonb_agg(jsonb_build_object('id', s.id, 'kind', s.kind, 'until', s.until, 'reason', s.reason, 'at', s.created_at,
+                    'by', public.soc_name(s.by), 'revoked', s.revoked_at is not null, 'active', s.revoked_at is null and s.until > now()) order by s.created_at desc), '[]')
+                  from (select * from public.sanctions where user_id = p_target order by created_at desc limit 30) s),
+    'reports', (select coalesce(jsonb_agg(jsonb_build_object('id', r.id, 'reason', r.reason, 'note', r.note, 'chat', r.chat, 'at', r.created_at,
+                    'by', public.soc_name(r.reporter), 'handled', r.handled) order by r.created_at desc), '[]')
+                from (select * from public.reports where target = p_target order by created_at desc limit 20) r),
+    'reportCount', (select count(*) from public.reports where target = p_target));
+end $$;
+
+-- GM: ban / mute (p_minutes <= 0 or null = permanent), kick (p_minutes > 0 = also banned that long), warn (reason = the message)
+create or replace function public.gm_sanction(p_target uuid, p_kind text, p_minutes int, p_reason text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); why text := left(btrim(regexp_replace(coalesce(p_reason, ''), '\s+', ' ', 'g')), 200);
+        until_at timestamptz := case when coalesce(p_minutes, 0) > 0 then now() + make_interval(mins => least(p_minutes, 5256000)) else 'infinity' end;
+begin
+  if me is null or not public.is_gm(me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  if p_target = me or public.is_gm(p_target) then return jsonb_build_object('ok', false, 'reason', 'target'); end if;
+  if not exists (select 1 from public.saves where user_id = p_target) then return jsonb_build_object('ok', false, 'reason', 'nosave'); end if;
+  if p_kind not in ('ban', 'mute', 'kick', 'warn') or (p_kind = 'warn' and why = '') then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if p_kind in ('ban', 'mute') then
+    update public.sanctions set revoked_at = now(), revoked_by = me   -- the new one replaces what was running
+     where user_id = p_target and kind = p_kind and revoked_at is null and until > now();
+    insert into public.sanctions (user_id, kind, until, reason, by) values (p_target, p_kind, until_at, why, me);
+  elsif p_kind = 'kick' then
+    insert into public.sanctions (user_id, kind, until, reason, by) values (p_target, 'kick', now(), why, me);
+    if coalesce(p_minutes, 0) > 0 then
+      update public.sanctions set revoked_at = now(), revoked_by = me
+       where user_id = p_target and kind = 'ban' and revoked_at is null and until > now() and until < until_at;
+      insert into public.sanctions (user_id, kind, until, reason, by) values (p_target, 'ban', until_at, why, me);
+    end if;
+  else
+    insert into public.sanctions (user_id, kind, until, reason, by) values (p_target, 'warn', now(), why, me);
+  end if;
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.gm_revoke(p_target uuid, p_kind text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null or not public.is_gm(me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  update public.sanctions set revoked_at = now(), revoked_by = me
+   where user_id = p_target and kind = p_kind and revoked_at is null and until > now();
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- GM: reports inbox (unhandled first) / mark handled
+create or replace function public.gm_reports(p_all boolean)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null or not public.is_gm(me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  return jsonb_build_object('ok', true, 'reports', (select coalesce(jsonb_agg(jsonb_build_object('id', r.id, 'reason', r.reason, 'note', r.note, 'chat', r.chat,
+      'at', r.created_at, 'handled', r.handled, 'target', r.target, 'targetName', public.soc_name(r.target), 'by', public.soc_name(r.reporter))
+      order by r.handled, r.created_at desc), '[]')
+    from (select * from public.reports where p_all or not handled order by handled, created_at desc limit 60) r));
+end $$;
+create or replace function public.gm_report_handle(p_id bigint, p_handled boolean)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null or not public.is_gm(me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  update public.reports set handled = coalesce(p_handled, true) where id = p_id;
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- GM: sanctions running now + recent history
+create or replace function public.gm_sanctions()
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null or not public.is_gm(me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  return jsonb_build_object('ok', true,
+    'active', (select coalesce(jsonb_agg(jsonb_build_object('id', s.id, 'user', s.user_id, 'name', public.soc_name(s.user_id), 'kind', s.kind,
+                 'until', s.until, 'reason', s.reason, 'at', s.created_at, 'by', public.soc_name(s.by)) order by s.created_at desc), '[]')
+               from public.sanctions s where s.kind in ('ban', 'mute') and s.revoked_at is null and s.until > now()),
+    'history', (select coalesce(jsonb_agg(jsonb_build_object('id', s.id, 'user', s.user_id, 'name', public.soc_name(s.user_id), 'kind', s.kind,
+                 'until', s.until, 'reason', s.reason, 'at', s.created_at, 'by', public.soc_name(s.by), 'revoked', s.revoked_at is not null) order by s.created_at desc), '[]')
+               from (select * from public.sanctions order by created_at desc limit 40) s));
+end $$;
+
+-- GM: announcement to everyone online (shown once per player, for 15 minutes after posting)
+create or replace function public.gm_announce(p_body text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); b text := left(btrim(regexp_replace(coalesce(p_body, ''), '\s+', ' ', 'g')), 200);
+begin
+  if me is null or not public.is_gm(me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  if b = '' then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  insert into public.announcements (body, by) values (b, me);
+  return jsonb_build_object('ok', true);
+end $$;
+
+revoke execute on function public.gm_search(text), public.gm_player(uuid), public.gm_sanction(uuid, text, int, text), public.gm_revoke(uuid, text),
+  public.gm_reports(boolean), public.gm_report_handle(bigint, boolean), public.gm_sanctions(), public.gm_announce(text) from public, anon;
+grant execute on function public.gm_search(text), public.gm_player(uuid), public.gm_sanction(uuid, text, int, text), public.gm_revoke(uuid, text),
+  public.gm_reports(boolean), public.gm_report_handle(bigint, boolean), public.gm_sanctions(), public.gm_announce(text) to authenticated;
 ------------------------------------------------------------------------------------------------ -->
 </body>
 </html>
