@@ -22,6 +22,15 @@
     background:#111; color:var(--ink);
   }
   button{ font-family:inherit; cursor:pointer; }
+  /* A game screen, not a document: fast clicking must never select text — a stray selection also hijacked
+     drag-and-drop (the browser dragged the highlighted text instead of the item/skill). Typing fields stay selectable. */
+  body{ -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  input, textarea, select{ -webkit-user-select:text; user-select:text; }
+  /* While anything is being dragged, the action bar sits above open panels (they overlap its top edge on
+     short screens, which swallowed drops aimed at the upper half of a slot). */
+  body.dnd-active #skillBar{ z-index:40; }
+  /* Slot children never become the drag/drop target themselves — no highlight flicker over icon/text. */
+  #skillBar .skill-btn > *, .item-slot > *, .equip-slot-box > *{ pointer-events:none; }
 
   /* ---------- Creation screen ----------
      Lore framing: the barrier has just cracked, the hero wakes by an overturned wagon with no memory —
@@ -572,6 +581,72 @@
   #chatInput{ pointer-events:auto; flex:1; min-width:0; padding:8px 12px; border-radius:18px; border:2px solid rgba(255,209,102,.6); background:rgba(20,16,40,.88); color:#fff; font-size:13px; }
   #chatInput[hidden]{ display:none; }
 
+  /* ---------- Social: player menu, profile, friends, report ---------- */
+  #playerMenu{ position:fixed; z-index:50; min-width:190px; padding:6px; border-radius:12px; background:rgba(22,19,46,.97);
+    border:1px solid rgba(143,243,255,.35); box-shadow:0 12px 30px rgba(0,0,0,.55); color:#e9e6f5; display:flex; flex-direction:column; gap:2px; }
+  #playerMenu[hidden]{ display:none; }
+  #playerMenu .pm-head{ padding:6px 10px 8px; border-bottom:1px solid rgba(255,255,255,.12); margin-bottom:4px; }
+  #playerMenu .pm-head b{ display:block; font-size:14px; color:#fff; }
+  #playerMenu .pm-head small{ font-size:11px; color:#ffe9a8; }
+  #playerMenu button{ display:flex; align-items:center; gap:10px; width:100%; padding:7px 10px; border:none; border-radius:8px; background:none; color:#e9e6f5; font-size:13px; text-align:left; }
+  #playerMenu button:hover{ background:rgba(143,243,255,.14); }
+  #playerMenu button.warn{ color:#ffb3b3; }
+  #playerMenu .pm-ic{ width:20px; text-align:center; font-size:15px; }
+  .pm-gm{ color:#ffd166; font-weight:bold; }
+  .pf-hero{ display:flex; align-items:center; gap:14px; background:#2e2a4a; color:#fff; border-radius:12px; padding:10px 16px; margin-bottom:10px; }
+  .pf-hero canvas{ flex:0 0 auto; border-radius:10px; background:radial-gradient(ellipse at 50% 85%, #1f3a52 0%, #151a33 60%, #100d24 100%); }
+  .pf-main{ flex:1; min-width:0; }
+  .pf-name{ font-size:19px; font-weight:bold; }
+  .pf-title{ font-size:12px; color:var(--gold); margin-top:2px; }
+  .pf-badges{ display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 6px; }
+  .pf-badges span{ background:rgba(255,255,255,.1); border-radius:12px; padding:3px 9px; font-size:12px; }
+  .pf-will{ font-size:12px; color:#d8d3e8; display:flex; align-items:center; gap:7px; }
+  .pf-will i{ width:12px; height:12px; border-radius:50%; display:inline-block; }
+  .pf-status{ font-size:12px; text-align:right; line-height:1.5; align-self:flex-start; }
+  .pf-weapon{ display:flex; align-items:center; gap:12px; background:#fff; border:2px solid #e4dcc4; border-radius:12px; padding:8px 12px; margin-bottom:10px; }
+  .pf-weapon b{ display:block; font-size:14px; color:#2a2346; }
+  .pf-rar{ font-size:10px; color:#fff; border-radius:8px; padding:1px 7px; margin-left:4px; vertical-align:middle; text-shadow:0 1px 1px #0005; }
+  .pf-weapon small{ font-size:12px; color:#7a7186; }
+  .pf-ic{ font-size:26px; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; }
+  .pf-ic svg{ width:34px; height:34px; }
+  #profileBody h4{ margin:10px 0 6px; font-size:13px; color:#7a7186; }
+  .pf-gear{ display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; }
+  .pf-slot{ display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 4px; border:2px solid #e4dcc4; border-radius:10px; background:#fff; text-align:center; min-height:84px; cursor:help; }
+  .pf-slot b{ font-size:11px; line-height:1.25; color:#2a2346; }
+  .pf-slot small{ font-size:10px; color:#7a7186; }
+  .pf-slot.empty{ opacity:.45; cursor:default; }
+  .pf-stats{ display:grid; grid-template-columns:repeat(6, 1fr); gap:6px; }
+  .pf-stats span{ background:#fff; border:1px solid #e4dcc4; border-radius:8px; padding:5px 4px; text-align:center; display:flex; flex-direction:column; }
+  .pf-stats small{ font-size:10px; color:#7a7186; }
+  .pf-stats b{ font-size:16px; color:#4b3f8f; }
+  .pf-locked{ background:#f1ecff; border:1px dashed #b3a6e8; color:#4b3f8f; border-radius:10px; padding:12px; text-align:center; font-size:13px; }
+  .pf-actions, .fr-btns{ display:flex; gap:8px; }
+  .pf-actions{ margin-top:12px; justify-content:flex-end; }
+  .pf-actions button, .fr-btns button{ border:none; border-radius:8px; padding:8px 12px; background:#4b3f8f; color:#fff; font-size:13px; font-weight:bold; }
+  .pf-actions button.warn, .fr-btns button.warn{ background:#c9401f; }
+  .fr-btns button.ok{ background:#2f9e5b; }
+  .pf-actions button:disabled{ opacity:.5; cursor:default; }
+  #friendsBody h4{ margin:12px 0 6px; font-size:13px; color:#7a7186; }
+  #friendsBody h4:first-child{ margin-top:0; }
+  .fr-row{ display:flex; align-items:center; gap:10px; background:#fff; border:2px solid #e4dcc4; border-radius:12px; padding:8px 10px; margin-bottom:6px; }
+  .fr-row.on{ border-color:#8fd19e; }
+  .fr-row .net-dot{ flex:0 0 auto; margin:0; }
+  .fr-main{ flex:1; min-width:0; }
+  .fr-main b{ display:block; font-size:14px; color:#2a2346; }
+  .fr-main small{ font-size:11.5px; color:#7a7186; }
+  .fr-btns button{ padding:6px 9px; font-size:13px; }
+  #reportReasons{ margin-bottom:10px; }
+  #reportNote{ width:100%; box-sizing:border-box; border:2px solid #d8cdb0; border-radius:8px; padding:8px; font:inherit; font-size:13px; resize:vertical; }
+  .report-chat{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:#4b3f8f; margin:8px 0 4px; }
+  #chatWhisperChip{ pointer-events:auto; display:inline-flex; align-items:center; gap:4px; flex:0 0 auto; max-width:140px; padding:4px 6px 4px 10px; border-radius:14px; background:rgba(193,92,224,.85); color:#fff; font-size:12px; font-weight:bold; }
+  #chatWhisperChip[hidden]{ display:none; }
+  #chatWhisperName{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #chatWhisperX{ border:none; background:none; color:#fff; font-size:12px; padding:0 2px; }
+  .chat-line.whisper{ color:#f3c6ff; }
+  .chat-line.whisper b{ color:#e59bff; }
+  .chat-line[data-id] b{ cursor:pointer; }
+  #chatBox.open .chat-line[data-id] b:hover{ text-decoration:underline; }
+
   #netBlock{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; background:rgba(8,6,20,.84); backdrop-filter:blur(2px); }
   #netBlock[hidden]{ display:none; }
   #netBlock .card{ max-width:420px; margin:16px; padding:24px 26px; border-radius:14px; text-align:center; color:#e9e6f5; background:#1c1838; border:1px solid rgba(143,243,255,.35); box-shadow:0 20px 60px rgba(0,0,0,.6); }
@@ -710,6 +785,7 @@
     <div id="chatLog" aria-live="polite"></div>
     <div class="chat-input-row">
       <button id="chatToggle" type="button" title="แชทในพื้นที่นี้ (Enter)">💬</button>
+      <span id="chatWhisperChip" hidden><span id="chatWhisperName"></span><button id="chatWhisperX" type="button" title="เลิกกระซิบ">✕</button></span>
       <input id="chatInput" type="text" maxlength="80" placeholder="พิมพ์ข้อความ แล้วกด Enter · Esc ปิด" autocomplete="off" hidden>
     </div>
   </div>
@@ -721,6 +797,7 @@
     <button class="menu-btn" id="weaponSkillBtn" type="button" style="position:relative;">⚔️ สกิลอาวุธ<span id="weaponSkillBadge" class="stat-badge" hidden>!</span></button>
     <button class="menu-btn" id="meditateBtn" type="button" style="position:relative;">🧘 ทำสมาธิ<span id="sanityLowBadge" class="stat-badge sanity-badge" hidden>!</span></button>
     <button class="menu-btn" id="tutorialBtn" type="button">❓ วิธีเล่น</button>
+    <button class="menu-btn" id="friendsBtn" type="button" style="position:relative;" hidden>👥 เพื่อน<span id="friendsBadge" class="stat-badge" hidden>0</span></button>
     <button class="menu-btn" id="accountBtn" type="button" hidden>👤 บัญชี</button>
   </div>
 
@@ -917,6 +994,31 @@
     <div class="choice-row" id="collectionTabs" style="margin-bottom:10px;"></div>
     <div id="collectionContent"></div>
   </div>
+
+  <div class="panel" id="friendsPanel" hidden style="width:520px;">
+    <button class="close-x" id="closeFriendsBtn" type="button">✕</button>
+    <h2>👥 เพื่อน</h2>
+    <div id="friendsBody"></div>
+  </div>
+
+  <div class="panel" id="profilePanel" hidden style="width:560px;">
+    <button class="close-x" id="closeProfileBtn" type="button">✕</button>
+    <h2>👤 ข้อมูลผู้เล่น</h2>
+    <div id="profileBody"></div>
+  </div>
+
+  <div class="panel" id="reportPanel" hidden style="width:440px;">
+    <button class="close-x" id="closeReportBtn" type="button">✕</button>
+    <h2>🚩 รายงาน <span id="reportName"></span></h2>
+    <p class="storage-hint">GM จะตรวจสอบภายหลัง — ผู้ถูกรายงานจะไม่รู้ว่าใครเป็นคนรายงาน</p>
+    <div class="choice-row" id="reportReasons"></div>
+    <textarea id="reportNote" maxlength="300" rows="3" placeholder="เล่าเพิ่มเติม (ไม่บังคับ)"></textarea>
+    <label class="report-chat"><input type="checkbox" id="reportChat"> แนบแชทล่าสุดของผู้เล่นนี้ (<span id="reportChatCount">0</span> ข้อความ)</label>
+    <div class="acct-msg err" id="reportMsg"></div>
+    <div class="actions"><button class="btn-primary" id="reportSendBtn" type="button">ส่งรายงาน</button></div>
+  </div>
+
+  <div id="playerMenu" hidden></div>
 
   <div class="panel" id="accountPanel" hidden style="width:540px;">
     <button class="close-x" id="closeAccountBtn" type="button">✕</button>
@@ -2609,6 +2711,8 @@ async function netAfterLogin(){
   document.getElementById("creationAcct").hidden = false;
   document.getElementById("creationAcctName").textContent = "👤 " + netAccountLabel();
   document.getElementById("accountBtn").hidden = false;
+  document.getElementById("friendsBtn").hidden = false;
+  socRefreshList();
   document.getElementById("chatBox").hidden = false;
   showContinueOption();
 }
@@ -2785,11 +2889,12 @@ function rtHandle(m){
   else if(m.payload.event === "bye") rtRemovePeer(d.id);
   else if(m.payload.event === "chat"){
     const text = String(d.text || "").replace(/\s+/g, " ").trim().slice(0, NET_CHAT_MAX_LEN);
-    if(!text) return;
+    if(!text || soc.blocked.has(d.id)) return; // blocked: no line, no bubble
     const o = rt.peers.get(d.id);
     const name = o ? o.name : String(d.name || "?").slice(0, 20);
     const gm = net.staff.has(d.id);
-    chatAddLine(gm ? "gm" : "", (gm ? "[GM] " : "") + name, text);
+    socRemember(d.id, text);
+    chatAddLine(gm ? "gm" : "", (gm ? "[GM] " : "") + name, text, d.id);
     if(o){ o.chat = text; o.chatUntil = performance.now() + NET_CHAT_BUBBLE_MS; }
   }
 }
@@ -2858,6 +2963,7 @@ function netTick(now, dt){
     if(walking) o.walkPhase = ((o.walkPhase || 0) + dt * 13) % (Math.PI * 2);
     else { o.walkPhase = null; o.facing = o.netFacing; }
   }
+  if(now >= soc.pollAt && !soc.polling){ soc.pollAt = now + NET_POLL_MS; socPoll(); }
   if(now >= rt.fadeCheckAt){
     rt.fadeCheckAt = now + 1000;
     document.querySelectorAll("#chatLog .chat-line:not(.faded)").forEach(el => { if(now - +el.dataset.t > NET_CHAT_FADE_MS) el.classList.add("faded"); });
@@ -2866,11 +2972,12 @@ function netTick(now, dt){
 }
 
 /* ---- Map chat ---- */
-function chatAddLine(cls, name, text){
+function chatAddLine(cls, name, text, id){ // id = the other player's account — their name becomes clickable
   const log = document.getElementById("chatLog");
   const line = document.createElement("div");
   line.className = "chat-line" + (cls ? " " + cls : "");
   line.dataset.t = String(performance.now());
+  if(id){ line.dataset.id = id; line.dataset.name = name.replace(/^(💌 (ถึง )?|\[GM\] )/, ""); }
   if(name){ const b = document.createElement("b"); b.textContent = name + ": "; line.appendChild(b); }
   line.appendChild(document.createTextNode(text));
   log.appendChild(line);
@@ -2890,8 +2997,12 @@ function chatClose(){
 }
 function chatSend(){
   const input = document.getElementById("chatInput");
-  const text = input.value.replace(/\s+/g, " ").trim().slice(0, NET_CHAT_MAX_LEN);
+  const text = input.value.replace(/\s+/g, " ").trim().slice(0, soc.whisperTo ? NET_WHISPER_MAX_LEN : NET_CHAT_MAX_LEN);
   if(!text){ chatClose(); return; }
+  if(soc.whisperTo){ // whisper mode stays on (chip) until ✕ or Esc
+    socSendWhisper(text).then(done => { if(done){ input.value = ""; chatClose(); } });
+    return;
+  }
   const now = performance.now();
   if(now - rt.lastChatAt < NET_CHAT_COOLDOWN_MS) return; // too fast — the text stays, press Enter again
   if(!rt.joined){ chatAddLine("sys", "", "ยังไม่ได้เชื่อมต่อ — ส่งข้อความไม่ได้ตอนนี้"); return; }
@@ -2927,6 +3038,326 @@ function drawChatBubble(ctx, x, bottomY, text){
   ctx.fillStyle = "#2a2346"; ctx.textAlign = "center"; ctx.textBaseline = "top";
   lines.forEach((l, i) => ctx.fillText(l, x, top + 5 + i * 15));
   ctx.restore();
+}
+
+/* ---- Social: right-click another player → profile / whisper / friend / block / report; 👥 friends window.
+   All of it goes through server functions (see SOCIAL in the SQL block) — who sent what is decided there. ---- */
+const NET_POLL_MS = 3000;          // heartbeat + whisper mailbox; also how fast friends see where you are
+const NET_WHISPER_MAX_LEN = 120;
+const REPORT_REASONS = [ { id:"chat", label:"💬 ชื่อ/แชทไม่เหมาะสม" }, { id:"cheat", label:"🛠️ โกง/ใช้บั๊ก" },
+                         { id:"spam", label:"📢 ก่อกวน/สแปม" }, { id:"other", label:"❓ อื่นๆ" } ];
+const soc = { friends:new Map(), blocked:new Map(), reqIds:new Set(), fc:-1, pollAt:0, polling:false,
+              whisperTo:null, menu:null, menuConfirm:"", recent:new Map(), profile:null, report:null, confirmRemove:"" };
+
+function socState(id){
+  if(soc.blocked.has(id)) return "blocked";
+  const f = soc.friends.get(id);
+  return f ? f.state : "none"; // friends | outgoing | incoming | none
+}
+function socName(id, fallback){
+  const o = rt.peers.get(id), f = soc.friends.get(id) || soc.blocked.get(id);
+  return (o && o.name) || (f && f.name) || fallback || "?";
+}
+function socRpcMsg(r){
+  return { offline:"ผู้เล่นนี้ออฟไลน์อยู่ — กระซิบได้เฉพาะตอนออนไลน์", blocked:"ส่งไม่ได้ — มีการบล็อกกันอยู่",
+           fast:"ช้าลงหน่อย — ส่งถี่เกินไป", full:"รายชื่อเพื่อนเต็มแล้ว (100 คน)", invalid:"ทำรายการนี้ไม่ได้",
+           nosave:"ผู้เล่นนี้ยังไม่มีข้อมูลบนเซิร์ฟเวอร์" }[r && r.reason] || "ทำรายการไม่สำเร็จ";
+}
+async function socPoll(){
+  soc.polling = true;
+  try{
+    const p = game.player;
+    const r = await netRpc("net_poll", JSON.stringify({ p_dim: game.dimension || 1, p_map: game.mapTier, p_x: Math.round(p.x), p_y: Math.round(p.y) }));
+    (r.w || []).forEach(w => {
+      if(soc.blocked.has(w.from)) return;
+      socRemember(w.from, "[กระซิบ] " + w.body);
+      chatAddLine("whisper", "💌 " + String(w.name || "?").slice(0, 20), String(w.body || "").slice(0, NET_WHISPER_MAX_LEN), w.from);
+      sfx.click();
+    });
+    const ids = new Set((r.req || []).map(q => q.id));
+    (r.req || []).forEach(q => { if(!soc.reqIds.has(q.id)) chatAddLine("sys", "", `👥 ${String(q.name || "?").slice(0, 20)} ขอเป็นเพื่อน — เปิดเมนู 👥 เพื่อน`); });
+    const changed = ids.size !== soc.reqIds.size || [...ids].some(id => !soc.reqIds.has(id)) || r.fc !== soc.fc;
+    soc.reqIds = ids; soc.fc = r.fc;
+    if(changed || !document.getElementById("friendsPanel").hidden) await socRefreshList();
+    socBadge();
+  }catch(err){ /* offline — the save indicator already says so; try again next tick */ }
+  soc.polling = false;
+}
+async function socRefreshList(){
+  try{
+    const r = await netRpc("friend_list", "{}");
+    soc.friends = new Map((r.friends || []).map(f => [f.id, f]));
+    soc.blocked = new Map((r.blocked || []).map(b => [b.id, b]));
+  }catch(err){ return; }
+  socBadge();
+  if(!document.getElementById("friendsPanel").hidden) renderFriendsPanel();
+}
+function socBadge(){
+  const n = [...soc.friends.values()].filter(f => f.state === "incoming").length;
+  const b = document.getElementById("friendsBadge");
+  b.textContent = n; b.hidden = !n;
+}
+function socRemember(id, text){ // the last few lines per player, attachable to a report
+  const list = soc.recent.get(id) || [];
+  list.push(text); if(list.length > 10) list.shift();
+  soc.recent.set(id, list);
+}
+
+/* context menu */
+function socPeerAt(clientX, clientY){
+  const rect = canvas.getBoundingClientRect();
+  const wx = clientX - rect.left + game.camera.x, wy = clientY - rect.top + game.camera.y;
+  let best = null, bestD = 1e9;
+  for(const o of game.otherPlayers){
+    if(!o.netId || o.mapTier !== game.mapTier) continue;
+    const dx = Math.abs(wx - o.x), top = o.y - 85, bottom = o.y + 12;
+    if(dx < 28 && wy > top && wy < bottom && dx < bestD){ best = o; bestD = dx; }
+  }
+  return best;
+}
+function socOpenMenu(id, name, clientX, clientY){
+  if(!net.user || id === net.user.id) return;
+  soc.menu = { id, name: socName(id, name) };
+  soc.menuConfirm = "";
+  renderPlayerMenu();
+  const el = document.getElementById("playerMenu");
+  el.hidden = false;
+  const w = el.offsetWidth, h = el.offsetHeight;
+  el.style.left = Math.max(8, Math.min(clientX, innerWidth - w - 8)) + "px";
+  el.style.top = Math.max(8, Math.min(clientY, innerHeight - h - 8)) + "px";
+}
+function socCloseMenu(){ document.getElementById("playerMenu").hidden = true; soc.menu = null; }
+function renderPlayerMenu(){
+  const m = soc.menu, st = socState(m.id), f = soc.friends.get(m.id), o = rt.peers.get(m.id);
+  const gm = net.staff.has(m.id);
+  const item = (act, icon, label, extra) => `<button type="button" data-act="${act}"${extra || ""}><span class="pm-ic">${icon}</span>${label}</button>`;
+  const friendItem = st === "friends" ? item("unfriend", "👥", soc.menuConfirm === "unfriend" ? "ยืนยันลบเพื่อน" : "ลบเพื่อน", ' class="warn"')
+    : st === "outgoing" ? item("unfriend", "⏳", "ยกเลิกคำขอเพื่อน")
+    : st === "incoming" ? item("addfriend", "✅", "ตอบรับเป็นเพื่อน")
+    : st === "none" ? item("addfriend", "➕", "แอดเพื่อน") : "";
+  const canGo = st === "friends" && f && f.online && !(f.map === game.mapTier && (f.map === TOWN_TIER || f.dim === game.dimension));
+  document.getElementById("playerMenu").innerHTML = `
+    <div class="pm-head"><b>${gm ? '<span class="pm-gm">[GM]</span> ' : ""}${netEsc(m.name)}</b>${o ? `<small>Lv.${o.level} · มิติ ${o.maxDim} · แมพ ${o.maxMap}</small>` : ""}</div>
+    ${item("profile", "👤", "ข้อมูลผู้เล่น")}
+    ${st === "blocked" ? "" : item("whisper", "💬", "กระซิบ")}
+    ${friendItem}
+    ${canGo ? item("goto", "🧭", "ไปหาเพื่อน") : ""}
+    ${st === "blocked" ? item("unblock", "✔️", "เลิกบล็อก") : item("block", "🚫", soc.menuConfirm === "block" ? "ยืนยันบล็อก" : "บล็อก", ' class="warn"')}
+    ${item("report", "🚩", "รายงานผู้เล่น", ' class="warn"')}`;
+}
+async function socMenuAction(act, id, name){
+  name = socName(id, name);
+  if((act === "block" || act === "unfriend") && soc.menu && soc.menuConfirm !== act && socState(id) !== "outgoing"){
+    soc.menuConfirm = act; renderPlayerMenu(); return; // dangerous ones take a second click
+  }
+  socCloseMenu();
+  if(act === "profile") return openProfile(id, name);
+  if(act === "whisper") return socStartWhisper(id, name);
+  if(act === "report") return openReport(id, name);
+  if(act === "goto") return socGoTo(soc.friends.get(id));
+  try{
+    let r;
+    if(act === "addfriend"){
+      r = await netRpc("friend_request", JSON.stringify({ p_to: id }));
+      showToast(r.ok ? (r.state === "friends" ? `👥 ${name} เป็นเพื่อนกับคุณแล้ว` : `ส่งคำขอเป็นเพื่อนถึง ${name} แล้ว`) : socRpcMsg(r));
+    } else if(act === "unfriend"){
+      r = await netRpc("friend_remove", JSON.stringify({ p_other: id }));
+      if(r.ok) showToast(`ลบ ${name} ออกจากรายชื่อแล้ว`);
+    } else if(act === "block" || act === "unblock"){
+      r = await netRpc("block_player", JSON.stringify({ p_other: id, p_on: act === "block" }));
+      if(r.ok) showToast(act === "block" ? `🚫 บล็อก ${name} แล้ว — จะไม่เห็นแชทและกระซิบจากผู้เล่นนี้` : `เลิกบล็อก ${name} แล้ว`);
+      if(act === "block" && soc.whisperTo && soc.whisperTo.id === id) socClearWhisper();
+      if(act === "block" && rt.peers.get(id)) rt.peers.get(id).chatUntil = 0; // drop their speech bubble right away
+    }
+    await socRefreshList();
+    if(!document.getElementById("profilePanel").hidden && soc.profile && soc.profile.id === id) openProfile(id, name);
+  }catch(err){ showToast(err.message); }
+}
+
+/* whisper — rides on the map chat box, with a "→ name" chip */
+function socStartWhisper(id, name){
+  if(soc.blocked.has(id)) return;
+  soc.whisperTo = { id, name: socName(id, name) };
+  document.getElementById("chatWhisperName").textContent = "→ " + soc.whisperTo.name;
+  document.getElementById("chatWhisperChip").hidden = false;
+  document.getElementById("chatInput").placeholder = `กระซิบถึง ${soc.whisperTo.name} · Enter ส่ง`;
+  document.getElementById("chatInput").maxLength = NET_WHISPER_MAX_LEN;
+  closeAllPanels();
+  chatOpen();
+}
+function socClearWhisper(){
+  soc.whisperTo = null;
+  document.getElementById("chatWhisperChip").hidden = true;
+  document.getElementById("chatInput").placeholder = "พิมพ์ข้อความ แล้วกด Enter · Esc ปิด";
+  document.getElementById("chatInput").maxLength = NET_CHAT_MAX_LEN;
+}
+async function socSendWhisper(text){
+  const to = soc.whisperTo;
+  try{
+    const r = await netRpc("whisper_send", JSON.stringify({ p_to: to.id, p_body: text }));
+    if(r.ok) chatAddLine("whisper me", "💌 ถึง " + to.name, text, to.id);
+    else chatAddLine("sys", "", socRpcMsg(r));
+    return r.ok || r.reason !== "fast";
+  }catch(err){ chatAddLine("sys", "", err.message); return false; }
+}
+
+/* go to a friend: same rules as the travel gate — only layers/maps you've unlocked yourself */
+function socGoTo(f){
+  if(!f || !f.online){ showToast("เพื่อนออฟไลน์อยู่"); return; }
+  if(game.inBattle){ showToast("ออกจากการต่อสู้ก่อน"); return; }
+  if(game.dungeon){ showToast("ออกจากดันเจี้ยนก่อน"); return; }
+  const town = f.map === TOWN_TIER;
+  if(!town && (f.dim > game.maxDimension || f.map > getDimReach(f.dim))){
+    showToast(`ยังไปไม่ได้ — ต้องปลดล็อก มิติ ${f.dim} แมพ ${f.map} ด้วยตัวเองก่อน`); return;
+  }
+  closeAllPanels();
+  if(town) warpToMap(TOWN_TIER); else warpToMap(f.map, f.dim);
+  if(f.x != null && f.y != null){ // land beside them, on a walkable cell
+    const c = worldToCell(clamp(f.x + 50, 20, WORLD_W - 20), clamp(f.y, 20, WORLD_H - 20));
+    const free = findNearestFreeCell(c.gx, c.gy), pos = cellToWorld(free.gx, free.gy);
+    game.player.x = pos.x; game.player.y = pos.y;
+  }
+  showToast(`🧭 มาหา ${f.name} แล้ว`);
+}
+
+/* profile card / full inspect */
+function socSafeEntry(e){ // another player's save — only known shapes reach the item helpers
+  const def = e && EQUIPMENT_DEFS[e.defId];
+  if(!def) return null;
+  const rolledStats = {};
+  Object.entries(e.rolledStats || {}).forEach(([k, v]) => { if(STAT_INFO[k] && Number.isFinite(+v)) rolledStats[k] = Math.round(+v); });
+  return { kind:"equipment", defId: e.defId, rarity: RARITY_DEFS[e.rarity] ? e.rarity : def.rarity, slot: def.slot,
+           refineLevel: clamp(Math.floor(+e.refineLevel) || 0, 0, 99), rolledStats,
+           rollQuality: Number.isFinite(+e.rollQuality) && e.rollQuality !== null ? clamp(Math.round(+e.rollQuality), 0, 100) : null };
+}
+async function openProfile(id, name){
+  closeAllPanels();
+  soc.profile = { id, name, data: null };
+  document.getElementById("profileBody").innerHTML = `<div class="empty-note">กำลังเปิดข้อมูลของ ${netEsc(name)}…</div>`;
+  document.getElementById("profilePanel").hidden = false;
+  try{
+    const d = await netRpc("player_profile", JSON.stringify({ p_target: id }));
+    if(!soc.profile || soc.profile.id !== id) return;
+    if(!d.ok){ document.getElementById("profileBody").innerHTML = `<div class="empty-note">${socRpcMsg(d)}</div>`; return; }
+    soc.profile.data = d;
+    renderProfile();
+  }catch(err){ document.getElementById("profileBody").innerHTML = `<div class="empty-note">${netEsc(err.message)}</div>`; }
+}
+function renderProfile(){
+  const { id, data: d } = soc.profile;
+  const name = String(d.name || "?").slice(0, 20), st = socState(id);
+  const level = Math.max(1, Math.floor(+d.level) || 1), maxDim = Math.max(1, Math.floor(+d.maxDimension) || 1);
+  const reach = maxDim === 1 ? (+d.maxMapTierReachedDim1 || 1) : (+(d.dimReach || {})[maxDim] || 1);
+  const will = WILL_COLORS.find(c => c.id === d.willColor) || WILL_COLORS[0];
+  const weapon = socSafeEntry(d.weapon), wdef = weapon && EQUIPMENT_DEFS[weapon.defId];
+  const wtype = wdef && wdef.weaponType, rankEntry = wtype && d.weaponRank && d.weaponRank[wtype];
+  const rankName = WEAPON_RANK_LADDER[getWeaponRankIndex(+(rankEntry && rankEntry.exp) || 0)].name;
+  const tile = (e, label) => {
+    const def = e && EQUIPMENT_DEFS[e.defId];
+    if(!def) return `<div class="pf-slot empty"><span class="pf-ic">·</span><small>${label}</small></div>`;
+    const rc = RARITY_DEFS[e.rarity].color;
+    return `<div class="pf-slot" style="border-color:${rc}; background:linear-gradient(160deg, ${rc}40, #f4efe0)" title="${netEsc(formatStatLine(e))}">
+      <span class="pf-ic">${equipIconHtml(def)}</span><b>${netEsc(equipDisplayName(e))}</b><small>${label} · <span style="color:${rc}; font-weight:bold; text-shadow:0 0 1px #0006">${RARITY_DEFS[e.rarity].label}</span></small></div>`;
+  };
+  let inspect;
+  if(Array.isArray(d.equipped)){
+    const byId = new Map(d.equipped.map(e => [e && e.instanceId, socSafeEntry(e)]));
+    const sp = d.statPoints || {};
+    inspect = `<h4>🛡️ อุปกรณ์ที่สวม</h4><div class="pf-gear">${EQUIPMENT_SLOTS.map(sk => tile(byId.get((d.equipment || {})[sk]), SLOT_LABELS[sk])).join("")}</div>
+      <h4>📊 แต้มสเตตัสที่ลง</h4><div class="pf-stats">${Object.keys(STAT_INFO).map(k => `<span><small>${STAT_INFO[k].label}</small><b>${Math.max(0, Math.floor(+sp[k]) || 0)}</b></span>`).join("")}</div>`;
+  } else {
+    inspect = `<div class="pf-locked">🔒 เป็นเพื่อนกันก่อน ถึงจะส่องอุปกรณ์และสเตตัสทั้งหมดได้</div>`;
+  }
+  const friendBtn = st === "none" ? `<button type="button" data-act="addfriend">➕ แอดเพื่อน</button>`
+    : st === "incoming" ? `<button type="button" data-act="addfriend">✅ ตอบรับเพื่อน</button>`
+    : st === "outgoing" ? `<button type="button" disabled>⏳ รอตอบรับ</button>` : "";
+  document.getElementById("profileBody").innerHTML = `
+    <div class="pf-hero">
+      <canvas id="profileAvatar" width="96" height="112"></canvas>
+      <div class="pf-main">
+        <div class="pf-name">${d.gm ? '<span class="pm-gm">[GM]</span> ' : ""}${netEsc(name)}</div>
+        ${d.title ? `<div class="pf-title">🏆 ${netEsc(String(d.title).slice(0, 40))}</div>` : ""}
+        <div class="pf-badges"><span>Lv.${level}</span><span>🌌 มิติ ${maxDim}</span><span>🗺️ แมพ ${reach}</span></div>
+        <div class="pf-will"><i style="background:${will.color}; box-shadow:0 0 8px ${will.color}"></i>${will.name}</div>
+      </div>
+      <div class="pf-status"><span class="net-dot${d.online ? "" : " off"}"></span>${d.online ? "ออนไลน์" : "ออฟไลน์"}${st === "friends" ? "<br><small>👥 เพื่อน</small>" : ""}</div>
+    </div>
+    <div class="pf-weapon">${weapon ? `<span class="pf-ic">${equipIconHtml(wdef)}</span><div><b>${netEsc(equipDisplayName(weapon))} <span class="pf-rar" style="background:${RARITY_DEFS[weapon.rarity].color}">${RARITY_DEFS[weapon.rarity].label}</span></b>
+      <small>${wtype && WEAPON_CATEGORIES[wtype] ? WEAPON_CATEGORIES[wtype].icon + " " + WEAPON_CATEGORIES[wtype].name + " · Rank " + rankName : ""}</small></div>` : `<small>ไม่ได้ถืออาวุธ</small>`}</div>
+    ${inspect}
+    <div class="pf-actions">${st === "blocked" ? "" : `<button type="button" data-act="whisper">💬 กระซิบ</button>`}${friendBtn}
+      <button type="button" data-act="report" class="warn">🚩 รายงาน</button></div>`;
+  const cv = document.getElementById("profileAvatar");
+  const lk = d.look || {};
+  const look = { gender: lk.gender === "female" ? "female" : "male", hairStyle: [0,1,2].includes(lk.hairStyle) ? lk.hairStyle : 0,
+                 hairColor: NET_HEX_COLOR.test(lk.hairColor) ? lk.hairColor : "#4a2c1d", outfitColor: NET_HEX_COLOR.test(lk.outfitColor) ? lk.outfitColor : "#3a7bd5" };
+  const c2 = cv.getContext("2d");
+  drawMeditationAura(c2, 48, 96, will.color);
+  drawCharacterAt(c2, 48, 100, look, 1.2, "down", null);
+}
+
+/* friends window */
+function socLocationLabel(f){
+  if(!f.online) return "ออฟไลน์";
+  if(f.map === TOWN_TIER) return "🏙️ " + TOWN_DEF.name;
+  const def = MAP_DEFS[f.map - 1];
+  return `🌌 มิติ ${f.dim} · 🗺️ แมพ ${f.map}${def ? ": " + def.name : ""}`;
+}
+function renderFriendsPanel(){
+  const all = [...soc.friends.values()];
+  const by = s => all.filter(f => f.state === s);
+  const friends = by("friends").sort((a, b) => (b.online ? 1 : 0) - (a.online ? 1 : 0) || String(a.name).localeCompare(String(b.name)));
+  const row = (f, buttons) => `<div class="fr-row${f.online ? " on" : ""}" data-id="${netEsc(f.id)}" data-name="${netEsc(f.name)}">
+      <span class="net-dot${f.online ? "" : " off"}"></span>
+      <div class="fr-main"><b>${net.staff.has(f.id) ? '<span class="pm-gm">[GM]</span> ' : ""}${netEsc(f.name)}</b><small>${f.state === "blocked" ? "ไม่เห็นแชทและกระซิบจากผู้เล่นนี้" : `Lv.${Math.floor(+f.level) || 1} · ${f.state === "friends" ? socLocationLabel(f) : f.state === "incoming" ? "ขอเป็นเพื่อนกับคุณ" : "รอตอบรับ"}`}</small></div>
+      <div class="fr-btns">${buttons}</div></div>`;
+  const b = (act, label, title, extra) => `<button type="button" data-act="${act}" title="${title}"${extra || ""}>${label}</button>`;
+  const incoming = by("incoming"), outgoing = by("outgoing"), blocked = [...soc.blocked.values()];
+  document.getElementById("friendsBody").innerHTML = `
+    ${incoming.length ? `<h4>📨 คำขอเป็นเพื่อน</h4>${incoming.map(f => row(f, b("addfriend", "✔ รับ", "ตอบรับ", ' class="ok"') + b("unfriend", "✖", "ปฏิเสธ"))).join("")}` : ""}
+    <h4>👥 เพื่อน (${friends.length}) <small>· ออนไลน์ ${friends.filter(f => f.online).length}</small></h4>
+    ${friends.length ? friends.map(f => {
+      const here = f.online && f.map === game.mapTier && (f.map === TOWN_TIER || f.dim === game.dimension);
+      return row(f, (f.online ? b("whisper", "💬", "กระซิบ") : "") + (f.online && !here ? b("goto", "🧭", "ไปหา") : "") + b("profile", "👤", "ข้อมูล")
+        + b("unfriend", soc.confirmRemove === f.id ? "ยืนยัน?" : "✖", "ลบเพื่อน", soc.confirmRemove === f.id ? ' class="warn"' : ""));
+    }).join("") : `<div class="empty-note">ยังไม่มีเพื่อน — คลิกขวาที่ผู้เล่นคนอื่นในแมพ แล้วเลือก ➕ แอดเพื่อน</div>`}
+    ${outgoing.length ? `<h4>⏳ รอตอบรับ</h4>${outgoing.map(f => row(f, b("unfriend", "ยกเลิก", "ยกเลิกคำขอ"))).join("")}` : ""}
+    ${blocked.length ? `<h4>🚫 บล็อกไว้</h4>${blocked.map(x => row(Object.assign({ state:"blocked", online:false }, x), b("unblock", "เลิกบล็อก", "เลิกบล็อก"))).join("")}` : ""}`;
+}
+async function socFriendsAction(act, id, name){
+  if(act === "unfriend" && socState(id) === "friends" && soc.confirmRemove !== id){ soc.confirmRemove = id; renderFriendsPanel(); return; }
+  soc.confirmRemove = "";
+  if(act === "profile") return openProfile(id, name);
+  if(act === "whisper") return socStartWhisper(id, name);
+  if(act === "goto") return socGoTo(soc.friends.get(id));
+  soc.menu = null;
+  await socMenuAction(act, id, name);
+}
+
+/* report */
+function openReport(id, name){
+  closeAllPanels();
+  soc.report = { id, name, reason: "" };
+  document.getElementById("reportName").textContent = name;
+  document.getElementById("reportNote").value = "";
+  const recent = soc.recent.get(id) || [];
+  document.getElementById("reportChatCount").textContent = recent.length;
+  document.getElementById("reportChat").checked = recent.length > 0;
+  document.getElementById("reportChat").disabled = !recent.length;
+  document.getElementById("reportMsg").textContent = "";
+  document.getElementById("reportReasons").innerHTML = REPORT_REASONS.map(r => `<button type="button" class="choice-btn" data-reason="${r.id}">${r.label}</button>`).join("");
+  document.getElementById("reportPanel").hidden = false;
+}
+async function sendReport(){
+  const rp = soc.report, msg = document.getElementById("reportMsg");
+  if(!rp.reason){ msg.textContent = "เลือกเหตุผลก่อน"; return; }
+  const chat = document.getElementById("reportChat").checked ? (soc.recent.get(rp.id) || []) : null;
+  try{
+    const r = await netRpc("report_player", JSON.stringify({ p_target: rp.id, p_reason: rp.reason, p_note: document.getElementById("reportNote").value.slice(0, 300), p_chat: chat }));
+    if(!r.ok){ msg.textContent = r.reason === "fast" ? "รายงานได้ไม่เกิน 10 ครั้งต่อชั่วโมง" : socRpcMsg(r); return; }
+    document.getElementById("reportPanel").hidden = true;
+    showToast(`🚩 ส่งรายงาน ${rp.name} ให้ GM แล้ว ขอบคุณที่ช่วยดูแลบาเรีย`);
+  }catch(err){ msg.textContent = err.message; }
 }
 
 /* ============================================================
@@ -5149,8 +5580,7 @@ document.querySelectorAll("#skillBar .skill-btn").forEach(btn=>{
     if(!skillId){ e.preventDefault(); return; }
     e.dataTransfer.setData("text/plain", JSON.stringify({ source:"actionbar", slotIndex }));
   });
-  btn.addEventListener("dragover", (e)=>{ e.preventDefault(); btn.classList.add("drag-over"); });
-  btn.addEventListener("dragleave", ()=>{ btn.classList.remove("drag-over"); });
+  bindDropHighlight(btn, "drag-over");
   btn.addEventListener("drop", (e)=>{
     e.preventDefault();
     e.stopPropagation(); // handled here — don't let the window-level "dropped outside" handler also fire
@@ -5180,6 +5610,24 @@ window.addEventListener("drop", (e)=>{
   }
 });
 
+// Drop-zone highlight that doesn't flicker when the pointer crosses the zone's own children.
+function bindDropHighlight(el, cls){
+  el.addEventListener("dragover", (e)=>{ e.preventDefault(); el.classList.add(cls); });
+  el.addEventListener("dragleave", (e)=>{ if(!el.contains(e.relatedTarget)) el.classList.remove(cls); });
+}
+// Any drag in progress lifts the action bar above panels; when it ends (dropped anywhere, cancelled with Esc,
+// or its source was re-rendered away) every leftover highlight is cleared.
+function endDragVisuals(){
+  document.body.classList.remove("dnd-active");
+  document.querySelectorAll(".drop-target, .drag-over, .dragging").forEach(el => el.classList.remove("drop-target", "drag-over", "dragging"));
+}
+document.addEventListener("dragstart", ()=> document.body.classList.add("dnd-active"));
+document.addEventListener("dragend", endDragVisuals);
+window.addEventListener("drop", endDragVisuals, true);
+
+// renderSkillBar runs every frame — rewriting unchanged markup 60×/s rebuilt the elements under the pointer
+// mid-drag. Only write when the content differs.
+function setSlotContent(el, html){ if(el.dataset.html !== html){ el.innerHTML = html; el.dataset.html = html; } }
 function renderSkillBar(){
   if(!game || !game.player) return;
   const now = performance.now();
@@ -5189,7 +5637,7 @@ function renderSkillBar(){
     const contentEl = btn.querySelector(".skill-content");
     const oldOverlay = btn.querySelector(".skill-cd");
     if(!skillId){
-      contentEl.innerHTML = `<span class="skill-empty">ว่าง</span>`;
+      setSlotContent(contentEl, `<span class="skill-empty">ว่าง</span>`);
       btn.draggable = false;
       btn.classList.remove("empowered");
       if(oldOverlay) oldOverlay.remove();
@@ -5197,7 +5645,7 @@ function renderSkillBar(){
     }
     btn.draggable = true;
     const info = getActionBarSkillInfo(skillId) || { icon:"❓", name:"?" };
-    contentEl.innerHTML = `<span class="skill-icon">${info.icon}</span><span class="skill-name">${info.name}</span>`;
+    setSlotContent(contentEl, `<span class="skill-icon">${info.icon}</span><span class="skill-name">${info.name}</span>`);
     btn.classList.toggle("empowered", !!(info.castable && info.weaponType && game.inBattle && game.battle
       && now < game.battle.skillEmpowerUntil && info.weaponType === getEquippedWeaponMasteryType()));
     const remaining = Math.max(0, (game.player.skillCooldowns[skillId] || 0) - now);
@@ -6795,6 +7243,10 @@ function closeAllPanels(){
   document.getElementById("debugPanel").hidden = true;
   document.getElementById("weaponSkillPanel").hidden = true;
   document.getElementById("accountPanel").hidden = true;
+  document.getElementById("friendsPanel").hidden = true;
+  document.getElementById("profilePanel").hidden = true;
+  document.getElementById("reportPanel").hidden = true;
+  if(typeof socCloseMenu === "function") socCloseMenu();
 }
 document.getElementById("closeDialogBtn").addEventListener("click", ()=>{ sfx.click(); closeDialog(); });
 document.getElementById("closeStorageBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("storagePanel").hidden = true; });
@@ -7280,8 +7732,7 @@ function renderStorageDetail(){
 ["invList","storeList"].forEach(id=>{
   const el = document.getElementById(id);
   const side = id === "invList" ? "inv" : "store";
-  el.addEventListener("dragover", (e)=>{ e.preventDefault(); el.classList.add("drop-target"); });
-  el.addEventListener("dragleave", ()=> el.classList.remove("drop-target"));
+  bindDropHighlight(el, "drop-target");
   el.addEventListener("drop", (e)=>{
     e.preventDefault();
     el.classList.remove("drop-target");
@@ -7369,8 +7820,7 @@ function renderBagPanel(){
 // container element itself persists across re-renders (only its innerHTML changes).
 (()=>{
   const bagGridEl = document.getElementById("bagGrid");
-  bagGridEl.addEventListener("dragover", (e)=>{ e.preventDefault(); bagGridEl.classList.add("drop-target"); });
-  bagGridEl.addEventListener("dragleave", ()=> bagGridEl.classList.remove("drop-target"));
+  bindDropHighlight(bagGridEl, "drop-target");
   bagGridEl.addEventListener("drop", (e)=>{
     e.preventDefault();
     bagGridEl.classList.remove("drop-target");
@@ -7615,8 +8065,7 @@ document.getElementById("openSellBtn").addEventListener("click", ()=>{
 document.getElementById("closeSellBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("sellPanel").hidden = true; });
 
 const sellDropZone = document.getElementById("sellDropZone");
-sellDropZone.addEventListener("dragover", (e)=>{ e.preventDefault(); sellDropZone.classList.add("drop-target"); });
-sellDropZone.addEventListener("dragleave", ()=> sellDropZone.classList.remove("drop-target"));
+bindDropHighlight(sellDropZone, "drop-target");
 sellDropZone.addEventListener("drop", (e)=>{
   e.preventDefault();
   sellDropZone.classList.remove("drop-target");
@@ -8133,8 +8582,7 @@ function renderEquipmentSlots(){
       box.title = SLOT_LABELS[slotKey] + " (ว่าง) — ลากอุปกรณ์มาวางเพื่อสวมใส่";
       box.innerHTML = `<span style="opacity:.3;">${SLOT_PLACEHOLDER_ICON[slotKey]}</span><span class="equip-slot-label">${SLOT_LABELS[slotKey]}</span>`;
     }
-    box.addEventListener("dragover", (e)=>{ e.preventDefault(); box.classList.add("drop-target"); });
-    box.addEventListener("dragleave", ()=> box.classList.remove("drop-target"));
+    bindDropHighlight(box, "drop-target");
     box.addEventListener("drop", (e)=>{
       e.preventDefault();
       box.classList.remove("drop-target");
@@ -8426,8 +8874,55 @@ document.getElementById("chatToggle").addEventListener("click", ()=>{
 document.getElementById("chatInput").addEventListener("keydown", e => {
   e.stopPropagation(); // typing never reaches the game's hotkeys (1-8, A/D, Esc)
   if(e.key === "Enter"){ e.preventDefault(); chatSend(); }
-  else if(e.key === "Escape") chatClose();
+  else if(e.key === "Escape"){ socClearWhisper(); chatClose(); }
 });
+document.getElementById("chatWhisperX").addEventListener("click", ()=>{ socClearWhisper(); document.getElementById("chatInput").focus(); });
+// Clicking a name in the chat log: whisper lines → reply straight away, other lines → the player menu.
+document.getElementById("chatLog").addEventListener("click", e => {
+  const line = e.target.closest(".chat-line[data-id]");
+  if(!line || !e.target.closest("b")) return;
+  if(line.classList.contains("whisper")) socStartWhisper(line.dataset.id, line.dataset.name);
+  else socOpenMenu(line.dataset.id, line.dataset.name, e.clientX, e.clientY);
+});
+// Right-click another player on the map → the player menu (the browser's own menu never shows over the game).
+canvas.addEventListener("contextmenu", e => {
+  e.preventDefault();
+  if(!NET_ONLINE || !net.user || !game || game.inBattle) return;
+  const o = socPeerAt(e.clientX, e.clientY);
+  if(o) socOpenMenu(o.netId, o.name, e.clientX, e.clientY);
+});
+document.addEventListener("mousedown", e => { if(soc.menu && !e.target.closest("#playerMenu")) socCloseMenu(); });
+document.getElementById("playerMenu").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-act]");
+  if(btn && soc.menu){ sfx.click(); socMenuAction(btn.dataset.act, soc.menu.id, soc.menu.name); }
+});
+document.getElementById("profileBody").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-act]");
+  if(btn && !btn.disabled && soc.profile){ sfx.click(); socMenuAction(btn.dataset.act, soc.profile.id, soc.profile.name); }
+});
+document.getElementById("friendsBody").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-act]"), row = e.target.closest(".fr-row");
+  if(btn && row){ sfx.click(); socFriendsAction(btn.dataset.act, row.dataset.id, row.dataset.name); }
+});
+document.getElementById("friendsBtn").addEventListener("click", ()=>{
+  sfx.click();
+  closeAllPanels();
+  soc.confirmRemove = "";
+  renderFriendsPanel();
+  document.getElementById("friendsPanel").hidden = false;
+  socRefreshList();
+});
+document.getElementById("closeFriendsBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("friendsPanel").hidden = true; });
+document.getElementById("closeProfileBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("profilePanel").hidden = true; });
+document.getElementById("closeReportBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("reportPanel").hidden = true; });
+document.getElementById("reportReasons").addEventListener("click", e => {
+  const b = e.target.closest("[data-reason]");
+  if(!b) return;
+  sfx.click();
+  soc.report.reason = b.dataset.reason;
+  document.querySelectorAll("#reportReasons .choice-btn").forEach(x => x.classList.toggle("selected", x === b));
+});
+document.getElementById("reportSendBtn").addEventListener("click", ()=>{ sfx.click(); sendReport(); });
 window.addEventListener("keydown", e => {
   if(e.key !== "Enter" || !NET_ONLINE || !net.user || !game || game.inBattle) return;
   const tag = document.activeElement && document.activeElement.tagName;
@@ -8592,6 +9087,215 @@ $$;
 
 revoke execute on function public.claim_session(uuid), public.save_game(uuid, bigint, jsonb), public.staff_ids() from public, anon;
 grant execute on function public.claim_session(uuid), public.save_game(uuid, bigint, jsonb), public.staff_ids() to authenticated;
+
+-- ============================================================
+-- SOCIAL — friends, whispers, blocks, reports, player profiles (right-click menu on other players).
+-- Everything goes through the functions below; the sender is always auth.uid(), never what the game says.
+-- ============================================================
+create table if not exists public.player_status (      -- heartbeat every few seconds from net_poll()
+  user_id      uuid primary key references auth.users(id) on delete cascade,
+  last_seen    timestamptz not null default now(),
+  dim          int not null default 1,
+  map          int not null default 0,
+  x            int,
+  y            int,
+  last_whisper timestamptz
+);
+create table if not exists public.friends (             -- one row per direction; accepted on both once mutual
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  friend_id  uuid not null references auth.users(id) on delete cascade,
+  accepted   boolean not null default false,
+  created_at timestamptz not null default now(),
+  primary key (user_id, friend_id)
+);
+create table if not exists public.blocks (
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  blocked_id uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, blocked_id)
+);
+create table if not exists public.whispers (            -- a mailbox slot: deleted as soon as the receiver polls it
+  id         bigserial primary key,
+  from_id    uuid not null references auth.users(id) on delete cascade,
+  to_id      uuid not null references auth.users(id) on delete cascade,
+  body       text not null,
+  created_at timestamptz not null default now()
+);
+create table if not exists public.reports (             -- GM reads these in Table Editor → reports
+  id         bigserial primary key,
+  reporter   uuid not null references auth.users(id) on delete cascade,
+  target     uuid not null references auth.users(id) on delete cascade,
+  reason     text not null,
+  note       text,
+  chat       jsonb,
+  handled    boolean not null default false,
+  created_at timestamptz not null default now()
+);
+create index if not exists whispers_to_idx on public.whispers (to_id);
+create index if not exists friends_friend_idx on public.friends (friend_id);
+alter table public.player_status enable row level security;
+alter table public.friends enable row level security;
+alter table public.blocks enable row level security;
+alter table public.whispers enable row level security;
+alter table public.reports enable row level security;
+revoke all on public.player_status, public.friends, public.blocks, public.whispers, public.reports from anon, authenticated;
+
+-- helpers (not callable from the game)
+create or replace function public.soc_name(p uuid) returns text language sql stable security definer set search_path = public as $$
+  select coalesce((select data -> 'player' ->> 'name' from public.saves where user_id = p), '?') $$;
+create or replace function public.soc_online(p uuid) returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.player_status where user_id = p and last_seen > now() - interval '15 seconds') $$;
+create or replace function public.soc_blocked(a uuid, b uuid) returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.blocks where (user_id = a and blocked_id = b) or (user_id = b and blocked_id = a)) $$;
+revoke execute on function public.soc_name(uuid), public.soc_online(uuid), public.soc_blocked(uuid, uuid) from public, anon, authenticated;
+
+-- Heartbeat + mailbox: marks me online at this map, hands over (and deletes) whispers sent to me,
+-- and returns the counters the game uses to notice new friend requests / accepted friends.
+create or replace function public.net_poll(p_dim int, p_map int, p_x int, p_y int)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); w jsonb;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  insert into public.player_status (user_id, last_seen, dim, map, x, y) values (me, now(), p_dim, p_map, p_x, p_y)
+    on conflict (user_id) do update set last_seen = now(), dim = excluded.dim, map = excluded.map, x = excluded.x, y = excluded.y;
+  delete from public.whispers where to_id = me and created_at < now() - interval '2 minutes'; -- stale: I was offline, drop
+  with gone as (delete from public.whispers where to_id = me returning from_id, body, created_at)
+  select coalesce(jsonb_agg(jsonb_build_object('from', from_id, 'name', public.soc_name(from_id), 'body', body) order by created_at), '[]')
+    into w from gone;
+  return jsonb_build_object('w', w,
+    'req', (select coalesce(jsonb_agg(jsonb_build_object('id', f.user_id, 'name', public.soc_name(f.user_id))), '[]')
+              from public.friends f where f.friend_id = me and not f.accepted),
+    'fc', (select count(*) from public.friends where user_id = me and accepted));
+end $$;
+
+create or replace function public.whisper_send(p_to uuid, p_body text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); body text := btrim(regexp_replace(coalesce(p_body, ''), '\s+', ' ', 'g'));
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if p_to = me or char_length(body) = 0 or char_length(body) > 120 then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if public.soc_blocked(me, p_to) then return jsonb_build_object('ok', false, 'reason', 'blocked'); end if;
+  if not public.soc_online(p_to) then return jsonb_build_object('ok', false, 'reason', 'offline'); end if;
+  if exists (select 1 from public.player_status where user_id = me and last_whisper > now() - interval '1 second') then
+    return jsonb_build_object('ok', false, 'reason', 'fast');
+  end if;
+  update public.player_status set last_whisper = now() where user_id = me;
+  insert into public.whispers (from_id, to_id, body) values (me, p_to, body);
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- Ask to be friends; if they already asked me, this accepts instead.
+create or replace function public.friend_request(p_to uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if p_to = me or not exists (select 1 from public.saves where user_id = p_to) then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if public.soc_blocked(me, p_to) then return jsonb_build_object('ok', false, 'reason', 'blocked'); end if;
+  if exists (select 1 from public.friends where user_id = p_to and friend_id = me) then
+    update public.friends set accepted = true where user_id = p_to and friend_id = me;
+    insert into public.friends (user_id, friend_id, accepted) values (me, p_to, true)
+      on conflict (user_id, friend_id) do update set accepted = true;
+    return jsonb_build_object('ok', true, 'state', 'friends');
+  end if;
+  if (select count(*) from public.friends where user_id = me) >= 100 then return jsonb_build_object('ok', false, 'reason', 'full'); end if;
+  insert into public.friends (user_id, friend_id) values (me, p_to) on conflict do nothing;
+  return jsonb_build_object('ok', true, 'state', 'pending');
+end $$;
+
+-- Unfriend / cancel my request / decline theirs — all the same: both directions go.
+create or replace function public.friend_remove(p_other uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  delete from public.friends where (user_id = me and friend_id = p_other) or (user_id = p_other and friend_id = me);
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.block_player(p_other uuid, p_on boolean)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if p_other = me then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if p_on then
+    insert into public.blocks (user_id, blocked_id) values (me, p_other) on conflict do nothing;
+    delete from public.friends where (user_id = me and friend_id = p_other) or (user_id = p_other and friend_id = me);
+  else
+    delete from public.blocks where user_id = me and blocked_id = p_other;
+  end if;
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- Everything the friends window needs. Location only for accepted friends.
+create or replace function public.friend_list()
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  return jsonb_build_object(
+    'friends', (select coalesce(jsonb_agg(jsonb_build_object(
+        'id', o.id, 'name', public.soc_name(o.id),
+        'level', (select (data -> 'player' ->> 'level')::int from public.saves where user_id = o.id),
+        'state', o.state,
+        'online', case when o.state = 'friends' then public.soc_online(o.id) else null end,
+        'dim', case when o.state = 'friends' then s.dim end, 'map', case when o.state = 'friends' then s.map end,
+        'x', case when o.state = 'friends' then s.x end, 'y', case when o.state = 'friends' then s.y end)), '[]')
+      from (select coalesce(a.friend_id, b.user_id) id,
+                   case when a.accepted then 'friends' when a.friend_id is not null then 'outgoing' else 'incoming' end state
+              from (select * from public.friends where user_id = me) a
+              full join (select * from public.friends where friend_id = me) b on b.user_id = a.friend_id) o
+      left join public.player_status s on s.user_id = o.id),
+    'blocked', (select coalesce(jsonb_agg(jsonb_build_object('id', blocked_id, 'name', public.soc_name(blocked_id))), '[]')
+                  from public.blocks where user_id = me));
+end $$;
+
+-- Profile card (anyone) / full inspect (friends only), built from the target's cloud save.
+create or replace function public.player_profile(p_target uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); d jsonb; friend boolean; eq jsonb; weapon jsonb;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  select data into d from public.saves where user_id = p_target;
+  if d is null then return jsonb_build_object('ok', false, 'reason', 'nosave'); end if;
+  friend := exists (select 1 from public.friends where user_id = me and friend_id = p_target and accepted);
+  select coalesce(jsonb_agg(e), '[]') into eq from jsonb_array_elements(d -> 'inventory') e
+   where e ->> 'kind' = 'equipment'
+     and e ->> 'instanceId' in (select value from jsonb_each_text(coalesce(d -> 'player' -> 'equipment', '{}')));
+  select e into weapon from jsonb_array_elements(eq) e where e ->> 'instanceId' = d -> 'player' -> 'equipment' ->> 'weapon';
+  return jsonb_build_object('ok', true, 'friend', friend, 'gm', exists (select 1 from public.admins where user_id = p_target),
+    'online', public.soc_online(p_target),
+    'name', d -> 'player' -> 'name', 'title', d -> 'player' -> 'title', 'level', d -> 'player' -> 'level',
+    'look', d -> 'player' -> 'look', 'willColor', d -> 'player' -> 'willColor', 'weaponRank', d -> 'player' -> 'weaponRank',
+    'maxDimension', d -> 'maxDimension', 'dimReach', d -> 'dimReach', 'maxMapTierReachedDim1', d -> 'maxMapTierReachedDim1',
+    'weapon', weapon,
+    'equipment', case when friend or p_target = me then d -> 'player' -> 'equipment' end,
+    'equipped', case when friend or p_target = me then eq end,
+    'statPoints', case when friend or p_target = me then d -> 'player' -> 'statPoints' end);
+end $$;
+
+create or replace function public.report_player(p_target uuid, p_reason text, p_note text, p_chat jsonb)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if p_target = me or p_reason not in ('chat', 'cheat', 'spam', 'other') then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if (select count(*) from public.reports where reporter = me and created_at > now() - interval '1 hour') >= 10 then
+    return jsonb_build_object('ok', false, 'reason', 'fast');
+  end if;
+  insert into public.reports (reporter, target, reason, note, chat)
+    values (me, p_target, p_reason, left(coalesce(p_note, ''), 300),
+            case when jsonb_typeof(p_chat) = 'array' then (select jsonb_agg(left(v #>> '{}', 120)) from (select v from jsonb_array_elements(p_chat) v limit 10) t) end);
+  return jsonb_build_object('ok', true);
+end $$;
+
+revoke execute on function public.net_poll(int, int, int, int), public.whisper_send(uuid, text), public.friend_request(uuid),
+  public.friend_remove(uuid), public.block_player(uuid, boolean), public.friend_list(), public.player_profile(uuid),
+  public.report_player(uuid, text, text, jsonb) from public, anon;
+grant execute on function public.net_poll(int, int, int, int), public.whisper_send(uuid, text), public.friend_request(uuid),
+  public.friend_remove(uuid), public.block_player(uuid, boolean), public.friend_list(), public.player_profile(uuid),
+  public.report_player(uuid, text, text, jsonb) to authenticated;
 ------------------------------------------------------------------------------------------------ -->
 </body>
 </html>
