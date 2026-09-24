@@ -685,6 +685,44 @@
   .rk-row.rk-mine{ margin-top:auto; background:#dcebff; border:2px solid #3a7bd5; }
   .rk-row.rk-mine .rk-n, .rk-row.rk-mine .rk-nm{ color:#1d4f96; }
   .rk-row.rk-mine.note{ cursor:default; font-size:12px; color:#1d4f96; justify-content:center; text-align:center; }
+  /* 🗳️ Vote board — tabs of cards; open votes = big numbered choice buttons, closed = result bars */
+  #votePanel{ width:760px; }
+  .vb-tabs{ display:flex; gap:6px; margin:-2px 0 10px; }
+  .vb-tabs button{ flex:1; border:2px solid #e4dcc4; border-radius:10px; padding:8px 6px; background:#fff; color:#4b3f8f; font-size:14px; font-weight:bold; position:relative; }
+  .vb-tabs button.on{ background:#4b3f8f; border-color:#4b3f8f; color:#fff; }
+  .vb-tabs .vb-dot{ position:absolute; top:-7px; right:-5px; min-width:18px; height:18px; border-radius:9px; background:var(--gold); color:#3a2e00; font-size:11px; line-height:18px; }
+  .vb-note{ background:#f1ecff; border:1px dashed #b3a6e8; color:#4b3f8f; border-radius:10px; padding:9px 12px; font-size:12.5px; margin-bottom:10px; }
+  .vb-note.warn{ background:#fff4e0; border-color:#e8b86a; color:#7a4b00; }
+  .vb-card{ background:#fff; border:2px solid #e4dcc4; border-radius:14px; padding:12px 14px; margin-bottom:10px; }
+  .vb-card.gm{ border-color:var(--gold); }
+  .vb-q{ font-size:16px; font-weight:bold; color:#2a2346; margin-bottom:4px; }
+  .vb-meta{ font-size:11.5px; color:#7a7186; margin-bottom:8px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .vb-meta .vb-time{ color:#c9401f; font-weight:bold; }
+  .vb-choices{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .vb-choice{ display:flex; align-items:center; gap:10px; text-align:left; border:2px solid #d8cdb0; border-radius:12px; padding:10px 12px; background:#fbf8ef; color:#2a2346; font-size:14px; font-weight:bold; }
+  .vb-choice:hover:not(:disabled){ border-color:#4b3f8f; background:#f1ecff; }
+  .vb-choice .vb-n{ flex:0 0 auto; width:28px; height:28px; border-radius:50%; background:#4b3f8f; color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .vb-choice.picked{ border-color:#2f9e5b; background:#e6f7ec; }
+  .vb-choice.picked .vb-n{ background:#2f9e5b; }
+  .vb-choice:disabled{ cursor:default; opacity:.75; }
+  .vb-bar{ position:relative; border:2px solid #e4dcc4; border-radius:10px; padding:7px 12px; margin-bottom:6px; overflow:hidden; font-size:13.5px; color:#2a2346; display:flex; gap:10px; align-items:center; }
+  .vb-bar i{ position:absolute; left:0; top:0; bottom:0; background:rgba(75,63,143,.13); z-index:0; }
+  .vb-bar > *:not(i){ position:relative; z-index:1; }
+  .vb-bar b{ flex:1; min-width:0; }
+  .vb-bar span{ font-weight:bold; color:#4b3f8f; white-space:nowrap; }
+  .vb-bar.win{ border-color:var(--gold); } .vb-bar.win i{ background:rgba(255,209,102,.45); }
+  .vb-bar.mine b::after{ content:"  ✔ คุณโหวต"; font-size:11px; color:#2f9e5b; }
+  .vb-row{ display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+  .vb-row button, .vb-form button{ border:none; border-radius:8px; padding:7px 12px; background:#4b3f8f; color:#fff; font-size:13px; font-weight:bold; }
+  .vb-row button.on{ background:#2f9e5b; }
+  .vb-row button.warn, .vb-form button.warn{ background:#c9401f; }
+  .vb-row button:disabled, .vb-form button:disabled{ opacity:.5; cursor:default; }
+  .vb-opts{ font-size:12.5px; color:#4b3f8f; display:flex; gap:6px; flex-wrap:wrap; }
+  .vb-opts span{ background:#f1ecff; border-radius:8px; padding:3px 9px; }
+  .vb-form{ background:#fbf8ef; border:2px dashed #d8cdb0; border-radius:14px; padding:12px 14px; margin-top:6px; }
+  .vb-form h4{ margin:0 0 8px; font-size:14px; color:#4b3f8f; }
+  .vb-form input{ width:100%; box-sizing:border-box; border:2px solid #d8cdb0; border-radius:8px; padding:7px 9px; font:inherit; font-size:13px; margin-bottom:6px; }
+  .vb-form .vb-optin{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
   .rk-back{ position:absolute; top:12px; right:44px; border:none; border-radius:8px; padding:5px 10px; background:#f7df7a; color:#5b3a1a; font-size:12px; font-weight:bold; }
   .rk-back[hidden]{ display:none; }
   .report-chat{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:#4b3f8f; margin:8px 0 4px; }
@@ -1068,6 +1106,12 @@
     <button class="close-x" id="closeRankBtn" type="button">✕</button>
     <h2>🏆 หอเกียรติยศ</h2>
     <div id="rankBody"></div>
+  </div>
+
+  <div class="panel" id="votePanel" hidden>
+    <button class="close-x" id="closeVoteBtn" type="button">✕</button>
+    <h2>🗳️ ป้ายประชามติ</h2>
+    <div id="voteBody"></div>
   </div>
 
   <div class="panel" id="reportPanel" hidden style="width:440px;">
@@ -1796,6 +1840,34 @@ function drawNpcHoverRing(ctx, npc){
   ctx.restore();
 }
 
+// Vote board — a roofed wooden notice board covered in pinned ballots, with a ballot box in front.
+// One self-contained object like the Hall of Fame; where it stands is VOTE_BOARD_SPOT.
+function drawVoteBoardAt(ctx, cx, cy){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1.7, 1.7);
+  ctx.fillStyle = "rgba(0,0,0,.22)";
+  ctx.beginPath(); ctx.ellipse(0, 6, 44, 10, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "#6b4526"; ctx.fillRect(-34, -58, 6, 62); ctx.fillRect(28, -58, 6, 62);           // posts
+  ctx.fillStyle = "#8a5a2b"; ctx.fillRect(-38, -56, 76, 40);                                         // board
+  ctx.fillStyle = "#a9713d"; ctx.fillRect(-35, -53, 70, 34);
+  ctx.fillStyle = "#5b3a1a";                                                                         // little roof
+  ctx.beginPath(); ctx.moveTo(-44, -56); ctx.lineTo(0, -70); ctx.lineTo(44, -56); ctx.closePath(); ctx.fill();
+  const papers = [ [-31, -50, "#fff6d6"], [-12, -51, "#e7f0ff"], [7, -50, "#ffe3ec"], [-22, -34, "#e6f7ec"], [-2, -35, "#fff6d6"], [17, -35, "#f1ecff"] ];
+  for(const [x, y, c] of papers){
+    ctx.fillStyle = c; ctx.fillRect(x, y, 15, 13);
+    ctx.fillStyle = "rgba(75,63,143,.55)"; ctx.fillRect(x + 2, y + 3, 11, 1.5); ctx.fillRect(x + 2, y + 7, 8, 1.5);
+    ctx.fillStyle = "#c9401f"; ctx.beginPath(); ctx.arc(x + 7.5, y + 1, 1.6, 0, Math.PI*2); ctx.fill(); // pin
+  }
+  ctx.fillStyle = "#4b3f8f"; roundRect(ctx, -12, -12, 24, 16, 3); ctx.fill();                         // ballot box
+  ctx.fillStyle = "#2a2346"; ctx.fillRect(-7, -12, 14, 2.5);
+  const wave = Math.sin(performance.now() / 500) * 1.5;
+  ctx.fillStyle = "#fff"; ctx.save(); ctx.translate(0, -15 + wave); ctx.rotate(-0.15); ctx.fillRect(-4, -6, 8, 7); ctx.restore(); // ballot going in
+  ctx.fillStyle = "#ffd166"; ctx.font = "bold 8px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText("VOTE", 0, -3);
+  ctx.restore();
+}
+
 // Castle — the town lord's building, a modest keep with a central tower and flag
 function drawCastleAt(ctx, cx, cy){
   ctx.save();
@@ -1883,7 +1955,7 @@ const NPC_ROBE_COLORS = { merchant: "#c98f3a", town_lord: "#6a4a9c", blacksmith:
 // Which building sits behind each person NPC (storage has no person — it's the house itself)
 const TOWN_BUILDING_DRAW = { town_lord: drawCastleAt, merchant: drawMarketStallAt, blacksmith: drawForgeAt, temple: drawTempleAt };
 // Town points that are just an object — no person standing in front (click the object itself)
-const TOWN_OBJECT_DRAW = { storage: drawSmallHouseAt, ranking: drawHallOfFameAt };
+const TOWN_OBJECT_DRAW = { storage: drawSmallHouseAt, ranking: drawHallOfFameAt, vote: drawVoteBoardAt };
 
 // Temple of the Barrier — pale stone, a dome with a glowing barrier crack (brighter once the ritual is ready)
 function drawTempleAt(ctx, cx, cy){
@@ -2691,7 +2763,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 2;
+const GAME_VERSION = 3;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -3257,6 +3329,7 @@ async function socPoll(){
     const p = game.player;
     const r = await netRpc("net_poll", JSON.stringify({ p_dim: game.dimension || 1, p_map: game.mapTier, p_x: Math.round(p.x), p_y: Math.round(p.y) }));
     if(GAME_VERSION < (+r.mv || 0)) netBlock("version");
+    vb.pending = Math.max(0, Math.floor(+r.pv) || 0);
     (r.w || []).forEach(w => {
       if(soc.blocked.has(w.from)) return;
       socRemember(w.from, "[กระซิบ] " + w.body);
@@ -5057,6 +5130,7 @@ function renderOverworld(){
     if(hover){ ctx.save(); ctx.font = "bold 13px 'Trebuchet MS', sans-serif"; ctx.fillStyle = "#ffd166"; }
     ctx.strokeText(npc.name, npc.x, labelY); ctx.fillText(npc.name, npc.x, labelY);
     if(hover){ ctx.fillStyle = "#fff"; ctx.font = "10px 'Trebuchet MS', sans-serif"; ctx.strokeText("คลิกเพื่อคุย", npc.x, labelY + 13); ctx.fillText("คลิกเพื่อคุย", npc.x, labelY + 13); ctx.restore(); }
+    if(npc.kind === "vote" && vb.pending > 0) drawVoteBadge(ctx, npc.x, labelY - 22, vb.pending);
   }
 
   for(const m of game.monsters){
@@ -7505,8 +7579,12 @@ document.getElementById("tutorialBtn").addEventListener("click", ()=>{ sfx.click
    ============================================================ */
 // Where the Hall of Fame stands, relative to the town's travel gate (hub center). To move it, change these two numbers.
 const HALL_OF_FAME_SPOT = { dx: -TOWN_NPC_RADIUS * 1.35, dy: -TOWN_NPC_RADIUS * 1.2 }; // north-west, mirroring the temple
+// Where the vote board stands, relative to the hub center — change these two numbers to move it.
+const VOTE_BOARD_SPOT = { dx: -TOWN_NPC_RADIUS * 1.35, dy: TOWN_NPC_RADIUS * 1.2 }; // south-west
 function buildTownNpcs(){
   return [
+    { id:"vote_board",   kind:"vote",     name:"🗳️ ป้ายประชามติ",   x: TOWN_HUB_X + VOTE_BOARD_SPOT.dx, y: TOWN_HUB_Y + VOTE_BOARD_SPOT.dy,
+      labelDy: 132, hitDy: 55, hitR: 60 },
     { id:"hall_of_fame", kind:"ranking",  name:"🏆 หอเกียรติยศ",     x: TOWN_HUB_X + HALL_OF_FAME_SPOT.dx, y: TOWN_HUB_Y + HALL_OF_FAME_SPOT.dy,
       labelDy: 112, hitDy: 45, hitR: 70 }, // big object: name above the trophy, click anywhere on it
     { id:"storage_box", kind:"storage",   name:"กล่องฝากของ",       x: TOWN_HUB_X - TOWN_NPC_RADIUS, y: TOWN_HUB_Y },                     // west
@@ -7532,6 +7610,9 @@ function interactWithNpc(npc){
   } else if(npc.kind === "ranking"){
     sfx.click();
     openLeaderboard(false);
+  } else if(npc.kind === "vote"){
+    sfx.click();
+    openVoteBoard();
   } else if(npc.kind === "blacksmith"){
     sfx.talk();
     renderRefinePanel();
@@ -7582,6 +7663,7 @@ function closeAllPanels(){
   document.getElementById("friendsPanel").hidden = true;
   document.getElementById("profilePanel").hidden = true;
   document.getElementById("rankPanel").hidden = true;
+  document.getElementById("votePanel").hidden = true;
   document.getElementById("reportPanel").hidden = true;
   if(typeof socCloseMenu === "function") socCloseMenu();
 }
@@ -9250,6 +9332,149 @@ document.getElementById("friendsBtn").addEventListener("click", ()=>{
   socRefreshList();
 });
 document.getElementById("closeFriendsBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("friendsPanel").hidden = true; });
+/* ---- 🗳️ Vote board (town object) — everything is decided on the server (see VOTE BOARD in the SQL block):
+   who may vote/propose (linked account, Lv.10+), 12 h proposal rounds, the most-backed proposal going up,
+   hidden counts until close. The page only shows the board and sends choices. ---- */
+const VOTE_REFRESH_MS = 20000;
+const VOTE_REASON = { guest: "ต้องผูกบัญชีกับอีเมลหรือ Google ก่อน (เมนู 👤 บัญชี) — กันการปั๊มเสียงด้วย Guest",
+                      level: "ต้องเลเวล 10 ขึ้นไปถึงจะโหวต/เสนอหัวข้อได้", closed: "โหวตนี้ปิดไปแล้ว — กำลังโหลดใหม่",
+                      invalid: "ข้อมูลไม่ครบ: คำถาม 4–120 ตัวอักษร, ตัวเลือก 2–4 ข้อ ข้อละไม่เกิน 40 ตัว และห้ามซ้ำกัน",
+                      limit: "รอบนี้คุณเสนอไปแล้ว 1 หัวข้อ — รอรอบถัดไปนะ", gm: "เฉพาะ GM" };
+const vb = { data: null, at: 0, loading: false, err: "", tab: "open", pending: 0, busy: false, skew: 0, gmForm: false };
+
+function openVoteBoard(){
+  closeAllPanels();
+  document.getElementById("votePanel").hidden = false;
+  if(vb.pending > 0) vb.tab = "open"; // a vote is waiting for me — show it first
+  renderVoteBoard();
+  if(NET_ONLINE && net.user) loadVoteBoard(); // show the last board at once, then refresh (eligibility may have changed)
+}
+async function loadVoteBoard(){
+  if(vb.loading) return;
+  vb.loading = true; vb.err = "";
+  try{
+    vb.data = await netRpc("poll_board", "{}"); vb.at = performance.now();
+    vb.skew = Date.parse(vb.data.now) - Date.now(); // countdowns use the server's clock
+    vb.pending = (vb.data.open || []).filter(p => p.my == null).length;
+  }catch(err){ vb.err = err.message; }
+  vb.loading = false;
+  if(!document.getElementById("votePanel").hidden) renderVoteBoard();
+}
+function voteTimeLeft(iso){
+  const ms = Date.parse(iso) - (Date.now() + vb.skew);
+  if(!(ms > 0)) return "กำลังปิด…";
+  const h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000);
+  return h ? `เหลือ ${h} ชม. ${m} นาที` : `เหลือ ${Math.max(1, m)} นาที`;
+}
+function voteSafe(p){ // server rows carry player-written text — sanitize before it reaches the page
+  const opts = (Array.isArray(p.options) ? p.options : []).slice(0, 4).map(o => String(o).slice(0, 40));
+  return { id: Math.floor(+p.id) || 0, q: String(p.question || "").slice(0, 120), opts, my: p.my == null ? null : Math.floor(+p.my),
+           voters: Math.max(0, Math.floor(+p.voters) || 0), supports: Math.max(0, Math.floor(+p.supports) || 0), mine: !!p.mine, own: !!p.own,
+           by: String(p.by || "?").slice(0, 20), gm: p.source === "gm", closesAt: p.closesAt, closedAt: p.closedAt,
+           counts: (Array.isArray(p.counts) ? p.counts : []).map(n => Math.max(0, Math.floor(+n) || 0)) };
+}
+function renderVoteBoard(){
+  const body = document.getElementById("voteBody"), esc = netEsc;
+  if(!NET_ONLINE){ body.innerHTML = `<div class="vb-note">ป้ายประชามติเปิดเฉพาะในเวอร์ชันออนไลน์</div>`; return; }
+  const d = vb.data;
+  if(!d){ body.innerHTML = `<div class="empty-note">${vb.err ? "⚠️ " + esc(vb.err) : "กำลังโหลดป้ายประกาศ…"}</div>`; return; }
+  const open = (d.open || []).map(voteSafe), props = (d.proposals || []).map(voteSafe), closed = (d.closed || []).map(voteSafe);
+  const can = !d.ineligible, gm = !!d.gm;
+  const tab = (id, label, dot) => `<button type="button" data-tab="${id}" class="${vb.tab === id ? "on" : ""}">${label}${dot ? `<span class="vb-dot">${dot}</span>` : ""}</button>`;
+  const gmDel = p => gm ? `<button type="button" class="warn" data-act="gmremove" data-id="${p.id}">🛡️ ลบ (GM)</button>` : "";
+  let html = `<div class="vb-tabs">${tab("open", "🗳️ กำลังโหวต", open.filter(p => p.my == null).length || "")}${tab("props", "💡 หัวข้อเสนอ", props.length || "")}${tab("closed", "📜 ผลโหวต", "")}</div>`;
+  if(!can) html += `<div class="vb-note warn">👀 ดูได้ แต่${esc(VOTE_REASON[d.ineligible] || "ยังโหวตไม่ได้")}</div>`;
+  if(vb.tab === "open"){
+    html += `<div class="vb-note">1 คน 1 เสียง · เปลี่ยนใจได้จนกว่าจะปิด · คะแนนจะเปิดเผยตอนปิดโหวต แล้วผู้พัฒนาจะนำข้อที่ชนะไปทำในอัปเดตถัดไป</div>`;
+    html += open.length ? open.map(p => `<div class="vb-card${p.gm ? " gm" : ""}">
+        <div class="vb-q">${p.gm ? "🛡️ " : ""}${esc(p.q)}</div>
+        <div class="vb-meta"><span class="vb-time">⏳ ${voteTimeLeft(p.closesAt)}</span><span>🙋 โหวตแล้ว ${p.voters} คน</span>${p.gm ? "<span>คำถามจาก GM</span>" : ""}${p.my != null ? `<span style="color:#2f9e5b;font-weight:bold">✔ คุณเลือกข้อ ${p.my + 1}</span>` : ""}</div>
+        <div class="vb-choices">${p.opts.map((o, i) => `<button type="button" class="vb-choice${p.my === i ? " picked" : ""}" data-act="vote" data-id="${p.id}" data-choice="${i}"${can && !vb.busy ? "" : " disabled"}><span class="vb-n">${i + 1}</span>${esc(o)}</button>`).join("")}</div>
+        ${gm ? `<div class="vb-row">${gmDel(p)}</div>` : ""}</div>`).join("")
+      : `<div class="empty-note">ยังไม่มีหัวข้อเปิดโหวตตอนนี้ — ไปดู 💡 หัวข้อเสนอ แล้วช่วยกันหนุนให้ขึ้นป้าย</div>`;
+    if(gm) html += vb.gmForm ? voteFormHtml("gm") : `<div class="vb-row"><button type="button" data-act="gmform">🛡️ ตั้งคำถามโหวตทันที (GM)</button></div>`;
+  } else if(vb.tab === "props"){
+    html += `<div class="vb-note">เสนอหัวข้อพร้อมตัวเลือก 2–4 ข้อ แล้วให้ผู้เล่นกด 👍 หนุน — ครบรอบ (<b>${voteTimeLeft(d.roundEnds)}</b>) หัวข้อที่ได้เสียงหนุนมากสุด (อย่างน้อย 2 เสียง) จะขึ้นป้ายให้โหวต 12 ชม. ที่เหลือจะหมดรอบ</div>`;
+    html += props.length ? props.map((p, rank) => `<div class="vb-card">
+        <div class="vb-q">${rank === 0 && p.supports >= 2 ? "🥇 " : ""}${esc(p.q)}</div>
+        <div class="vb-meta"><span>เสนอโดย ${esc(p.by)}</span><span>👍 หนุน ${p.supports}</span></div>
+        <div class="vb-opts">${p.opts.map((o, i) => `<span>${i + 1}. ${esc(o)}</span>`).join("")}</div>
+        <div class="vb-row">${p.own ? `<small style="color:#7a7186">หัวข้อของคุณ (หนุนอัตโนมัติ)</small>`
+          : `<button type="button" class="${p.mine ? "on" : ""}" data-act="support" data-id="${p.id}" data-on="${p.mine ? 0 : 1}"${can && !vb.busy ? "" : " disabled"}>${p.mine ? "✔ หนุนแล้ว (กดเพื่อยกเลิก)" : "👍 หนุนหัวข้อนี้"}</button>`}${gmDel(p)}</div></div>`).join("")
+      : `<div class="empty-note">รอบนี้ยังไม่มีใครเสนอ — เป็นคนแรกเลย!</div>`;
+    if(can) html += voteFormHtml("propose");
+  } else {
+    html += closed.length ? closed.map(p => {
+      const total = p.counts.reduce((a, b) => a + b, 0), top = Math.max(0, ...p.counts);
+      const winners = p.counts.map((n, i) => n === top && top > 0 ? i : -1).filter(i => i >= 0);
+      const verdict = !total ? "ไม่มีผู้โหวต" : winners.length > 1 ? "⚖️ เสมอกัน: " + winners.map(i => "ข้อ " + (i + 1)).join(", ") : "👑 ชนะ: " + esc(p.opts[winners[0]] || "");
+      return `<div class="vb-card${p.gm ? " gm" : ""}"><div class="vb-q">${p.gm ? "🛡️ " : ""}${esc(p.q)}</div>
+        <div class="vb-meta"><span>ปิดเมื่อ ${new Date(p.closedAt).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" })}</span><span>🙋 ${total} เสียง</span><span style="color:#8a6a00;font-weight:bold">${verdict}</span></div>
+        ${p.opts.map((o, i) => { const n = p.counts[i] || 0, pct = total ? Math.round(n / total * 100) : 0;
+          return `<div class="vb-bar${winners.includes(i) ? " win" : ""}${p.my === i ? " mine" : ""}"><i style="width:${pct}%"></i><b>${winners.includes(i) ? "👑 " : ""}${i + 1}. ${esc(o)}</b><span>${n} เสียง · ${pct}%</span></div>`; }).join("")}</div>`;
+    }).join("") : `<div class="empty-note">ยังไม่มีโหวตที่ปิดแล้ว</div>`;
+  }
+  body.innerHTML = html;
+}
+function voteFormHtml(kind){
+  return `<div class="vb-form" data-form="${kind}"><h4>${kind === "gm" ? "🛡️ ตั้งคำถามโหวตทันที (GM)" : "💡 เสนอหัวข้อใหม่ (รอบละ 1 หัวข้อ)"}</h4>
+    <input type="text" data-f="q" maxlength="120" placeholder="คำถาม เช่น อยากให้ระบบคอสเมติกมีออปชันเพิ่มสเตตัสไหม?">
+    <div class="vb-optin">${[1,2,3,4].map(i => `<input type="text" data-f="o" maxlength="40" placeholder="ตัวเลือก ${i}${i > 2 ? " (ไม่ใส่ก็ได้)" : ""}">`).join("")}</div>
+    <div class="vb-row">${kind === "gm" ? `<label style="font-size:12.5px;color:#4b3f8f">เปิด <input type="number" data-f="h" min="1" max="72" value="12" style="width:64px;margin:0"> ชม.</label>` : ""}
+      <button type="button" data-act="${kind === "gm" ? "gmcreate" : "propose"}"${vb.busy ? " disabled" : ""}>${kind === "gm" ? "เปิดโหวตเลย" : "📌 ติดประกาศเสนอหัวข้อ"}</button></div></div>`;
+}
+async function voteAction(act, el){
+  if(vb.busy) return;
+  const form = el.closest(".vb-form");
+  let fn, args;
+  if(act === "vote") [fn, args] = ["poll_vote", { p_poll: +el.dataset.id, p_choice: +el.dataset.choice }];
+  else if(act === "support") [fn, args] = ["poll_support", { p_poll: +el.dataset.id, p_on: el.dataset.on === "1" }];
+  else if(act === "gmremove") [fn, args] = ["poll_gm_remove", { p_poll: +el.dataset.id }];
+  else if(act === "propose" || act === "gmcreate"){
+    const q = form.querySelector('[data-f="q"]').value, opts = [...form.querySelectorAll('[data-f="o"]')].map(i => i.value.trim()).filter(Boolean);
+    if(opts.length < 2 || q.trim().length < 4){ showToast(VOTE_REASON.invalid); return; }
+    [fn, args] = act === "propose" ? ["poll_propose", { p_question: q, p_options: opts }]
+      : ["poll_gm_create", { p_question: q, p_options: opts, p_hours: +form.querySelector('[data-f="h"]').value || 12 }];
+  } else return;
+  vb.busy = true; renderVoteBoard();
+  try{
+    const r = await netRpc(fn, JSON.stringify(args));
+    if(r && r.ok){
+      showToast({ poll_vote: "🗳️ บันทึกเสียงของคุณแล้ว", poll_support: args.p_on ? "👍 หนุนหัวข้อแล้ว" : "ยกเลิกการหนุนแล้ว",
+                  poll_propose: "📌 ติดประกาศหัวข้อของคุณแล้ว — ชวนเพื่อนมาหนุน!", poll_gm_create: "🛡️ เปิดโหวตแล้ว", poll_gm_remove: "🛡️ ลบแล้ว" }[fn]);
+      if(fn === "poll_gm_create") vb.gmForm = false;
+    } else showToast(VOTE_REASON[r && r.reason] || "ทำรายการไม่สำเร็จ");
+  }catch(err){ showToast(err.message); }
+  vb.busy = false;
+  await loadVoteBoard();
+}
+document.getElementById("voteBody").addEventListener("click", e => {
+  const t = e.target.closest("[data-tab]");
+  if(t){ sfx.click(); vb.tab = t.dataset.tab; renderVoteBoard(); if(performance.now() - vb.at > VOTE_REFRESH_MS) loadVoteBoard(); return; }
+  const b = e.target.closest("button[data-act]");
+  if(!b || b.disabled) return;
+  sfx.click();
+  if(b.dataset.act === "gmform"){ vb.gmForm = true; renderVoteBoard(); return; }
+  voteAction(b.dataset.act, b);
+});
+document.getElementById("closeVoteBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("votePanel").hidden = true; });
+setInterval(()=>{ // keep countdowns fresh; typing in a form is never re-rendered away
+  if(!game || document.getElementById("votePanel").hidden) return;
+  if(document.activeElement && document.activeElement.closest && document.activeElement.closest(".vb-form")) return;
+  if(performance.now() - vb.at > 60000) loadVoteBoard(); else renderVoteBoard();
+}, 30000);
+// "❗ n" over the board in town while votes are waiting for me (count comes with every net_poll)
+function drawVoteBadge(ctx, x, y, n){
+  const bob = Math.sin(performance.now() / 250) * 3;
+  ctx.save();
+  ctx.translate(x, y + bob);
+  ctx.fillStyle = "#ffd166"; ctx.strokeStyle = "#7a4b00"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "#3a2e00"; ctx.font = "bold 13px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(n > 9 ? "9+" : "!" + (n > 1 ? n : ""), 0, 1);
+  ctx.restore();
+}
+
 document.getElementById("rankBody").addEventListener("click", e => {
   if(e.target.closest("#rankRefreshBtn")){
     sfx.click();
@@ -9539,7 +9764,9 @@ begin
     'req', (select coalesce(jsonb_agg(jsonb_build_object('id', f.user_id, 'name', public.soc_name(f.user_id))), '[]')
               from public.friends f where f.friend_id = me and not f.accepted),
     'fc', (select count(*) from public.friends where user_id = me and accepted),
-    'mv', public.min_game_version());
+    'mv', public.min_game_version(),
+    'pv', (select count(*) from public.polls p where p.status = 'open' and p.closes_at > now()
+             and not exists (select 1 from public.poll_votes v where v.poll_id = p.id and v.user_id = me))); -- open votes I haven't cast (town board "!")
 end $$;
 
 create or replace function public.whisper_send(p_to uuid, p_body text)
@@ -9692,6 +9919,187 @@ revoke execute on function public.net_poll(int, int, int, int), public.whisper_s
 grant execute on function public.net_poll(int, int, int, int), public.whisper_send(uuid, text), public.friend_request(uuid),
   public.friend_remove(uuid), public.block_player(uuid, boolean), public.friend_list(), public.player_profile(uuid),
   public.report_player(uuid, text, text, jsonb), public.leaderboard() to authenticated;
+-- ============================================================
+-- VOTE BOARD (🗳️ ป้ายประชามติ in town) — players propose a question with 2-4 choices, others back it; every
+-- 12 h round (00:00 / 12:00 UTC) the most-backed proposal (≥ 2 backers) goes up for a 12 h vote. GMs can
+-- post a vote directly and remove anything. Who may vote / propose / back: a linked (non-Guest) account at
+-- Lv.10+ — one person, one voice. Counts stay hidden until a vote closes; a vote can be changed until then.
+-- ============================================================
+create table if not exists public.polls (
+  id         bigserial primary key,
+  question   text not null,
+  options    jsonb not null,                    -- ["...", "..."] 2-4 choices
+  status     text not null default 'proposal',  -- proposal | open | expired | removed ("closed" = open past closes_at)
+  source     text not null default 'player',    -- player | gm
+  created_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now(),
+  round      bigint not null default floor(extract(epoch from now()) / 43200),
+  opened_at  timestamptz,
+  closes_at  timestamptz
+);
+create table if not exists public.poll_votes (
+  poll_id    bigint not null references public.polls(id) on delete cascade,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  choice     smallint not null,
+  updated_at timestamptz not null default now(),
+  primary key (poll_id, user_id)
+);
+create table if not exists public.poll_supports (
+  poll_id    bigint not null references public.polls(id) on delete cascade,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  primary key (poll_id, user_id)
+);
+create index if not exists polls_status_idx on public.polls (status, round);
+alter table public.polls enable row level security;
+alter table public.poll_votes enable row level security;
+alter table public.poll_supports enable row level security;
+revoke all on public.polls, public.poll_votes, public.poll_supports from anon, authenticated;
+
+-- helpers (not callable from the game)
+create or replace function public.poll_ineligible(p uuid) returns text language sql stable security definer set search_path = public as $$
+  select case when coalesce((select is_anonymous from auth.users where id = p), true) then 'guest'
+              when public.lb_num((select data -> 'player' -> 'level' from public.saves where user_id = p)) < 10 then 'level'
+              else null end $$;
+-- trimmed, single-spaced text or null when empty / too long
+create or replace function public.poll_clean(t text, maxlen int) returns text language sql immutable as $$
+  select case when char_length(c) between 1 and maxlen then c end
+    from (select btrim(regexp_replace(coalesce(t, ''), '\s+', ' ', 'g')) c) x $$;
+-- validated choice list (2-4 distinct, ≤ 40 chars each) or null
+create or replace function public.poll_clean_options(o jsonb) returns jsonb language plpgsql immutable as $$
+declare out jsonb := '[]'; v text; c text;
+begin
+  if jsonb_typeof(o) is distinct from 'array' or jsonb_array_length(o) not between 2 and 4 then return null; end if;
+  for v in select jsonb_array_elements_text(o) loop
+    c := public.poll_clean(v, 40);
+    if c is null or out ? c then return null; end if;
+    out := out || to_jsonb(c);
+  end loop;
+  return out;
+end $$;
+-- round change: the most-backed proposal of every finished round opens for 12 h, the rest expire
+create or replace function public.poll_tick() returns void language plpgsql security definer set search_path = public as $$
+declare cur bigint := floor(extract(epoch from now()) / 43200); r bigint; best bigint;
+begin
+  if not exists (select 1 from public.polls where status = 'proposal' and round < cur) then return; end if;
+  perform pg_advisory_xact_lock(7701);
+  for r in select distinct round from public.polls where status = 'proposal' and round < cur order by 1 loop
+    select p.id into best from public.polls p
+      where p.status = 'proposal' and p.round = r
+        and (select count(*) from public.poll_supports s where s.poll_id = p.id) >= 2
+      order by (select count(*) from public.poll_supports s where s.poll_id = p.id) desc, p.created_at
+      limit 1;
+    if best is not null then
+      update public.polls set status = 'open', opened_at = now(), closes_at = now() + interval '12 hours' where id = best;
+    end if;
+    update public.polls set status = 'expired' where status = 'proposal' and round = r;
+  end loop;
+end $$;
+revoke execute on function public.poll_ineligible(uuid), public.poll_clean(text, int), public.poll_clean_options(jsonb), public.poll_tick()
+  from public, anon, authenticated;
+
+-- Everything the board shows. Open votes: my choice + how many voted (counts hidden until closed).
+create or replace function public.poll_board()
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); cur bigint := floor(extract(epoch from now()) / 43200);
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  perform public.poll_tick();
+  return jsonb_build_object(
+    'now', now(), 'roundEnds', to_timestamp((cur + 1) * 43200),
+    'ineligible', public.poll_ineligible(me),
+    'gm', exists (select 1 from public.admins where user_id = me),
+    'open', (select coalesce(jsonb_agg(jsonb_build_object('id', p.id, 'question', p.question, 'options', p.options, 'source', p.source,
+               'closesAt', p.closes_at, 'voters', (select count(*) from public.poll_votes v where v.poll_id = p.id),
+               'my', (select choice from public.poll_votes v where v.poll_id = p.id and v.user_id = me)) order by p.closes_at), '[]')
+             from public.polls p where p.status = 'open' and p.closes_at > now()),
+    'proposals', (select coalesce(jsonb_agg(x.j order by x.n desc, x.created_at), '[]') from (
+               select p.created_at, (select count(*) from public.poll_supports s where s.poll_id = p.id) n,
+                      jsonb_build_object('id', p.id, 'question', p.question, 'options', p.options,
+                        'supports', (select count(*) from public.poll_supports s where s.poll_id = p.id),
+                        'mine', exists (select 1 from public.poll_supports s where s.poll_id = p.id and s.user_id = me),
+                        'own', p.created_by = me, 'by', public.soc_name(p.created_by)) j
+                 from public.polls p where p.status = 'proposal' and p.round = cur) x),
+    'closed', (select coalesce(jsonb_agg(x.j order by x.closes_at desc), '[]') from (
+               select p.closes_at, jsonb_build_object('id', p.id, 'question', p.question, 'options', p.options, 'source', p.source,
+                        'closedAt', p.closes_at,
+                        'counts', (select jsonb_agg((select count(*) from public.poll_votes v where v.poll_id = p.id and v.choice = i) order by i)
+                                     from generate_series(0, jsonb_array_length(p.options) - 1) i),
+                        'my', (select choice from public.poll_votes v where v.poll_id = p.id and v.user_id = me)) j
+                 from public.polls p where p.status = 'open' and p.closes_at <= now()
+                 order by p.closes_at desc limit 20) x));
+end $$;
+
+create or replace function public.poll_vote(p_poll bigint, p_choice int)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); why text; p public.polls;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  why := public.poll_ineligible(me);
+  if why is not null then return jsonb_build_object('ok', false, 'reason', why); end if;
+  select * into p from public.polls where id = p_poll;
+  if not found or p.status <> 'open' or p.closes_at <= now() then return jsonb_build_object('ok', false, 'reason', 'closed'); end if;
+  if p_choice is null or p_choice < 0 or p_choice >= jsonb_array_length(p.options) then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  insert into public.poll_votes (poll_id, user_id, choice) values (p_poll, me, p_choice)
+    on conflict (poll_id, user_id) do update set choice = excluded.choice, updated_at = now();
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.poll_propose(p_question text, p_options jsonb)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); why text; q text := public.poll_clean(p_question, 120); o jsonb := public.poll_clean_options(p_options);
+        cur bigint := floor(extract(epoch from now()) / 43200); new_id bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  why := public.poll_ineligible(me);
+  if why is not null then return jsonb_build_object('ok', false, 'reason', why); end if;
+  if q is null or char_length(q) < 4 or o is null then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if exists (select 1 from public.polls where created_by = me and status = 'proposal' and round = cur) then
+    return jsonb_build_object('ok', false, 'reason', 'limit');
+  end if;
+  insert into public.polls (question, options, created_by, round) values (q, o, me, cur) returning id into new_id;
+  insert into public.poll_supports (poll_id, user_id) values (new_id, me); -- the proposer backs it
+  return jsonb_build_object('ok', true, 'id', new_id);
+end $$;
+
+create or replace function public.poll_support(p_poll bigint, p_on boolean)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); why text;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  why := public.poll_ineligible(me);
+  if why is not null then return jsonb_build_object('ok', false, 'reason', why); end if;
+  if not exists (select 1 from public.polls where id = p_poll and status = 'proposal' and round = floor(extract(epoch from now()) / 43200)) then
+    return jsonb_build_object('ok', false, 'reason', 'closed');
+  end if;
+  if p_on then insert into public.poll_supports (poll_id, user_id) values (p_poll, me) on conflict do nothing;
+  else delete from public.poll_supports where poll_id = p_poll and user_id = me; end if;
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- GM: open a vote right away (hours 1-72) / take down a proposal or vote
+create or replace function public.poll_gm_create(p_question text, p_options jsonb, p_hours int)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); q text := public.poll_clean(p_question, 120); o jsonb := public.poll_clean_options(p_options);
+begin
+  if me is null or not exists (select 1 from public.admins where user_id = me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  if q is null or o is null then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  insert into public.polls (question, options, status, source, created_by, opened_at, closes_at)
+    values (q, o, 'open', 'gm', me, now(), now() + make_interval(hours => least(greatest(coalesce(p_hours, 12), 1), 72)));
+  return jsonb_build_object('ok', true);
+end $$;
+create or replace function public.poll_gm_remove(p_poll bigint)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null or not exists (select 1 from public.admins where user_id = me) then return jsonb_build_object('ok', false, 'reason', 'gm'); end if;
+  update public.polls set status = 'removed' where id = p_poll;
+  return jsonb_build_object('ok', true);
+end $$;
+
+revoke execute on function public.poll_board(), public.poll_vote(bigint, int), public.poll_propose(text, jsonb), public.poll_support(bigint, boolean),
+  public.poll_gm_create(text, jsonb, int), public.poll_gm_remove(bigint) from public, anon;
+grant execute on function public.poll_board(), public.poll_vote(bigint, int), public.poll_propose(text, jsonb), public.poll_support(bigint, boolean),
+  public.poll_gm_create(text, jsonb, int), public.poll_gm_remove(bigint) to authenticated;
 ------------------------------------------------------------------------------------------------ -->
 </body>
 </html>
