@@ -943,6 +943,70 @@
   @media (prefers-reduced-motion: reduce){
     .panel:not([hidden]), #talkDialog, .talk-choice, .tk-reward, .talk-portrait .talk-emoji{ animation:none; }
   }
+
+  /* ================= v6 — Collection: collector level, just-unlocked strip, title (ฉายา) challenge cards ================= */
+  .col-head{ display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+  .col-lv{ display:flex; align-items:center; gap:14px; background:linear-gradient(135deg,#2e2a4a,#3d3763); color:#fff; border-radius:12px; padding:12px 14px;
+    box-shadow:inset 0 0 0 1px rgba(255,209,102,.25); }
+  .col-lv-badge{ flex:0 0 58px; height:58px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 50% 35%, #ffe08a, #c9a24a 70%); color:#3a2e00; box-shadow:0 0 0 3px rgba(255,209,102,.3), 0 0 16px rgba(255,209,102,.35); }
+  .col-lv-badge span{ font-size:9px; font-weight:bold; letter-spacing:.3px; line-height:1; }
+  .col-lv-badge b{ font-size:24px; line-height:1; }
+  .col-lv-main{ flex:1; min-width:0; }
+  .col-lv-main .t{ font-size:15px; font-weight:bold; color:#ffe6a6; }
+  .col-lv-main .t small{ font-size:11px; color:#b9b1d6; font-weight:normal; margin-left:6px; }
+  .col-lv-main .track{ height:8px; border-radius:5px; background:rgba(255,255,255,.14); overflow:hidden; margin:6px 0 5px; }
+  .col-lv-main .track i{ display:block; height:100%; background:linear-gradient(90deg,#ffb84d,#ffd166); border-radius:5px; }
+  .col-lv-main .s{ font-size:11px; color:#d8d3e8; }
+  .col-lv-main .s b{ color:#7CFFB2; }
+  .col-pct{ flex:0 0 auto; text-align:center; padding-left:12px; border-left:1px solid rgba(255,255,255,.14); }
+  .col-pct b{ display:block; font-size:22px; color:#fff; line-height:1.1; }
+  .col-pct span{ font-size:10px; color:#b9b1d6; display:block; }
+  .col-pct small{ font-size:10px; color:#8f88ad; display:block; margin-top:2px; white-space:nowrap; }
+  .col-eq{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#fff; border:2px solid #e4dcc4; border-radius:10px; padding:8px 12px; font-size:13px; }
+  .col-eq .ic{ font-size:22px; }
+  .col-eq .nm{ font-weight:bold; color:#4b3f8f; }
+  .col-eq .none{ color:#8a8196; }
+  .col-eq button{ margin-left:auto; border:none; background:#e9e3ff; color:#4b3f8f; border-radius:8px; padding:5px 10px; font-size:12px; font-weight:bold; }
+  .ttl-bonus{ display:inline-flex; gap:4px; flex-wrap:wrap; }
+  .ttl-bonus span{ font-size:11px; font-weight:bold; color:#1f7a55; background:#e3f7ec; border:1px solid #bfe8d2; border-radius:20px; padding:1px 7px; white-space:nowrap; }
+  .ttl-recent{ background:linear-gradient(180deg,#fff7df,#fff); border:2px solid #f0d58a; border-radius:12px; padding:10px 12px; margin-bottom:12px; }
+  .ttl-recent-h{ font-size:13px; font-weight:bold; color:#8a6412; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .ttl-recent-h small{ font-weight:normal; color:#a08a5a; font-size:11px; }
+  .ttl-recent-row{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; }
+  .ttl-mini{ position:relative; background:#fff; border:2px solid var(--tc,#cfc6ad); border-radius:10px; padding:8px; display:flex; flex-direction:column; gap:4px; min-width:0; }
+  .ttl-mini .h{ display:flex; align-items:center; gap:6px; min-width:0; }
+  .ttl-mini .h .ic{ font-size:22px; flex:0 0 auto; }
+  .ttl-mini .h b{ font-size:12px; color:#2d2a32; line-height:1.25; }
+  .ttl-mini button{ margin-top:auto; border:none; border-radius:7px; padding:5px 6px; font-size:12px; font-weight:bold; background:#4b3f8f; color:#fff; }
+  .ttl-mini button.on{ background:#e3f7ec; color:#1f7a55; cursor:default; }
+  .ttl-new{ position:absolute; top:-8px; right:-6px; background:linear-gradient(180deg,#ff6b8b,#e0314f); color:#fff; font-size:9px; font-weight:bold;
+    border-radius:8px; padding:1px 6px; box-shadow:0 2px 6px rgba(224,49,79,.4); animation:pulseBadge 1.2s infinite; }
+  .ttl-cats{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .ttl-cats button{ border:2px solid #e4dcc4; background:#fff; border-radius:20px; padding:4px 11px; font-size:12px; color:#4b3f8f; font-weight:bold; }
+  .ttl-cats button.on{ background:#4b3f8f; color:#fff; border-color:#4b3f8f; }
+  .ttl-cats button small{ font-weight:normal; opacity:.75; margin-left:3px; }
+  .ttl-sum{ font-size:12px; color:#7a7186; margin:-2px 0 8px; }
+  .ttl-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; }
+  .ttl-card{ position:relative; display:flex; gap:10px; background:#fff; border:2px solid #e4dcc4; border-left:5px solid var(--tc,#cfc6ad); border-radius:10px; padding:8px 10px; min-width:0; }
+  .ttl-card.locked{ background:#faf7ef; }
+  .ttl-card.locked .ttl-ic{ filter:grayscale(1); opacity:.5; }
+  .ttl-card.eq{ box-shadow:0 0 0 2px #4b3f8f; }
+  .ttl-ic{ flex:0 0 38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; background:#f4efe0; }
+  .ttl-body{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .ttl-nm{ font-size:13px; font-weight:bold; color:#2d2a32; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .ttl-tier{ font-size:9px; font-weight:bold; color:#fff; background:var(--tc); border-radius:10px; padding:1px 6px; }
+  .ttl-desc{ font-size:11px; color:#7a7186; line-height:1.35; }
+  .ttl-bar{ height:6px; border-radius:4px; background:#ece4cc; overflow:hidden; }
+  .ttl-bar i{ display:block; height:100%; background:var(--tc); border-radius:4px; }
+  .ttl-foot{ display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:11px; color:#7a7186; flex-wrap:wrap; }
+  .ttl-card button{ align-self:center; flex:0 0 auto; border:none; border-radius:8px; padding:6px 10px; font-size:12px; font-weight:bold; background:#4b3f8f; color:#fff; }
+  .ttl-card button.on{ background:#e3f7ec; color:#1f7a55; }
+  .col-lv-list{ display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; }
+  .col-lv-list i{ font-style:normal; font-size:10px; padding:1px 6px; border-radius:10px; background:rgba(255,255,255,.08); color:#8f88ad; }
+  .col-lv-list i.on{ background:rgba(124,255,178,.18); color:#7CFFB2; }
+  .stat-tb{ color:#b07d10; font-weight:bold; }
+  @media (max-width: 640px){ .ttl-grid, .ttl-recent-row{ grid-template-columns:1fr; } .col-pct{ display:none; } }
 </style>
 </head>
 <body>
@@ -1232,11 +1296,11 @@
     <div id="gmPlayerBody"></div>
   </div>
 
-  <div class="panel" id="collectionPanel" hidden style="width:640px;">
+  <div class="panel" id="collectionPanel" hidden style="width:760px;">
     <button class="close-x" id="closeCollectionBtn" type="button">✕</button>
-    <h2>📖 Collection</h2>
+    <h2>📖 Collection<span class="hdr-chip" id="collectionCpChip"></span></h2>
     <div id="collectionProgressHead"></div>
-    <div class="slot-list" id="collectionRewardsList" style="margin-bottom:12px;"></div>
+    <div id="titleRecent"></div>
     <div class="choice-row" id="collectionTabs" style="margin-bottom:10px;"></div>
     <div id="collectionContent"></div>
   </div>
@@ -2898,6 +2962,7 @@ function createGameState(name, chosenLook){
       skillBarSlots: ["heavy_attack", "haste", "heal", "guard", null, null, null, null],
       equipment: { weapon: null, armor: null, headgear: null, accessory1: null, accessory2: null },
       title: null,
+      titleId: null, // equipped title (TITLE_DEFS id) — its bonus only counts while it's worn
       statPoints: { available: 0, STR:0, AGI:0, DEX:0, VIT:0, LUK:0, MEDITATE:0 },
       mastery: { sword: 0, heavy: 0 },
       weaponRank: {}, // lazily populated per category — see ensureWeaponRankEntry
@@ -2921,7 +2986,7 @@ function createGameState(name, chosenLook){
     bossDefeatedThisMap: false,
     warpPoint: null,
     travelGate: null,
-    stats: { bestPerfectStreak: 0, untouchableBossKills: 0, survivorWins: 0, chestsOpened: 0 },
+    stats: newGameStats(),
     unlockedAchievements: new Set(),
     unlockedMilestones: new Set(),
     monsters: [],
@@ -2936,6 +3001,7 @@ function createGameState(name, chosenLook){
     encounteredMonsters: new Set(), // "<mapTier>_<type>" — marks a monster type as identified once you've fought it at least once (see enterBattle)
     discoveredItems: new Set(),
     unlockedTitles: new Set(),
+    newTitles: new Set(), // unlocked but not yet seen in the Collection panel — the "NEW" badges
     hasNewTitleUnlock: false,
     nextEliteEligibleAt: 0,
     battleCooldownUntil: 0
@@ -2956,7 +3022,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 5;
+const GAME_VERSION = 6;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -3921,7 +3987,7 @@ const SAVE_PLAYER_SKIP = ["x","y","targetX","targetY","path","pathIndex","destin
   "pendingNpcId","pendingLocationId","pendingWarp","pendingTravelGate","skillCooldowns","isMeditating","meditateShownFull","facing","walkPhase"];
 const SAVE_GAME_FIELDS = ["inventory","storage","maxMapTierReached","maxMapTierReachedDim1","dimension","maxDimension",
   "dimReach","dimCleared","stats","pity","huntCounts","hasNewTitleUnlock","mapTier"];
-const SAVE_GAME_SETS = ["unlockedAchievements","unlockedMilestones","encounteredMonsters","discoveredItems","unlockedTitles"];
+const SAVE_GAME_SETS = ["unlockedAchievements","unlockedMilestones","encounteredMonsters","discoveredItems","unlockedTitles","newTitles"];
 let lastSaveAt = 0;
 function buildSaveData(){
   const player = {};
@@ -3949,6 +4015,7 @@ function continueGame(data){
   Object.assign(game.player, data.player);
   SAVE_GAME_FIELDS.forEach(k => { if(data[k] !== undefined) game[k] = data[k]; });
   SAVE_GAME_SETS.forEach(k => { game[k] = new Set(data[k] || []); });
+  migrateTitleSave();
   const tier = game.mapTier;
   const dim = game.dimension || 1;
   game.dimension = 0;       // force setDimension() inside warpToMap to rebuild the law counts
@@ -4406,6 +4473,8 @@ function advanceDungeonAfterWin(m){
     const instance = rollEquipmentInstance(exclusiveId);
     addEquipmentToInventory(instance);
     showDiscoveryBanner("🏆 DUNGEON CLEARED!", EQUIPMENT_DEFS[exclusiveId].name);
+    game.stats.dungeons = (game.stats.dungeons || 0) + 1;
+    setTimeout(()=> checkTitles(false), 2600); // after the clear banner has had its moment
     showToast("พิชิตดันเจี้ยนสำเร็จ! ได้รับ " + EQUIPMENT_DEFS[exclusiveId].icon + " " + EQUIPMENT_DEFS[exclusiveId].name);
     game.dungeon = null;
     document.getElementById("dungeonPanel").hidden = true;
@@ -4428,6 +4497,7 @@ let lastTalkLocation = null; // the secret spot the next showLocationDialog belo
 function interactWithLocation(loc){
   const def = SECRET_LOCATION_DEFS[loc.defId];
   lastTalkLocation = loc;
+  if(!loc.discovered){ game.stats.secrets = (game.stats.secrets || 0) + 1; setTimeout(()=> checkTitles(false), 1200); }
   loc.discovered = true;
 
   if(loc.used && def.grantType !== "portal"){
@@ -4693,33 +4763,236 @@ function computeCollectionProgress(){
   };
 }
 
-// Cosmetic-only rewards (titles) — never touches combat stats, so Collection progress can't break game balance.
-const COLLECTION_REWARDS = [
-  { id:"monster_hunter", title:"นักล่ามอนสเตอร์", desc:"พบมอนสเตอร์ครบครึ่งหนึ่ง",
-    check: p => p.monsterDiscovered >= Math.ceil(p.monsterTotal/2) },
-  { id:"half_collector", title:"นักสะสมมือใหม่", desc:"เก็บ Collection ครบ 50%",
-    check: p => p.percent >= 50 },
-  { id:"full_collector", title:"ตำนานนักสะสม", desc:"เก็บ Collection ครบ 100%",
-    check: p => p.percent >= 100 }
+/* ============================================================
+   TITLES (ฉายา) & CHALLENGES — every title is a challenge with a goal; reaching it unlocks the title.
+   • Wear ONE title → its stat bonus applies (swap any time, no cost).
+   • Every unlocked title also gives Collector Points (CP); Collector Level = a permanent bonus to all 6 stats.
+   Both flow into getStatTotals() through getTitleStatBonus(). Progress is read from game.stats + live data.
+   ============================================================ */
+function newGameStats(){
+  return { bestPerfectStreak: 0, untouchableBossKills: 0, survivorWins: 0, chestsOpened: 0,
+    kills: 0, eliteKills: 0, perfectHits: 0, perfectDodges: 0, counters: 0, crits: 0, flawless: 0, deaths: 0,
+    dungeons: 0, secrets: 0, refines: 0, goldEarned: 0, meditations: 0, letters: 0, bossTiers: {}, titleLog: [] };
+}
+const TITLE_TIERS = {
+  1: { label:"บรอนซ์", color:"#c07a3e", cp:1 },
+  2: { label:"เงิน",   color:"#7d8aa3", cp:2 },
+  3: { label:"ทอง",    color:"#d39a0f", cp:3 },
+  4: { label:"ตำนาน",  color:"#b44fd6", cp:5 }
+};
+const TITLE_CATS = [
+  { id:"all", label:"ทั้งหมด" }, { id:"combat", label:"⚔️ ต่อสู้" }, { id:"boss", label:"👑 ล่าบอส" }, { id:"adventure", label:"🗺️ ผจญภัย" },
+  { id:"dimension", label:"🌌 มิติ" }, { id:"collector", label:"📖 นักสะสม" }, { id:"life", label:"🔨 ชีวิต & ฝีมือ" }
 ];
-
-// Checks + unlocks any newly-earned title, returns the reward object if one was just unlocked (for the discovery banner)
-function checkCollectionRewards(){
-  const progress = computeCollectionProgress();
-  let newlyUnlocked = null;
-  for(const reward of COLLECTION_REWARDS){
-    if(reward.check(progress) && !game.unlockedTitles.has(reward.id)){
-      game.unlockedTitles.add(reward.id);
-      newlyUnlocked = reward;
-    }
+const mkTitle = (id, cat, tier, icon, name, desc, goal, stat, bonus, extra) => Object.assign({ id, cat, tier, icon, name, desc, goal, stat, bonus }, extra || {});
+const TITLE_DEFS = [
+  // ⚔️ combat
+  mkTitle("first_blood",     "combat", 1, "🗡️", "นักล่าหน้าใหม่",          "ปราบมอนสเตอร์ 100 ตัว",                 100,   "kills",       { STR:3 }),
+  mkTitle("reaper",          "combat", 2, "⚔️", "เพชฌฆาตแห่งทุ่งกว้าง",     "ปราบมอนสเตอร์ 1,000 ตัว",               1000,  "kills",       { STR:6 }),
+  mkTitle("death_walker",    "combat", 3, "💀", "มัจจุราชเดินดิน",          "ปราบมอนสเตอร์ 5,000 ตัว",               5000,  "kills",       { STR:10 }),
+  mkTitle("calamity",        "combat", 4, "☠️", "หายนะแห่งมวลมาร",          "ปราบมอนสเตอร์ 20,000 ตัว",              20000, "kills",       { STR:9, AGI:6 }),
+  mkTitle("slime_hunter",    "combat", 1, "🟢", "ศัตรูคู่อาฆาตสไลม์",        "ปราบสไลม์ทุกชนิดรวม 100 ตัว",            100,   "slimeKills",  { LUK:3 }, { alias:["Slime Hunter"] }),
+  mkTitle("one_beat",        "combat", 1, "🎯", "หนึ่งจังหวะหนึ่งชีวิต",     "ตี Perfect รวม 300 ครั้ง",               300,   "perfectHits", { MEDITATE:3 }),
+  mkTitle("flawless_blade",  "combat", 2, "🌙", "ดาบไร้ที่ติ",               "ตี Perfect รวม 3,000 ครั้ง",             3000,  "perfectHits", { MEDITATE:6 }),
+  mkTitle("rhythm_sage",     "combat", 3, "🎼", "ผู้หยั่งรู้จังหวะสวรรค์",    "ตี Perfect รวม 15,000 ครั้ง",            15000, "perfectHits", { MEDITATE:10 }),
+  mkTitle("perfect_warrior", "combat", 3, "✨", "นักรบสมบูรณ์แบบ",           "ตี Perfect ติดกัน 50 ครั้งในไฟต์เดียว",   50,    "bestPerfectStreak", { MEDITATE:5, DEX:5 }, { alias:["Perfect Warrior"] }),
+  mkTitle("swaying_shadow",  "combat", 1, "🍃", "เงาพริ้วไหว",               "หลบแบบ Perfect รวม 50 ครั้ง",            50,    "perfectDodges", { AGI:3 }),
+  mkTitle("formless_wind",   "combat", 2, "🌪️", "สายลมไร้รูป",               "หลบแบบ Perfect รวม 500 ครั้ง",           500,   "perfectDodges", { AGI:6 }),
+  mkTitle("shadowless",      "combat", 3, "👤", "ผู้ไร้เงา",                 "หลบแบบ Perfect รวม 2,500 ครั้ง",         2500,  "perfectDodges", { AGI:10 }),
+  mkTitle("counter_art",     "combat", 1, "🔄", "ศิลปะแห่งการสวนกลับ",       "โจมตีสวนกลับรวม 50 ครั้ง",               50,    "counters",    { STR:3 }),
+  mkTitle("mirror_blade",    "combat", 2, "🪞", "ดาบสะท้อนเงา",              "โจมตีสวนกลับรวม 500 ครั้ง",              500,   "counters",    { STR:3, DEX:3 }),
+  mkTitle("keen_eye",        "combat", 1, "💥", "คมกริบ",                    "ตีคริติคอลรวม 500 ครั้ง",                500,   "crits",       { LUK:3 }),
+  mkTitle("fortune_chosen",  "combat", 2, "🍀", "ผู้ที่ดวงดาวเลือก",          "ตีคริติคอลรวม 5,000 ครั้ง",              5000,  "crits",       { LUK:6 }),
+  mkTitle("star_assassin",   "combat", 3, "🌠", "มือสังหารใต้แสงดาว",         "ตีคริติคอลรวม 25,000 ครั้ง",             25000, "crits",       { LUK:10 }),
+  mkTitle("unscathed",       "combat", 1, "🛡️", "ไร้รอยขีดข่วน",              "ชนะโดยไม่เสียเลือดเลย 50 ครั้ง",          50,    "flawless",    { VIT:3 }),
+  mkTitle("invisible_armor", "combat", 2, "🔰", "เกราะที่มองไม่เห็น",          "ชนะโดยไม่เสียเลือดเลย 500 ครั้ง",         500,   "flawless",    { VIT:6 }),
+  mkTitle("survivor",        "combat", 2, "🩸", "รอดตายหวุดหวิด",             "ชนะขณะเลือดเหลือต่ำกว่า 5%",             1,     "survivor",    { VIT:6 }, { alias:["Survivor"] }),
+  mkTitle("never_give_up",   "combat", 1, "🔥", "ผู้ไม่ยอมแพ้",               "ล้มแล้วลุกขึ้นใหม่ 25 ครั้ง",            25,    "deaths",      { VIT:3 }, { secret:true, hint:"ฉายาลับ — ว่ากันว่าคนที่ล้มบ่อยที่สุด คือคนที่ลุกบ่อยที่สุด" }),
+  // 👑 bosses & elites
+  mkTitle("elite_hunter",    "boss", 1, "⭐", "ผู้ล่าเหล่าหัวกะทิ",          "ปราบ Elite Monster 10 ตัว",              10,    "eliteKills",  { STR:3 }),
+  mkTitle("star_breaker",    "boss", 2, "🌟", "ผู้ดับแสงดารา",               "ปราบ Elite Monster 100 ตัว",             100,   "eliteKills",  { LUK:6 }),
+  mkTitle("elite_bane",      "boss", 3, "💫", "ฝันร้ายของเหล่าหัวกะทิ",      "ปราบ Elite Monster 500 ตัว",             500,   "eliteKills",  { STR:5, LUK:5 }),
+  mkTitle("boss_slayer",     "boss", 2, "👑", "ผู้ปราบราชันย์",              "ปราบบอสประจำแมพรวม 10 ครั้ง",            10,    "bossKills",   { STR:6 }, { alias:["King Slayer"] }),
+  mkTitle("throne_hunter",   "boss", 3, "⚜️", "นักล่าบัลลังก์",              "ปราบบอสรวม 50 ครั้ง",                    50,    "bossKills",   { STR:5, VIT:5 }),
+  mkTitle("king_of_kings",   "boss", 4, "🔱", "จักรพรรดิเหนือราชันย์",       "ปราบบอสรวม 200 ครั้ง",                   200,   "bossKills",   { STR:8, VIT:7 }),
+  mkTitle("untouchable",     "boss", 3, "🌀", "ไร้เทียมทาน",                 "ปราบบอสโดยไม่โดนโจมตีเลยแม้แต่ครั้งเดียว", 1,     "untouchable", { AGI:5, VIT:5 }, { alias:["Untouchable"] }),
+  mkTitle("five_realms",     "boss", 2, "🏯", "ผู้พิชิตห้าแดน",              "ปราบบอสประจำแมพ 5 แมพที่ต่างกัน",        5,     "bossTiers",   { VIT:6 }),
+  mkTitle("ten_kings",       "boss", 3, "🏆", "ผู้โค่นราชันย์ทั้งสิบ",        "ปราบบอสประจำแมพครบทั้ง 10 แมพ",          10,    "bossTiers",   { STR:5, VIT:5 }),
+  // 🗺️ adventure
+  mkTitle("wanderer",        "adventure", 1, "🧭", "นักเดินทาง",             "เดินทางถึงแมพ 3",                        3,     "reach",       { AGI:3 }),
+  mkTitle("pathfinder",      "adventure", 2, "🗺️", "ผู้บุกเบิก",              "เดินทางถึงแมพ 6",                        6,     "reach",       { AGI:6 }),
+  mkTitle("worlds_edge",     "adventure", 3, "🌄", "ผู้ยืนบนสุดขอบโลก",       "เดินทางถึงแมพ 10",                       10,    "reach",       { AGI:5, DEX:5 }),
+  mkTitle("secret_seeker",   "adventure", 1, "🔍", "นักตามหาความลับ",        "ค้นพบจุดลับ 5 แห่ง",                     5,     "secrets",     { LUK:3 }),
+  mkTitle("secret_keeper",   "adventure", 2, "🗝️", "ผู้ไขปริศนาแห่งพงไพร",    "ค้นพบจุดลับ 30 แห่ง",                    30,    "secrets",     { LUK:6 }),
+  mkTitle("dungeon_diver",   "adventure", 1, "🏰", "ผู้ท้าทายดันเจี้ยน",       "พิชิตดันเจี้ยน 1 ครั้ง",                   1,     "dungeons",    { VIT:3 }),
+  mkTitle("labyrinth_lord",  "adventure", 2, "🕯️", "เจ้าแห่งเขาวงกต",          "พิชิตดันเจี้ยน 10 ครั้ง",                  10,    "dungeons",    { VIT:6 }),
+  mkTitle("underworld_ruler","adventure", 3, "🦇", "ผู้ครองใต้พิภพ",           "พิชิตดันเจี้ยน 30 ครั้ง",                  30,    "dungeons",    { VIT:5, LUK:5 }),
+  mkTitle("treasure_hunter", "adventure", 2, "💰", "นักล่าสมบัติ",             "เปิดหีบสมบัติในดันเจี้ยน 10 ครั้ง",          10,    "chests",      { LUK:6 }, { alias:["Treasure Hunter"] }),
+  mkTitle("rising_hero",     "adventure", 1, "🌱", "ผู้กล้าที่กำลังเติบโต",     "เลเวล 25",                               25,    "level",       { VIT:3 }),
+  mkTitle("menalars_hero",   "adventure", 2, "🦁", "วีรชนแห่งเมนาลาร์",        "เลเวล 50",                               50,    "level",       { VIT:6 }),
+  mkTitle("peak",            "adventure", 4, "🏔️", "ผู้ไปถึงจุดสูงสุด",        "เลเวล 100",                              100,   "level",       { STR:5, AGI:5, VIT:5 }),
+  // 🌌 dimensions
+  mkTitle("barrier_breaker", "dimension", 2, "🌌", "ผู้ข้ามบาเรีย",            "ข้ามไปถึงมิติที่ 2",                       2,     "maxDim",      { MEDITATE:6 }),
+  mkTitle("dimension_walker","dimension", 3, "🪐", "ผู้เดินข้ามมิติ",           "ข้ามไปถึงมิติที่ 3",                       3,     "maxDim",      { MEDITATE:5, AGI:5 }),
+  mkTitle("void_voyager",    "dimension", 4, "🕳️", "ผู้ท่องห้วงนิรันดร์",       "ข้ามไปถึงมิติที่ 5",                       5,     "maxDim",      { MEDITATE:8, STR:7 }),
+  // 📖 collector
+  mkTitle("novice_collector","collector", 1, "📘", "นักสะสมฝึกหัด",           "ค้นพบ Collection 10%",                  10,    "colPct",      { LUK:3 }),
+  mkTitle("monster_hunter",  "collector", 1, "📗", "นักล่ามอนสเตอร์",          "พบมอนสเตอร์ในสมุดมอนสเตอร์ครบครึ่งหนึ่ง",  1,     "monstersHalf",{ STR:3 }, { alias:["นักล่ามอนสเตอร์"] }),
+  mkTitle("monster_master",  "collector", 2, "📚", "ปรมาจารย์สัตว์อสูร",       "พบมอนสเตอร์ในสมุดมอนสเตอร์ครบทุกชนิด",    1,     "monstersAll", { STR:3, VIT:3 }, { alias:["Monster Master"] }),
+  mkTitle("card_collector",  "collector", 1, "🃏", "นักสะสมการ์ด",            "ค้นพบการ์ด 3 ใบ",                         3,     "cards",       { DEX:3 }),
+  mkTitle("full_deck",       "collector", 3, "🎴", "ไพ่ครบสำรับ",              "ค้นพบการ์ดครบทุกใบ รวมใบลับ",               1,     "allCards",    { DEX:5, LUK:5 }),
+  mkTitle("half_collector",  "collector", 2, "📙", "นักสะสมตัวยง",             "ค้นพบ Collection 50%",                  50,    "colPct",      { LUK:6 }, { alias:["นักสะสมมือใหม่"] }),
+  mkTitle("curator",         "collector", 3, "🏛️", "ภัณฑารักษ์แห่งตำนาน",      "ค้นพบ Collection 75%",                  75,    "colPct",      { LUK:5, DEX:5 }),
+  mkTitle("full_collector",  "collector", 4, "📜", "ตำนานนักสะสม",             "ค้นพบ Collection 100%",                 100,   "colPct",      { LUK:8, MEDITATE:7 }, { alias:["Living Legend"] }),
+  mkTitle("treasure_bearer", "collector", 2, "💜", "ผู้ครอบครองของล้ำค่า",      "ค้นพบอุปกรณ์ระดับเอปิก 5 ชนิด",             5,     "epics",       { LUK:6 }),
+  mkTitle("legend_chosen",   "collector", 3, "🧡", "ผู้ถูกตำนานเลือก",          "ค้นพบอุปกรณ์ระดับตำนาน 1 ชนิด",             1,     "legends",     { LUK:5, STR:5 }),
+  mkTitle("legend_vault",    "collector", 4, "🏺", "คลังแห่งตำนาน",            "ค้นพบอุปกรณ์ระดับตำนาน 10 ชนิด",            10,    "legends",     { LUK:8, STR:7 }),
+  // 🔨 life & craft
+  mkTitle("apprentice_smith","life", 1, "🔨", "ลูกมือช่างตีเหล็ก",           "ตีบวกอุปกรณ์สำเร็จ 10 ครั้ง",               10,    "refines",     { VIT:3 }),
+  mkTitle("artisan",         "life", 2, "⚒️", "ช่างฝีมือเอก",                "ตีบวกอุปกรณ์ชิ้นหนึ่งถึง +5",               5,     "bestRefine",  { STR:3, VIT:3 }),
+  mkTitle("forge_master",    "life", 3, "🔥", "ปรมาจารย์แห่งเตาหลอม",         "ตีบวกอุปกรณ์ชิ้นหนึ่งถึง +10",              10,    "bestRefine",  { STR:5, VIT:5 }),
+  mkTitle("new_rich",        "life", 1, "🪙", "เศรษฐีหน้าใหม่",              "หาเงินจากการต่อสู้รวม 10,000",            10000, "goldEarned",  { LUK:3 }),
+  mkTitle("tycoon",          "life", 2, "💎", "เจ้าสัวแห่งเมนาลาร์",           "หาเงินจากการต่อสู้รวม 100,000",           100000,"goldEarned",  { LUK:6 }),
+  mkTitle("gold_king",       "life", 3, "🏦", "ราชาแห่งทองคำ",               "หาเงินจากการต่อสู้รวม 1,000,000",         1000000,"goldEarned", { LUK:10 }),
+  mkTitle("mind_trainee",    "life", 1, "🧘", "ผู้ฝึกจิต",                    "ทำสมาธิจนสติเต็ม 10 ครั้ง",                10,    "meditations", { MEDITATE:3 }),
+  mkTitle("still_water",     "life", 2, "💧", "จิตนิ่งดั่งผืนน้ำ",             "ทำสมาธิจนสติเต็ม 100 ครั้ง",               100,   "meditations", { MEDITATE:6 }),
+  mkTitle("town_friend",     "life", 1, "🏙️", "มิตรแท้แห่งเจ้าเมือง",         "ทำภารกิจกำจัดขยะของเจ้าเมืองสำเร็จ",        1,     "junkQuest",   { VIT:3 }),
+  mkTitle("courier",         "life", 1, "✉️", "ผู้ส่งสารต่างแดน",             "ส่งจดหมายเก่าให้พ่อค้า 3 ฉบับ",             3,     "letters",     { LUK:3 }),
+  mkTitle("skill_student",   "life", 1, "📜", "ผู้ศึกษาวิชายุทธ์",             "ปลดสกิลอาวุธ 5 สกิล",                     5,     "skills",      { DEX:3 }),
+  mkTitle("weapon_scholar",  "life", 2, "📖", "ผู้เชี่ยวชาญศาสตร์อาวุธ",       "ปลดสกิลอาวุธ 15 สกิล",                    15,    "skills",      { DEX:6 }),
+  mkTitle("weapon_master",   "life", 3, "🥋", "ปรมาจารย์อาวุธ",               "ความชำนาญอาวุธถึงแรงค์ Master",           5,     "bestRank",    { DEX:5, STR:5 }),
+  mkTitle("four_arms",       "life", 3, "🧿", "ผู้รอบรู้สี่ศาสตร์",            "อาวุธทั้ง 4 แบบถึงแรงค์ Expert",           4,     "rankedWeapons",{ DEX:5, AGI:5 }),
+  mkTitle("transcender",     "life", 4, "☀️", "ผู้ก้าวข้ามขีดจำกัด",           "ความชำนาญอาวุธถึงแรงค์ Transcender",      9,     "bestRank",    { DEX:8, STR:7 })
+];
+const TITLE_BY_ID = Object.fromEntries(TITLE_DEFS.map(d => [d.id, d]));
+// Collector Level — reached by total CP; the bonus is to ALL six stats and is permanent (no need to wear anything).
+const COLLECTOR_LEVELS = [
+  { cp:0, all:0 }, { cp:5, all:1 }, { cp:12, all:2 }, { cp:22, all:3 }, { cp:35, all:4 },
+  { cp:50, all:5 }, { cp:70, all:6 }, { cp:95, all:7 }, { cp:125, all:8 }
+];
+function getCollectorCP(){
+  let n = 0;
+  for(const id of game.unlockedTitles){ const d = TITLE_BY_ID[id]; if(d) n += TITLE_TIERS[d.tier].cp; }
+  return n;
+}
+function getCollectorLevelIndex(cp){
+  let i = 0;
+  while(i + 1 < COLLECTOR_LEVELS.length && cp >= COLLECTOR_LEVELS[i + 1].cp) i++;
+  return i;
+}
+function titleBonusText(bonus){ return Object.entries(bonus).map(([k, v]) => `+${v} ${STAT_INFO[k].label}`); }
+let titleBonusCache = null;
+function invalidateTitleBonus(){ titleBonusCache = null; }
+function getTitleStatBonus(){
+  if(titleBonusCache && titleBonusCache.g === game) return titleBonusCache.v;
+  const out = {}; STAT_KEYS.forEach(k => out[k] = 0);
+  const all = COLLECTOR_LEVELS[getCollectorLevelIndex(getCollectorCP())].all;
+  if(all) STAT_KEYS.forEach(k => out[k] += all);
+  const worn = game.player.titleId && TITLE_BY_ID[game.player.titleId];
+  if(worn && game.unlockedTitles.has(worn.id)) for(const [k, v] of Object.entries(worn.bonus)) out[k] += v;
+  titleBonusCache = { g: game, v: out };
+  return out;
+}
+function getTitleStats(){
+  const st = game.stats, p = game.player, hc = game.huntCounts || {};
+  const eqFound = r => Object.keys(EQUIPMENT_DEFS).filter(id => EQUIPMENT_DEFS[id].rarity === r && game.discoveredItems.has("equipment:" + id)).length;
+  let skills = 0, bestRank = 0, rankedWeapons = 0;
+  for(const type of Object.keys(WEAPON_CATEGORIES)){
+    const e = p.weaponRank && p.weaponRank[type];
+    if(!e) continue;
+    skills += Object.keys(e.unlockedSkills || {}).length;
+    const ri = getWeaponRankIndex(e.exp || 0);
+    bestRank = Math.max(bestRank, ri);
+    if(ri >= 3) rankedWeapons++;
   }
-  if(newlyUnlocked){
-    const unlockedInOrder = COLLECTION_REWARDS.filter(r => game.unlockedTitles.has(r.id));
-    game.player.title = unlockedInOrder[unlockedInOrder.length-1].title;
-    game.hasNewTitleUnlock = true;
-    updateHud();
+  let bestRefine = 0;
+  for(const e of game.inventory.concat(game.storage || [])) if(e && e.kind === "equipment") bestRefine = Math.max(bestRefine, e.refineLevel || 0);
+  const book = getMonsterBookEntries(), cards = getCardEntries();
+  return {
+    kills: st.kills || 0, eliteKills: st.eliteKills || 0, bossKills: hc[5] || 0, bossTiers: Object.keys(st.bossTiers || {}).length,
+    slimeKills: (hc[0] || 0) + (hc[1] || 0), perfectHits: st.perfectHits || 0, perfectDodges: st.perfectDodges || 0,
+    counters: st.counters || 0, crits: st.crits || 0, flawless: st.flawless || 0, deaths: st.deaths || 0,
+    bestPerfectStreak: st.bestPerfectStreak || 0, untouchable: st.untouchableBossKills || 0, survivor: st.survivorWins || 0,
+    chests: st.chestsOpened || 0, dungeons: st.dungeons || 0, secrets: st.secrets || 0,
+    refines: st.refines || 0, bestRefine, goldEarned: st.goldEarned || 0, meditations: st.meditations || 0, letters: st.letters || 0,
+    junkQuest: p.questState && p.questState.junk_hunt === "completed" ? 1 : 0,
+    level: p.level, reach: game.maxMapTierReached || 1, maxDim: game.maxDimension || 1,
+    skills, bestRank, rankedWeapons, colPct: computeCollectionProgress().percent,
+    monstersHalf: book.filter(m => m.discovered).length >= Math.ceil(book.length / 2) ? 1 : 0,
+    monstersAll: book.every(m => m.discovered) ? 1 : 0,
+    cards: cards.filter(c => c.discovered).length, allCards: cards.every(c => c.discovered) ? 1 : 0,
+    epics: eqFound("epic"), legends: eqFound("legendary")
+  };
+}
+// Unlocks everything whose goal is met. silent = no banner/toast (the caller shows its own, or it's a load-time catch-up).
+function checkTitles(silent){
+  const res = { got: [], levelUp: null };
+  if(!game || !game.player || !game.unlockedTitles) return res;
+  const s = getTitleStats();
+  const lvBefore = getCollectorLevelIndex(getCollectorCP());
+  for(const d of TITLE_DEFS){
+    if(game.unlockedTitles.has(d.id) || (s[d.stat] || 0) < d.goal) continue;
+    game.unlockedTitles.add(d.id);
+    game.newTitles.add(d.id);
+    res.got.push(d);
   }
-  return newlyUnlocked;
+  if(!res.got.length) return res;
+  const log = game.stats.titleLog || (game.stats.titleLog = []);
+  res.got.forEach(d => { const i = log.indexOf(d.id); if(i >= 0) log.splice(i, 1); log.unshift(d.id); });
+  log.length = Math.min(log.length, 6);
+  invalidateTitleBonus();
+  const lvAfter = getCollectorLevelIndex(getCollectorCP());
+  if(lvAfter > lvBefore) res.levelUp = { level: lvAfter, all: COLLECTOR_LEVELS[lvAfter].all };
+  game.hasNewTitleUnlock = true;
+  if(!silent) announceTitles(res);
+  updateHud();
+  if(!document.getElementById("collectionPanel").hidden) renderCollectionPanel();
+  return res;
+}
+function announceTitles(res){
+  if(!res.got.length) return;
+  if(res.levelUp) showDiscoveryBanner(`📖 ระดับนักสะสม ${res.levelUp.level}!`, `โบนัสถาวร: ทุกสเตตัส +${res.levelUp.all}`);
+  else showDiscoveryBanner("🏅 ปลดล็อกฉายาใหม่!", res.got[0].icon + " " + res.got[0].name + (res.got.length > 1 ? ` และอีก ${res.got.length - 1}` : ""));
+  showToast(`🏅 ${res.got[0].name}${res.got.length > 1 ? ` (+${res.got.length - 1})` : ""} — กด J เพื่อสวมฉายา`);
+}
+function equipTitle(id){
+  const d = TITLE_BY_ID[id];
+  if(!d || !game.unlockedTitles.has(id)) return;
+  game.player.titleId = id; game.player.title = d.name;
+  invalidateTitleBonus();
+  updateHud();
+}
+function unequipTitle(){
+  game.player.titleId = null; game.player.title = null;
+  invalidateTitleBonus();
+  updateHud();
+}
+// Old saves: fill the new counters, work out what we can from existing data, map the worn title (a plain name) to its new id.
+function migrateTitleSave(){
+  game.stats = Object.assign(newGameStats(), game.stats || {});
+  const st = game.stats;
+  if(!st.kills) st.kills = Object.values(game.huntCounts || {}).reduce((a, n) => a + (n || 0), 0);
+  if(!Object.keys(st.bossTiers).length){
+    // reaching map t+1 in layer 1 means map t's boss fell (the warp point only opens after the boss)
+    for(let t = 1; t < (game.maxMapTierReachedDim1 || game.maxMapTierReached || 1); t++) st.bossTiers[t] = 1;
+    if(Object.keys(game.dimCleared || {}).length) st.bossTiers[MAP_TIER_COUNT] = 1;
+  }
+  const p = game.player;
+  if(p.titleId && !TITLE_BY_ID[p.titleId]) p.titleId = null;
+  if(p.title && !p.titleId){
+    const d = TITLE_DEFS.find(t => t.name === p.title || (t.alias || []).includes(p.title));
+    if(d){ p.titleId = d.id; p.title = d.name; }
+  }
+  invalidateTitleBonus();
+  const res = checkTitles(true);
+  if(res.got.length) setTimeout(()=> showToast(`🏅 ปลดล็อกฉายาจากความสำเร็จเดิม ${res.got.length} ฉายา — กด J เพื่อดู`), 1600);
+}
+function markTitlesSeen(){
+  if(!game || !game.newTitles || !game.newTitles.size) return;
+  if(document.getElementById("collectionPanel").hidden) return;
+  game.newTitles.clear();
+  game.hasNewTitleUnlock = false;
+  updateHud();
 }
 
 /* ============================================================
@@ -4756,20 +5029,19 @@ function checkAchievements(){
       newlyUnlocked = ach;
     }
   }
-  if(newlyUnlocked){ game.player.title = newlyUnlocked.title; game.hasNewTitleUnlock = true; updateHud(); }
-  return newlyUnlocked;
+  return newlyUnlocked; // titles now come from TITLE_DEFS (same goals) — see checkTitles()
 }
 
 const MILESTONE_DEFS = [
   { id:"level_10",      name:"Level 10",              desc:"ปลดระบบ Elite Monster ให้เริ่มเกิดในโลกได้",
     check: () => game.player.level >= 10 },
-  { id:"monsters_all",  name:"พบมอนสเตอร์ครบทุกชนิด", desc:"ปลด Title พิเศษ: Monster Master", titleReward:"Monster Master",
+  { id:"monsters_all",  name:"พบมอนสเตอร์ครบทุกชนิด", desc:"ปลดฉายา: ปรมาจารย์สัตว์อสูร",
     check: () => getMonsterBookEntries().every(mm => mm.discovered) },
   { id:"boss_5",        name:"ฆ่าบอส 5 ตัว",           desc:"ปลด Cosmetic: ออร่าทอง", auraReward:{ id:"golden", label:"ออร่าทอง", color:"#ffd166" },
     check: () => (game.huntCounts[5]||0) >= 5 },
   { id:"collection_50", name:"Collection 50%",        desc:"ปลดของพิเศษ: เหรียญนักสะสม (Cosmetic ล้วน ไม่มีค่าพลัง)", itemReward:"collector_medal",
     check: () => computeCollectionProgress().percent >= 50 },
-  { id:"collection_100",name:"Collection 100%",       desc:"ปลด Legendary Cosmetic + Title สูงสุด", titleReward:"Living Legend",
+  { id:"collection_100",name:"Collection 100%",       desc:"ปลด Legendary Cosmetic: ออร่ารุ้ง + ฉายา ตำนานนักสะสม",
     auraReward:{ id:"prismatic", label:"ออร่ารุ้ง", color:"#c15ce0" },
     check: () => computeCollectionProgress().percent >= 100 }
 ];
@@ -4779,7 +5051,6 @@ function checkMilestones(){
     if(ms.check() && !game.unlockedMilestones.has(ms.id)){
       game.unlockedMilestones.add(ms.id);
       newlyUnlocked = ms;
-      if(ms.titleReward){ game.player.title = ms.titleReward; game.hasNewTitleUnlock = true; }
       if(ms.auraReward && !game.player.cosmetics.unlockedAuras.some(a => a.id === ms.auraReward.id)){
         game.player.cosmetics.unlockedAuras.push(ms.auraReward);
         if(!game.player.cosmetics.activeAura) game.player.cosmetics.activeAura = ms.auraReward.id;
@@ -4922,8 +5193,8 @@ function getGearStatPoints(){
 // What every stat formula reads: allocated points + gear points. (statPoints itself stays allocation-only,
 // so reset/refund math never touches gear.)
 function getStatTotals(){
-  const sp = game.player.statPoints, gear = getGearStatPoints(), out = {};
-  STAT_KEYS.forEach(k => out[k] = (sp[k] || 0) + gear[k]);
+  const sp = game.player.statPoints, gear = getGearStatPoints(), tb = getTitleStatBonus(), out = {};
+  STAT_KEYS.forEach(k => out[k] = (sp[k] || 0) + gear[k] + tb[k]);
   return out;
 }
 function getEffectiveMaxHp(){
@@ -5511,6 +5782,7 @@ function renderMeditatePanel(){
   document.getElementById("meditateProgressDetail").textContent = full
     ? `${Math.round(p.sanity)}% / ${SANITY_MAX}% · เต็มแล้ว`
     : `${Math.round(p.sanity)}% / ${SANITY_MAX}% · เหลืออีกประมาณ ${remainingSeconds} วินาที`;
+  if(p.meditateShownFull === false && full){ game.stats.meditations = (game.stats.meditations || 0) + 1; checkTitles(false); } // meditated all the way back to full
   if(p.meditateShownFull !== full){ // only touch the DOM when the state flips
     p.meditateShownFull = full;
     document.getElementById("meditateProgressLabel").textContent = full ? "✨ จิตสงบนิ่ง สติเต็มเปี่ยม" : "สติกำลังฟื้นคืน...";
@@ -5701,6 +5973,7 @@ function unlockWeaponSkill(type, skillId){
   if(countTierUnlocked(type, tier) >= tier.points) return false; // 2 of 3 per tier — points can't spill into an old tier
   if(getWeaponSkillPointsAvailable(type) <= 0) return false;
   entry.unlockedSkills[skillId] = 0; // proficiency EXP starts at 0 = level 1
+  setTimeout(()=> checkTitles(false), 300);
   // A castable skill goes straight into the first empty action-bar slot so it's usable right away.
   const slots = game.player.skillBarSlots, d = SKILL_DEFS[skillId];
   if(d && !slots.includes(skillId)){
@@ -6393,6 +6666,16 @@ function exitBattle(result){
 
     if(b.isBoss && !b.damageTakenThisFight) game.stats.untouchableBossKills++;
     if(p.hp / getEffectiveMaxHp() < 0.05) game.stats.survivorWins++;
+    const gs = game.stats;
+    gs.kills = (gs.kills || 0) + 1;
+    if(m.isElite) gs.eliteKills = (gs.eliteKills || 0) + 1;
+    if(b.isBoss && !m.isDungeonRoom){ gs.bossTiers = gs.bossTiers || {}; gs.bossTiers[game.mapTier] = 1; }
+    gs.perfectHits = (gs.perfectHits || 0) + summary.perfectHits;
+    gs.perfectDodges = (gs.perfectDodges || 0) + summary.perfectDodges;
+    gs.counters = (gs.counters || 0) + summary.counters;
+    gs.crits = (gs.crits || 0) + summary.critHits;
+    if(summary.hpLost === 0) gs.flawless = (gs.flawless || 0) + 1;
+    gs.goldEarned = (gs.goldEarned || 0) + goldGained;
 
     const rolledDrops = rollLootTable(m.type, m.isElite ? ELITE_LOOT_CHANCE_MULT : 1);
     if(b.isBoss) rolledDrops.push({ kind:"equipment", defId: pickTierKind(pickWeightedRarity(BOSS_WEAPON_RARITY_WEIGHTS)) }); // every boss: at least one rare+ weapon
@@ -6433,12 +6716,13 @@ function exitBattle(result){
 
     // one lightweight, auto-dismissing discovery banner per kill — never stacks, never blocks play
     const unlockedMilestone = checkMilestones();
-    const unlockedAchievement = checkAchievements();
-    const unlockedReward = checkCollectionRewards();
+    checkAchievements(); // legacy set (kept for old saves) — the titles themselves come from checkTitles
+    const titleRes = checkTitles(true);
     let bannerText = null;
     if(unlockedMilestone) bannerText = { title:"🚩 MILESTONE!", sub: unlockedMilestone.name };
-    else if(unlockedAchievement) bannerText = { title:"🏅 ACHIEVEMENT!", sub: unlockedAchievement.name };
-    else if(unlockedReward) bannerText = { title:"🏆 ปลดล็อกยศ!", sub: unlockedReward.title };
+    else if(titleRes.levelUp) bannerText = { title:`📖 ระดับนักสะสม ${titleRes.levelUp.level}!`, sub:`โบนัสถาวร: ทุกสเตตัส +${titleRes.levelUp.all}` };
+    else if(titleRes.got.length) bannerText = { title:"🏅 ปลดล็อกฉายาใหม่!", sub: titleRes.got[0].icon + " " + titleRes.got[0].name + (titleRes.got.length > 1 ? ` และอีก ${titleRes.got.length - 1}` : "") };
+    if(titleRes.got.length) showToast(`🏅 ${titleRes.got[0].name}${titleRes.got.length > 1 ? ` (+${titleRes.got.length - 1})` : ""} — กด J เพื่อสวมฉายา`);
     else if(m.isElite) bannerText = { title:"⭐ ELITE DEFEATED!", sub: MONSTER_DEFS[m.type].name };
     else if(isFirstKill) bannerText = { title:"✨ NEW DISCOVERY!", sub: MONSTER_DEFS[m.type].name };
     else {
@@ -6465,6 +6749,8 @@ function exitBattle(result){
   } else {
     const penalty = applyDeathPenalty();
     showDefeatPenalty(penalty, summary);
+    game.stats.deaths = (game.stats.deaths || 0) + 1;
+    checkTitles(false);
     if(m.isDungeonRoom){ game.dungeon = null; document.getElementById("dungeonPanel").hidden = true; }
   }
 
@@ -7614,7 +7900,9 @@ function updateHud(){
   const statBadge = document.getElementById("statPointsBadge");
   if(p.statPoints.available > 0){ statBadge.textContent = p.statPoints.available; statBadge.hidden = false; }
   else statBadge.hidden = true;
-  document.getElementById("titleUnlockBadge").hidden = !game.hasNewTitleUnlock;
+  const newT = game.newTitles ? game.newTitles.size : 0, tBadge = document.getElementById("titleUnlockBadge");
+  tBadge.hidden = !(newT || game.hasNewTitleUnlock);
+  tBadge.textContent = newT ? String(newT) : "🎖️";
   const skillBadge = document.getElementById("weaponSkillBadge");
   const skillCount = countUnlockableWeaponSkills();
   skillBadge.hidden = skillCount === 0;
@@ -8002,11 +8290,13 @@ function turnInOldLetter(){
   if(game.inventory[idx].qty <= 0) game.inventory.splice(idx, 1);
   const goldReward = randInt(30,60);
   game.player.gold += goldReward;
+  game.stats.letters = (game.stats.letters || 0) + 1;
   const defId = rollAncientStatueEquipment(); // this map's tier only (was: any tier)
   const isNew = registerDiscovery({ kind:"equipment", defId });
   addEquipmentToInventory(rollEquipmentInstance(defId));
   updateHud();
   sfx.levelUp();
+  setTimeout(()=> checkTitles(false), 1500);
   const eq = EQUIPMENT_DEFS[defId];
   showToast(`พ่อค้าขอบคุณ! ได้รับ 💰${goldReward} และ ${eq.icon} ${eq.name}${isNew ? " (ใหม่!)" : ""}`);
   openMerchantDialog("นี่มัน... จดหมายจากพี่ชายข้าที่หายไปเมื่อหลายปีก่อน! ขอบคุณจริงๆ นักผจญภัย รับของพวกนี้ไว้เถอะ",
@@ -8037,6 +8327,7 @@ function openBlacksmithDialog(line){
 function closeDialog(){ closeTalk(); }
 function closeAllPanels(){
   if(typeof hideSkillTip === "function") hideSkillTip(true);
+  markTitlesSeen(); // NEW badges clear once the Collection window has been seen and closed
   closeDialog();
   closeLocationDialog();
   stopMeditating(); // every panel-opening button calls this first — keeps meditation from lingering behind another panel
@@ -8231,11 +8522,13 @@ function refineEquipment(idx){
   if(manaEntry.qty <= 0){ const mi = game.inventory.indexOf(manaEntry); game.inventory.splice(mi, 1); }
   game.player.gold -= cost.gold;
   entry.refineLevel = level + 1;
+  game.stats.refines = (game.stats.refines || 0) + 1;
   sfx.levelUp();
   showToast(`ตีบวกสำเร็จ! ${equipDisplayName(entry)}`);
   updateHud();
   selectedRefineIndex = null;
   renderRefinePanel();
+  checkTitles(false);
 }
 document.getElementById("closeRefineBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("refinePanel").hidden = true; });
 
@@ -8288,6 +8581,7 @@ function renderTownLordDialog(line, extraHtml){
       gainExp(quest.rewardExp);
       game.player.questState.junk_hunt = "completed";
       updateHud();
+      setTimeout(()=> checkTitles(false), 2200);
       showDiscoveryBanner("✅ ภารกิจสำเร็จ!", quest.name);
       showToast(`${quest.npcCompleteText} (+💰${quest.rewardGold} +${quest.rewardExp} EXP)`);
       renderTownLordDialog(quest.npcCompleteText, `<div class="tk-reward"><span class="big">🏅</span><span>ได้รับ 💰${quest.rewardGold} และ ✨ ${quest.rewardExp} EXP</span></div>`);
@@ -8351,6 +8645,7 @@ function performDimensionRitual(){
   p.hp = getEffectiveMaxHp();
   updateHud();
   showDiscoveryBanner(`🌌 มิติ ${next}`, "มานาหนาแน่นขึ้น — แต้มสเตตัสถูกคืนให้จัดใหม่แล้ว");
+  setTimeout(()=> checkTitles(false), 2600);
   saveGameNow();
   return true;
 }
@@ -8913,7 +9208,7 @@ function renderStatusPanel(){
   const p = game.player;
   const stats = computePlayerBattleStats(p.level);
   const rows = [
-    statusRow("ฉายา", p.title || "ยังไม่ปลดล็อกฉายา"),
+    statusRow("ฉายา", p.titleId && TITLE_BY_ID[p.titleId] ? `${TITLE_BY_ID[p.titleId].icon} ${p.title} (${titleBonusText(TITLE_BY_ID[p.titleId].bonus).join(", ")})` : (p.title || "ยังไม่ได้สวมฉายา — เลือกได้ในคอลเลกชัน (J)")),
     statusRow("ชื่อ", p.name),
     statusRow("เพศ", p.look.gender === "male" ? "ชาย" : "หญิง"),
     statusRow("เลเวล", p.level),
@@ -8941,12 +9236,13 @@ const STAT_INFO = {
   MEDITATE: { label:"สมาธิ",       desc:"ขยาย Perfect Zone (หลัก)" }
 };
 function renderStatPointsSection(){
-  const p = game.player, sp = p.statPoints, gear = getGearStatPoints();
+  const p = game.player, sp = p.statPoints, gear = getGearStatPoints(), tb = getTitleStatBonus();
   const totalSpent = sp.STR+sp.AGI+sp.DEX+sp.VIT+sp.LUK+sp.MEDITATE;
   const container = document.getElementById("statPointsList");
   container.innerHTML = Object.keys(STAT_INFO).map(key => {
     const info = STAT_INFO[key];
-    const gearTag = gear[key] ? ` <b style="color:#4b3f8f;">+${gear[key]}</b>` : ""; // from equipment
+    const gearTag = (gear[key] ? ` <b style="color:#4b3f8f;" title="จากอุปกรณ์">+${gear[key]}</b>` : "") // from equipment
+      + (tb[key] ? ` <b class="stat-tb" title="จากฉายา + ระดับนักสะสม">+${tb[key]}🏅</b>` : "");
     return `<div class="slot-item">
       <span>${info.label} <span style="font-size:10px; color:#7a7186;">(${sp[key]}${gearTag}) — ${info.desc}</span></span>
       <span style="display:flex; gap:4px;">
@@ -9012,6 +9308,7 @@ function renderHuntLog(){
 
 /* ---- Collection panel ---- */
 const COLLECTION_TABS = [
+  { id:"titles",    label:"🏅 ฉายา & ชาเลนจ์" },
   { id:"monsters",  label:"มอนสเตอร์" },
   { id:"mastery",   label:"ความชำนาญ" },
   { id:"cards",     label:"การ์ด" },
@@ -9020,10 +9317,10 @@ const COLLECTION_TABS = [
   { id:"bosses",    label:"บอส" },
   { id:"secret",    label:"ลับ" },
   { id:"locations", label:"แผนที่ลับ" },
-  { id:"achievements", label:"Achievement" },
-  { id:"milestones",   label:"Milestone" }
+  { id:"milestones",   label:"🚩 Milestone" }
 ];
-let collectionActiveTab = "monsters";
+let collectionActiveTab = "titles";
+let titleCatView = "all";
 
 // Adventure Log — reads directly from game.secretLocations (single source of truth), no separate store
 function getSecretLocationEntries(){
@@ -9044,21 +9341,37 @@ function renderLocationCard(entry){
 
 function renderCollectionPanel(){
   const progress = computeCollectionProgress();
-  document.getElementById("collectionProgressHead").innerHTML = `
-    <div style="text-align:center; font-weight:bold; color:#4b3f8f;">Collection Progress</div>
-    <div style="text-align:center; font-size:28px; font-weight:bold; color:#4b3f8f;">${progress.percent}%</div>
-    <div class="progress-bar-big"><div class="progress-bar-big-fill" style="width:${progress.percent}%;"></div></div>
-    <div class="slot-list">
-      ${statusRow("Monster", `${progress.monsterDiscovered} / ${progress.monsterTotal}`)}
-      ${statusRow("Cards", `${progress.cardDiscovered} / ${progress.cardTotal}`)}
-      ${statusRow("Equipment", `${progress.equipDiscovered} / ${progress.equipTotal}`)}
+  const cp = getCollectorCP(), li = getCollectorLevelIndex(cp), cur = COLLECTOR_LEVELS[li], next = COLLECTOR_LEVELS[li + 1];
+  const pct = next ? Math.round((cp - cur.cp) / (next.cp - cur.cp) * 100) : 100;
+  const worn = game.player.titleId && TITLE_BY_ID[game.player.titleId];
+  document.getElementById("collectionCpChip").textContent = `📖 ${cp} CP`;
+  document.getElementById("collectionProgressHead").innerHTML = `<div class="col-head">
+    <div class="col-lv">
+      <div class="col-lv-badge"><span>ระดับ</span><b>${li}</b></div>
+      <div class="col-lv-main">
+        <div class="t">ระดับนักสะสม ${li}<small>${cp} CP · ฉายา ${game.unlockedTitles.size ? [...game.unlockedTitles].filter(id => TITLE_BY_ID[id]).length : 0}/${TITLE_DEFS.length}</small></div>
+        <div class="track"><i style="width:${pct}%"></i></div>
+        <div class="s">โบนัสถาวร: <b>ทุกสเตตัส +${cur.all}</b> · ${next ? `อีก ${next.cp - cp} CP → ทุกสเตตัส +${next.all}` : "ระดับสูงสุดแล้ว!"}</div>
+        <div class="col-lv-list">${COLLECTOR_LEVELS.slice(1).map((l, i) => `<i class="${li >= i + 1 ? "on" : ""}" title="${l.cp} CP">Lv${i + 1} +${l.all}</i>`).join("")}</div>
+      </div>
+      <div class="col-pct"><b>${progress.percent}%</b><span>ค้นพบแล้ว</span><small>มอน ${progress.monsterDiscovered}/${progress.monsterTotal} · การ์ด ${progress.cardDiscovered}/${progress.cardTotal}</small><small>อุปกรณ์ ${progress.equipDiscovered}/${progress.equipTotal}</small></div>
     </div>
-  `;
+    <div class="col-eq">${worn
+      ? `<span class="ic">${worn.icon}</span><span>ฉายาที่สวม: <span class="nm">${worn.name}</span></span><span class="ttl-bonus">${titleBonusText(worn.bonus).map(t => `<span>${t}</span>`).join("")}</span><button type="button" data-unequip="1">ถอดฉายา</button>`
+      : `<span class="ic">🏅</span><span class="none">ยังไม่ได้สวมฉายา — เลือกสวมได้ 1 ฉายา รับโบนัสสเตตัสของฉายานั้น</span>`}</div>
+  </div>`;
 
-  document.getElementById("collectionRewardsList").innerHTML = COLLECTION_REWARDS.map(r => {
-    const unlocked = game.unlockedTitles.has(r.id);
-    return `<div class="slot-item"><span>${unlocked ? "✅" : "🔒"} ${r.title}</span><span style="font-size:11px; color:#7a7186;">${r.desc}</span></div>`;
-  }).join("");
+  // "just unlocked" — the latest titles, NEW-badged until this window is closed, with a wear button right there
+  const log = (game.stats.titleLog || []).filter(id => TITLE_BY_ID[id] && game.unlockedTitles.has(id)).slice(0, 6);
+  const recentEl = document.getElementById("titleRecent");
+  recentEl.innerHTML = log.length ? `<div class="ttl-recent"><div class="ttl-recent-h"><span>✨ เพิ่งปลดล็อก</span><small>กดสวมได้เลย — เปลี่ยนฉายาได้ทุกเมื่อ ไม่มีค่าใช้จ่าย</small></div>
+    <div class="ttl-recent-row">${log.map(id => {
+      const d = TITLE_BY_ID[id], on = game.player.titleId === id;
+      return `<div class="ttl-mini" style="--tc:${TITLE_TIERS[d.tier].color}">${game.newTitles.has(id) ? '<span class="ttl-new">NEW</span>' : ""}
+        <div class="h"><span class="ic">${d.icon}</span><b>${d.name}</b></div>
+        <span class="ttl-bonus">${titleBonusText(d.bonus).map(t => `<span>${t}</span>`).join("")}</span>
+        <button type="button" ${on ? 'class="on" disabled' : `data-equip="${d.id}"`}>${on ? "✓ สวมอยู่" : "สวมฉายา"}</button></div>`;
+    }).join("")}</div></div>` : "";
 
   const tabsEl = document.getElementById("collectionTabs");
   tabsEl.innerHTML = "";
@@ -9073,6 +9386,46 @@ function renderCollectionPanel(){
 
   renderCollectionContent();
 }
+function renderTitleTab(){
+  const s = getTitleStats();
+  const counts = {};
+  TITLE_CATS.forEach(c => { const list = TITLE_DEFS.filter(d => c.id === "all" || d.cat === c.id); counts[c.id] = [list.filter(d => game.unlockedTitles.has(d.id)).length, list.length]; });
+  const list = TITLE_DEFS.filter(d => titleCatView === "all" || d.cat === titleCatView);
+  // unlocked NEW first, then everything in its challenge order
+  const ordered = list.filter(d => game.newTitles.has(d.id)).concat(list.filter(d => !game.newTitles.has(d.id)));
+  const cards = ordered.map(d => {
+    const on = game.unlockedTitles.has(d.id), worn = game.player.titleId === d.id, tier = TITLE_TIERS[d.tier];
+    const cur = Math.min(s[d.stat] || 0, d.goal), hidden = d.secret && !on;
+    const pctDone = Math.round(cur / d.goal * 100);
+    return `<div class="ttl-card${on ? "" : " locked"}${worn ? " eq" : ""}" style="--tc:${tier.color}">
+      ${game.newTitles.has(d.id) ? '<span class="ttl-new">NEW</span>' : ""}
+      <div class="ttl-ic">${hidden ? "❔" : d.icon}</div>
+      <div class="ttl-body">
+        <div class="ttl-nm">${hidden ? "??? ฉายาลับ" : d.name}<span class="ttl-tier">${tier.label} · ${tier.cp} CP</span></div>
+        <div class="ttl-desc">${hidden ? d.hint : d.desc}</div>
+        ${on ? "" : `<div class="ttl-bar"><i style="width:${hidden ? 0 : pctDone}%"></i></div>`}
+        <div class="ttl-foot"><span>${on ? "✅ ปลดล็อกแล้ว" : hidden ? "???" : `${cur.toLocaleString()} / ${d.goal.toLocaleString()}`}</span>
+          <span class="ttl-bonus">${titleBonusText(d.bonus).map(t => `<span>${t}</span>`).join("")}</span></div>
+      </div>
+      ${on ? `<button type="button" ${worn ? 'class="on" data-unequip="1">✓ สวมอยู่' : `data-equip="${d.id}">สวม`}</button>` : ""}
+    </div>`;
+  }).join("");
+  const [u, t] = counts[titleCatView];
+  return `<div class="ttl-cats">${TITLE_CATS.map(c => `<button type="button" data-tcat="${c.id}" class="${c.id === titleCatView ? "on" : ""}">${c.label}<small>${counts[c.id][0]}/${counts[c.id][1]}</small></button>`).join("")}</div>
+    <div class="ttl-sum">ปลดแล้ว ${u}/${t} · สวมได้ครั้งละ 1 ฉายา (รับโบนัสของฉายานั้น) · ทุกฉายาที่ปลดให้ CP สะสมเพิ่มระดับนักสะสม (โบนัสถาวร)</div>
+    <div class="ttl-grid">${cards}</div>`;
+}
+function onTitleClick(e){
+  const eq = e.target.closest("[data-equip]");
+  if(eq){ sfx.click(); equipTitle(eq.dataset.equip); showToast(`🏅 สวมฉายา: ${TITLE_BY_ID[eq.dataset.equip].name}`); renderCollectionPanel(); return true; }
+  const un = e.target.closest("[data-unequip]");
+  if(un){ sfx.click(); unequipTitle(); renderCollectionPanel(); return true; }
+  const cat = e.target.closest("[data-tcat]");
+  if(cat){ sfx.click(); titleCatView = cat.dataset.tcat; renderCollectionContent(); return true; }
+  return false;
+}
+document.getElementById("titleRecent").addEventListener("click", onTitleClick);
+document.getElementById("collectionProgressHead").addEventListener("click", onTitleClick);
 
 /* ---- Weapon Skill Tree panel ---- */
 function categoryHasEquipment(type){ return WEAPON_KIND_IDS.some(id => EQUIPMENT_DEFS[id].weaponType === type); }
@@ -9252,6 +9605,7 @@ function renderCollectionTile(entry){
 
 function renderCollectionContent(){
   const container = document.getElementById("collectionContent");
+  if(collectionActiveTab === "titles"){ container.innerHTML = renderTitleTab(); return; }
   if(collectionActiveTab === "monsters" || collectionActiveTab === "bosses"){
     const entries = collectionActiveTab === "monsters" ? getMonsterBookEntries() : getBossEntries();
     container.innerHTML = entries.map(renderMonsterBookCard).join("");
@@ -9268,23 +9622,6 @@ function renderCollectionContent(){
   }
   if(collectionActiveTab === "locations"){
     container.innerHTML = getSecretLocationEntries().map(renderLocationCard).join("");
-    return;
-  }
-  if(collectionActiveTab === "achievements"){
-    const s = getAchievementStats();
-    container.innerHTML = ACHIEVEMENT_DEFS.map(ach => {
-      const unlocked = game.unlockedAchievements.has(ach.id);
-      const cur = Math.min(ach.progress(s), ach.goal);
-      const titleBtn = unlocked
-        ? `<button data-title="${ach.title}" class="menu-btn" style="margin-top:6px;">${game.player.title===ach.title ? "กำลังใช้ยศนี้" : "ใช้เป็นยศ"}</button>`
-        : "";
-      return `<div class="monster-book-card${unlocked ? "" : " locked"}">
-        <h4>${unlocked ? "🏅" : "🔒"} ${ach.name}</h4>
-        <div class="stat-line">${ach.desc}</div>
-        <div class="stat-line">ความคืบหน้า: ${cur} / ${ach.goal}</div>
-        ${titleBtn}
-      </div>`;
-    }).join("");
     return;
   }
   if(collectionActiveTab === "milestones"){
@@ -9317,14 +9654,7 @@ function renderCollectionContent(){
     : `<div class="empty-note">ไม่มีรายการในหมวดนี้</div>`;
 }
 document.getElementById("collectionContent").addEventListener("click", (e)=>{
-  const titleBtn = e.target.closest("[data-title]");
-  if(titleBtn){
-    sfx.click();
-    game.player.title = titleBtn.dataset.title;
-    updateHud();
-    renderCollectionContent();
-    return;
-  }
+  if(onTitleClick(e)) return;
   const auraBtn = e.target.closest("[data-aura]");
   if(auraBtn){
     sfx.click();
@@ -9336,12 +9666,12 @@ document.getElementById("collectionContent").addEventListener("click", (e)=>{
 document.getElementById("collectionBtn").addEventListener("click", ()=>{
   sfx.click();
   closeAllPanels();
-  game.hasNewTitleUnlock = false;
-  updateHud();
+  checkTitles(true); // catch up on anything reached outside the usual checkpoints — it'll show as NEW right here
+  if(game.newTitles.size) collectionActiveTab = "titles";
   renderCollectionPanel();
   document.getElementById("collectionPanel").hidden = false;
 });
-document.getElementById("closeCollectionBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("collectionPanel").hidden = true; });
+document.getElementById("closeCollectionBtn").addEventListener("click", ()=>{ sfx.click(); markTitlesSeen(); document.getElementById("collectionPanel").hidden = true; });
 
 const SLOT_LABELS = { weapon:"อาวุธ", armor:"ชุดเกราะ", headgear:"หมวก", accessory1:"ประดับ 1", accessory2:"ประดับ 2" };
 const SLOT_PLACEHOLDER_ICON = { weapon:"🗡️", armor:"🛡️", headgear:"⛑️", accessory1:"📿", accessory2:"📿" };
@@ -9655,7 +9985,9 @@ if(DEBUG_MODE){
     unlockAllRewards(){
       if(!debugRequireGame()) return;
       ACHIEVEMENT_DEFS.forEach(a => game.unlockedAchievements.add(a.id));
-      COLLECTION_REWARDS.forEach(r => game.unlockedTitles.add(r.id));
+      TITLE_DEFS.forEach(d => { if(!game.unlockedTitles.has(d.id)){ game.unlockedTitles.add(d.id); game.newTitles.add(d.id); } });
+      game.stats.titleLog = TITLE_DEFS.slice(-6).map(d => d.id).reverse();
+      invalidateTitleBonus();
       MILESTONE_DEFS.forEach(ms => {
         game.unlockedMilestones.add(ms.id);
         if(ms.auraReward && !game.player.cosmetics.unlockedAuras.some(a => a.id === ms.auraReward.id)){
@@ -9666,7 +9998,7 @@ if(DEBUG_MODE){
           addEquipmentToInventory(rollEquipmentInstance(ms.itemReward));
         }
       });
-      game.player.title = "Living Legend";
+      equipTitle("full_collector");
       game.hasNewTitleUnlock = true;
       updateHud();
       console.log("[DEBUG] ปลด Achievement/Milestone/Collection Title ทั้งหมดแล้ว");
