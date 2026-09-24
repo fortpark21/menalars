@@ -637,6 +637,47 @@
   .fr-btns button{ padding:6px 9px; font-size:13px; }
   #reportReasons{ margin-bottom:10px; }
   #reportNote{ width:100%; box-sizing:border-box; border:2px solid #d8cdb0; border-radius:8px; padding:8px; font:inherit; font-size:13px; resize:vertical; }
+  /* Hall of Fame (town object) — podium for the top 3 on a night stage + a notice board for 4–10 and "you" */
+  #rankPanel{ width:780px; }
+  .rk-head{ display:flex; align-items:center; gap:10px; margin:-4px 0 10px; font-size:12px; color:#7a7186; }
+  .rk-head span{ flex:1; }
+  .rk-head button{ border:none; border-radius:8px; padding:6px 10px; background:#4b3f8f; color:#fff; font-size:12px; font-weight:bold; }
+  .rk-head button:disabled{ opacity:.5; cursor:default; }
+  .rk-stage{ display:flex; gap:14px; align-items:stretch; }
+  .rk-podium{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:4px; padding:12px 10px 14px; border-radius:14px;
+    background:radial-gradient(ellipse at 50% 30%, #3a3170 0%, #1c1838 55%, #100d24 100%); box-shadow:inset 0 0 0 2px rgba(255,209,102,.25); }
+  .rk-pod-row{ display:flex; justify-content:space-between; gap:14px; width:100%; }
+  .rk-pod{ display:flex; flex-direction:column; align-items:center; width:210px; max-width:48%; cursor:pointer; border-radius:12px; transition:transform .12s; }
+  .rk-pod:hover{ transform:translateY(-3px); }
+  .rk-pod.empty{ cursor:default; opacity:.5; }
+  .rk-pod.empty:hover{ transform:none; }
+  .rk-pod canvas{ display:block; margin-bottom:-6px; }
+  .rk-plate{ width:100%; box-sizing:border-box; text-align:center; padding:7px 8px 8px; border-radius:10px; border:3px solid; color:#fff;
+    background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(0,0,0,.25)); box-shadow:0 4px 12px rgba(0,0,0,.45); }
+  .rk-p1 .rk-plate{ border-color:#ffd166; background-color:#6b5217; }
+  .rk-p2 .rk-plate{ border-color:#d5dbe6; background-color:#4d5566; }
+  .rk-p3 .rk-plate{ border-color:#d9955a; background-color:#6a3f22; }
+  .rk-plate b{ display:block; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rk-plate small{ display:block; font-size:11px; color:#f1e9d2; margin-top:2px; }
+  .rk-plate .rk-title{ color:var(--gold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rk-medal{ font-size:20px; line-height:1; }
+  .rk-pod.me .rk-plate, .rk-row.me{ box-shadow:0 0 0 3px #5aa7ff, 0 4px 12px rgba(0,0,0,.45); }
+  .rk-board{ flex:0 0 280px; display:flex; flex-direction:column; gap:5px; padding:12px 12px 12px; border-radius:12px;
+    background:repeating-linear-gradient(0deg, #f7df7a 0 26px, #f1d468 26px 27px); border:6px solid #8a5a2b; box-shadow:inset 0 0 12px rgba(122,82,48,.35), 0 6px 14px rgba(0,0,0,.25); }
+  .rk-board h4{ margin:0 0 4px; text-align:center; font-size:14px; color:#5b3a1a; }
+  .rk-row{ display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:8px; background:rgba(255,250,230,.75); border:1px solid rgba(138,90,43,.35); cursor:pointer; min-height:36px; box-sizing:border-box; }
+  .rk-row:hover{ background:#fffbea; }
+  .rk-row.empty{ cursor:default; opacity:.45; }
+  .rk-row .rk-n{ width:30px; font-size:14px; color:#8a5a2b; }
+  .rk-row .rk-nm{ flex:1; min-width:0; font-size:13px; font-weight:bold; color:#3a2a14; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rk-row .rk-nm small{ display:block; font-size:10px; font-weight:normal; color:#8a6a2b; overflow:hidden; text-overflow:ellipsis; }
+  .rk-row .rk-pg{ text-align:right; font-size:11px; color:#5b3a1a; white-space:nowrap; }
+  .rk-row .rk-pg small{ display:block; font-size:10px; color:#8a6a2b; }
+  .rk-row.rk-mine{ margin-top:auto; background:#dcebff; border:2px solid #3a7bd5; }
+  .rk-row.rk-mine .rk-n, .rk-row.rk-mine .rk-nm{ color:#1d4f96; }
+  .rk-row.rk-mine.note{ cursor:default; font-size:12px; color:#1d4f96; justify-content:center; text-align:center; }
+  .rk-back{ position:absolute; top:12px; right:44px; border:none; border-radius:8px; padding:5px 10px; background:#f7df7a; color:#5b3a1a; font-size:12px; font-weight:bold; }
+  .rk-back[hidden]{ display:none; }
   .report-chat{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:#4b3f8f; margin:8px 0 4px; }
   #chatWhisperChip{ pointer-events:auto; display:inline-flex; align-items:center; gap:4px; flex:0 0 auto; max-width:140px; padding:4px 6px 4px 10px; border-radius:14px; background:rgba(193,92,224,.85); color:#fff; font-size:12px; font-weight:bold; }
   #chatWhisperChip[hidden]{ display:none; }
@@ -1003,8 +1044,15 @@
 
   <div class="panel" id="profilePanel" hidden style="width:560px;">
     <button class="close-x" id="closeProfileBtn" type="button">✕</button>
+    <button class="rk-back" id="profileBackBtn" type="button" hidden>← 🏆 กลับหน้าจัดอันดับ</button>
     <h2>👤 ข้อมูลผู้เล่น</h2>
     <div id="profileBody"></div>
+  </div>
+
+  <div class="panel" id="rankPanel" hidden>
+    <button class="close-x" id="closeRankBtn" type="button">✕</button>
+    <h2>🏆 หอเกียรติยศ</h2>
+    <div id="rankBody"></div>
   </div>
 
   <div class="panel" id="reportPanel" hidden style="width:440px;">
@@ -1669,6 +1717,45 @@ function drawSmallHouseAt(ctx, cx, cy){
   ctx.restore();
 }
 
+// Hall of Fame — the ranking monument: a 1-2-3 podium with a gold trophy and a notice board beside it.
+// One self-contained object (no person) like the storage house; where it stands is HALL_OF_FAME_SPOT.
+function drawHallOfFameAt(ctx, cx, cy){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1.7, 1.7); // drawn at small-house size, shown at building size
+  ctx.fillStyle = "rgba(0,0,0,.22)";
+  ctx.beginPath(); ctx.ellipse(8, 6, 62, 11, 0, 0, Math.PI*2); ctx.fill();
+  // notice board (behind, right): two posts + a yellow sheet with ruled lines
+  ctx.fillStyle = "#7a5230"; ctx.fillRect(34, -52, 5, 56); ctx.fillRect(66, -52, 5, 56);
+  ctx.fillStyle = "#8a5a2b"; ctx.fillRect(30, -58, 45, 38);
+  ctx.fillStyle = "#f7df7a"; ctx.fillRect(34, -54, 37, 30);
+  ctx.strokeStyle = "rgba(122,82,48,.6)"; ctx.lineWidth = 1.5;
+  for(let i = 0; i < 5; i++){ ctx.beginPath(); ctx.moveTo(37, -49 + i*5.5); ctx.lineTo(i === 4 ? 58 : 68, -49 + i*5.5); ctx.stroke(); }
+  ctx.strokeStyle = "#3a7bd5"; ctx.beginPath(); ctx.moveTo(37, -26.5); ctx.lineTo(68, -26.5); ctx.stroke(); // "your rank" line
+  // podium: 2 (left) · 1 (middle, tallest) · 3 (right)
+  const steps = [ { x:-50, w:28, h:22, c:"#c9ced8", n:"2" }, { x:-22, w:30, h:34, c:"#ffd166", n:"1" }, { x:8, w:28, h:15, c:"#d9955a", n:"3" } ];
+  for(const st of steps){
+    ctx.fillStyle = "#e6e0cc"; ctx.fillRect(st.x, -st.h, st.w, st.h + 4);
+    ctx.strokeStyle = "#a79f86"; ctx.lineWidth = 1.5; ctx.strokeRect(st.x, -st.h, st.w, st.h + 4);
+    ctx.fillStyle = st.c; ctx.fillRect(st.x, -st.h, st.w, 5);
+    ctx.fillStyle = "#6c6a60"; ctx.font = "bold 11px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(st.n, st.x + st.w/2, -st.h/2 + 3);
+  }
+  // gold trophy on the top step, softly glowing
+  const glow = 0.5 + 0.5 * Math.sin(performance.now()/450);
+  ctx.shadowColor = "#ffd166"; ctx.shadowBlur = 6 + glow * 8;
+  ctx.fillStyle = "#f2b632";
+  ctx.fillRect(-11, -38, 12, 4);                                            // base
+  ctx.fillRect(-7, -44, 4, 6);                                              // stem
+  ctx.beginPath(); ctx.moveTo(-15, -58); ctx.lineTo(5, -58); ctx.quadraticCurveTo(4, -45, -5, -44); ctx.quadraticCurveTo(-14, -45, -15, -58); ctx.fill(); // cup
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = "#f2b632"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(-15, -53, 4, Math.PI*0.5, Math.PI*1.5); ctx.stroke();
+  ctx.beginPath(); ctx.arc(5, -53, 4, -Math.PI*0.5, Math.PI*0.5); ctx.stroke();
+  ctx.fillStyle = `rgba(255,255,255,${0.4 + glow*0.5})`; ctx.fillRect(-11, -56, 3, 7); // shine
+  ctx.restore();
+}
+
 // Castle — the town lord's building, a modest keep with a central tower and flag
 function drawCastleAt(ctx, cx, cy){
   ctx.save();
@@ -1755,6 +1842,8 @@ function drawForgeAt(ctx, cx, cy){
 const NPC_ROBE_COLORS = { merchant: "#c98f3a", town_lord: "#6a4a9c", blacksmith: "#6b3a3a", temple: "#e8e2cf" };
 // Which building sits behind each person NPC (storage has no person — it's the house itself)
 const TOWN_BUILDING_DRAW = { town_lord: drawCastleAt, merchant: drawMarketStallAt, blacksmith: drawForgeAt, temple: drawTempleAt };
+// Town points that are just an object — no person standing in front (click the object itself)
+const TOWN_OBJECT_DRAW = { storage: drawSmallHouseAt, ranking: drawHallOfFameAt };
 
 // Temple of the Barrier — pale stone, a dome with a glowing barrier crack (brighter once the ritual is ready)
 function drawTempleAt(ctx, cx, cy){
@@ -3230,9 +3319,15 @@ function socSafeEntry(e){ // another player's save — only known shapes reach t
            refineLevel: clamp(Math.floor(+e.refineLevel) || 0, 0, 99), rolledStats,
            rollQuality: Number.isFinite(+e.rollQuality) && e.rollQuality !== null ? clamp(Math.round(+e.rollQuality), 0, 100) : null };
 }
-async function openProfile(id, name){
+function socSafeLook(lk){ // another player's look — only known shapes reach drawCharacterAt
+  lk = lk || {};
+  return { gender: lk.gender === "female" ? "female" : "male", hairStyle: [0,1,2].includes(lk.hairStyle) ? lk.hairStyle : 0,
+           hairColor: NET_HEX_COLOR.test(lk.hairColor) ? lk.hairColor : "#4a2c1d", outfitColor: NET_HEX_COLOR.test(lk.outfitColor) ? lk.outfitColor : "#3a7bd5" };
+}
+async function openProfile(id, name, from){
   closeAllPanels();
   soc.profile = { id, name, data: null };
+  document.getElementById("profileBackBtn").hidden = from !== "rank";
   document.getElementById("profileBody").innerHTML = `<div class="empty-note">กำลังเปิดข้อมูลของ ${netEsc(name)}…</div>`;
   document.getElementById("profilePanel").hidden = false;
   try{
@@ -3285,15 +3380,87 @@ function renderProfile(){
     <div class="pf-weapon">${weapon ? `<span class="pf-ic">${equipIconHtml(wdef)}</span><div><b>${netEsc(equipDisplayName(weapon))} <span class="pf-rar" style="background:${RARITY_DEFS[weapon.rarity].color}">${RARITY_DEFS[weapon.rarity].label}</span></b>
       <small>${wtype && WEAPON_CATEGORIES[wtype] ? WEAPON_CATEGORIES[wtype].icon + " " + WEAPON_CATEGORIES[wtype].name + " · Rank " + rankName : ""}</small></div>` : `<small>ไม่ได้ถืออาวุธ</small>`}</div>
     ${inspect}
-    <div class="pf-actions">${st === "blocked" ? "" : `<button type="button" data-act="whisper">💬 กระซิบ</button>`}${friendBtn}
-      <button type="button" data-act="report" class="warn">🚩 รายงาน</button></div>`;
+    ${net.user && id === net.user.id ? "" : `<div class="pf-actions">${st === "blocked" ? "" : `<button type="button" data-act="whisper">💬 กระซิบ</button>`}${friendBtn}
+      <button type="button" data-act="report" class="warn">🚩 รายงาน</button></div>`}`;
   const cv = document.getElementById("profileAvatar");
-  const lk = d.look || {};
-  const look = { gender: lk.gender === "female" ? "female" : "male", hairStyle: [0,1,2].includes(lk.hairStyle) ? lk.hairStyle : 0,
-                 hairColor: NET_HEX_COLOR.test(lk.hairColor) ? lk.hairColor : "#4a2c1d", outfitColor: NET_HEX_COLOR.test(lk.outfitColor) ? lk.outfitColor : "#3a7bd5" };
   const c2 = cv.getContext("2d");
   drawMeditationAura(c2, 48, 96, will.color);
-  drawCharacterAt(c2, 48, 100, look, 1.2, "down", null);
+  drawCharacterAt(c2, 48, 100, socSafeLook(d.look), 1.2, "down", null);
+}
+
+/* ---- Hall of Fame (town object) — ranking by progress: highest dimension → furthest map in it → level → EXP
+   (a full tie goes to whoever got there first). Built on the server from every cloud save with GM accounts
+   (public.admins) left out there — see leaderboard() in the SQL block. Click anyone → their profile card. ---- */
+const RANK_REFRESH_MS = 30000;   // reopening the board within this reuses the last result (no request)
+const RANK_MANUAL_GAP_MS = 5000; // 🔄 button cooldown
+const hof = { data:null, at:0, loading:false, err:"" };
+
+function openLeaderboard(force){
+  closeAllPanels();
+  document.getElementById("rankPanel").hidden = false;
+  renderLeaderboard();
+  if(NET_ONLINE && net.user && (force || !hof.data || performance.now() - hof.at > RANK_REFRESH_MS)) loadLeaderboard();
+}
+async function loadLeaderboard(){
+  if(hof.loading) return;
+  hof.loading = true; hof.err = "";
+  renderLeaderboard();
+  try{ hof.data = await netRpc("leaderboard", "{}"); hof.at = performance.now(); }
+  catch(err){ hof.err = err.message; }
+  hof.loading = false;
+  if(!document.getElementById("rankPanel").hidden) renderLeaderboard();
+}
+function rankSafeRow(r){ // server rows are other players' saves — sanitize before they reach the page
+  if(!r || typeof r.id !== "string") return null;
+  const int = (v, lo) => Math.max(lo, Math.floor(+v) || 0);
+  const will = WILL_COLORS.find(c => c.id === r.willColor) || WILL_COLORS[0];
+  return { id: r.id, rank: int(r.rank, 1), name: String(r.name || "?").slice(0, 20), title: r.title ? String(r.title).slice(0, 40) : "",
+           level: int(r.level, 1), dim: int(r.dim, 1), map: int(r.map, 1), look: socSafeLook(r.look), will: will.color };
+}
+function renderLeaderboard(){
+  const body = document.getElementById("rankBody");
+  const d = hof.data || {};
+  const top = (Array.isArray(d.top) ? d.top : []).slice(0, 10).map(rankSafeRow).filter(Boolean);
+  const me = rankSafeRow(d.me), myId = net.user && net.user.id;
+  const esc = netEsc;
+  const prog = r => `🌌 มิติ ${r.dim} · 🗺️ แมพ ${r.map}`;
+  const pod = (r, n) => r
+    ? `<div class="rk-pod rk-p${n}${r.id === myId ? " me" : ""}" data-id="${esc(r.id)}" data-name="${esc(r.name)}" title="คลิกดูการ์ดผู้เล่น">
+        <canvas id="rkAv${n}" width="${n === 1 ? 120 : 104}" height="${n === 1 ? 122 : 108}"></canvas>
+        <div class="rk-plate"><span class="rk-medal">${["🥇","🥈","🥉"][n-1]}</span><b>${esc(r.name)}</b>
+          ${r.title ? `<small class="rk-title">🏆 ${esc(r.title)}</small>` : `<small class="rk-title">&nbsp;</small>`}
+          <small>${prog(r)} · Lv.${r.level}</small></div></div>`
+    : `<div class="rk-pod rk-p${n} empty"><canvas width="${n === 1 ? 120 : 104}" height="${n === 1 ? 122 : 108}"></canvas>
+        <div class="rk-plate"><span class="rk-medal">${["🥇","🥈","🥉"][n-1]}</span><b>ว่าง</b><small class="rk-title">&nbsp;</small><small>รอผู้ท้าชิง</small></div></div>`;
+  const row = (r, n) => r
+    ? `<div class="rk-row${r.id === myId ? " me" : ""}" data-id="${esc(r.id)}" data-name="${esc(r.name)}" title="คลิกดูการ์ดผู้เล่น">
+        <b class="rk-n">#${n}</b><span class="rk-nm">${esc(r.name)}${r.title ? `<small>🏆 ${esc(r.title)}</small>` : ""}</span>
+        <span class="rk-pg">มิติ ${r.dim} · แมพ ${r.map}<small>Lv.${r.level}</small></span></div>`
+    : `<div class="rk-row empty"><b class="rk-n">#${n}</b><span class="rk-nm">—</span></div>`;
+  let mine;
+  if(!NET_ONLINE) mine = `<div class="rk-row rk-mine note">หอเกียรติยศเปิดเฉพาะในเวอร์ชันออนไลน์</div>`;
+  else if(d.gm) mine = `<div class="rk-row rk-mine note">🛡️ บัญชี GM ไม่ถูกนับในอันดับ</div>`;
+  else if(me) mine = `<div class="rk-row rk-mine" data-id="${esc(me.id)}" data-name="${esc(me.name)}" title="คลิกดูการ์ดของคุณ">
+        <b class="rk-n">#${me.rank}</b><span class="rk-nm">คุณ · ${esc(me.name)}${me.rank <= 3 ? "<small>อยู่บนแท่นแล้ว!</small>" : me.rank <= 10 ? "<small>ติดป้ายประกาศแล้ว!</small>" : ""}</span>
+        <span class="rk-pg">มิติ ${me.dim} · แมพ ${me.map}<small>Lv.${me.level}</small></span></div>`;
+  else mine = `<div class="rk-row rk-mine note">${hof.data ? "ยังไม่มีอันดับ — เซฟครั้งแรกแล้วจะขึ้นป้าย" : "…"}</div>`;
+  const status = !NET_ONLINE ? "" : hof.loading ? "กำลังโหลดอันดับ…" : hof.err ? "⚠️ " + esc(hof.err)
+    : hof.data ? `ผู้เล่นในอันดับ ${Math.max(0, Math.floor(+d.total) || 0)} คน · อัปเดตเมื่อ ${new Date(Date.now() - (performance.now() - hof.at)).toLocaleTimeString("th-TH", { hour:"2-digit", minute:"2-digit" })}` : "";
+  body.innerHTML = `
+    <div class="rk-head"><span>เรียงตาม มิติสูงสุด → แมพสูงสุด → เลเวล (เสมอกัน ใครถึงก่อนอยู่บน) · ไม่รวม GM<br>${status}</span>
+      ${NET_ONLINE ? `<button type="button" id="rankRefreshBtn"${hof.loading ? " disabled" : ""}>🔄 อัปเดต</button>` : ""}</div>
+    <div class="rk-stage">
+      <div class="rk-podium">${pod(top[0], 1)}<div class="rk-pod-row">${pod(top[1], 2)}${pod(top[2], 3)}</div></div>
+      <div class="rk-board"><h4>📜 ป้ายประกาศ · อันดับ 4–10</h4>
+        ${[3,4,5,6,7,8,9].map(i => row(top[i], i + 1)).join("")}
+        ${mine}</div>
+    </div>`;
+  top.slice(0, 3).forEach((r, i) => {
+    const cv = document.getElementById("rkAv" + (i + 1)), c2 = cv.getContext("2d"), big = i === 0;
+    const cx = cv.width / 2, cy = cv.height - 10;
+    drawMeditationAura(c2, cx, cy - 4, r.will);
+    drawCharacterAt(c2, cx, cy, r.look, big ? 1.45 : 1.25, "down", null);
+  });
 }
 
 /* friends window */
@@ -4456,7 +4623,7 @@ canvas.addEventListener("click", (e)=>{
   }
 
   let hitNpc = null;
-  for(const npc of game.npcs){ if(dist(worldX, worldY, npc.x, npc.y) < 26){ hitNpc = npc; break; } }
+  for(const npc of game.npcs){ if(dist(worldX, worldY, npc.x, npc.y - (npc.hitDy || 0)) < (npc.hitR || 26)){ hitNpc = npc; break; } }
   if(hitNpc){
     game.player.pendingNpcId = hitNpc.id;
     game.player.targetMonsterId = null; game.player.pendingLocationId = null;
@@ -4679,8 +4846,9 @@ function renderOverworld(){
     drawables.push({ y: tg.y, draw: () => drawTravelGateAt(ctx, tg.x, tg.y) });
   }
   for(const npc of game.npcs){
-    if(npc.kind === "storage"){
-      drawables.push({ y: npc.y, draw: () => drawSmallHouseAt(ctx, npc.x, npc.y) });
+    const objectFn = TOWN_OBJECT_DRAW[npc.kind];
+    if(objectFn){
+      drawables.push({ y: npc.y, draw: () => objectFn(ctx, npc.x, npc.y) });
       continue;
     }
     const buildingFn = TOWN_BUILDING_DRAW[npc.kind];
@@ -4726,12 +4894,12 @@ function renderOverworld(){
   ctx.textAlign = "center";
   const playerNameY = p.y - 78 * PLAYER_OVERWORLD_SCALE / 1.1;
   const rank = getPlayerRankTier();
-  const nameColor = rank.rainbow ? `hsl(${(performance.now()/12) % 360},85%,65%)` : rank.color;
-  ctx.font = rank.minTier >= 7 ? "bold 13px 'Trebuchet MS', sans-serif" : "12px 'Trebuchet MS', sans-serif";
-  if(rank.glow > 0){
-    const pulse = (rank.pulse || rank.rainbow) ? 0.7 + 0.3 * Math.sin(performance.now()/260) : 1;
+  const nameColor = hof.rainbow ? `hsl(${(performance.now()/12) % 360},85%,65%)` : hof.color;
+  ctx.font = hof.minTier >= 7 ? "bold 13px 'Trebuchet MS', sans-serif" : "12px 'Trebuchet MS', sans-serif";
+  if(hof.glow > 0){
+    const pulse = (hof.pulse || hof.rainbow) ? 0.7 + 0.3 * Math.sin(performance.now()/260) : 1;
     ctx.shadowColor = nameColor;
-    ctx.shadowBlur = rank.glow * pulse;
+    ctx.shadowBlur = hof.glow * pulse;
   }
   ctx.fillStyle = nameColor; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.lineWidth = 3;
   const shownName = (net.admin ? "[GM] " : "") + p.name; // online GM accounts only — offline net.admin is always false
@@ -4746,7 +4914,8 @@ function renderOverworld(){
   ctx.font = "11px 'Trebuchet MS', sans-serif";
   ctx.fillStyle = "#fff"; // reset — the lines above switched color/glow just for the player's nameplate
   for(const npc of game.npcs){
-    ctx.strokeText(npc.name, npc.x, npc.y - 68); ctx.fillText(npc.name, npc.x, npc.y - 68);
+    const labelY = npc.y - (npc.labelDy || 68);
+    ctx.strokeText(npc.name, npc.x, labelY); ctx.fillText(npc.name, npc.x, labelY);
   }
 
   for(const m of game.monsters){
@@ -7174,8 +7343,12 @@ document.getElementById("tutorialBtn").addEventListener("click", ()=>{ sfx.click
 /* ============================================================
    TOWN — NPCs, quest dialog, shop, refine, and the travel gate
    ============================================================ */
+// Where the Hall of Fame stands, relative to the town's travel gate (hub center). To move it, change these two numbers.
+const HALL_OF_FAME_SPOT = { dx: -TOWN_NPC_RADIUS * 1.35, dy: -TOWN_NPC_RADIUS * 1.2 }; // north-west, mirroring the temple
 function buildTownNpcs(){
   return [
+    { id:"hall_of_fame", kind:"ranking",  name:"🏆 หอเกียรติยศ",     x: TOWN_HUB_X + HALL_OF_FAME_SPOT.dx, y: TOWN_HUB_Y + HALL_OF_FAME_SPOT.dy,
+      labelDy: 112, hitDy: 45, hitR: 70 }, // big object: name above the trophy, click anywhere on it
     { id:"storage_box", kind:"storage",   name:"กล่องฝากของ",       x: TOWN_HUB_X - TOWN_NPC_RADIUS, y: TOWN_HUB_Y },                     // west
     { id:"merchant",    kind:"merchant",  name:"พ่อค้าประจำเมือง",  x: TOWN_HUB_X + TOWN_NPC_RADIUS, y: TOWN_HUB_Y },                     // east
     { id:"town_lord",   kind:"town_lord", name:"เจ้าเมือง",         x: TOWN_HUB_X,                    y: TOWN_HUB_Y - TOWN_NPC_RADIUS },  // north
@@ -7196,6 +7369,9 @@ function interactWithNpc(npc){
     renderTownLordDialog();
   } else if(npc.kind === "temple"){
     renderTempleDialog();
+  } else if(npc.kind === "ranking"){
+    sfx.click();
+    openLeaderboard(false);
   } else if(npc.kind === "blacksmith"){
     sfx.talk();
     renderRefinePanel();
@@ -7245,6 +7421,7 @@ function closeAllPanels(){
   document.getElementById("accountPanel").hidden = true;
   document.getElementById("friendsPanel").hidden = true;
   document.getElementById("profilePanel").hidden = true;
+  document.getElementById("rankPanel").hidden = true;
   document.getElementById("reportPanel").hidden = true;
   if(typeof socCloseMenu === "function") socCloseMenu();
 }
@@ -8289,11 +8466,11 @@ function renderWeaponSkillPanel(){
   const rank = WEAPON_RANK_LADDER[rankIdx];
   const nextRank = WEAPON_RANK_LADDER[rankIdx + 1];
   const points = getWeaponSkillPointsAvailable(type);
-  const pct = nextRank ? clamp((entry.exp - rank.expNeeded) / (nextRank.expNeeded - rank.expNeeded), 0, 1) : 1;
+  const pct = nextRank ? clamp((entry.exp - hof.expNeeded) / (nextRank.expNeeded - hof.expNeeded), 0, 1) : 1;
   const sub = !categoryHasEquipment(type) ? "ยังไม่มีอาวุธประเภทนี้"
     : nextRank ? `${entry.exp} / ${nextRank.expNeeded} EXP · ถัดไป ${nextRank.name}` : "Rank สูงสุดแล้ว";
   document.getElementById("weaponSkillRankInfo").innerHTML = `<div class="skt-rank">
-      <div class="bar"><div class="name">${WEAPON_CATEGORIES[type].icon} ${rank.name}</div>
+      <div class="bar"><div class="name">${WEAPON_CATEGORIES[type].icon} ${hof.name}</div>
         <div class="sub">${sub}</div><div class="track"><div class="fill" style="width:${Math.round(pct*100)}%"></div></div></div>
       <div class="skt-points${points > 0 ? " has" : ""}"><b>${points}</b><span>แต้มสกิล</span></div>
     </div>`;
@@ -8913,6 +9090,17 @@ document.getElementById("friendsBtn").addEventListener("click", ()=>{
   socRefreshList();
 });
 document.getElementById("closeFriendsBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("friendsPanel").hidden = true; });
+document.getElementById("rankBody").addEventListener("click", e => {
+  if(e.target.closest("#rankRefreshBtn")){
+    sfx.click();
+    if(performance.now() - hof.at < RANK_MANUAL_GAP_MS){ showToast("เพิ่งอัปเดตไป — รอสักครู่"); return; }
+    loadLeaderboard(); return;
+  }
+  const who = e.target.closest("[data-id]");
+  if(who){ sfx.click(); openProfile(who.dataset.id, who.dataset.name, "rank"); }
+});
+document.getElementById("closeRankBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("rankPanel").hidden = true; });
+document.getElementById("profileBackBtn").addEventListener("click", ()=>{ sfx.click(); openLeaderboard(false); });
 document.getElementById("closeProfileBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("profilePanel").hidden = true; });
 document.getElementById("closeReportBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("reportPanel").hidden = true; });
 document.getElementById("reportReasons").addEventListener("click", e => {
@@ -9005,6 +9193,19 @@ create table if not exists public.admins (
   user_id uuid primary key references auth.users(id) on delete cascade
 );
 
+-- Hall of Fame: when this account last moved up the ranking key (a full tie goes to whoever got there first).
+alter table public.saves add column if not exists progress_at timestamptz;
+update public.saves set progress_at = updated_at where progress_at is null;
+
+-- Ranking key of a save: {highest dimension, furthest map in it, level, exp}. Numbers that aren't numbers count as 0.
+create or replace function public.lb_num(v jsonb) returns bigint language sql immutable as $$
+  select case when jsonb_typeof(v) = 'number' then least(greatest(floor((v)::numeric), 0), 1000000000000)::bigint else 0 end $$;
+create or replace function public.lb_key(d jsonb) returns bigint[] language sql immutable as $$
+  select array[m, greatest(case when m = 1 then public.lb_num(d -> 'maxMapTierReachedDim1') else public.lb_num(d -> 'dimReach' -> m::text) end, 1),
+               public.lb_num(d -> 'player' -> 'level'), public.lb_num(d -> 'player' -> 'exp')]
+    from (select greatest(public.lb_num(d -> 'maxDimension'), 1) m) x $$;
+revoke execute on function public.lb_num(jsonb), public.lb_key(jsonb) from public, anon, authenticated;
+
 -- No direct table access from the game — only through the two functions below.
 alter table public.saves enable row level security;
 alter table public.item_registry enable row level security;
@@ -9073,7 +9274,8 @@ begin
     select me, u from unnest(uids) u
     on conflict (user_id, uid) do nothing;
 
-  update public.saves set data = p_data, rev = rev + 1, updated_at = now()
+  update public.saves set data = p_data, rev = rev + 1, updated_at = now(),
+         progress_at = case when progress_at is null or public.lb_key(p_data) > public.lb_key(r.data) then now() else progress_at end
    where user_id = me returning * into r;
   return jsonb_build_object('ok', true, 'rev', r.rev);
 end $$;
@@ -9275,6 +9477,28 @@ begin
     'statPoints', case when friend or p_target = me then d -> 'player' -> 'statPoints' end);
 end $$;
 
+-- Hall of Fame (town object): top 10 + my own rank. GM accounts (public.admins) are left out here, on the server.
+create or replace function public.leaderboard()
+returns jsonb language plpgsql stable security definer set search_path = public as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  return (
+    with ranked as (
+      select s.user_id, s.data, k, row_number() over (order by k desc, s.progress_at asc nulls last, s.user_id) rn
+        from public.saves s cross join lateral (select public.lb_key(s.data) k) kk
+       where s.data is not null and not exists (select 1 from public.admins a where a.user_id = s.user_id)),
+    rw as (
+      select user_id, rn, jsonb_build_object('id', user_id, 'rank', rn, 'name', data -> 'player' -> 'name', 'title', data -> 'player' -> 'title',
+               'dim', k[1], 'map', k[2], 'level', k[3], 'look', data -> 'player' -> 'look', 'willColor', data -> 'player' -> 'willColor') j
+        from ranked)
+    select jsonb_build_object(
+      'total', (select count(*) from ranked),
+      'gm', exists (select 1 from public.admins where user_id = me),
+      'top', (select coalesce(jsonb_agg(j order by rn), '[]') from rw where rn <= 10),
+      'me', (select j from rw where user_id = me)));
+end $$;
+
 create or replace function public.report_player(p_target uuid, p_reason text, p_note text, p_chat jsonb)
 returns jsonb language plpgsql security definer set search_path = public as $$
 declare me uuid := auth.uid();
@@ -9292,10 +9516,10 @@ end $$;
 
 revoke execute on function public.net_poll(int, int, int, int), public.whisper_send(uuid, text), public.friend_request(uuid),
   public.friend_remove(uuid), public.block_player(uuid, boolean), public.friend_list(), public.player_profile(uuid),
-  public.report_player(uuid, text, text, jsonb) from public, anon;
+  public.report_player(uuid, text, text, jsonb), public.leaderboard() from public, anon;
 grant execute on function public.net_poll(int, int, int, int), public.whisper_send(uuid, text), public.friend_request(uuid),
   public.friend_remove(uuid), public.block_player(uuid, boolean), public.friend_list(), public.player_profile(uuid),
-  public.report_player(uuid, text, text, jsonb) to authenticated;
+  public.report_player(uuid, text, text, jsonb), public.leaderboard() to authenticated;
 ------------------------------------------------------------------------------------------------ -->
 </body>
 </html>
