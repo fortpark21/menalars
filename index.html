@@ -121,6 +121,16 @@
   .bar-fill{ height:100%; border-radius:6px; transition: width .2s; }
   #hud .gold{ margin-top:4px; color:var(--gold); font-weight:bold; }
   #hudTitle{ font-size:11px; color:var(--gold); margin-bottom:4px; }
+  #storyTracker{ position:absolute; top:62px; right:12px; width:260px; z-index:9; cursor:pointer;
+    background:linear-gradient(180deg, rgba(42,26,6,.86), rgba(20,16,40,.8)); border:1px solid rgba(255,209,102,.45);
+    color:#fff; padding:8px 12px; border-radius:10px; font-size:12px; line-height:1.45; box-shadow:0 4px 14px rgba(0,0,0,.3); }
+  #storyTracker:empty{ display:none; }
+  #storyTracker:hover{ border-color:#ffd166; }
+  #storyTracker .st-ch{ font-size:10.5px; color:#ffd166; letter-spacing:.2px; }
+  #storyTracker .st-q{ font-weight:bold; font-size:13px; margin:1px 0 2px; }
+  #storyTracker .st-goal{ color:#e9e3f7; }
+  #storyTracker .st-goal b{ color:#ffe08a; }
+  #storyTracker .st-goal.offer, #storyTracker .st-goal.ready{ color:#ffd166; }
 
   #hint{
     position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
@@ -1157,6 +1167,7 @@
   </div>
 
   <div id="discoveryBanner"></div>
+  <div id="storyTracker" title="ภารกิจหลัก — คลิกเพื่อดูบันทึก"></div>
 
   <div id="hint">คลิกพื้นเพื่อเดิน · เดินชนมอนสเตอร์เพื่อเข้าสู้ · คลิก NPC เพื่อคุย · ปุ่มลัด C B K J</div>
   <div id="attackGauge" hidden>
@@ -1685,7 +1696,7 @@ const MONSTER_DEFS_TIER1 = MONSTER_DEFS; // keep the original, hand-tuned roster
    ============================================================ */
 const MAP_TIER_COUNT = 10;
 const TOWN_TIER = 0; // the safe-zone hub map — no monsters, no boss, just NPCs + the travel gate
-const TOWN_DEF = { name: "เมืองปลอดภัย (Safe Zone)", groundColor: "#d9c48a" };
+const TOWN_DEF = { name: "แดนมานาอรุณ (เขตปลอดภัย)", groundColor: "#d9c48a" };
 function getMapDisplayDef(tier){ return tier === TOWN_TIER ? TOWN_DEF : MAP_DEFS[tier-1]; }
 const MAP_DEFS = [
   { tier:1,  name:"ทุ่งหญ้าเริ่มต้น",     groundColor:"#7fbf8a", colors:["#4CD97B","#FF7FB0","#8BC34A","#6D5B4B","#D9D2C4"],
@@ -2045,6 +2056,9 @@ function drawHallOfFameAt(ctx, cx, cy){
 // "!" = something new for you here, "?" = ready to hand in (gold) — the classic quest-giver markers.
 function npcQuestMarker(npc){
   if(!game || !game.player) return null;
+  const story = storyNpcState(npc.kind);
+  if(story === "offer") return { ch:"!", color:"#ffb347" };
+  if(story === "turnin") return { ch:"?", color:"#ffb347" };
   if(npc.kind === "town_lord"){
     const st = game.player.questState.junk_hunt || "available";
     if(st === "available") return { ch:"!", color:"#ffd166" };
@@ -2209,9 +2223,80 @@ function drawForgeAt(ctx, cx, cy){
 }
 
 // Robe tint per town NPC role, so they read as distinct people at a glance
-const NPC_ROBE_COLORS = { merchant: "#c98f3a", town_lord: "#6a4a9c", blacksmith: "#6b3a3a", temple: "#e8e2cf" };
+const NPC_ROBE_COLORS = { merchant: "#c98f3a", town_lord: "#6a4a9c", blacksmith: "#6b3a3a", temple: "#e8e2cf", researcher: "#3a6ea5", doctor: "#5f9e74", monk: "#d9822b" };
 // Which building sits behind each person NPC (storage has no person — it's the house itself)
-const TOWN_BUILDING_DRAW = { town_lord: drawCastleAt, merchant: drawMarketStallAt, blacksmith: drawForgeAt, temple: drawTempleAt };
+const TOWN_BUILDING_DRAW = { town_lord: drawCastleAt, merchant: drawMarketStallAt, blacksmith: drawForgeAt, temple: drawTempleAt,
+  researcher: drawResearchTowerAt, doctor: drawClinicAt, monk: drawShrineAt };
+// Little props worn by the story NPCs (overworld + talk portrait share the same sprite coordinates)
+function drawNpcExtra(ctx, kind, cx, cy){
+  if(kind !== "researcher" && kind !== "doctor" && kind !== "monk") return;
+  ctx.save(); ctx.translate(cx, cy);
+  if(kind === "researcher"){      // round glasses + a mana-crystal pendant
+    ctx.strokeStyle = "#2a2f3a"; ctx.lineWidth = 1.1;
+    ctx.beginPath(); ctx.arc(-4, -52, 3, 0, Math.PI*2); ctx.moveTo(7, -52); ctx.arc(4, -52, 3, 0, Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-1, -52.5); ctx.lineTo(1, -52.5); ctx.stroke();
+    ctx.fillStyle = "#8ff3ff"; ctx.shadowColor = "#8ff3ff"; ctx.shadowBlur = 5;
+    ctx.beginPath(); ctx.moveTo(0, -38); ctx.lineTo(2.5, -34.5); ctx.lineTo(0, -31); ctx.lineTo(-2.5, -34.5); ctx.closePath(); ctx.fill();
+  } else if(kind === "doctor"){   // white apron + headband with a green leaf
+    ctx.fillStyle = "#f4f1e6"; roundRect(ctx, -7, -40, 14, 25, 4); ctx.fill();
+    ctx.fillStyle = "#f4f1e6"; ctx.fillRect(-13.5, -62, 27, 3.6);
+    ctx.fillStyle = "#3f9457"; ctx.beginPath(); ctx.ellipse(0, -60.2, 3.2, 1.8, -0.5, 0, Math.PI*2); ctx.fill();
+  } else if(kind === "monk"){     // straw kasa hat + prayer beads
+    ctx.fillStyle = "#d9b56a"; ctx.strokeStyle = "#9c7a3a"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-21, -59); ctx.lineTo(0, -75); ctx.lineTo(21, -59); ctx.quadraticCurveTo(0, -55, -21, -59); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = "rgba(156,122,58,.55)"; ctx.beginPath(); ctx.moveTo(-10, -63); ctx.lineTo(0, -75); ctx.lineTo(10, -63); ctx.stroke();
+    ctx.fillStyle = "#5a3418";
+    for(let i = 0; i < 9; i++){ const a = Math.PI * (0.15 + i * 0.0875); ctx.beginPath(); ctx.arc(Math.cos(a) * 9, -41 + Math.sin(a) * 6, 1.4, 0, Math.PI*2); ctx.fill(); }
+  }
+  ctx.restore();
+}
+// 🗼 Research tower — slim stone tower with a glowing mana crystal on top
+function drawResearchTowerAt(ctx, cx, cy){
+  ctx.save(); ctx.translate(cx, cy);
+  ctx.fillStyle = "rgba(0,0,0,.2)"; ctx.beginPath(); ctx.ellipse(0, 6, 42, 11, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "#8f8a80"; ctx.fillRect(-26, -20, 52, 24);                     // base
+  ctx.fillStyle = "#a9a397"; ctx.fillRect(-18, -104, 36, 86);                    // tower
+  ctx.strokeStyle = "#7d786e"; ctx.lineWidth = 1;
+  for(let y = -96; y < -20; y += 12){ ctx.beginPath(); ctx.moveTo(-18, y); ctx.lineTo(18, y); ctx.stroke(); }
+  ctx.fillStyle = "#3a3450"; roundRect(ctx, -7, -16, 14, 20, 6); ctx.fill();      // door
+  const glow = 0.55 + 0.35 * Math.sin(performance.now() / 420);
+  ctx.fillStyle = `rgba(143,243,255,${glow})`;
+  for(const y of [-84, -58]){ roundRect(ctx, -4, y, 8, 12, 4); ctx.fill(); }      // windows
+  ctx.fillStyle = "#4a5a8a"; ctx.beginPath(); ctx.moveTo(-24, -104); ctx.lineTo(0, -132); ctx.lineTo(24, -104); ctx.closePath(); ctx.fill(); // roof
+  ctx.fillStyle = "#8ff3ff"; ctx.shadowColor = "#8ff3ff"; ctx.shadowBlur = 14 * glow;
+  const bob = Math.sin(performance.now() / 500) * 2;
+  ctx.beginPath(); ctx.moveTo(0, -150 + bob); ctx.lineTo(6, -140 + bob); ctx.lineTo(0, -130 + bob); ctx.lineTo(-6, -140 + bob); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+// 🌿 Clinic — small whitewashed house, green roof, a leaf sign and herb pots
+function drawClinicAt(ctx, cx, cy){
+  ctx.save(); ctx.translate(cx, cy);
+  ctx.fillStyle = "rgba(0,0,0,.2)"; ctx.beginPath(); ctx.ellipse(0, 6, 48, 11, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "#efe9d8"; ctx.fillRect(-38, -40, 76, 44);
+  ctx.strokeStyle = "#cfc6ab"; ctx.lineWidth = 2; ctx.strokeRect(-38, -40, 76, 44);
+  ctx.fillStyle = "#4f8f5f"; ctx.beginPath(); ctx.moveTo(-46, -40); ctx.lineTo(0, -70); ctx.lineTo(46, -40); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#6b4a2a"; roundRect(ctx, -8, -20, 16, 24, 3); ctx.fill();
+  ctx.fillStyle = "#bfe3ff"; ctx.fillRect(-30, -30, 12, 10); ctx.fillRect(18, -30, 12, 10);
+  ctx.fillStyle = "#fff"; roundRect(ctx, -9, -60, 18, 14, 3); ctx.fill();          // sign
+  ctx.fillStyle = "#3f9457"; ctx.fillRect(-1.8, -58, 3.6, 10); ctx.fillRect(-5, -54.8, 10, 3.6);
+  for(const x of [-44, 44]){ ctx.fillStyle = "#a0603a"; ctx.fillRect(x - 6, -6, 12, 10); ctx.fillStyle = "#5fb86a"; ctx.beginPath(); ctx.arc(x, -10, 8, 0, Math.PI*2); ctx.fill(); }
+  ctx.restore();
+}
+// ⛩️ Shrine — red torii gate, a stone lantern and a small sakura tree
+function drawShrineAt(ctx, cx, cy){
+  ctx.save(); ctx.translate(cx, cy);
+  ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.beginPath(); ctx.ellipse(0, 6, 56, 11, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "#c0392b";
+  ctx.fillRect(-30, -74, 7, 78); ctx.fillRect(23, -74, 7, 78);                      // posts
+  ctx.fillRect(-36, -66, 72, 6);                                                     // lower beam
+  ctx.beginPath(); ctx.moveTo(-44, -80); ctx.quadraticCurveTo(0, -74, 44, -80); ctx.lineTo(42, -86); ctx.quadraticCurveTo(0, -81, -42, -86); ctx.closePath(); ctx.fill(); // top beam
+  ctx.fillStyle = "#2a1a14"; ctx.fillRect(-46, -89, 92, 4);
+  ctx.fillStyle = "#b8b2a4"; ctx.fillRect(40, -24, 12, 28); ctx.fillRect(36, -34, 20, 10); // stone lantern
+  ctx.fillStyle = `rgba(255,209,102,${0.6 + 0.3 * Math.sin(performance.now() / 350)})`; ctx.fillRect(42, -32, 8, 6);
+  ctx.fillStyle = "#7a5230"; ctx.fillRect(-58, -30, 6, 34);                          // sakura
+  ctx.fillStyle = "#f4a7c4"; ctx.beginPath(); ctx.arc(-55, -42, 16, 0, Math.PI*2); ctx.arc(-66, -34, 10, 0, Math.PI*2); ctx.arc(-44, -34, 10, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+}
 // Town points that are just an object — no person standing in front (click the object itself)
 const TOWN_OBJECT_DRAW = { storage: drawSmallHouseAt, ranking: drawHallOfFameAt, vote: drawVoteBoardAt };
 
@@ -2234,6 +2319,13 @@ function drawTempleAt(ctx, cx, cy){
   ctx.strokeStyle = `rgba(143,243,255,${glow})`; ctx.lineWidth = ready ? 2.5 : 1.5;
   ctx.shadowColor = "#8ff3ff"; ctx.shadowBlur = ready ? 12 : 4;
   ctx.beginPath(); ctx.moveTo(4, -86); ctx.lineTo(-4, -74); ctx.lineTo(3, -66); ctx.lineTo(-6, -56); ctx.stroke();
+  const lit = storyPillarsLit();
+  for(let i = 0; i < 10; i++){
+    const x = -40.5 + i * 9;
+    ctx.shadowBlur = i < lit ? 8 : 0; ctx.shadowColor = "#ffd166";
+    ctx.fillStyle = i < lit ? "#ffe08a" : "#9d967f";
+    ctx.beginPath(); ctx.arc(x, 0, 2.8, 0, Math.PI*2); ctx.fill();
+  }
   ctx.restore();
 }
 
@@ -2918,8 +3010,8 @@ function warpToMap(tier, dim){
   game.player.pendingWarp = false; game.player.pendingTravelGate = false;
 
   if(tier === TOWN_TIER){
-    showDiscoveryBanner("🏙️ TOWN", "เมืองปลอดภัย — จุดพักและเตรียมตัวก่อนออกเดินทาง");
-    showToast("กลับสู่เมืองปลอดภัยแล้ว");
+    showDiscoveryBanner("🏯 แดนมานาอรุณ", "ที่มั่นสุดท้ายของผู้รอดชีวิต — จุดพักและเตรียมตัวก่อนออกเดินทาง");
+    showToast("กลับสู่แดนมานาอรุณแล้ว");
   } else {
     const mapDef = MAP_DEFS[tier-1];
     showDiscoveryBanner("🗺️ MAP " + tier + "!", mapDef.name);
@@ -2937,6 +3029,8 @@ function startGame(name, chosenLook, startWeapon){
   equipItem(starterWeapon.instanceId);
 
   warpToMap(1); // the adventure starts straight in Map 1 — the town is reached later via the travel gate
+  storyState();
+  storyPendingScene = { text: STORY_QUESTS[0].give, extra: storyCard(STORY_QUESTS[0], '<span class="tk-tag">กำลังทำ</span>') };
   updateHud();
   requestAnimationFrame(loop);
   if(!hasSeenTutorial()) openTutorial();
@@ -3023,7 +3117,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 7;
+const GAME_VERSION = 8;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -4038,6 +4132,7 @@ function continueGame(data){
   SAVE_GAME_FIELDS.forEach(k => { if(data[k] !== undefined) game[k] = data[k]; });
   SAVE_GAME_SETS.forEach(k => { game[k] = new Set(data[k] || []); });
   migrateTitleSave();
+  if(!game.player.story){ storyState(); setTimeout(()=> showDiscoveryBanner("📜 เนื้อเรื่องหลักมาแล้ว!", "ดูภารกิจที่มุมขวาบน — ย้อนเล่นได้ตั้งแต่บทที่ 1", 4000), 1500); }
   const tier = game.mapTier;
   const dim = game.dimension || 1;
   game.dimension = 0;       // force setDimension() inside warpToMap to rebuild the law counts
@@ -4064,15 +4159,30 @@ window.addEventListener("beforeunload", ()=>{ saveGameNow(); if(rt.joined && net
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState === "hidden") saveGameNow(); });
 
 const ITEM_TABLE = [
-  { id: "herb", name: "สมุนไพร", icon: "🌿" },
-  { id: "potion", name: "ยาต้ม", icon: "🧪" },
-  { id: "slime_jelly", name: "Slime Jelly", icon: "🟢" },
-  { id: "wolf_fang", name: "Wolf Fang", icon: "🦷" },
-  { id: "stone_fragment", name: "Stone Fragment", icon: "🪨" },
-  { id: "secret_key", name: "Secret Key", icon: "🔑" },
-  { id: "old_letter", name: "จดหมายเก่า", icon: "✉️" },
-  { id: "junk_scrap", name: "ขยะเก่า", icon: "🗑️" },
-  { id: "mana_stone", name: "หินมานา", icon: "💠" }
+  { id: "herb", name: "สมุนไพร", icon: "🌿", desc: "สมุนไพรที่ยังไม่ถูกมานาแทรกแซง หมอใช้ทำยาและธูปจำทาง" },
+  { id: "potion", name: "ยาต้ม", icon: "🧪", desc: "ยาต้มสูตรพื้นบ้านของแดนมานาอรุณ" },
+  { id: "slime_jelly", name: "เมือกมานา", icon: "💧", desc: "เมือกของสไลม์ — มานาที่จับตัวกันเป็นก้อนแต่ยังไม่มีเจตจำนงของตัวเอง" },
+  { id: "wolf_fang", name: "เขี้ยวแปรพันธุ์", icon: "🦷", desc: "เขี้ยวหมาป่าที่ถูกเจตจำนงอื่นแทรกแซงจนงอกผิดรูป" },
+  { id: "stone_fragment", name: "เศษศิลาบาเรีย", icon: "🪨", desc: "เศษหินเรืองแสงจางๆ ที่หลุดออกจากศิลาหลักบาเรียในอกของบอส" },
+  { id: "secret_key", name: "กุญแจลับ", icon: "🔑", desc: "ใช้เปิดประตูดันเจี้ยนที่ถูกผนึกไว้" },
+  { id: "old_letter", name: "จดหมายเก่า", icon: "✉️", desc: "ไอเทมเควส — นำไปคุยกับพ่อค้าในเมืองเพื่อส่งมอบแทนการขาย" },
+  { id: "junk_scrap", name: "เศษซากปนมานา", icon: "🔩", desc: "ข้าวของของผู้คนที่ถูกมานากลืน ทิ้งไว้นานอาจแปรปรวนต่อ — เจ้าเมืองรับไปเผาทำลาย" },
+  { id: "mana_stone", name: "หินมานา", icon: "💠", desc: "มานาที่ตกผลึก ช่างตีเหล็กใช้ตีบวกอุปกรณ์" },
+  // 🧪 research samples — one per map, bought by the researcher (price grows with the map, see CONSUMABLE_SELL_PRICE)
+  { id: "sample_t1",  name: "หญ้ามานาแปรผัน",     icon: "🌾", desc: "ตัวอย่างมานาจากทุ่งหญ้าเริ่มต้น — ส่งให้นักวิจัย" },
+  { id: "sample_t2",  name: "ใบไม้กลืนเงา",       icon: "🍂", desc: "ตัวอย่างมานาจากป่าเงามืด — ส่งให้นักวิจัย" },
+  { id: "sample_t3",  name: "ทรายหลอมเพลิง",      icon: "⏳", desc: "ตัวอย่างมานาจากทะเลทรายเพลิง — ส่งให้นักวิจัย" },
+  { id: "sample_t4",  name: "น้ำแข็งไม่ละลาย",    icon: "🧊", desc: "ตัวอย่างมานาจากยอดเขาหิมะ — ส่งให้นักวิจัย" },
+  { id: "sample_t5",  name: "แร่กระซิบ",          icon: "🪙", desc: "ตัวอย่างมานาจากถ้ำใต้ดิน — ส่งให้นักวิจัย" },
+  { id: "sample_t6",  name: "เมือกพิษเรืองแสง",   icon: "🦠", desc: "ตัวอย่างมานาจากหนองน้ำพิษ — ส่งให้นักวิจัย" },
+  { id: "sample_t7",  name: "ผลึกสะท้อนเจตจำนง", icon: "💎", desc: "ตัวอย่างมานาจากดินแดนคริสตัล — ส่งให้นักวิจัย" },
+  { id: "sample_t8",  name: "ทรายทองศักดิ์สิทธิ์", icon: "✨", desc: "ตัวอย่างมานาจากทะเลทรายศักดิ์สิทธิ์ — ส่งให้นักวิจัย" },
+  { id: "sample_t9",  name: "เศษเงาที่มีชีวิต",    icon: "🌑", desc: "ตัวอย่างมานาจากห้วงเงามืด — ส่งให้นักวิจัย" },
+  { id: "sample_t10", name: "ขนนกสวรรค์",         icon: "🪶", desc: "ตัวอย่างมานาจากบัลลังก์สวรรค์ — ส่งให้นักวิจัย" },
+  // 📜 main-story quest items (not sellable, handed in to the NPC)
+  { id: "bark_tag",        name: "ป้ายชื่อบนเปลือกไม้", icon: "🪵", quest: true, desc: "ไอเทมเควส — ป้ายชื่อของผู้ร่วมเดินทางที่ถูกเปลือกไม้กลืนไปครึ่งหนึ่ง" },
+  { id: "barrier_lantern", name: "ตะเกียงบาเรีย",       icon: "🏮", quest: true, desc: "ไอเทมเควส — ชิ้นส่วนเล็กๆ ของบาเรียที่ถูกขโมยไป" },
+  { id: "inscribed_wrap",  name: "ผ้าพันแผลจารึก",      icon: "📜", quest: true, desc: "ไอเทมเควส — ผ้าที่ผู้รอดจากคลื่นครั้งก่อนเขียนเจตจำนงของตัวเองไว้" }
 ];
 
 /* ============================================================
@@ -4271,14 +4381,14 @@ for(let tier = 2; tier <= MAP_TIER_COUNT; tier++) Object.assign(EQUIPMENT_DEFS, 
 
 // Collectible cards (stackable like consumables — reuse the same qty-merge pattern, no socket system here)
 const CARD_DEFS = {
-  green_slime_card: { name: "Earth Slime Card", rarity: "common",    icon: "🃏", desc: "การ์ดที่ระลึกจากสไลม์ดิน" },
-  pink_slime_card:  { name: "Wood Slime Card",  rarity: "common",    icon: "🃏", desc: "การ์ดที่ระลึกจากสไลม์ไม้" },
-  goblin_card:      { name: "Stone Goblin Card", rarity: "uncommon", icon: "🃏", desc: "การ์ดที่ระลึกจากก็อบลินหิน" },
-  wolf_card:        { name: "Thorn Wolf Card",  rarity: "uncommon",  icon: "🃏", desc: "การ์ดที่ระลึกจากหมาป่าหนาม" },
-  skeleton_card:    { name: "Wandering Traveler Card", rarity: "rare", icon: "🃏", desc: "การ์ดที่ระลึกจากนักเดินทางไม้ผุ" },
-  stone_king_card:  { name: "Stone King Card",  rarity: "legendary", icon: "🃏", desc: "การ์ดหายากจากราชันย์หินยักษ์" },
+  green_slime_card: { name: "การ์ดสไลม์ดิน", rarity: "common",    icon: "🃏", desc: "การ์ดที่ระลึกจากสไลม์ดิน" },
+  pink_slime_card:  { name: "การ์ดสไลม์ไม้",  rarity: "common",    icon: "🃏", desc: "การ์ดที่ระลึกจากสไลม์ไม้" },
+  goblin_card:      { name: "การ์ดก็อบลินหิน", rarity: "uncommon", icon: "🃏", desc: "การ์ดที่ระลึกจากก็อบลินหิน" },
+  wolf_card:        { name: "การ์ดหมาป่าหนาม",  rarity: "uncommon",  icon: "🃏", desc: "การ์ดที่ระลึกจากหมาป่าหนาม" },
+  skeleton_card:    { name: "การ์ดนักเดินทางไม้ผุ", rarity: "rare", icon: "🃏", desc: "การ์ดที่ระลึกจากนักเดินทางไม้ผุ" },
+  stone_king_card:  { name: "การ์ดราชันย์หินยักษ์",  rarity: "legendary", icon: "🃏", desc: "การ์ดหายากจากราชันย์หินยักษ์" },
   // unknown item — shows "???" until the player has obtained it once, then reveals its true identity
-  kings_oath_secret:{ name: "King's Oath", secretName: "???", rarity: "legendary", icon: "👑", secretIcon: "❓", isSecret: true, desc: "สมบัติลับที่ซ่อนอยู่ภายใต้ร่างของราชันย์หินยักษ์" }
+  kings_oath_secret:{ name: "คำสาบานแห่งราชันย์", secretName: "???", rarity: "legendary", icon: "👑", secretIcon: "❓", isSecret: true, desc: "สมบัติลับที่ซ่อนอยู่ภายใต้ร่างของราชันย์หินยักษ์" }
 };
 
 // Each monster type (index matches MONSTER_DEFS) has its own independent drop rows.
@@ -4292,7 +4402,7 @@ const LOOT_TABLES = {
     { kind:"card",       defId:"green_slime_card", chance:0.01 }
   ],
   1: [ // Wood Slime
-    { kind:"consumable", id:"potion",            chance:0.55 },
+    { kind:"consumable", id:"slime_jelly",       chance:0.55 },
     { kind:"card",       defId:"pink_slime_card", chance:0.01 }
   ],
   2: [ // Stone Goblin
@@ -4332,6 +4442,7 @@ const ELITE_LOOT_CHANCE_MULT = 2;    // doubles every drop-table row's chance fo
 const ELITE_BONUS_DROP_CHANCE = 0.35; // extra chance at a random equipment piece, on top of its normal table
 const JUNK_SCRAP_DROP_CHANCE = 0.35;  // 🗑️ town lord's quest material
 const MANA_STONE_DROP_CHANCE = 0.22;  // 💠 blacksmith's refine material
+const SAMPLE_DROP_CHANCE = 0.25;      // 🧪 this map's research sample (sample_t<map>) — the researcher buys them
 
 // Rolls whether a (re)spawning monster becomes Elite, and sets its stats either way.
 function rollEliteForMonster(m){
@@ -4356,11 +4467,11 @@ function rollEliteForMonster(m){
    SECRET LOCATIONS & MINI DUNGEON
    ============================================================ */
 const SECRET_LOCATION_DEFS = {
-  hidden_cave:     { name:"Hidden Cave",      icon:"🕳️", flavor:"ถ้ำมืดลึกลับ มีลมเย็นพัดออกมาจากปากถ้ำ ข้างในดูเหมือนจะทะลุลึกลงไป", grantType:"portal" },
-  ancient_statue:  { name:"Ancient Statue",   icon:"🗿", flavor:"รูปปั้นโบราณที่ถูกลืมเลือน มีบางอย่างซุกซ่อนอยู่ใต้ฐานของมัน",       grantType:"item" },
-  strange_tree:    { name:"Strange Tree",     icon:"🌳", flavor:"เจ้ารู้สึกถึงพลังบางอย่างจากภายในต้นไม้",                              grantType:"key" },
-  abandoned_house: { name:"Abandoned House",  icon:"🏚️", flavor:"บ้านร้างที่ไม่มีใครกล้าเข้าไป ทันใดนั้นประตูก็เปิดออกเบาๆ...",         grantType:"monster" },
-  ancient_ruins:   { name:"Ancient Ruins",    icon:"🏛️", flavor:"ซากปรักหักพังของอารยธรรมเก่าแก่ ยังพบจดหมายเก่าเก็บอยู่ใต้เศษหิน",     grantType:"quest" }
+  hidden_cave:     { name:"ถ้ำลับ",      icon:"🕳️", flavor:"ถ้ำมืดลึกลับ มีลมเย็นพัดออกมาจากปากถ้ำ ข้างในดูเหมือนจะทะลุลึกลงไป", grantType:"portal" },
+  ancient_statue:  { name:"รูปปั้นโบราณ",   icon:"🗿", flavor:"รูปปั้นโบราณที่ถูกลืมเลือน มีบางอย่างซุกซ่อนอยู่ใต้ฐานของมัน",       grantType:"item" },
+  strange_tree:    { name:"ต้นไม้ประหลาด",     icon:"🌳", flavor:"เจ้ารู้สึกถึงพลังบางอย่างจากภายในต้นไม้",                              grantType:"key" },
+  abandoned_house: { name:"บ้านร้าง",  icon:"🏚️", flavor:"บ้านร้างที่ไม่มีใครกล้าเข้าไป ทันใดนั้นประตูก็เปิดออกเบาๆ...",         grantType:"monster" },
+  ancient_ruins:   { name:"ซากปรักหักพังโบราณ",    icon:"🏛️", flavor:"ซากปรักหักพังของอารยธรรมเก่าแก่ ยังพบจดหมายเก่าเก็บอยู่ใต้เศษหิน",     grantType:"quest" }
 };
 const SECRET_LOCATION_TRIGGER_DIST = 34;
 const NORMAL_EQUIPMENT_IDS = Object.keys(EQUIPMENT_DEFS).filter(id => !EQUIPMENT_DEFS[id].dungeonOnly);
@@ -4427,7 +4538,7 @@ function consumeKey(){
 
 function enterDungeon(loc){
   if(game.dungeon){ showToast("กำลังอยู่ในดันเจี้ยนอยู่แล้ว"); return; }
-  if(getKeyCount() < 1){ showToast("ต้องมี 🔑 Secret Key ก่อนถึงจะเข้าดันเจี้ยนได้"); return; }
+  if(getKeyCount() < 1){ showToast("ต้องมี 🔑 กุญแจลับ ก่อนถึงจะเข้าดันเจี้ยนได้"); return; }
   consumeKey();
   const roomTypes = ["monster", Math.random() < 0.5 ? "monster" : "chest", "miniboss", "boss"];
   game.dungeon = { roomIndex:0, roomTypes, portalLocationId: loc.id };
@@ -4550,7 +4661,7 @@ function interactWithLocation(loc){
   if(def.grantType === "key"){
     loc.used = true;
     addToInventory("secret_key");
-    showLocationDialog(def, def.flavor, "ได้รับ 🔑 Secret Key", null);
+    showLocationDialog(def, def.flavor, "ได้รับ 🔑 กุญแจลับ", null);
     return;
   }
 
@@ -4573,10 +4684,10 @@ function showLocationDialog(def, flavorText, resultText, portalOptions){
   if(resultText) extra += `<div class="tk-reward"><span class="big">🎁</span><span>${netEsc(resultText)}</span></div>`;
   if(portalOptions){
     const keys = getKeyCount();
-    extra += `<div class="tk-chips"><span class="tk-chip${keys ? "" : " no"}">🔑 Secret Key ×${keys}</span><span class="tk-chip">🏰 4 ห้อง · บอสท้ายสุดดรอปอาวุธ Epic+</span></div>`;
+    extra += `<div class="tk-chips"><span class="tk-chip${keys ? "" : " no"}">🔑 กุญแจลับ ×${keys}</span><span class="tk-chip">🏰 4 ห้อง · บอสท้ายสุดดรอปอาวุธ Epic+</span></div>`;
     choices.push(portalOptions.hasKey
-      ? { icon:"🔑", label:"เข้าดันเจี้ยน", sub:"ใช้ Secret Key 1 ดอก", cls:"gold", onPick: ()=> enterDungeon(portalOptions.loc) }
-      : { icon:"🔒", label:"ประตูถูกผนึก", sub:"ต้องมี 🔑 Secret Key — ลองสำรวจจุดลับอื่นดู", disabled:true });
+      ? { icon:"🔑", label:"เข้าดันเจี้ยน", sub:"ใช้กุญแจลับ 1 ดอก", cls:"gold", onPick: ()=> enterDungeon(portalOptions.loc) }
+      : { icon:"🔒", label:"ประตูถูกผนึก", sub:"ต้องมี 🔑 กุญแจลับ — ลองสำรวจจุดลับอื่นดู", disabled:true });
   }
   choices.push({ icon:"👣", label: portalOptions ? "ไว้ก่อน" : "ออกไปสำรวจต่อ", leave:true });
   openTalk({ emoji: def.icon, name: def.name, role: "📍 จุดลับ", bg: ["#3f7a6a", "#0f2420"],
@@ -4844,6 +4955,10 @@ const TITLE_DEFS = [
   mkTitle("wanderer",        "adventure", 1, "🧭", "นักเดินทาง",             "เดินทางถึงแมพ 3",                        3,     "reach",       { AGI:3 }),
   mkTitle("pathfinder",      "adventure", 2, "🗺️", "ผู้บุกเบิก",              "เดินทางถึงแมพ 6",                        6,     "reach",       { AGI:6 }),
   mkTitle("worlds_edge",     "adventure", 3, "🌄", "ผู้ยืนบนสุดขอบโลก",       "เดินทางถึงแมพ 10",                       10,    "reach",       { AGI:5, DEX:5 }),
+  mkTitle("story_c1",        "adventure", 1, "🛒", "ผู้รอดจากเกวียน",          "จบเนื้อเรื่องหลักบทที่ 1",                1,     "chapters",    { VIT:3 }),
+  mkTitle("story_c2",        "adventure", 1, "🏮", "ผู้ไม่หลงทางในเงามืด",      "จบเนื้อเรื่องหลักบทที่ 2",                2,     "chapters",    { MEDITATE:3 }),
+  mkTitle("story_c3",        "adventure", 2, "🗿", "ผู้ถอดรหัสพันปี",            "จบเนื้อเรื่องหลักบทที่ 3",                3,     "chapters",    { DEX:6 }),
+  mkTitle("whisper_listener","adventure", 1, "👂", "ผู้รับฟังเสียงกระซิบ",        "ฟังผู้เผยแผ่ชุดขาวพูดจนจบ",               1,     "listened",    { LUK:3 }, { secret:true, hint:"ฉายาลับ — บางคำพูด ต้องฟังให้จบก่อนตัดสิน" }),
   mkTitle("secret_seeker",   "adventure", 1, "🔍", "นักตามหาความลับ",        "ค้นพบจุดลับ 5 แห่ง",                     5,     "secrets",     { LUK:3 }),
   mkTitle("secret_keeper",   "adventure", 2, "🗝️", "ผู้ไขปริศนาแห่งพงไพร",    "ค้นพบจุดลับ 30 แห่ง",                    30,    "secrets",     { LUK:6 }),
   mkTitle("dungeon_diver",   "adventure", 1, "🏰", "ผู้ท้าทายดันเจี้ยน",       "พิชิตดันเจี้ยน 1 ครั้ง",                   1,     "dungeons",    { VIT:3 }),
@@ -4878,7 +4993,7 @@ const TITLE_DEFS = [
   mkTitle("gold_king",       "life", 3, "🏦", "ราชาแห่งทองคำ",               "หาเงินจากการต่อสู้รวม 1,000,000",         1000000,"goldEarned", { LUK:10 }),
   mkTitle("mind_trainee",    "life", 1, "🧘", "ผู้ฝึกจิต",                    "ทำสมาธิจนสติเต็ม 10 ครั้ง",                10,    "meditations", { MEDITATE:3 }),
   mkTitle("still_water",     "life", 2, "💧", "จิตนิ่งดั่งผืนน้ำ",             "ทำสมาธิจนสติเต็ม 100 ครั้ง",               100,   "meditations", { MEDITATE:6 }),
-  mkTitle("town_friend",     "life", 1, "🏙️", "มิตรแท้แห่งเจ้าเมือง",         "ทำภารกิจกำจัดขยะของเจ้าเมืองสำเร็จ",        1,     "junkQuest",   { VIT:3 }),
+  mkTitle("town_friend",     "life", 1, "🏙️", "มิตรแท้แห่งเจ้าเมือง",         "ทำภารกิจเก็บกวาดเศษซากของเจ้าเมืองสำเร็จ",        1,     "junkQuest",   { VIT:3 }),
   mkTitle("courier",         "life", 1, "✉️", "ผู้ส่งสารต่างแดน",             "ส่งจดหมายเก่าให้พ่อค้า 3 ฉบับ",             3,     "letters",     { LUK:3 }),
   mkTitle("skill_student",   "life", 1, "📜", "ผู้ศึกษาวิชายุทธ์",             "ปลดสกิลอาวุธ 5 สกิล",                     5,     "skills",      { DEX:3 }),
   mkTitle("weapon_scholar",  "life", 2, "📖", "ผู้เชี่ยวชาญศาสตร์อาวุธ",       "ปลดสกิลอาวุธ 15 สกิล",                    15,    "skills",      { DEX:6 }),
@@ -4938,6 +5053,7 @@ function getTitleStats(){
     chests: st.chestsOpened || 0, dungeons: st.dungeons || 0, secrets: st.secrets || 0,
     refines: st.refines || 0, bestRefine, goldEarned: st.goldEarned || 0, meditations: st.meditations || 0, letters: st.letters || 0,
     junkQuest: p.questState && p.questState.junk_hunt === "completed" ? 1 : 0,
+    chapters: storyPillarsLit(), listened: p.story && p.story.ch && p.story.ch.c2p === "listen" ? 1 : 0,
     level: p.level, reach: game.maxMapTierReached || 1, maxDim: game.maxDimension || 1,
     skills, bestRank, rankedWeapons, colPct: computeCollectionProgress().percent,
     monstersHalf: book.filter(m => m.discovered).length >= Math.ceil(book.length / 2) ? 1 : 0,
@@ -5313,6 +5429,12 @@ canvas.addEventListener("click", (e)=>{
     return;
   }
 
+  const hitSpot = storyActiveSpots().find(sp => dist(worldX, worldY, sp.x, sp.y) < 30);
+  if(hitSpot){ // walking onto it opens the scene (storyCheckSpots)
+    game.player.targetMonsterId = null; game.player.pendingNpcId = null; game.player.pendingLocationId = null;
+    setPlayerDestination(hitSpot.x, hitSpot.y);
+    return;
+  }
   let hitLocation = null;
   for(const loc of game.secretLocations){ if(dist(worldX, worldY, loc.x, loc.y) < 26){ hitLocation = loc; break; } }
   if(hitLocation){
@@ -5399,6 +5521,7 @@ function updateMonsterWander(m, dt){
 
 function updateOverworld(dt){
   const p = game.player;
+  storyStatTick(); storyCheckSpots(); storyShowPendingScene();
 
   if(p.targetMonsterId != null){
     const m = game.monsters.find(mm => mm.id === p.targetMonsterId);
@@ -5529,6 +5652,7 @@ function renderOverworld(){
     const wp = game.warpPoint;
     drawables.push({ y: wp.y, draw: () => drawWarpPointAt(ctx, wp.x, wp.y) });
   }
+  for(const sp of storyActiveSpots()) drawables.push({ y: sp.y, draw: () => drawStorySpotAt(ctx, sp.x, sp.y) });
   if(game.travelGate){
     const tg = game.travelGate;
     drawables.push({ y: tg.y, draw: () => drawTravelGateAt(ctx, tg.x, tg.y) });
@@ -5547,7 +5671,7 @@ function renderOverworld(){
       // person always stands clearly in front of their building — and never covers their click spot
       drawables.push({ y: npc.y - 90, draw: () => buildingFn(ctx, npc.x, npc.y - 45) });
     }
-    drawables.push({ y: npc.y, draw: () => drawNpcAt(ctx, npc.x, npc.y, NPC_ROBE_COLORS[npc.kind]) });
+    drawables.push({ y: npc.y, draw: () => { drawNpcAt(ctx, npc.x, npc.y, NPC_ROBE_COLORS[npc.kind]); drawNpcExtra(ctx, npc.kind, npc.x, npc.y); } });
   }
   for(const m of game.monsters){
     if(!m.alive) continue;
@@ -5637,6 +5761,7 @@ function renderOverworld(){
 
   renderDestinationMarker(p);
   ctx.restore();
+  drawStoryArrows();
 
   renderMinimap();
 }
@@ -5804,7 +5929,7 @@ function renderMeditatePanel(){
   document.getElementById("meditateProgressDetail").textContent = full
     ? `${Math.round(p.sanity)}% / ${SANITY_MAX}% · เต็มแล้ว`
     : `${Math.round(p.sanity)}% / ${SANITY_MAX}% · เหลืออีกประมาณ ${remainingSeconds} วินาที`;
-  if(p.meditateShownFull === false && full){ game.stats.meditations = (game.stats.meditations || 0) + 1; checkTitles(false); } // meditated all the way back to full
+  if(p.meditateShownFull === false && full){ game.stats.meditations = (game.stats.meditations || 0) + 1; checkTitles(false); storyOnMeditateFull(); } // meditated all the way back to full
   if(p.meditateShownFull !== full){ // only touch the DOM when the state flips
     p.meditateShownFull = full;
     document.getElementById("meditateProgressLabel").textContent = full ? "✨ จิตสงบนิ่ง สติเต็มเปี่ยม" : "สติกำลังฟื้นคืน...";
@@ -6583,6 +6708,7 @@ function enterBattle(monster){
 
   const def = MONSTER_DEFS[monster.type];
   game.encounteredMonsters.add(game.mapTier + "_" + monster.type);
+  storyOnBattleStart(!!def.isBoss && !monster.isDungeonRoom);
 
   game.battle = {
     monster,
@@ -6643,6 +6769,7 @@ function enterBattle(monster){
   canvas.style.display = "none";
   battleCanvas.style.display = "block";
   document.getElementById("topMenu").style.display = "none";
+  document.getElementById("storyTracker").style.display = "none";
   document.getElementById("minimapCanvas").style.display = "none";
   document.getElementById("skillBar").hidden = false;
   document.getElementById("attackGauge").hidden = false;
@@ -6707,6 +6834,8 @@ function exitBattle(result){
     // so both the town lord's junk-collecting quest and the blacksmith's refine system stay farmable anywhere.
     if(Math.random() < JUNK_SCRAP_DROP_CHANCE) rolledDrops.push({ kind:"consumable", id:"junk_scrap" });
     if(Math.random() < MANA_STONE_DROP_CHANCE) rolledDrops.push({ kind:"consumable", id:"mana_stone" });
+    if(game.mapTier >= 1 && game.mapTier <= MAP_TIER_COUNT && Math.random() < SAMPLE_DROP_CHANCE) rolledDrops.push({ kind:"consumable", id:"sample_t" + game.mapTier });
+    storyExtraDrop(m, rolledDrops);
     const resolvedDrops = [];
     for(const drop of rolledDrops){
       const isNew = registerDiscovery(drop);
@@ -6732,6 +6861,7 @@ function exitBattle(result){
       resolvedDrops.push({ kind:"equipment", defId:bonusDefId, isNew:isNewBonus, eliteBonus:true, where });
     }
 
+    storyOnKill(m, b.isBoss, summary);
     const hasNotableDrop = resolvedDrops.some(d => ["rare","epic","legendary"].includes(getEntryRarity(d)));
     if(hasNotableDrop || m.isElite) sfx.levelUp();
     showVictoryReward(expGained, goldGained, resolvedDrops, m.isElite, summary);
@@ -6822,6 +6952,7 @@ function returnToOverworldView(){
   battleCanvas.style.display = "none";
   canvas.style.display = "block";
   document.getElementById("topMenu").style.display = "flex";
+  document.getElementById("storyTracker").style.display = "";
   document.getElementById("minimapCanvas").style.display = "block";
   document.getElementById("skillBar").hidden = true;
   document.getElementById("attackGauge").hidden = true;
@@ -7924,6 +8055,7 @@ function updateHud(){
   sanityBarEl.style.background = p.sanity < SANITY_SAFE_THRESHOLD ? "#e05fd0" : "#c15ce0";
   document.getElementById("hudGold").textContent = p.gold;
   updateHeaderChips();
+  storyRefresh();
   const statBadge = document.getElementById("statPointsBadge");
   if(p.statPoints.available > 0){ statBadge.textContent = p.statPoints.available; statBadge.hidden = false; }
   else statBadge.hidden = true;
@@ -8039,7 +8171,7 @@ const TUTORIAL_STEPS = [
     "• มองหาจุดลับเรืองแสงและดันเจี้ยนระหว่างเดิน\n" +
     "• ปราบบอสประจำแมพเพื่อไปแมพถัดไปผ่านประตูเดินทาง\n" +
     "• ปราบบอสแมพ 10 แล้ว ทำพิธีที่ 🛕 โบสถ์ในเมือง เพื่อขึ้นมิติถัดไป (ของ/เลเวลอยู่ครบ มอนแกร่งขึ้น มีกฎหลอมรวม)\n" +
-    "• เมือง = จุดปลอดภัย: ร้านค้า ช่างตีเหล็ก กล่องเก็บของ\n• เกมบันทึกอัตโนมัติ — เปิดใหม่แล้วกด \"เล่นต่อ\"" }
+    "• เมือง (แดนมานาอรุณ) = จุดปลอดภัย: ร้านค้า ช่างตีเหล็ก กล่องเก็บของ นักวิจัย หมอ พระ\n• 📜 ภารกิจหลัก (มุมขวาบน) = เนื้อเรื่อง ตามลูกศร 📜 บนจอ ได้เงิน EXP อุปกรณ์ และฉายา\n• 🧪 ตัวอย่างมานาจากแต่ละแมพ ขายให้นักวิจัยได้ (แมพไกล = ราคาดี)\n• เกมบันทึกอัตโนมัติ — เปิดใหม่แล้วกด \"เล่นต่อ\"" }
 ];
 let tutorialStep = 0;
 
@@ -8095,12 +8227,20 @@ function buildTownNpcs(){
     { id:"merchant",    kind:"merchant",  name:"พ่อค้าประจำเมือง",  x: TOWN_HUB_X + TOWN_NPC_RADIUS, y: TOWN_HUB_Y },                     // east
     { id:"town_lord",   kind:"town_lord", name:"เจ้าเมือง",         x: TOWN_HUB_X,                    y: TOWN_HUB_Y - TOWN_NPC_RADIUS },  // north
     { id:"blacksmith",  kind:"blacksmith",name:"ช่างตีเหล็ก",       x: TOWN_HUB_X,                    y: TOWN_HUB_Y + TOWN_NPC_RADIUS },  // south
-    { id:"temple",      kind:"temple",    name:"นักบวชแห่งบาเรีย",  x: TOWN_HUB_X + TOWN_NPC_RADIUS * 1.35, y: TOWN_HUB_Y - TOWN_NPC_RADIUS * 1.2 } // north-east, a little apart
+    { id:"temple",      kind:"temple",    name:"นักบวชแห่งบาเรีย",  x: TOWN_HUB_X + TOWN_NPC_RADIUS * 1.35, y: TOWN_HUB_Y - TOWN_NPC_RADIUS * 1.2 }, // north-east, a little apart
+    { id:"researcher",  kind:"researcher",name:"นักวิจัย",          x: TOWN_HUB_X + TOWN_NPC_RADIUS * 1.35, y: TOWN_HUB_Y + TOWN_NPC_RADIUS * 1.2 }, // south-east: research tower
+    { id:"doctor",      kind:"doctor",    name:"หมอ",              x: TOWN_HUB_X - TOWN_NPC_RADIUS * 2.3,  y: TOWN_HUB_Y + 20 },                          // far west: clinic
+    { id:"monk",        kind:"monk",      name:"พระ",              x: TOWN_HUB_X + TOWN_NPC_RADIUS * 2.3,  y: TOWN_HUB_Y + 20 }                           // far east: shrine
   ];
 }
 
 function interactWithNpc(npc){
   closeAllPanels();
+  if(storyTalk(npc)) return; // the main story speaks first when this person has something for it
+  interactWithNpcDefault(npc);
+}
+function interactWithNpcDefault(npc){
+  if(npc.kind === "researcher" || npc.kind === "doctor" || npc.kind === "monk"){ storyNpcDialog(npc.kind); return; }
   if(npc.kind === "storage"){
     sfx.click();
     renderStoragePanel();
@@ -8132,7 +8272,10 @@ const NPC_TALK_PROFILE = {
   merchant:   { name:"พ่อค้าประจำเมือง",  role:"🛒 ร้านค้า · ซื้อ–ขาย",            bg:["#c98f3a", "#2e1a08"] },
   blacksmith: { name:"ช่างตีเหล็ก",        role:"🔨 โรงตีเหล็ก · ตีบวกอุปกรณ์",      bg:["#d0643a", "#260c08"] },
   town_lord:  { name:"เจ้าเมือง",          role:"👑 ผู้ปกครองเมือง · ภารกิจ",        bg:["#7a5fd9", "#191230"] },
-  temple:     { name:"นักบวชแห่งบาเรีย",   role:"🛕 โบสถ์แห่งบาเรีย · พิธีข้ามมิติ",  bg:["#b7a8f0", "#221c48"] }
+  temple:     { name:"นักบวชแห่งบาเรีย",   role:"🛕 โบสถ์แห่งบาเรีย · พิธีข้ามมิติ",  bg:["#b7a8f0", "#221c48"] },
+  researcher: { name:"นักวิจัย",            role:"🗼 หอคอยวิจัย · หน่วยกวาดล้าง",     bg:["#4a9fd9", "#0c1a2e"] },
+  doctor:     { name:"หมอ",                 role:"🌿 โรงหมอ · การกลายพันธุ์และสติ",   bg:["#6fbf8a", "#0e2616"] },
+  monk:       { name:"พระ",                 role:"⛩️ ศาลเจ้า · ฝึกสมาธิ",              bg:["#e0a050", "#2e1a06"] }
 };
 const TALK_CPS_MS = 18; // one letter every 18 ms (~55/s) — fast enough never to feel like waiting
 function talkGraphemes(t){ return String(t).match(/[\s\S][ัิ-ฺ็-๎️‍]*/gu) || []; } // Thai vowels/tones stay on their letter
@@ -8189,6 +8332,7 @@ function drawTalkPortrait(kind, mouthOpen){
   c.scale(k, k);
   c.translate(56, 172); c.scale(2.35, 2.35);
   drawNpcAt(c, 0, 0, NPC_ROBE_COLORS[kind]);
+  drawNpcExtra(c, kind, 0, 0);
   if(kind === "town_lord"){        // gold crown with a ruby
     c.fillStyle = "#f2b632"; c.strokeStyle = "#a8781a"; c.lineWidth = 0.6;
     c.beginPath(); c.moveTo(-10,-66); c.lineTo(-11,-75); c.lineTo(-5.5,-70); c.lineTo(0,-78); c.lineTo(5.5,-70); c.lineTo(11,-75); c.lineTo(10,-66); c.closePath(); c.fill(); c.stroke();
@@ -8562,13 +8706,13 @@ document.getElementById("closeRefineBtn").addEventListener("click", ()=>{ sfx.cl
 /* ---- Town lord — accept/turn-in quest + town lore, through the conversation window (openTalk) ---- */
 const QUEST_DEFS = {
   junk_hunt: {
-    name: "กำจัดขยะในป่า",
-    npcGiveText: "เมืองเรามีปัญหาขยะเกลื่อนตามแมพผจญภัยมากเลย ช่วยฉันเก็บขยะกลับมาหน่อยได้ไหม?",
+    name: "เก็บกวาดเศษซากปนมานา",
+    npcGiveText: "ข้าวของของผู้คนที่ถูกมานากลืนยังเกลื่อนอยู่ทั่วแมพ ทิ้งไว้นานมันจะแปรปรวนต่อจนกลายเป็นอะไรที่แย่กว่าเดิม ช่วยเก็บกลับมาให้ข้าเผาทำลายทีได้ไหม?",
     itemId: "junk_scrap",
     required: 10,
     rewardGold: 100,
     rewardExp: 50,
-    npcCompleteText: "เยี่ยมมาก! เมืองสะอาดขึ้นเยอะเลย นี่รางวัลของเจ้า"
+    npcCompleteText: "เยี่ยมมาก! เผาทิ้งหมดนี่ มานาแถวนี้คงสงบลงบ้าง นี่รางวัลของเจ้า"
   }
 };
 const TOWN_LORD_LORE = [
@@ -8577,6 +8721,502 @@ const TOWN_LORD_LORE = [
   "เมืองนี้เป็น **เขตปลอดภัย** ไม่มีมอนสเตอร์กล้าย่างกรายเข้ามา จะพักหรือจัดของก็ตามสบาย",
   "ทางใต้ของลานเมืองมี **ช่างตีเหล็ก** ฝีมือดีที่สุดในแดนนี้ เอาอุปกรณ์ไปให้เขาตีบวกดูสิ"
 ];
+
+/* ============================================================
+   MAIN STORY (เควสหลัก) — "ฟื้นเสาบาเรีย 10 ต้น": one linear chain, chapter N = map N (any layer).
+   Not a gate: every map stays open exactly as before; the story only guides, tells the lore and rewards (once each).
+   State (saved with the player): game.player.story = { i, st:"offer"|"active", base, n, spots:[[x,y,done]], ch:{key:val}, done:[ids] }
+   Goal types: kill{tier,n} · boss{tier} · win{tier,flawless} · stat{key,n} · spot{tier,spots[],choice?}
+               drop{tier,slot,item,n,chance} · give{item,n} · meditate{tier} · talk{npc}
+   from = who offers it (null = starts by itself) · npc = who it's reported to (null = completes in the field)
+   rw = [gold, exp, gear] — the server reads the same numbers (econ_data().quests) to allow them in a save.
+   ============================================================ */
+const STORY_CHAPTERS = {
+  1: { name:"ผู้รอดจากเกวียน" },
+  2: { name:"เสียงกระซิบในป่า" },
+  3: { name:"จารึกพันปี" }
+};
+const STORY_LAST_CHAPTER = 3; // chapters written so far — the chain ends with a "to be continued" note
+const STORY_NPC_NAME = { town_lord:"เจ้าเมือง", merchant:"พ่อค้า", blacksmith:"ช่างตีเหล็ก", temple:"นักบวชแห่งบาเรีย", researcher:"นักวิจัย", doctor:"หมอ", monk:"พระ" };
+const STORY_QUESTS = [
+  // ---------- บทที่ 1 · ทุ่งหญ้าเริ่มต้น ----------
+  { id:"c1_wake", ch:1, name:"ตื่นกลางดง", from:null, npc:null, goal:{ type:"kill", tier:1, n:3 }, rw:[40, 60],
+    desc:"ปราบมอนสเตอร์ในแมพ 1 ให้ได้ 3 ตัว",
+    give:"เจ้าลืมตาขึ้นข้างซากเกวียนที่พลิกคว่ำ หัวยังมึนไปหมด จำอะไรไม่ได้เลยนอกจากเสียงระเบิดของ **มานา**…\nสไลม์ที่ถูกเจตจำนงแทรกแซงกำลังคืบเข้ามา — **ปราบมันให้ได้ 3 ตัว** ก่อนจะหาทางออกจากที่นี่",
+    done:"รอดมาได้… ไกลออกไปมีแสงวูบวาบของ **🌀 ประตูเดินทาง** มันอาจพาเจ้าไปถึงที่ปลอดภัยได้" },
+  { id:"c1_town", ch:1, name:"ที่มั่นสุดท้าย", from:null, npc:"town_lord", goal:{ type:"talk", npc:"town_lord" }, rw:[50, 95],
+    desc:"ไปที่ 🌀 ประตูเดินทาง วาปกลับ **แดนมานาอรุณ** แล้วคุยกับเจ้าเมือง",
+    give:"",
+    done:"เจ้า… รอดออกมาจากดงมอนสเตอร์นั่นได้ยังไงกัน? ที่นี่คือ **แดนมานาอรุณ** ที่มั่นสุดท้ายของผู้รอดชีวิต\n**บาเรีย** ที่ปกป้องเรามาพันปีเพิ่งแตกไป คนที่ใจไม่มั่นคงถูกเจตจำนงอื่นแทรกแซงจนกลายพันธุ์ ส่วนคนที่รอดได้แบบเจ้า คือคนที่มี **เจตจำนงแรงกล้า**\nเราต้องการคนแบบเจ้า ไปหา **นักวิจัย** ที่หอคอยวิจัยทางตะวันออกเฉียงใต้ของเมืองเถอะ" },
+  { id:"c1_squad", ch:1, name:"หน่วยกวาดล้าง", from:null, npc:"researcher", goal:{ type:"talk", npc:"researcher" }, rw:[50, 95],
+    desc:"คุยกับนักวิจัยที่ 🗼 หอคอยวิจัย (ตะวันออกเฉียงใต้ของเมือง)",
+    give:"",
+    done:"อ้อ ผู้รอดจากเกวียนขนของสินะ ข้าคือนักวิจัยประจำ **หน่วยกวาดล้าง**\nงานของเราคือกวาดล้างมอนสเตอร์และเก็บ **ตัวอย่างมานา** กลับมาวิจัย เพื่อหาทางสร้างบาเรียขึ้นใหม่\nแต่ก่อนรับเข้าหน่วย ข้าขอดูฝีมือเจ้าหน่อย" },
+  { id:"c1_test", ch:1, name:"บททดสอบจังหวะ", from:"researcher", npc:"researcher", goal:{ type:"stat", key:"perfectHits", n:5 }, rw:[100, 190],
+    desc:"ตีจังหวะ PERFECT ให้ได้ 5 ครั้ง (ตีตอนหลอดอยู่ในโซนสีทอง)",
+    give:"มอนสเตอร์ที่ถูกแทรกแซงมีจังหวะที่เจตจำนงของมันสั่นไหว ตีให้ตรงจังหวะนั้น — **PERFECT 5 ครั้ง** แล้วกลับมาหาข้า",
+    done:"ตาดีไม่เลว! ยินดีต้อนรับสู่หน่วยกวาดล้าง\nเอาล่ะ งานแรกของเจ้า… ข้าได้ข่าวว่าเกวียนที่เจ้าตกลงมา **ไม่ได้ล่มเพราะอุบัติเหตุ**" },
+  { id:"c1_wreck", ch:1, name:"ซากเกวียน", from:"researcher", npc:"researcher", rw:[100, 190],
+    goal:{ type:"spot", tier:1, spots:[
+      { icon:"🛒", name:"ซากเกวียน", text:"ซากเกวียนพลิกคว่ำ ลังไม้แตกกระจาย… ลังใบใหญ่ที่สุดถูก **งัดเปิดจากข้างนอก** ข้างในว่างเปล่า มีแต่ผงสีฟ้าเรืองแสงติดอยู่" },
+      { icon:"👣", name:"รอยเท้าประหลาด", text:"รอยเท้าคนหลายคู่เดินเป็นแถวเรียบร้อยเกินไป… มีเศษ **ผ้าสีขาว** ขาดติดอยู่กับพุ่มหนาม นี่ไม่ใช่รอยของมอนสเตอร์แน่ๆ" } ] },
+    desc:"สำรวจบริเวณเกวียนล่มในแมพ 1 (ตามลูกศร 📜)",
+    give:"ไปดูซากเกวียนที่ **แมพ 1** อีกครั้ง ข้าอยากรู้ว่าเกิดอะไรขึ้นกันแน่ — ตามลูกศร 📜 บนจอไปได้เลย",
+    done:"ผงสีฟ้านี่… **เศษศิลาบาเรีย**! เกวียนคันนั้นขนเศษศิลามาซ่อมบาเรีย แล้วถูกดักปล้น\nผ้าสีขาว… ข้าเคยได้ยินข่าวลือถึงกลุ่มคนชุดขาวที่เรียกตัวเองว่า **คณะหนึ่งเดียว** แต่ไม่คิดว่าจะมีจริง" },
+  { id:"c1_bark", ch:1, name:"ชื่อบนเปลือกไม้", from:"researcher", npc:"doctor", goal:{ type:"drop", tier:1, slot:4, item:"bark_tag", n:3, chance:0.5 }, rw:[100, 190],
+    desc:"เก็บ 🪵 ป้ายชื่อบนเปลือกไม้ 3 ชิ้น จากนักเดินทางไม้ผุ (แมพ 1) แล้วนำไปให้หมอ",
+    give:"อีกเรื่อง… **นักเดินทางไม้ผุ** ในแมพ 1 ใส่เสื้อผ้าแบบเดียวกับคนขับเกวียน\nข้าว่าพวกเขาคือ **เพื่อนร่วมทางของเจ้า** ที่ถูกเจตจำนงของต้นไม้แทรกแซง… เก็บป้ายชื่อที่ติดตัวพวกเขามา 3 ชิ้น แล้วเอาไปให้ **หมอ** ทางตะวันตกของเมือง",
+    done:"(หมอลูบป้ายชื่อที่ถูกเปลือกไม้กลืนไปครึ่งหนึ่งเบาๆ)\nตอนมานาระเบิด คนที่ใจหวาดกลัวจนไม่มีที่ยึด เจตจำนงรอบตัวจะไหลเข้ามาแทนที่… ต้นไม้ไม่เคยกลัวอะไร มันจึงกลืนพวกเขาได้ง่ายนัก\nเจ้ารอดมาได้เพราะใจเจ้ามีบางอย่างยึดไว้ แต่ **สติ** ก็หมดได้ถ้าไม่ฝึก ไปหา **พระ** ที่ศาลเจ้าทางตะวันออกของเมืองเถอะ" },
+  { id:"c1_mind", ch:1, name:"ใจที่ไม่หวั่นไหว", from:"monk", npc:"monk", goal:{ type:"meditate", tier:1 }, rw:[100, 190],
+    desc:"ทำสมาธิจนสติเต็ม **กลางแมพ 1** (ในเมืองไม่นับ) แล้วกลับมาหาพระ",
+    give:"ในเมืองใครๆ ก็ใจสงบได้ ลองไปนั่ง **ทำสมาธิกลางแมพ 1** ท่ามกลางมอนสเตอร์ดูสิ ทำจนสติเต็มแล้วค่อยกลับมา",
+    done:"เห็นไหม ใจที่นิ่งได้แม้อยู่กลางพายุ นั่นแหละ **เจตจำนงแรงกล้า** ของแท้\nจำไว้ มอนสเตอร์ไม่ได้ทำร้ายแค่ร่างกาย ทุกครั้งที่เจ้าฆ่า สติของเจ้าก็สึกกร่อนไปด้วย" },
+  { id:"c1_counter", ch:1, name:"จังหวะของศัตรู", from:"monk", npc:null, goal:{ type:"stat", key:"counters", n:3 }, rw:[100, 190],
+    desc:"โจมตีสวนกลับ 3 ครั้ง (หลบด้วย A/D ตอนมอนเงื้อ แล้วตีกลับทันที)",
+    give:"บทเรียนสุดท้ายของข้า — จิตที่นิ่งจะมองเห็นจังหวะของศัตรู **หลบด้วย A/D** ตอนมันเงื้อ แล้วตีกลับทันที ทำให้ได้ **สวนกลับ 3 ครั้ง**",
+    done:"ร่างกายเจ้าจำจังหวะสวนกลับได้แล้ว… ทันใดนั้นพื้นดินก็สั่นสะเทือน เสียงคำรามดังมาจากใจกลางแมพ 1 — **ราชันย์หินยักษ์** ตื่นแล้ว!" },
+  { id:"c1_boss", ch:1, name:"เสียงคำรามใต้หิน", from:null, npc:"temple", goal:{ type:"boss", tier:1 }, rw:[270, 510, 1], finale:true,
+    desc:"ปราบ 👑 ราชันย์หินยักษ์ (บอสแมพ 1) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"ในอกของราชันย์หินยักษ์ มีบางอย่าง **เรืองแสงสีฟ้าเต้นเป็นจังหวะ** เหมือนหัวใจ…",
+    done:"(นักบวชรับก้อนหินที่เต้นเป็นจังหวะเหมือนหัวใจไว้ในมือ)\nนี่คือ **ศิลาหลักบาเรีย** หนึ่งในสิบก้อนที่กระเด็นไปตอนบาเรียแตก! สิงโตหินตัวนั้นกลืนมันไว้ มานาจึงพองร่างมันจนใหญ่โตขนาดนั้น\n(แสงสีทองพุ่งขึ้นจากยอดโบสถ์ — **เสาบาเรียต้นที่ 1 ถูกจุดขึ้นแล้ว**)\n…แล้วเสียงหนึ่งก็ดังก้องในหัวเจ้า \"ทำไมต้องฝืนทนเจ็บอยู่อีกเล่า… อีกไม่นานหรอก ข้าจะพาทุกคนไปสู่ที่ที่ไม่มีความทุกข์\"" },
+
+  // ---------- บทที่ 2 · ป่าเงามืด ----------
+  { id:"c2_child", ch:2, name:"เด็กที่หายไป", from:"merchant", npc:"merchant", rw:[350, 600],
+    goal:{ type:"spot", tier:2, spots:[
+      { icon:"👟", name:"รองเท้าเล็กๆ", text:"รองเท้าเด็กข้างหนึ่งตกอยู่ริมทาง พื้นรองเท้าปักชื่อไว้ว่า **มิว**" },
+      { icon:"🧸", name:"ตุ๊กตาไม้", text:"ตุ๊กตาไม้ถูกวางไว้บนตอไม้อย่างตั้งใจ เหมือนมีคนวางไว้ให้หา… รอบๆ **ไม่มีรอยต่อสู้เลย**" },
+      { icon:"🏳️", name:"ผ้าคลุมสีขาว", text:"ผ้าคลุมสีขาวแขวนอยู่บนกิ่งไม้ ตรงอกปักตรา **วงกลมหลายวงหลอมเป็นวงเดียว**… เด็กไม่ได้หลงป่า — มีคน **พาตัวไป**" } ] },
+    desc:"ตามรอยเด็กที่หายไปในแมพ 2 (ตามลูกศร 📜)",
+    give:"(พ่อค้ามือสั่น) นักกวาดล้าง… ลูกสาวข้า **มิว** หายไปใน **ป่าเงามืด** (แมพ 2) ตั้งแต่สามวันก่อน ข้าออกไปหาเองไม่ได้ ได้โปรดช่วยตามหาแกที",
+    done:"ผ้าคลุมนี่… ตราของ **คณะหนึ่งเดียว** พวกมันชอบมาเทศน์หน้าเมืองว่า \"การหลอมรวมคือการหลุดพ้น\"\nมิวยังมีชีวิตอยู่ใช่ไหม… ใช่ไหม? ขอบใจนะ อย่างน้อยข้าก็รู้แล้วว่าต้องตามหาใคร" },
+  { id:"c2_lantern", ch:2, name:"ตะเกียงที่ถูกขโมย", from:"town_lord", npc:"temple", goal:{ type:"drop", tier:2, slot:2, item:"barrier_lantern", n:1, chance:0.25 }, rw:[350, 600],
+    desc:"ชิง 🏮 ตะเกียงบาเรียคืนจากก็อบลินรากไม้ (แมพ 2) แล้วนำไปให้นักบวช",
+    give:"เรื่องคณะหนึ่งเดียวข้าได้ยินแล้ว… ยังมีอีกเรื่อง **ตะเกียงบาเรีย** ที่ใช้นำทางในป่าเงามืดถูกขโมยไป ข้าเห็น **ก็อบลินรากไม้** ถือแสงสีฟ้าวิ่งไปมาในแมพ 2 ไปชิงคืนมาให้นักบวชที",
+    done:"ตะเกียงดวงนี้คือชิ้นส่วนเล็กๆ ของบาเรีย ใช้เก็บแสงของมันไว้นำทาง… ก็อบลินไม่รู้หรอกว่ามันคืออะไร แต่ **มีคนสอนให้มันขโมย**\nชิ้นส่วนบาเรียกำลังหายไปทีละชิ้น" },
+  { id:"c2_incense", ch:2, name:"ธูปจำทาง", from:"doctor", npc:"doctor", goal:{ type:"give", item:"herb", n:5 }, rw:[350, 600],
+    desc:"นำ 🌿 สมุนไพร 5 ต้น ไปให้หมอ (ก็อบลินดรอป หรือซื้อจากพ่อค้า)",
+    give:"ป่าเงามืดกลืนทั้งแสงและ **สมาธิ** ใครอยู่นานจะลืมว่าตัวเองกำลังจะไปไหน — พวก **คนหลงป่า** ก็เป็นแบบนั้น\nเอา **สมุนไพร 5 ต้น** มาให้ข้า ข้าจะทำธูปที่ช่วยให้ใจเจ้ายังจำทางกลับได้",
+    done:"(กลิ่นธูปฉุนจนแสบจมูก แต่ความคิดกลับแจ่มใสขึ้นอย่างประหลาด)\nจุดติดตัวไว้ตอนเข้าป่า แล้วถ้าเจอใคร **ที่ยังพูดได้** ลองคุยกับเขาดู บางคนอาจยังไปไม่ไกลเกินกลับ" },
+  { id:"c2_preacher", ch:2, name:"ผู้เผยแผ่ชุดขาว", from:null, npc:null, rw:[350, 600],
+    goal:{ type:"spot", tier:2, spots:[
+      { icon:"🕯️", name:"ผู้เผยแผ่ชุดขาว", text:"ชายชุดขาวยืนสงบนิ่งกลางป่า มอนสเตอร์รอบตัวไม่แตะต้องเขาเลย\n\"ท่านนักกวาดล้าง… ท่านเคยสงสัยไหม ว่าทำไมต้องทนเจ็บปวดเพื่อเป็น 'ตัวเอง' ต้นไม้ไม่เคยทุกข์ หินไม่เคยร้องไห้ **ท่านปรมัตถ์** สอนเราว่า เมื่อทุกสิ่งหลอมเป็นหนึ่ง ความทุกข์จะไม่มีที่อยู่\"",
+        choice:{ key:"c2p", options:[
+          { val:"listen", icon:"👂", label:"ฟังเขาพูดจนจบ", text:"เขาพูดถึงโลกที่ไม่มีใครต้องเสียใครไป ด้วยน้ำเสียงอ่อนโยนราวกับพูดความจริง… พอพูดจบเขาก็โค้ง แล้วเดินหายเข้าไปในเงาไม้\nชื่อ **ปรมัตถ์ ผู้เมตตา** ติดอยู่ในหัวเจ้าไม่ยอมหายไป" },
+          { val:"chase", icon:"⚔️", label:"ไล่เขาไป", text:"\"ความเมตตาของท่านปรมัตถ์จะรอท่านอยู่เสมอ\" — เขาถอยหลังเข้าไปในเงาไม้ แล้วหายไปราวกับไม่เคยมีตัวตน" } ] } } ] },
+    desc:"ตามแสงเทียนประหลาดในแมพ 2 (ตามลูกศร 📜)",
+    give:"ขณะเดินออกจากร้านหมอ กลิ่นธูปยังติดตัว… เจ้านึกขึ้นได้ว่าเคยเห็น **แสงเทียน** วูบวาบอยู่ลึกเข้าไปใน **ป่าเงามืด** (แมพ 2)",
+    done:"ท่านปรมัตถ์… ผู้เมตตา? คนทั้งป่าถูกกลืน แต่เขากลับเรียกมันว่าความเมตตา" },
+  { id:"c2_lost", ch:2, name:"คนที่ยังจำทางกลับบ้าน", from:null, npc:null, rw:[350, 600],
+    goal:{ type:"spot", tier:2, spots:[
+      { icon:"🌿", name:"ชายผู้ยังพูดได้", text:"ครึ่งตัวของชายคนนี้กลายเป็นรากไม้ฝังลงดินไปแล้ว แต่ตายังมีแวว\n\"ข้าชื่อ… ข้าชื่ออะไรนะ… ข้าจำได้แค่ว่าต้องกลับบ้าน… ช่วยข้าที\"",
+        choice:{ key:"c2l", options:[
+          { val:"doctor", icon:"🩺", label:"ตัดรากแล้วพาไปหาหมอ", text:"เจ้าค่อยๆ ตัดรากที่เพิ่งงอกออก จุดธูปของหมอไว้ข้างเขา ลมหายใจของเขาสงบลง \"…บ้าน\" — หน่วยกู้ภัยของเมืองจะมารับตัวเขาไปหาหมอ" },
+          { val:"release", icon:"🕊️", label:"ปลดทุกข์ให้เขา", text:"\"…ขอบใจ\" รากไม้ที่เคยเป็นตัวเขาคลายออก แล้วสลายเป็นละอองแสงสีเขียวลอยขึ้นฟ้า ใบหน้าสุดท้ายดูสงบกว่าที่เคย" } ] } } ] },
+    desc:"ตามเสียงเรียกขอความช่วยเหลือในแมพ 2 (ตามลูกศร 📜)",
+    give:"มีเสียงแหบแห้งร้องขอความช่วยเหลือ ดังมาจากที่ไหนสักแห่งในป่าเงามืด…",
+    done:"ป่าเงียบลงไปครู่หนึ่ง แล้วเสียงคำรามทุ้มต่ำก็ดังมาจากใจกลางป่า — **เจ้าป่าเงามืด** กำลังปกป้องอะไรบางอย่างที่เรืองแสงสีฟ้า" },
+  { id:"c2_boss", ch:2, name:"หัวใจของป่า", from:null, npc:"temple", goal:{ type:"boss", tier:2 }, rw:[930, 1600, 1], finale:true,
+    desc:"ปราบ 👑 เจ้าป่าเงามืด (บอสแมพ 2) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"เงาไม้ทั้งป่าไหลเข้าหาร่างของเจ้าป่า… กลางลำตัวมันมี **ศิลาหลักบาเรีย** ฝังอยู่",
+    done:"(ศิลาก้อนที่สองเปล่งแสงรับกับก้อนแรก — **เสาบาเรียต้นที่ 2 ถูกจุดขึ้นแล้ว**)\nนักบวชนิ่งไปนานเมื่อได้ยินชื่อ **ปรมัตถ์** \"…ชื่อนั้น ข้าไม่ได้ยินมานานแล้ว\" แต่ไม่ยอมเล่าอะไรต่อ\nส่วนมิว… ถ้าคณะหนึ่งเดียวพาแกไป แกก็ยังมีชีวิตอยู่ **อย่าเพิ่งหมดหวัง**" },
+
+  // ---------- บทที่ 3 · ทะเลทรายเพลิง ----------
+  { id:"c3_tablets", ch:3, name:"แผ่นจารึกใต้ทราย", from:"researcher", npc:"researcher", rw:[580, 980],
+    goal:{ type:"spot", tier:3, spots:[
+      { icon:"🗿", name:"แผ่นจารึกที่ 1", text:"ใต้ผืนทรายร้อนมีแผ่นหินสลักอักษรโบราณ… รูปวงกลมใหญ่ครอบเมืองไว้ แล้วมี **คลื่น** ซัดเข้ามา" },
+      { icon:"🗿", name:"แผ่นจารึกที่ 2", text:"วงกลมวงเดิม **แตกเป็นเสี่ยงๆ** คนตัวเล็กๆ ในภาพกลายเป็นรูปร่างครึ่งคนครึ่งสัตว์" },
+      { icon:"🗿", name:"แผ่นจารึกที่ 3", text:"วงกลมวงใหม่ถูกวาดขึ้น คราวนี้มี **ช่องว่างเล็กๆ** เว้นไว้รอบวง คลื่นไหลผ่านช่องว่างออกไป… และเมืองยังอยู่" } ] },
+    desc:"ขุดแผ่นจารึก 3 แผ่นในแมพ 3 (ตามลูกศร 📜)",
+    give:"ข้าเจอบันทึกเก่าว่าที่ **ทะเลทรายเพลิง** (แมพ 3) เคยมีเมืองที่รอดจากคลื่นมานาใหญ่ครั้งก่อนเมื่อพันปีที่แล้ว ไปหา **แผ่นจารึก** ของพวกเขามาให้ข้าที",
+    done:"เข้าใจแล้ว! บาเรียรุ่นแรก **แข็งเกินไป** พอคลื่นใหญ่มาถึงจึงแตกทั้งวง ส่วนบาเรียรุ่นหลังเว้น **ช่องระบาย** ไว้ให้คลื่นผ่าน แรงกระแทกจึงลดลง\nแปลว่าเสาที่เราจุดขึ้นใหม่ต้องมีช่องระบายด้วย ไม่งั้นคลื่นลูกหน้าก็พังอีก" },
+  { id:"c3_wrap", ch:3, name:"ผ้าพันแผลจารึก", from:"researcher", npc:"researcher", goal:{ type:"drop", tier:3, slot:4, item:"inscribed_wrap", n:3, chance:0.5 }, rw:[580, 980],
+    desc:"เก็บ 📜 ผ้าพันแผลจารึก 3 ผืน จากมัมมี่พเนจร (แมพ 3)",
+    give:"**มัมมี่พเนจร** ในแมพ 3 พันตัวด้วยผ้าที่มีอักษรแบบเดียวกับแผ่นจารึก เอามาให้ข้าสัก 3 ผืน ข้าต้องการสูตรคำนวณช่องระบาย",
+    done:"พวกเขาไม่ใช่ศพ… พวกเขาคือ **ผู้รอดจากคลื่นครั้งก่อน** ที่เขียนเจตจำนงของตัวเองลงบนผ้าแล้วพันตัวไว้ เพื่อไม่ให้ลืมว่าตัวเองเป็นใคร\nพันปีผ่านไป ตัวอักษรบนผ้าจางลง พวกเขาจึงเดินวนอยู่อย่างนั้น…\nสูตรครบแล้ว ไปให้ **ช่างตีเหล็ก** ช่วยตีสลักช่องระบายที" },
+  { id:"c3_vent", ch:3, name:"สลักช่องระบาย", from:null, npc:"blacksmith", goal:{ type:"give", item:"mana_stone", n:5 }, rw:[580, 980],
+    desc:"นำ 💠 หินมานา 5 ก้อน ไปให้ช่างตีเหล็กตีสลักช่องระบาย",
+    give:"ช่างตีเหล็กต้องใช้ **หินมานา 5 ก้อน** ในการตีสลัก เตรียมไปให้เขาได้เลย",
+    done:"หึ งานละเอียดแบบนี้ไม่ได้ทำมาหลายปีแล้ว (ประกายไฟสีฟ้าแตกกระจายทุกครั้งที่ค้อนกระทบ)\nเรียบร้อย **สลักช่องระบาย** พร้อมตอกเข้าฐานเสาแล้ว คลื่นลูกหน้ามาเมื่อไหร่ บาเรียจะโอนอ่อนตามแทนที่จะแตก" },
+  { id:"c3_heat", ch:3, name:"ทรายร้อนไม่ให้พลาด", from:"blacksmith", npc:null, goal:{ type:"win", tier:3, flawless:true }, rw:[580, 980],
+    desc:"ชนะมอนสเตอร์ในแมพ 3 โดยไม่เสียเลือดเลย 1 ครั้ง",
+    give:"อ้อ ก่อนไปเจอเจ้าจอมเพลิงนั่น… ทรายที่นั่นร้อนจนโลหะอ่อนตัว เกราะอะไรก็ช่วยไม่ได้ **พลาดครั้งเดียวก็ไหม้** ลองชนะสักไฟต์ในแมพ 3 **โดยไม่โดนตีเลย** ดูก่อน",
+    done:"ไม่มีรอยไหม้สักรอย… ขณะที่เจ้ากำลังพักหายใจ ขอบฟ้าของทะเลทรายก็ลุกเป็นไฟ ดวงอาทิตย์เหมือน **ถูกดึงลงมาหลอมรวมกับผืนทราย** — **จอมเพลิงทะเลทราย** ปรากฏตัวแล้ว" },
+  { id:"c3_boss", ch:3, name:"ดวงอาทิตย์ที่ถูกหลอม", from:null, npc:"temple", goal:{ type:"boss", tier:3 }, rw:[1540, 2600, 1], finale:true,
+    desc:"ปราบ 👑 จอมเพลิงทะเลทราย (บอสแมพ 3) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"ความร้อนแผดเผาจนอากาศบิดเบี้ยว ในเปลวไฟมี **ศิลาหลักบาเรีย** ลอยวนอยู่",
+    done:"(ศิลาก้อนที่สามยังร้อนระอุ พอสลักช่องระบายถูกตอกลงไป เสาทั้งสามต้นก็ส่งเสียงกังวานพร้อมกัน)\n**เสาบาเรียต้นที่ 3 ถูกจุดขึ้นแล้ว — ต้นแรกที่มีช่องระบาย**\n\"แสงอาทิตย์หลอมรวมกับทราย… นั่นไม่ใช่มานาแปรปรวนตามธรรมชาติ\" นักบวชพูดเสียงเบา \"นั่นคือ **กฎแห่งการหลอมรวม** และข้ารู้จักคนเพียงคนเดียวที่ครอบครองมัน\"\n(บทที่ 4 จะมาในอัปเดตถัดไป)" }
+];
+const STORY_BY_ID = Object.fromEntries(STORY_QUESTS.map(q => [q.id, q]));
+const STORY_SPOT_R = 36;
+
+function storyState(){
+  const p = game.player;
+  if(!p.story || typeof p.story !== "object") p.story = { i:0, st:"active", base:0, n:0, spots:null, ch:{}, done:[] };
+  const s = p.story;
+  if(!Array.isArray(s.done)) s.done = [];
+  if(!s.ch || typeof s.ch !== "object") s.ch = {};
+  return s;
+}
+function storyQuest(){ const s = storyState(); return STORY_QUESTS[s.i] || null; }
+function storyTier(q){ return q.goal.tier || (q.ch || 1); }
+function storyItemCount(id){
+  let n = 0;
+  for(const e of game.inventory.concat(game.storage || [])) if(e && e.kind !== "equipment" && e.id === id) n += e.qty || 0;
+  return n;
+}
+function storyTakeItems(id, n){
+  for(const list of [game.inventory, game.storage || []]){
+    for(let i = list.length - 1; i >= 0 && n > 0; i--){
+      const e = list[i];
+      if(!e || e.kind === "equipment" || e.id !== id) continue;
+      const take = Math.min(n, e.qty); e.qty -= take; n -= take;
+      if(e.qty <= 0) list.splice(i, 1);
+    }
+  }
+}
+// { have, need } for the active quest
+function storyProgress(q){
+  const s = storyState(), g = q.goal;
+  if(g.type === "stat") return { have: Math.max(0, (game.stats[g.key] || 0) - (s.base || 0)), need: g.n };
+  if(g.type === "spot") return { have: (s.spots || []).filter(x => x[2]).length, need: g.spots.length };
+  if(g.type === "drop" || g.type === "give") return { have: storyItemCount(g.item), need: g.n };
+  if(g.type === "kill") return { have: s.n || 0, need: g.n };
+  if(g.type === "talk") return { have: 0, need: 1 };
+  return { have: s.n || 0, need: 1 }; // boss / win / meditate
+}
+function storyReady(q){ const pr = storyProgress(q); return pr.have >= pr.need; }
+function storyWho(kind){ return STORY_NPC_NAME[kind] || kind; }
+
+function storyStart(){
+  const s = storyState(), q = storyQuest();
+  if(!q) return;
+  s.st = "active"; s.n = 0; s.spots = null;
+  s.base = q.goal.type === "stat" ? (game.stats[q.goal.key] || 0) : 0;
+  storyEnsureSpots();
+  showDiscoveryBanner("📜 ภารกิจหลักใหม่", `บทที่ ${q.ch} · ${q.name}`, 2600);
+  storyRefresh();
+}
+// quest spots are placed the first time the player stands on their map, then kept (saved) so they never move
+function storyEnsureSpots(){
+  const s = storyState(), q = storyQuest();
+  if(!q || s.st !== "active" || q.goal.type !== "spot" || s.spots || game.mapTier !== q.goal.tier) return;
+  s.spots = q.goal.spots.map(() => {
+    let spot = pickFreeWorldPosition(160);
+    for(let k = 0; k < 8 && dist(spot.x, spot.y, PLAYER_SPAWN_X, PLAYER_SPAWN_Y) < 260; k++) spot = pickFreeWorldPosition(160);
+    return [Math.round(spot.x), Math.round(spot.y), 0];
+  });
+}
+
+// hand out the rewards of the current quest and move to the next one
+function storyComplete(){
+  const s = storyState(), q = storyQuest();
+  if(!q) return null;
+  const p = game.player, [gold, exp, gear] = q.rw;
+  if(q.goal.type === "drop" || q.goal.type === "give") storyTakeItems(q.goal.item, q.goal.n);
+  p.gold += gold;
+  game.stats.goldEarned = (game.stats.goldEarned || 0) + gold;
+  gainExp(exp);
+  let gearName = null;
+  if(gear){
+    const t = storyTier(q);
+    const pool = GEAR_KIND_IDS.filter(id => EQUIPMENT_DEFS[id].rarity === "rare" && !EQUIPMENT_DEFS[id].cosmeticOnly);
+    const defId = resolveTierDefId(pool[randInt(0, pool.length - 1)], t);
+    registerDiscovery({ kind:"equipment", defId });
+    addEquipmentToInventory(rollEquipmentInstance(defId));
+    gearName = EQUIPMENT_DEFS[defId].name;
+  }
+  if(!s.done.includes(q.id)) s.done.push(q.id);
+  s.i += 1; s.n = 0; s.spots = null; s.base = 0;
+  const next = storyQuest();
+  if(next){
+    if(next.from) s.st = "offer";
+    else { s.st = "active"; s.base = next.goal.type === "stat" ? (game.stats[next.goal.key] || 0) : 0; storyEnsureSpots(); }
+  }
+  sfx.levelUp();
+  showToast(`✅ ภารกิจสำเร็จ: ${q.name} · +${gold} 💰 +${exp} EXP` + (gearName ? ` · ได้ ${gearName}` : ""));
+  if(q.finale) showDiscoveryBanner("🛕 เสาบาเรียต้นที่ " + storyPillarsLit() + " ถูกจุดขึ้นแล้ว!", `จบบทที่ ${q.ch}: ${STORY_CHAPTERS[q.ch].name}`, 3200);
+  checkTitles(false);
+  updateHud(); renderSkillBar && renderSkillBar();
+  saveGameNow();
+  return { q, next, gearName };
+}
+function storyPillarsLit(){
+  if(!game || !game.player || !game.player.story) return 0;
+  return (game.player.story.done || []).filter(id => STORY_BY_ID[id] && STORY_BY_ID[id].finale).length;
+}
+function storyRewardChips(q){
+  return `<div class="tk-chips"><span class="tk-chip">💰 ${q.rw[0]}</span><span class="tk-chip">✨ ${q.rw[1]} EXP</span>${q.rw[2] ? '<span class="tk-chip">🎁 อุปกรณ์หายาก</span>' : ""}</div>`;
+}
+function storyCard(q, tagHtml){
+  const pr = storyProgress(q);
+  const bar = storyState().st === "active" && pr.need > 1 && q.goal.type !== "talk"
+    ? `<div class="tk-bar"><i style="width:${Math.min(100, Math.round(pr.have / pr.need * 100))}%"></i></div>` : "";
+  return `<div class="tk-card"><h5><span>📜 บทที่ ${q.ch} · ${netEsc(q.name)}</span>${tagHtml || ""}</h5>
+    <div>${talkMarkup(q.desc)}${pr.need > 1 && q.goal.type !== "talk" ? ` <b>${Math.min(pr.have, pr.need)}/${pr.need}</b>` : ""}</div>${bar}${storyRewardChips(q)}</div>`;
+}
+function talkMarkup(t){ return netEsc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
+
+// What this NPC has to say about the story right now: "offer" | "turnin" | null
+function storyNpcState(kind){
+  if(!game || !game.player) return null;
+  const s = storyState(), q = storyQuest();
+  if(!q) return null;
+  if(s.st === "offer") return q.from === kind ? "offer" : null;
+  if(q.goal.type === "talk") return q.goal.npc === kind ? "turnin" : null;
+  if(q.npc === kind && storyReady(q)) return "turnin";
+  return null;
+}
+// Returns true when the story took over this conversation.
+function storyTalk(npc){
+  const kind = npc.kind, state = storyNpcState(kind);
+  if(!state) return false;
+  const q = storyQuest();
+  const other = { icon:"💬", label:"ธุระอื่น", sub:"คุยเรื่องอื่นก่อน", onPick: ()=>{ closeTalk(); interactWithNpcDefault(npc); } };
+  const anchor = { x: npc.x, y: npc.y, r: npcTalkRange(npc) + 90 };
+  if(state === "offer"){
+    openTalk({ npcKind:kind, text:q.give, extra:storyCard(q, '<span class="tk-tag new">ภารกิจหลัก</span>'), anchor, choices:[
+      { icon:"✅", label:"รับภารกิจ", sub:q.name, cls:"primary", onPick: ()=>{ storyStart(); storyAfterStart(npc); } },
+      other, { icon:"👣", label:"ไว้ทีหลัง", leave:true } ] });
+    return true;
+  }
+  openTalk({ npcKind:kind, text:q.done, extra:storyCard(q, '<span class="tk-tag ok">พร้อมส่ง</span>'), anchor, choices:[
+    { icon:"🎁", label: q.goal.type === "talk" ? "รับทราบ" : "ส่งภารกิจ", sub:"รับรางวัล", cls:"gold", onPick: ()=>{ const r = storyComplete(); storyAfterComplete(npc, r); } },
+    other ] });
+  return true;
+}
+function storyAfterStart(npc){
+  const q = storyQuest();
+  openTalk({ npcKind:npc.kind, text:"ฝากด้วยนะ", extra:storyCard(q, '<span class="tk-tag">กำลังทำ</span>'),
+    anchor:{ x:npc.x, y:npc.y, r:npcTalkRange(npc) + 90 }, choices:[{ icon:"👍", label:"ไปล่ะ", leave:true }] });
+}
+// after a hand-in at an NPC: chain straight into what comes next
+function storyAfterComplete(npc, r){
+  const next = r && r.next, s = storyState();
+  const anchor = { x:npc.x, y:npc.y, r:npcTalkRange(npc) + 90 };
+  if(!next){ openTalk({ npcKind:npc.kind, text:"เรื่องราวยังไม่จบเพียงเท่านี้… (บทต่อไปจะมาในอัปเดตถัดไป)", anchor, choices:[{ icon:"👍", label:"ตกลง", leave:true }] }); return; }
+  if(s.st === "offer" && next.from === npc.kind){ storyTalk(npc); return; }
+  const line = s.st === "active" ? (next.give || "ไปต่อกันเถอะ") : `มีคนรอเจ้าอยู่ — ไปคุยกับ **${storyWho(next.from)}** ต่อได้เลย`;
+  openTalk({ npcKind:npc.kind, text:line, extra: s.st === "active" ? storyCard(next, '<span class="tk-tag">กำลังทำ</span>') : "",
+    anchor, choices:[{ icon:"👍", label:"ไปล่ะ", leave:true }] });
+}
+// quests that finish in the field: queue the scene until we're back on the map (not mid-fight / mid-talk)
+let storyPendingScene = null;
+function storyFieldComplete(){
+  const r = storyComplete();
+  if(!r) return;
+  const s = storyState(), next = r.next;
+  let text = r.q.done;
+  if(next && s.st === "active" && next.give) text += "\n\n" + next.give;
+  else if(next && s.st === "offer") text += `\n\n📜 ภารกิจถัดไป: ไปคุยกับ **${storyWho(next.from)}** ในเมือง`;
+  storyPendingScene = { text, extra: next && s.st === "active" ? storyCard(next, '<span class="tk-tag">กำลังทำ</span>') : "" };
+}
+function storyShowPendingScene(){
+  if(!storyPendingScene || game.inBattle || talk.open || document.getElementById("tutorialOverlay").classList.contains("show")) return;
+  if(!document.getElementById("victoryPanel").hidden || !document.getElementById("defeatPanel").hidden) return;
+  const sc = storyPendingScene; storyPendingScene = null;
+  openTalk({ emoji:"📜", name:"ภารกิจหลัก", role:"🛕 ฟื้นเสาบาเรีย", bg:["#d9a441", "#2a1a06"], text:sc.text, extra:sc.extra,
+    choices:[{ icon:"👍", label:"ไปต่อ", leave:true }] });
+}
+
+// ---- hooks called from the game ----
+function storyOnKill(m, isBoss, summary){
+  if(!game || !game.player) return;
+  const s = storyState(), q = storyQuest();
+  if(!q || s.st !== "active" || m.isDungeonRoom) return;
+  const g = q.goal, onTier = game.mapTier === g.tier;
+  if(g.type === "kill" && onTier && !isBoss) s.n = (s.n || 0) + 1;
+  else if(g.type === "boss" && onTier && isBoss) s.n = 1;
+  else if(g.type === "win" && onTier && (!g.flawless || summary.hpLost === 0)) s.n = 1;
+  if(q.npc === null && storyReady(q)) storyFieldComplete();
+  storyRefresh();
+}
+// the quest item rides along with the kill's normal drops
+function storyExtraDrop(m, rolledDrops){
+  const s = storyState(), q = storyQuest();
+  if(!q || s.st !== "active" || q.goal.type !== "drop" || m.isDungeonRoom) return;
+  const g = q.goal;
+  if(game.mapTier !== g.tier || m.type !== g.slot || storyItemCount(g.item) >= g.n) return;
+  if(Math.random() < g.chance * (m.isElite ? 2 : 1)) rolledDrops.push({ kind:"consumable", id:g.item });
+}
+function storyOnMeditateFull(){
+  const s = storyState(), q = storyQuest();
+  if(!q || s.st !== "active" || q.goal.type !== "meditate" || game.mapTier !== q.goal.tier) return;
+  s.n = 1;
+  if(q.npc === null) storyFieldComplete(); else showToast(`🧘 สำเร็จ — กลับไปหา${storyWho(q.npc)}ได้เลย`);
+  storyRefresh();
+}
+function storyOnBattleStart(isBoss){
+  const s = storyState(), q = storyQuest();
+  if(isBoss && q && s.st === "active" && q.goal.type === "boss" && game.mapTier === q.goal.tier && q.fight)
+    showDiscoveryBanner("📜 " + q.name, q.fight.replace(/\*\*/g, ""), 3000);
+}
+function storyStatTick(){ // stat goals (perfect hits, counters…) complete on their own once reached
+  const s = storyState(), q = storyQuest();
+  if(q && s.st === "active" && q.goal.type === "stat" && q.npc === null && storyReady(q)) storyFieldComplete();
+}
+// walked onto a quest spot
+function storyCheckSpots(){
+  const s = storyState(), q = storyQuest();
+  if(!q || s.st !== "active" || q.goal.type !== "spot" || game.mapTier !== q.goal.tier || talk.open) return;
+  storyEnsureSpots();
+  const p = game.player;
+  const k = (s.spots || []).findIndex(x => !x[2] && dist(p.x, p.y, x[0], x[1]) < STORY_SPOT_R);
+  if(k < 0) return;
+  const def = q.goal.spots[k];
+  p.targetX = null; p.targetY = null; p.path = null; p.destinationMarker = null;
+  const finish = (extraText) => {
+    s.spots[k][2] = 1;
+    sfx.click();
+    const allDone = storyReady(q);
+    if(allDone && q.npc === null){ closeTalk(); storyFieldComplete(); storyShowPendingScene(); return; }
+    const tail = allDone ? `\n\n📜 สำรวจครบแล้ว — กลับไปรายงาน **${storyWho(q.npc)}** ในเมือง` : "";
+    openTalk({ emoji:def.icon, name:def.name, role:"📜 " + q.name, bg:["#d9a441", "#2a1a06"], text:(extraText || def.text) + tail,
+      extra:storyCard(q), choices:[{ icon:"👍", label:"ไปต่อ", leave:true }] });
+    storyRefresh();
+  };
+  if(def.choice){
+    openTalk({ emoji:def.icon, name:def.name, role:"📜 " + q.name, bg:["#d9a441", "#2a1a06"], text:def.text,
+      choices:def.choice.options.map(o => ({ icon:o.icon, label:o.label, onPick: ()=>{ s.ch[def.choice.key] = o.val; finish(o.text); } })) });
+  } else finish();
+}
+function storyActiveSpots(){
+  if(!game || !game.player || !game.player.story) return [];
+  const s = game.player.story, q = STORY_QUESTS[s.i];
+  if(!q || s.st !== "active" || q.goal.type !== "spot" || game.mapTier !== q.goal.tier || !s.spots) return [];
+  return s.spots.map((x, k) => ({ x:x[0], y:x[1], done:!!x[2], def:q.goal.spots[k] })).filter(x => !x.done);
+}
+function drawStorySpotAt(ctx, x, y){
+  const t = performance.now() / 1000, pulse = 0.5 + 0.5 * Math.sin(t * 3);
+  ctx.save(); ctx.translate(x, y - 6);
+  ctx.fillStyle = `rgba(255,209,102,${0.18 + 0.2 * pulse})`;
+  ctx.beginPath(); ctx.arc(0, 0, 26 + pulse * 4, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = `rgba(255,236,170,${0.6 + 0.4 * pulse})`; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.stroke();
+  ctx.font = "24px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText("📜", 0, -2 - pulse * 3);
+  ctx.restore();
+}
+// where the story wants you on THIS map (world points) — used for the edge arrows
+function storyTargets(){
+  if(!game || !game.player || !game.player.story) return [];
+  const s = game.player.story, q = STORY_QUESTS[s.i];
+  if(!q) return [];
+  if(game.mapTier === TOWN_TIER){
+    const who = s.st === "offer" ? q.from : (q.goal.type === "talk" ? q.goal.npc : (storyReady(q) ? q.npc : null));
+    const npc = who && game.npcs.find(n => n.kind === who);
+    if(npc) return [{ x:npc.x, y:npc.y - 30 }];
+    if(s.st === "active" && game.travelGate && !who) return [{ x:game.travelGate.x, y:game.travelGate.y, gate:true }];
+    return [];
+  }
+  const spots = storyActiveSpots();
+  if(spots.length) return spots;
+  if(s.st === "active" && q.goal.type === "boss" && game.mapTier === q.goal.tier){
+    const b = game.monsters.find(m => m.alive && MONSTER_DEFS[m.type].isBoss);
+    if(b) return [{ x:b.x, y:b.y }];
+  }
+  const needTown = s.st === "offer" || q.goal.type === "talk" || (q.npc && storyReady(q));
+  if(needTown && game.travelGate) return [{ x:game.travelGate.x, y:game.travelGate.y, gate:true }];
+  return [];
+}
+// screen-space arrow at the edge pointing to an off-screen target
+function drawStoryArrows(){
+  const targets = storyTargets();
+  if(!targets.length) return;
+  const W = canvas.width, H = canvas.height, pad = 46, t = performance.now() / 300;
+  for(const tg of targets.slice(0, 3)){
+    const sx = tg.x - game.camera.x, sy = tg.y - game.camera.y;
+    if(sx > 20 && sx < W - 20 && sy > 20 && sy < H - 20) continue; // on screen already
+    const cx = W / 2, cy = H / 2, ang = Math.atan2(sy - cy, sx - cx);
+    const k = Math.min((W / 2 - pad) / Math.abs(Math.cos(ang) || 1e-6), (H / 2 - pad) / Math.abs(Math.sin(ang) || 1e-6));
+    const ax = cx + Math.cos(ang) * k, ay = cy + Math.sin(ang) * k, bob = Math.sin(t) * 3;
+    ctx.save(); ctx.translate(ax + Math.cos(ang) * bob, ay + Math.sin(ang) * bob);
+    ctx.fillStyle = "rgba(30,20,4,.75)"; ctx.beginPath(); ctx.arc(0, 0, 17, 0, Math.PI * 2); ctx.fill();
+    ctx.font = "15px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(tg.gate ? "🌀" : "📜", 0, 1);
+    ctx.rotate(ang); ctx.fillStyle = "#ffd166";
+    ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(17, -7); ctx.lineTo(17, 7); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+}
+
+// ---- quest tracker (top-right, under the menu) ----
+function storyRefresh(){
+  const el = document.getElementById("storyTracker");
+  if(!el || !game || !game.player) return;
+  const s = storyState(), q = storyQuest();
+  if(!q){
+    el.innerHTML = `<div class="st-ch">📜 ภารกิจหลัก</div><div class="st-q">เสาบาเรีย ${storyPillarsLit()}/10 ต้น</div><div class="st-goal">บทต่อไปจะมาในอัปเดตถัดไป</div>`;
+    return;
+  }
+  let goal, cls = "";
+  if(s.st === "offer"){ goal = `❗ ไปคุยกับ <b>${storyWho(q.from)}</b> ในเมือง`; cls = " offer"; }
+  else if(q.goal.type === "talk"){ goal = talkMarkup(q.desc); }
+  else if(storyReady(q) && q.npc){ goal = `✅ กลับไปรายงาน <b>${storyWho(q.npc)}</b> ในเมือง`; cls = " ready"; }
+  else {
+    const pr = storyProgress(q);
+    goal = talkMarkup(q.desc) + (pr.need > 1 ? ` <b>${Math.min(pr.have, pr.need)}/${pr.need}</b>` : "");
+  }
+  el.innerHTML = `<div class="st-ch">📜 บทที่ ${q.ch} · ${netEsc(STORY_CHAPTERS[q.ch].name)}</div><div class="st-q">${netEsc(q.name)}</div><div class="st-goal${cls}">${goal}</div>`;
+}
+function openStoryLog(){
+  if(!game || game.inBattle) return;
+  sfx.click();
+  const s = storyState(), q = storyQuest();
+  const rows = [];
+  for(let c = 1; c <= STORY_LAST_CHAPTER; c++){
+    const qs = STORY_QUESTS.filter(x => x.ch === c), done = qs.filter(x => s.done.includes(x.id)).length;
+    rows.push(`<span class="tk-chip${done === qs.length ? "" : " no"}">${done === qs.length ? "🛕" : "▫️"} บทที่ ${c}: ${netEsc(STORY_CHAPTERS[c].name)} ${done}/${qs.length}</span>`);
+  }
+  const extra = (q ? storyCard(q, s.st === "offer" ? '<span class="tk-tag new">รอรับ</span>' : '<span class="tk-tag">กำลังทำ</span>') : "")
+    + `<div class="tk-card"><h5><span>🛕 เสาบาเรีย ${storyPillarsLit()}/10 ต้น</span></h5><div class="tk-chips">${rows.join("")}</div></div>`;
+  const text = !q ? "เจ้าจุดเสาบาเรียครบทุกต้นที่เปิดให้ไปถึงตอนนี้แล้ว… เรื่องราวจะดำเนินต่อในอัปเดตถัดไป"
+    : s.st === "offer" ? `**${storyWho(q.from)}** มีเรื่องจะคุยกับเจ้า — ไปหาที่เมืองแดนมานาอรุณ`
+    : (q.give || q.desc);
+  openTalk({ emoji:"📜", name:"บันทึกภารกิจหลัก", role:"ฟื้นเสาบาเรีย 10 ต้น", bg:["#d9a441", "#2a1a06"], text, extra,
+    choices:[{ icon:"👍", label:"ปิด", leave:true }] });
+}
+
+/* ---- the three people from the research quarter (town NPCs added with the story) ---- */
+const RESEARCHER_LINES = [
+  "มอนสเตอร์ทุกตัวเคยเป็น **อย่างอื่น** มาก่อน เจตจำนงที่แทรกเข้ามาไม่ได้ลบของเดิมทิ้ง แค่ทับซ้อนลงไป",
+  "**ตัวอย่างมานา** จากแต่ละแมพไม่เหมือนกันเลย ยิ่งไกลจากเมือง มานายิ่งข้นจนเกือบจับต้องได้ — เอามาขายให้ข้าได้ทุกเมื่อ",
+  "บาเรียไม่ใช่กำแพง มันคือ **เจตจำนงร่วม** ของผู้รอดชีวิตทุกคนที่ถูกขังไว้ในศิลา",
+  "ข้าจดทุกอย่างที่เจ้าเล่า ตั้งแต่สีของเมือกสไลม์ไปจนถึงเสียงคำรามของบอส ความรู้คืออาวุธเดียวที่ข้ามี"
+];
+const DOCTOR_LINES = [
+  "ถ้า **สติ** ต่ำกว่าครึ่ง ตีอะไรก็พลาดง่าย ใจที่สั่นคลอนคือประตูบานแรกที่เจตจำนงอื่นใช้เข้ามา",
+  "ข้ารักษาแผลได้ แต่รักษาใจที่ยอมแพ้ไม่ได้ อย่าลืม **ทำสมาธิ** ทุกครั้งที่รู้สึกว่าเสียงรอบตัวดังขึ้น",
+  "สมุนไพรธรรมดาก็ช่วยได้มากกว่าที่คิด ข้ากำลังคิดสูตรยาที่ใช้ได้ระหว่างเดินทางอยู่…"
+];
+const MONK_LINES = [
+  "ลมหายใจเข้า รู้ว่าเข้า ลมหายใจออก รู้ว่าออก — ง่ายแค่นั้น แต่คนส่วนใหญ่ทำไม่ได้ตอนมีดาบจ่อคอ",
+  "เจตจำนงแรงกล้าไม่ได้แปลว่าต้องดี มืดหรือสว่างก็ยึดใจไว้ได้ทั้งนั้น ขอแค่ **อย่าปล่อยมือ**",
+  "จังหวะของศัตรูก็เหมือนลมหายใจ ถ้าใจเจ้านิ่งพอ เจ้าจะเห็นมันก่อนที่มันจะขยับ"
+];
+function storyNpcDialog(kind, line){
+  const lines = kind === "researcher" ? RESEARCHER_LINES : kind === "doctor" ? DOCTOR_LINES : MONK_LINES;
+  const choices = [];
+  if(kind === "researcher"){
+    const samples = game.inventory.filter(e => e.kind !== "equipment" && /^sample_t\d+$/.test(e.id));
+    const total = samples.reduce((sum, e) => sum + (CONSUMABLE_SELL_PRICE[e.id] || 0) * e.qty, 0);
+    const count = samples.reduce((sum, e) => sum + e.qty, 0);
+    choices.push({ icon:"🧪", label:"ส่งตัวอย่างมานาทั้งหมด", sub: count ? `${count} ชิ้น · ได้ ${total} 💰` : "ยังไม่มีตัวอย่างในกระเป๋า", cls:"gold", disabled: !count, onPick: ()=>{
+      for(let i = game.inventory.length - 1; i >= 0; i--){ const e = game.inventory[i]; if(e.kind !== "equipment" && /^sample_t\d+$/.test(e.id)) sellItem(i, e.qty); }
+      storyNpcDialog("researcher", `ขอบใจ! ตัวอย่างพวกนี้มีค่ามากสำหรับงานวิจัย นี่ค่าตอบแทน **${total} 💰**`);
+    } });
+  }
+  if(kind === "monk") choices.push({ icon:"🧘", label:"ขอนั่งสมาธิที่นี่", sub:"เริ่มทำสมาธิ", onPick: ()=>{ closeTalk(); startMeditating(); } });
+  choices.push({ icon:"💬", label:"ขอคำแนะนำ", sub:"ฟังเรื่องเล่า", onPick: ()=> storyNpcDialog(kind, lines[randInt(0, lines.length - 1)]) });
+  choices.push({ icon:"📜", label:"ภารกิจหลัก", sub:"ดูบันทึก", onPick: ()=>{ closeTalk(); openStoryLog(); } });
+  choices.push({ icon:"👋", label:"ลาก่อน", leave:true });
+  const greet = { researcher:"มีอะไรให้ข้าช่วยไหม นักกวาดล้าง? ถ้าได้ **ตัวอย่างมานา** มา ข้ารับซื้อทุกชิ้น",
+                  doctor:"บาดเจ็บตรงไหนหรือเปล่า? ถ้าไม่ได้บาดเจ็บที่ตัว ก็อาจเป็นที่ใจนะ",
+                  monk:"นั่งลงก่อนสิ รีบไปก็เท่านั้น มานาไม่ได้หนีไปไหน" }[kind];
+  openTalk({ npcKind:kind, text: line || greet, choices, anchor: npcTalkAnchor(kind) });
+}
+
 function renderTownLordDialog(line, extraHtml){
   const quest = QUEST_DEFS.junk_hunt;
   const state = game.player.questState.junk_hunt || "available";
@@ -8586,7 +9226,7 @@ function renderTownLordDialog(line, extraHtml){
     : ready ? '<span class="tk-tag ok">พร้อมส่ง</span>' : '<span class="tk-tag">กำลังทำ</span>';
   const pct = Math.min(100, Math.round(haveQty / quest.required * 100));
   const card = `<div class="tk-card"><h5><span>📜 ${netEsc(quest.name)}</span>${tag}</h5>
-    <div>เก็บ 🗑️ ขยะเก่า (ดรอปจากมอนสเตอร์ทุกแมพ) <b>${state === "completed" ? quest.required : Math.min(haveQty, quest.required)}/${quest.required}</b></div>
+    <div>เก็บ 🔩 เศษซากปนมานา (ดรอปจากมอนสเตอร์ทุกแมพ) <b>${state === "completed" ? quest.required : Math.min(haveQty, quest.required)}/${quest.required}</b></div>
     ${state === "active" ? `<div class="tk-bar"><i style="width:${pct}%"></i></div>` : ""}
     <div class="tk-chips"><span class="tk-chip">💰 ${quest.rewardGold}</span><span class="tk-chip">✨ ${quest.rewardExp} EXP</span></div></div>`;
   let text = line;
@@ -8596,7 +9236,7 @@ function renderTownLordDialog(line, extraHtml){
     choices.push({ icon:"✅", label:"รับภารกิจ", sub: quest.name, cls:"primary", onPick: ()=>{
       game.player.questState.junk_hunt = "active";
       showToast("รับเควสแล้ว: " + quest.name);
-      renderTownLordDialog(`ขอบใจมาก! ขยะเก่าตกจากมอนสเตอร์ได้ทุกแมพ เก็บให้ครบ **${quest.required} ชิ้น** แล้วกลับมาหาข้านะ`);
+      renderTownLordDialog(`ขอบใจมาก! เศษซากปนมานาตกจากมอนสเตอร์ได้ทุกแมพ เก็บให้ครบ **${quest.required} ชิ้น** แล้วกลับมาหาข้านะ`);
     } });
   } else if(state === "active"){
     text = text || (ready ? "โอ้! เก็บมาครบแล้วสินะ ข้ามองเห็นกองขยะจากตรงนี้เลย ส่งมาได้เลย"
@@ -8732,6 +9372,7 @@ function renderTravelPanel(){
   }
 }
 let travelDimView = 0; // which layer tab the travel panel shows (0 = follow the current layer)
+document.getElementById("storyTracker").addEventListener("click", ()=> openStoryLog());
 document.getElementById("closeTravelBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("travelPanel").hidden = true; });
 
 function itemLabel(entry){
@@ -9037,7 +9678,8 @@ function slotDisplayName(slot){
 
 /* ---- Sell to NPC ---- */
 const SELL_PRICE_BY_RARITY = { common:15, uncommon:35, rare:80, epic:180, legendary:400 };
-const CONSUMABLE_SELL_PRICE = { herb:3, potion:5, slime_jelly:4, wolf_fang:6, stone_fragment:8, secret_key:20, junk_scrap:2, mana_stone:12 };
+const CONSUMABLE_SELL_PRICE = { herb:3, potion:5, slime_jelly:4, wolf_fang:6, stone_fragment:8, secret_key:20, junk_scrap:2, mana_stone:12,
+  sample_t1:7, sample_t2:23, sample_t3:39, sample_t4:54, sample_t5:69, sample_t6:85, sample_t7:100, sample_t8:115, sample_t9:130, sample_t10:146 };
 
 function getSellPrice(entry){
   if(entry.kind === "equipment") return SELL_PRICE_BY_RARITY[entry.rarity] || 10;
@@ -9047,6 +9689,7 @@ function getSellPrice(entry){
 function isSellable(entry){
   if(entry.kind === "equipment" && entry.equipped) return false; // can never sell what's currently worn
   if(entry.id === "old_letter") return false; // quest item — hand it to the NPC instead
+  if(entry.kind !== "equipment" && entry.kind !== "card" && (ITEM_TABLE.find(i => i.id === entry.id) || {}).quest) return false; // main-story items
   return true;
 }
 
@@ -9137,7 +9780,7 @@ function renderSellDetail(entry){
   } else {
     const def = ITEM_TABLE.find(i => i.id === entry.id);
     nameHtml = `${def.icon} ${def.name} x${entry.qty}`;
-    descHtml = entry.id === "old_letter" ? "ไอเทมเควส — นำไปคุยกับพ่อค้าในเมืองเพื่อส่งมอบแทนการขาย" : "ไอเทมสำหรับพักฟื้น";
+    descHtml = def.desc || "ไอเทมสำหรับพักฟื้น";
   }
 
   detail.innerHTML = `
@@ -10884,7 +11527,7 @@ alter table public.saves_archive enable row level security;
 revoke all on public.econ_flags, public.saves_archive from anon, authenticated;
 
 -- ECON_DATA_BEGIN
-create or replace function public.econ_data() returns jsonb language sql immutable as $$ select '{"tiers":{"1":{"g":[9,16,28,46,70,263],"x":[21,35,56,84,123,385]},"2":{"g":[86,102,116,131,147,431],"x":[149,173,200,224,250,735]},"3":{"g":[163,177,193,208,224,648],"x":[275,301,326,352,376,1089]},"4":{"g":[238,254,270,285,299,863],"x":[403,427,453,478,504,1446]},"5":{"g":[315,331,347,361,376,1073],"x":[529,555,579,606,630,1799]},"6":{"g":[392,408,422,438,453,1288],"x":[656,681,707,732,758,2156]},"7":{"g":[469,483,499,515,530,1505],"x":[782,809,833,859,884,2510]},"8":{"g":[544,560,576,592,606,1720],"x":[910,935,961,985,1012,2867]},"9":{"g":[621,637,653,667,683,1930],"x":[1036,1062,1087,1113,1138,3220]},"10":{"g":[698,714,728,744,760,2146],"x":[1164,1188,1215,1239,1265,3577]}},"dimStep":0.3,"items":{"kings_armor":["epic",0],"collector_medal":["legendary",1],"sword_1":["common",0],"sword_2":["common",0],"sword_3":["uncommon",0],"sword_4":["uncommon",0],"sword_5":["rare",0],"sword_6":["rare",0],"sword_7":["epic",0],"sword_8":["epic",0],"sword_9":["legendary",0],"sword_10":["legendary",0],"heavy_1":["common",0],"heavy_2":["common",0],"heavy_3":["uncommon",0],"heavy_4":["uncommon",0],"heavy_5":["rare",0],"heavy_6":["rare",0],"heavy_7":["epic",0],"heavy_8":["epic",0],"heavy_9":["legendary",0],"heavy_10":["legendary",0],"bow_1":["common",0],"bow_2":["common",0],"bow_3":["uncommon",0],"bow_4":["uncommon",0],"bow_5":["rare",0],"bow_6":["rare",0],"bow_7":["epic",0],"bow_8":["epic",0],"bow_9":["legendary",0],"bow_10":["legendary",0],"orb_1":["common",0],"orb_2":["common",0],"orb_3":["uncommon",0],"orb_4":["uncommon",0],"orb_5":["rare",0],"orb_6":["rare",0],"orb_7":["epic",0],"orb_8":["epic",0],"orb_9":["legendary",0],"orb_10":["legendary",0],"armor_1":["common",0],"armor_2":["uncommon",0],"armor_3":["rare",0],"armor_4":["epic",0],"armor_5":["legendary",0],"headgear_1":["common",0],"headgear_2":["uncommon",0],"headgear_3":["rare",0],"headgear_4":["epic",0],"headgear_5":["legendary",0],"accessory_1":["common",0],"accessory_2":["uncommon",0],"accessory_3":["rare",0],"accessory_4":["epic",0],"accessory_5":["legendary",0]},"pts":{"common":1.2,"uncommon":1.7,"rare":2.4,"epic":3.4,"legendary":4.4},"eliteMult":2,"price":{"herb":3,"potion":5,"slime_jelly":4,"wolf_fang":6,"stone_fragment":8,"secret_key":20,"junk_scrap":2,"mana_stone":12,"green_slime_card":11,"pink_slime_card":11,"goblin_card":25,"wolf_card":25,"skeleton_card":56,"stone_king_card":280,"kings_oath_secret":280},"eqPrice":{"common":15,"uncommon":35,"rare":80,"epic":180,"legendary":400},"starter":["sword_1","heavy_1","bow_1","orb_1"],"shopOnly":["herb","potion"],"stack":["herb","potion","slime_jelly","wolf_fang","stone_fragment","secret_key","old_letter","junk_scrap","mana_stone","green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"cards":["green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"rankExp":[0,500,1500,3500,7000,13000,23000,40000,70000,120000],"skill":{"sword":[[1,2],[3,2],[5,2],[7,2],[9,2]],"heavy":[[1,2],[3,2],[5,2],[7,2],[9,2]],"bow":[[1,2],[3,2],[5,2],[7,2],[9,2]],"orb":[[1,2],[3,2],[5,2],[7,2],[9,2]]},"titles":{"first_blood":["kills",100],"reaper":["kills",1000],"death_walker":["kills",5000],"calamity":["kills",20000],"slime_hunter":["slimeKills",100],"one_beat":["perfectHits",300],"flawless_blade":["perfectHits",3000],"rhythm_sage":["perfectHits",15000],"perfect_warrior":["bestPerfectStreak",50],"swaying_shadow":["perfectDodges",50],"formless_wind":["perfectDodges",500],"shadowless":["perfectDodges",2500],"counter_art":["counters",50],"mirror_blade":["counters",500],"keen_eye":["crits",500],"fortune_chosen":["crits",5000],"star_assassin":["crits",25000],"unscathed":["flawless",50],"invisible_armor":["flawless",500],"survivor":["survivor",1],"never_give_up":["deaths",25],"elite_hunter":["eliteKills",10],"star_breaker":["eliteKills",100],"elite_bane":["eliteKills",500],"boss_slayer":["bossKills",10],"throne_hunter":["bossKills",50],"king_of_kings":["bossKills",200],"untouchable":["untouchable",1],"five_realms":["bossTiers",5],"ten_kings":["bossTiers",10],"wanderer":["reach",3],"pathfinder":["reach",6],"worlds_edge":["reach",10],"secret_seeker":["secrets",5],"secret_keeper":["secrets",30],"dungeon_diver":["dungeons",1],"labyrinth_lord":["dungeons",10],"underworld_ruler":["dungeons",30],"treasure_hunter":["chests",10],"rising_hero":["level",25],"menalars_hero":["level",50],"peak":["level",100],"barrier_breaker":["maxDim",2],"dimension_walker":["maxDim",3],"void_voyager":["maxDim",5],"novice_collector":["colPct",10],"monster_hunter":["monstersHalf",1],"monster_master":["monstersAll",1],"card_collector":["cards",3],"full_deck":["allCards",1],"half_collector":["colPct",50],"curator":["colPct",75],"full_collector":["colPct",100],"treasure_bearer":["epics",5],"legend_chosen":["legends",1],"legend_vault":["legends",10],"apprentice_smith":["refines",10],"artisan":["bestRefine",5],"forge_master":["bestRefine",10],"new_rich":["goldEarned",10000],"tycoon":["goldEarned",100000],"gold_king":["goldEarned",1000000],"mind_trainee":["meditations",10],"still_water":["meditations",100],"town_friend":["junkQuest",1],"courier":["letters",3],"skill_student":["skills",5],"weapon_scholar":["skills",15],"weapon_master":["bestRank",5],"four_arms":["rankedWeapons",4],"transcender":["bestRank",9]},"totals":{"mon":6,"card":7,"eq":561},"base":{"atk":6,"hp":50,"atkLv":2,"hpLv":10,"spLv":3,"spDim":3,"masteryMax":100,"refineMax":10,"sanityMax":100,"tierMax":10,"bag":48,"storage":100}}'::jsonb $$;
+create or replace function public.econ_data() returns jsonb language sql immutable as $$ select '{"tiers":{"1":{"g":[9,16,28,46,70,263],"x":[21,35,56,84,123,385]},"2":{"g":[86,102,116,131,147,431],"x":[149,173,200,224,250,735]},"3":{"g":[163,177,193,208,224,648],"x":[275,301,326,352,376,1089]},"4":{"g":[238,254,270,285,299,863],"x":[403,427,453,478,504,1446]},"5":{"g":[315,331,347,361,376,1073],"x":[529,555,579,606,630,1799]},"6":{"g":[392,408,422,438,453,1288],"x":[656,681,707,732,758,2156]},"7":{"g":[469,483,499,515,530,1505],"x":[782,809,833,859,884,2510]},"8":{"g":[544,560,576,592,606,1720],"x":[910,935,961,985,1012,2867]},"9":{"g":[621,637,653,667,683,1930],"x":[1036,1062,1087,1113,1138,3220]},"10":{"g":[698,714,728,744,760,2146],"x":[1164,1188,1215,1239,1265,3577]}},"dimStep":0.3,"items":{"kings_armor":["epic",0],"collector_medal":["legendary",1],"sword_1":["common",0],"sword_2":["common",0],"sword_3":["uncommon",0],"sword_4":["uncommon",0],"sword_5":["rare",0],"sword_6":["rare",0],"sword_7":["epic",0],"sword_8":["epic",0],"sword_9":["legendary",0],"sword_10":["legendary",0],"heavy_1":["common",0],"heavy_2":["common",0],"heavy_3":["uncommon",0],"heavy_4":["uncommon",0],"heavy_5":["rare",0],"heavy_6":["rare",0],"heavy_7":["epic",0],"heavy_8":["epic",0],"heavy_9":["legendary",0],"heavy_10":["legendary",0],"bow_1":["common",0],"bow_2":["common",0],"bow_3":["uncommon",0],"bow_4":["uncommon",0],"bow_5":["rare",0],"bow_6":["rare",0],"bow_7":["epic",0],"bow_8":["epic",0],"bow_9":["legendary",0],"bow_10":["legendary",0],"orb_1":["common",0],"orb_2":["common",0],"orb_3":["uncommon",0],"orb_4":["uncommon",0],"orb_5":["rare",0],"orb_6":["rare",0],"orb_7":["epic",0],"orb_8":["epic",0],"orb_9":["legendary",0],"orb_10":["legendary",0],"armor_1":["common",0],"armor_2":["uncommon",0],"armor_3":["rare",0],"armor_4":["epic",0],"armor_5":["legendary",0],"headgear_1":["common",0],"headgear_2":["uncommon",0],"headgear_3":["rare",0],"headgear_4":["epic",0],"headgear_5":["legendary",0],"accessory_1":["common",0],"accessory_2":["uncommon",0],"accessory_3":["rare",0],"accessory_4":["epic",0],"accessory_5":["legendary",0]},"pts":{"common":1.2,"uncommon":1.7,"rare":2.4,"epic":3.4,"legendary":4.4},"eliteMult":2,"price":{"herb":3,"potion":5,"slime_jelly":4,"wolf_fang":6,"stone_fragment":8,"secret_key":20,"junk_scrap":2,"mana_stone":12,"sample_t1":7,"sample_t2":23,"sample_t3":39,"sample_t4":54,"sample_t5":69,"sample_t6":85,"sample_t7":100,"sample_t8":115,"sample_t9":130,"sample_t10":146,"green_slime_card":11,"pink_slime_card":11,"goblin_card":25,"wolf_card":25,"skeleton_card":56,"stone_king_card":280,"kings_oath_secret":280},"eqPrice":{"common":15,"uncommon":35,"rare":80,"epic":180,"legendary":400},"starter":["sword_1","heavy_1","bow_1","orb_1"],"shopOnly":["herb","potion"],"stack":["herb","potion","slime_jelly","wolf_fang","stone_fragment","secret_key","old_letter","junk_scrap","mana_stone","sample_t1","sample_t2","sample_t3","sample_t4","sample_t5","sample_t6","sample_t7","sample_t8","sample_t9","sample_t10","bark_tag","barrier_lantern","inscribed_wrap","green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"cards":["green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"rankExp":[0,500,1500,3500,7000,13000,23000,40000,70000,120000],"skill":{"sword":[[1,2],[3,2],[5,2],[7,2],[9,2]],"heavy":[[1,2],[3,2],[5,2],[7,2],[9,2]],"bow":[[1,2],[3,2],[5,2],[7,2],[9,2]],"orb":[[1,2],[3,2],[5,2],[7,2],[9,2]]},"titles":{"first_blood":["kills",100],"reaper":["kills",1000],"death_walker":["kills",5000],"calamity":["kills",20000],"slime_hunter":["slimeKills",100],"one_beat":["perfectHits",300],"flawless_blade":["perfectHits",3000],"rhythm_sage":["perfectHits",15000],"perfect_warrior":["bestPerfectStreak",50],"swaying_shadow":["perfectDodges",50],"formless_wind":["perfectDodges",500],"shadowless":["perfectDodges",2500],"counter_art":["counters",50],"mirror_blade":["counters",500],"keen_eye":["crits",500],"fortune_chosen":["crits",5000],"star_assassin":["crits",25000],"unscathed":["flawless",50],"invisible_armor":["flawless",500],"survivor":["survivor",1],"never_give_up":["deaths",25],"elite_hunter":["eliteKills",10],"star_breaker":["eliteKills",100],"elite_bane":["eliteKills",500],"boss_slayer":["bossKills",10],"throne_hunter":["bossKills",50],"king_of_kings":["bossKills",200],"untouchable":["untouchable",1],"five_realms":["bossTiers",5],"ten_kings":["bossTiers",10],"wanderer":["reach",3],"pathfinder":["reach",6],"worlds_edge":["reach",10],"story_c1":["chapters",1],"story_c2":["chapters",2],"story_c3":["chapters",3],"whisper_listener":["listened",1],"secret_seeker":["secrets",5],"secret_keeper":["secrets",30],"dungeon_diver":["dungeons",1],"labyrinth_lord":["dungeons",10],"underworld_ruler":["dungeons",30],"treasure_hunter":["chests",10],"rising_hero":["level",25],"menalars_hero":["level",50],"peak":["level",100],"barrier_breaker":["maxDim",2],"dimension_walker":["maxDim",3],"void_voyager":["maxDim",5],"novice_collector":["colPct",10],"monster_hunter":["monstersHalf",1],"monster_master":["monstersAll",1],"card_collector":["cards",3],"full_deck":["allCards",1],"half_collector":["colPct",50],"curator":["colPct",75],"full_collector":["colPct",100],"treasure_bearer":["epics",5],"legend_chosen":["legends",1],"legend_vault":["legends",10],"apprentice_smith":["refines",10],"artisan":["bestRefine",5],"forge_master":["bestRefine",10],"new_rich":["goldEarned",10000],"tycoon":["goldEarned",100000],"gold_king":["goldEarned",1000000],"mind_trainee":["meditations",10],"still_water":["meditations",100],"town_friend":["junkQuest",1],"courier":["letters",3],"skill_student":["skills",5],"weapon_scholar":["skills",15],"weapon_master":["bestRank",5],"four_arms":["rankedWeapons",4],"transcender":["bestRank",9]},"quests":{"c1_wake":[40,60,0,1,0],"c1_town":[50,95,0,1,0],"c1_squad":[50,95,0,1,0],"c1_test":[100,190,0,1,0],"c1_wreck":[100,190,0,1,0],"c1_bark":[100,190,0,1,0],"c1_mind":[100,190,0,1,0],"c1_counter":[100,190,0,1,0],"c1_boss":[270,510,1,1,1],"c2_child":[350,600,0,2,0],"c2_lantern":[350,600,0,2,0],"c2_incense":[350,600,0,2,0],"c2_preacher":[350,600,0,2,0],"c2_lost":[350,600,0,2,0],"c2_boss":[930,1600,1,2,1],"c3_tablets":[580,980,0,3,0],"c3_wrap":[580,980,0,3,0],"c3_vent":[580,980,0,3,0],"c3_heat":[580,980,0,3,0],"c3_boss":[1540,2600,1,3,1]},"totals":{"mon":6,"card":7,"eq":561},"base":{"atk":6,"hp":50,"atkLv":2,"hpLv":10,"spLv":3,"spDim":3,"masteryMax":100,"refineMax":10,"sanityMax":100,"tierMax":10,"bag":48,"storage":100}}'::jsonb $$;
 -- ECON_DATA_END
 
 create or replace function public.econ_n(v jsonb) returns numeric language sql immutable as $$
@@ -10937,6 +11580,9 @@ begin
     'bestRefine', (select coalesce(max(public.econ_n(e -> 'refineLevel')), 0) from public.econ_items(d) e where e ->> 'kind' = 'equipment'),
     'goldEarned', public.econ_n(st -> 'goldEarned'), 'meditations', public.econ_n(st -> 'meditations'), 'letters', public.econ_n(st -> 'letters'),
     'junkQuest', case when public.econ_obj(p -> 'questState') ->> 'junk_hunt' = 'completed' then 1 else 0 end,
+    'chapters', (select count(distinct x) from jsonb_array_elements_text(public.econ_arr(public.econ_obj(p -> 'story') -> 'done')) x
+                  where C -> 'quests' -> x ->> 4 = '1'),
+    'listened', case when public.econ_obj(public.econ_obj(p -> 'story') -> 'ch') ->> 'c2p' = 'listen' then 1 else 0 end,
     'level', public.econ_n(p -> 'level'), 'reach', greatest(public.econ_n(d -> 'maxMapTierReached'), 1), 'maxDim', greatest(public.econ_n(d -> 'maxDimension'), 1),
     'skills', skills, 'bestRank', best, 'rankedWeapons', ranked,
     'colPct', round((mon + cards + eqd) * 100.0 / ((C -> 'totals' ->> 'mon')::int + (C -> 'totals' ->> 'card')::int + (C -> 'totals' ->> 'eq')::int)),
@@ -10960,6 +11606,7 @@ declare
   lim_g numeric; lim_x numeric; k record; tstats jsonb; flags jsonb := '[]'::jsonb;
   rk numeric := 0.3; ru numeric := 4; rb numeric := 1.0 / 30; bank_k numeric; bank_u numeric; bank_b numeric; bank_e numeric; bank_l numeric; acc numeric;
   luck numeric := 0; dboss numeric; neq numeric := 0; nstarter numeric := 0; nshop numeric := 0;
+  qg numeric := 0; qx numeric := 0; qgear numeric := 0;
 begin
   np := public.econ_obj(d -> 'player');
   if jsonb_typeof(o) is distinct from 'object' or jsonb_typeof(o -> 'player') is distinct from 'object' then o := '{}'::jsonb; end if;
@@ -11051,6 +11698,7 @@ begin
     -- stackables: known ids, sane counts
     if exists (select 1 from public.econ_items(d) x
                 where jsonb_typeof(x) <> 'object'
+                   or (coalesce(x ->> 'kind', '') <> 'equipment' and coalesce(x ->> 'id', '') ~ '^sample_t[0-9]{1,2}$' and substring(x ->> 'id' from 9)::int > reach)
                    or (coalesce(x ->> 'kind', '') <> 'equipment' and (not ((C -> 'stack') ? coalesce(x ->> 'id', ''))
                         or public.econ_n(x -> 'qty') < 1 or public.econ_n(x -> 'qty') > 99999 or public.econ_n(x -> 'qty') <> floor(public.econ_n(x -> 'qty'))))) then
       bad := 'stack';
@@ -11148,6 +11796,21 @@ begin
                         or jsonb_array_length(public.econ_arr(d -> 'storage')) < (B ->> 'storage')::int) then   -- bag + box full = drops are lost, that's honest
       flags := flags || jsonb_build_array(jsonb_build_object('kind', 'discovery', 'n', tmp2)); end if;
   end if;
+  if bad is null then
+    if jsonb_typeof(public.econ_obj(np -> 'story') -> 'done') not in ('array', 'null') and (np -> 'story' -> 'done') is not null then bad := 'quest';
+    elsif exists (select 1 from jsonb_array_elements(public.econ_arr(public.econ_obj(np -> 'story') -> 'done')) x
+                   where jsonb_typeof(x) <> 'string' or not ((C -> 'quests') ? (x #>> '{}'))) then bad := 'quest';
+    elsif exists (select 1 from jsonb_array_elements_text(public.econ_arr(public.econ_obj(op -> 'story') -> 'done')) x
+                   where (C -> 'quests') ? x and not (public.econ_arr(public.econ_obj(np -> 'story') -> 'done') ? x)) then bad := 'quest';
+    else
+      select coalesce(sum((C -> 'quests' -> x ->> 0)::numeric), 0), coalesce(sum((C -> 'quests' -> x ->> 1)::numeric), 0),
+             coalesce(sum((C -> 'quests' -> x ->> 2)::numeric), 0), coalesce(max((C -> 'quests' -> x ->> 3)::numeric), 0)
+        into qg, qx, qgear, tmp
+        from (select distinct x from jsonb_array_elements_text(public.econ_arr(public.econ_obj(np -> 'story') -> 'done')) x
+               where not (public.econ_arr(public.econ_obj(op -> 'story') -> 'done') ? x)) q;
+      if tmp > reach then bad := 'quest'; end if;
+    end if;
+  end if;
   if bad is not null then return jsonb_build_object('ok', false, 'reason', 'invalid', 'detail', bad); end if;
 
   -- ---------- 5. earnings tied to kills ----------
@@ -11158,8 +11821,8 @@ begin
     into lim_g, lim_x from jsonb_each(public.econ_obj(d -> 'huntCounts')) x;
   lim_g := ceil(lim_g * dm + delite * (C -> 'tiers' -> tr::text -> 'g' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm)
          + sale + 50 * greatest(public.econ_n(st -> 'chestsOpened') - public.econ_n(ost -> 'chestsOpened'), 0)
-         + 60 * greatest(public.econ_n(st -> 'letters') - public.econ_n(ost -> 'letters'), 0) + 120;
-  lim_x := ceil(lim_x * dm + delite * (C -> 'tiers' -> tr::text -> 'x' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm) + 80;
+         + 60 * greatest(public.econ_n(st -> 'letters') - public.econ_n(ost -> 'letters'), 0) + 120 + qg;
+  lim_x := ceil(lim_x * dm + delite * (C -> 'tiers' -> tr::text -> 'x' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm) + 80 + qx;
   -- shop goods cost money: a starter weapon 20, a herb/potion at least 8 (beyond what kills could have dropped) —
   -- so free copies from the console can't be sold back for gold
   lim_g := lim_g - 20 * nstarter - 8 * greatest(nshop - 2 * dk, 0);
@@ -11180,7 +11843,7 @@ begin
                             - public.econ_n(st -> 'letters') + public.econ_n(ost -> 'letters'), 0);
   -- new gear only comes from kills (≤3 pieces each), letters, secret spots and the one-time collector medal
   if neq > 3 * dk + greatest(public.econ_n(st -> 'letters') - public.econ_n(ost -> 'letters'), 0) + greatest(public.econ_n(st -> 'secrets') - public.econ_n(ost -> 'secrets'), 0)
-            + (case when public.econ_arr(d -> 'unlockedMilestones') ? 'collection_50' and not (public.econ_arr(o -> 'unlockedMilestones') ? 'collection_50') then 1 else 0 end) then
+            + (case when public.econ_arr(d -> 'unlockedMilestones') ? 'collection_50' and not (public.econ_arr(o -> 'unlockedMilestones') ? 'collection_50') then 1 else 0 end) + qgear then
     return jsonb_build_object('ok', false, 'reason', 'econ', 'detail', 'items', 'n', neq, 'max', 3 * dk);
   end if;
   units := units + neq;
