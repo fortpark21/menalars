@@ -561,6 +561,7 @@
   .chat-line{ font-size:12.5px; line-height:1.4; color:#fff; text-shadow:0 1px 2px #000, 0 0 4px rgba(0,0,0,.8); word-break:break-word; transition:opacity .8s; }
   .chat-line b{ color:var(--gold); }
   .chat-line.me b{ color:#8ff3ff; }
+  .chat-line.gm b{ color:#ffb347; }
   .chat-line.sys{ color:#d9d2f5; font-style:italic; font-size:11.5px; }
   .chat-line.faded{ opacity:0; }
   #chatBox.open .chat-line.faded{ opacity:.8; }
@@ -1446,8 +1447,11 @@ function drawBrawlCloudAt(ctx, cx, cy){
 function getPlayerPresence(){
   const p = game.player;
   return { name: p.name, look: p.look, x: Math.round(p.x), y: Math.round(p.y), facing: p.facing || "down", mapTier: game.mapTier, dimension: game.dimension,
-           inBattle: game.inBattle, isMeditating: !!p.isMeditating, willColor: p.willColor, level: p.level };
+           inBattle: game.inBattle, isMeditating: !!p.isMeditating, willColor: p.willColor, level: p.level,
+           maxDim: game.maxDimension || 1, maxMap: getDimReach(game.maxDimension || 1) };
 }
+// Nameplate progress line (own + other players): highest dimension reached, and the furthest map inside it.
+function nameplateInfo(level, maxDim, maxMap){ return `Lv.${level} · มิติ ${maxDim} · แมพ ${maxMap}`; }
 // Other players on this map (filled by the future multiplayer layer; debug.addDummyPlayer for previewing).
 function drawOtherPlayer(ctx, o){
   if(o.inBattle){ drawBrawlCloudAt(ctx, o.x, o.y); }
@@ -1457,10 +1461,14 @@ function drawOtherPlayer(ctx, o){
   }
   ctx.save();
   ctx.font = "bold 12px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center";
-  ctx.lineWidth = 3; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.fillStyle = "#e9e6f5";
-  const label = o.name + (o.inBattle ? " ⚔️" : "");
+  const gm = !!o.netId && net.staff.has(o.netId); // GM list comes from the server (public.admins), never from the player's own message
+  ctx.lineWidth = 3; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.fillStyle = gm ? "#ffd166" : "#e9e6f5";
+  const label = (gm ? "[GM] " : "") + o.name + (o.inBattle ? " ⚔️" : "");
   const labelY = o.y - (o.inBattle ? 100 : 118);
   ctx.strokeText(label, o.x, labelY); ctx.fillText(label, o.x, labelY);
+  ctx.font = "10px 'Trebuchet MS', sans-serif"; ctx.fillStyle = "#ffe9a8";
+  const info = nameplateInfo(o.level || 1, o.maxDim || 1, o.maxMap || 1);
+  ctx.strokeText(info, o.x, labelY + 13); ctx.fillText(info, o.x, labelY + 13);
   ctx.restore();
   if(o.chatUntil > performance.now()) drawChatBubble(ctx, o.x, labelY - 14, o.chat);
 }
@@ -2447,7 +2455,7 @@ const NET_STALE_MS = 12000;     // a player not heard from this long has left
 const NET_HEARTBEAT_MS = 25000;
 const NET_CHAT_MAX_LEN = 80, NET_CHAT_COOLDOWN_MS = 1200, NET_CHAT_BUBBLE_MS = 5000, NET_CHAT_FADE_MS = 30000;
 const net = { session:null, user:null, sessionId:null, rev:0, saveJson:null, admin:false,
-              saving:false, pendingJson:null, blocked:false, connected:true, lastSavedAt:0, refreshing:null, refreshTimer:0, myBubble:null };
+              saving:false, pendingJson:null, blocked:false, connected:true, lastSavedAt:0, refreshing:null, refreshTimer:0, myBubble:null, staff:new Set() };
 const rt = { ws:null, ref:0, topic:null, joinRef:null, joined:false, retryMs:1000, reconnectAt:0, rejoinAt:0, hb:0,
              lastSent:0, lastKey:"", lastX:0, lastY:0, force:false, hello:false, joinedAt:0, peers:new Map(), lastChatAt:0, fadeCheckAt:0 };
 
@@ -2595,6 +2603,7 @@ async function netAfterLogin(){
     net.rev = r.rev || 0; net.admin = !!r.admin;
     net.saveJson = r.data ? JSON.stringify(r.data) : null;
   }catch(err){ loginMsg(err.message, true); return; }
+  try{ net.staff = new Set(await netRpc("staff_ids", "{}") || []); }catch(err){ /* no [GM] tags this session — harmless */ }
   document.getElementById("loginCard").hidden = true;
   document.getElementById("creationCard").hidden = false;
   document.getElementById("creationAcct").hidden = false;
@@ -2779,7 +2788,8 @@ function rtHandle(m){
     if(!text) return;
     const o = rt.peers.get(d.id);
     const name = o ? o.name : String(d.name || "?").slice(0, 20);
-    chatAddLine("", name, text);
+    const gm = net.staff.has(d.id);
+    chatAddLine(gm ? "gm" : "", (gm ? "[GM] " : "") + name, text);
     if(o){ o.chat = text; o.chatUntil = performance.now() + NET_CHAT_BUBBLE_MS; }
   }
 }
@@ -2800,7 +2810,8 @@ function rtPeerUpdate(d){
   if(Math.hypot(o.tx - o.x, o.ty - o.y) > 500){ o.x = o.tx; o.y = o.ty; } // warped / way behind — snap
   o.netFacing = ["down","up","left","right"].includes(d.facing) ? d.facing : "down";
   o.mapTier = +d.mapTier || 0; o.dimension = +d.dimension || 1;
-  o.inBattle = !!d.inBattle; o.isMeditating = !!d.isMeditating; o.willColor = String(d.willColor || ""); o.level = +d.level || 1;
+  o.inBattle = !!d.inBattle; o.isMeditating = !!d.isMeditating; o.willColor = String(d.willColor || ""); o.level = Math.max(1, Math.floor(+d.level) || 1);
+  o.maxDim = clamp(Math.floor(+d.maxDim) || 1, 1, 9999); o.maxMap = clamp(Math.floor(+d.maxMap) || 1, 1, MAP_TIER_COUNT);
   o.seen = now;
   if(d.hi) rt.force = true; // a newcomer — answer with our presence right away
   if(fresh && now - rt.joinedAt > 3000) chatAddLine("sys", "", `${o.name} เข้ามาในพื้นที่นี้`);
@@ -2825,7 +2836,7 @@ function netTick(now, dt){
   }
   if(rt.joined){
     const pres = getPlayerPresence();
-    const key = [pres.name, pres.facing, pres.inBattle, pres.isMeditating, pres.willColor, pres.level].join("|");
+    const key = [pres.name, pres.facing, pres.inBattle, pres.isMeditating, pres.willColor, pres.level, pres.maxDim, pres.maxMap].join("|");
     const moved = Math.abs(pres.x - rt.lastX) + Math.abs(pres.y - rt.lastY) > 1;
     const since = now - rt.lastSent;
     if(since >= NET_MIN_SEND_MS && (rt.force || key !== rt.lastKey || (moved && since >= NET_MOVE_SEND_MS) || since >= NET_IDLE_SEND_MS)){
@@ -2886,7 +2897,7 @@ function chatSend(){
   if(!rt.joined){ chatAddLine("sys", "", "ยังไม่ได้เชื่อมต่อ — ส่งข้อความไม่ได้ตอนนี้"); return; }
   rt.lastChatAt = now;
   rtSend("chat", { id: net.user.id, name: game.player.name, text });
-  chatAddLine("me", game.player.name, text);
+  chatAddLine(net.admin ? "me gm" : "me", (net.admin ? "[GM] " : "") + game.player.name, text);
   net.myBubble = { text, until: now + NET_CHAT_BUBBLE_MS };
   input.value = "";
   chatClose();
@@ -4292,12 +4303,13 @@ function renderOverworld(){
     ctx.shadowBlur = rank.glow * pulse;
   }
   ctx.fillStyle = nameColor; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.lineWidth = 3;
-  ctx.strokeText(p.name, p.x, playerNameY); ctx.fillText(p.name, p.x, playerNameY);
+  const shownName = (net.admin ? "[GM] " : "") + p.name; // online GM accounts only — offline net.admin is always false
+  ctx.strokeText(shownName, p.x, playerNameY); ctx.fillText(shownName, p.x, playerNameY);
   ctx.shadowBlur = 0; // reset — otherwise every later draw call this frame inherits the glow
   ctx.font = "10px 'Trebuchet MS', sans-serif";
   ctx.fillStyle = "#ffe9a8"; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.lineWidth = 3;
   const playerInfoY = playerNameY + 13;
-  const playerInfoText = game.maxDimension > 1 ? `Lv.${p.level} · มิติ ${game.maxDimension}` : `Lv.${p.level} · แมพสูงสุด ${game.maxMapTierReached}`;
+  const playerInfoText = nameplateInfo(p.level, game.maxDimension || 1, getDimReach(game.maxDimension || 1));
   ctx.strokeText(playerInfoText, p.x, playerInfoY); ctx.fillText(playerInfoText, p.x, playerInfoY);
   if(net.myBubble && net.myBubble.until > performance.now()) drawChatBubble(ctx, p.x, playerNameY - 14, net.myBubble.text);
   ctx.font = "11px 'Trebuchet MS', sans-serif";
@@ -8492,7 +8504,7 @@ create table if not exists public.item_registry (
   primary key (user_id, uid)
 );
 
--- Accounts allowed to open the debug panel (Ctrl+Shift+D) in the online build.
+-- GM accounts: may open the debug panel (Ctrl+Shift+D) in the online build and get a [GM] tag in-game.
 -- Add yourself: insert into public.admins values ('<your user id from Authentication → Users>');
 create table if not exists public.admins (
   user_id uuid primary key references auth.users(id) on delete cascade
@@ -8571,8 +8583,15 @@ begin
   return jsonb_build_object('ok', true, 'rev', r.rev);
 end $$;
 
-revoke execute on function public.claim_session(uuid), public.save_game(uuid, bigint, jsonb) from public, anon;
-grant execute on function public.claim_session(uuid), public.save_game(uuid, bigint, jsonb) to authenticated;
+-- GM accounts (public.admins) — the game shows [GM] over these players' heads. The list comes from here,
+-- so a player can't tag themselves by editing what their own game sends.
+create or replace function public.staff_ids()
+returns uuid[] language sql stable security definer set search_path = public as $$
+  select coalesce(array_agg(user_id), '{}') from public.admins
+$$;
+
+revoke execute on function public.claim_session(uuid), public.save_game(uuid, bigint, jsonb), public.staff_ids() from public, anon;
+grant execute on function public.claim_session(uuid), public.save_game(uuid, bigint, jsonb), public.staff_ids() to authenticated;
 ------------------------------------------------------------------------------------------------ -->
 </body>
 </html>
