@@ -273,9 +273,18 @@
   .skill-btn .skill-empty{ font-size:9px; color:rgba(255,255,255,.35); }
   /* weapon active skill is empowered right now — a Perfect weapon input just landed (see SKILL_EMPOWER_WINDOW_MS) */
   .skill-btn.empowered{ border-color:var(--gold); box-shadow:0 0 12px var(--gold); background:rgba(255,209,102,.3); }
+  /* cooldown: a dark sweep that uncovers the button clockwise as it recharges (--cd = fraction still left) */
   .skill-btn .skill-cd{
-    position:absolute; inset:0; background:rgba(0,0,0,.65);
-    display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:bold;
+    position:absolute; inset:0; background:conic-gradient(rgba(0,0,0,.72) calc(var(--cd, 1) * 360deg), rgba(0,0,0,.18) 0);
+    display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:bold; text-shadow:0 1px 3px #000;
+  }
+  .skill-btn .skill-cd.soon{ color:#7CFFB2; font-size:15px; } /* last second: tenths, green */
+  /* just came off cooldown — a bright pulse so it's obvious the button is usable again */
+  .skill-btn.cd-ready{ animation:skillReady .7s ease-out; }
+  @keyframes skillReady{
+    0%{ border-color:#7CFFB2; box-shadow:0 0 0 0 rgba(124,255,178,.95), inset 0 0 18px rgba(124,255,178,.9); background:rgba(124,255,178,.45); }
+    60%{ border-color:#7CFFB2; box-shadow:0 0 0 7px rgba(124,255,178,0), inset 0 0 8px rgba(124,255,178,.4); }
+    100%{ box-shadow:0 0 0 0 rgba(124,255,178,0); }
   }
 
   #toast{
@@ -688,6 +697,12 @@
   .chat-line[data-id] b{ cursor:pointer; }
   #chatBox.open .chat-line[data-id] b:hover{ text-decoration:underline; }
 
+  #updateBanner{ position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:55; display:flex; align-items:center; gap:10px;
+    padding:8px 10px 8px 16px; border-radius:24px; background:rgba(28,24,56,.95); color:#fff; font-size:14px; font-weight:bold;
+    border:2px solid var(--gold); box-shadow:0 0 18px rgba(255,209,102,.55), 0 8px 24px rgba(0,0,0,.45); animation:updPulse 2s ease-in-out infinite; }
+  #updateBanner[hidden]{ display:none; }
+  #updateBanner button{ padding:6px 12px; font-size:13px; }
+  @keyframes updPulse{ 50%{ box-shadow:0 0 30px rgba(255,209,102,.85), 0 8px 24px rgba(0,0,0,.45); } }
   #netBlock{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; background:rgba(8,6,20,.84); backdrop-filter:blur(2px); }
   #netBlock[hidden]{ display:none; }
   #netBlock .card{ max-width:420px; margin:16px; padding:24px 26px; border-radius:14px; text-align:center; color:#e9e6f5; background:#1c1838; border:1px solid rgba(143,243,255,.35); box-shadow:0 20px 60px rgba(0,0,0,.6); }
@@ -1143,6 +1158,11 @@
 <div id="sanityVignette"></div>
 
 <!-- Online: a save the server refused / a dead login covers the whole game (see netBlock) -->
+<div id="updateBanner" hidden>
+  <span>✨ Menalars มีเวอร์ชันใหม่แล้ว</span>
+  <button class="btn-primary" id="updateNowBtn" type="button">🔄 อัปเดตเลย</button>
+  <button class="btn-secondary" id="updateLaterBtn" type="button">ภายหลัง</button>
+</div>
 <div id="netBlock" hidden>
   <div class="card">
     <div class="ico" id="netBlockIcon">⚠️</div>
@@ -1270,7 +1290,8 @@ const sfx = {
   // perfect-dodge counter — the biggest, most triumphant hit in the game: a low slam plus a rising 3-note stab
   counter: () => { noiseBurst(0.09, 0.28, 2400, "lowpass"); tone(110, 0.17, "square", 0.24); tone(520, 0.06, "square", 0.15); tone(860, 0.07, "square", 0.15); tone(1280, 0.09, "square", 0.14); },
   playerHurt: () => { noiseBurst(0.08, 0.14, 900, "lowpass"); tone(140, 0.18, "sawtooth", 0.14); },
-  levelUp: () => { [523,659,784].forEach((f,i)=> setTimeout(()=>tone(f,0.18,"triangle",0.12), i*90)); }
+  levelUp: () => { [523,659,784].forEach((f,i)=> setTimeout(()=>tone(f,0.18,"triangle",0.12), i*90)); },
+  skillReady: () => tone(1320, 0.05, "sine", 0.05) // a skill just came off cooldown — soft, short "ting"
 };
 document.body.addEventListener("click", ()=>{ getAudio(); }, { once:true, capture:true });
 
@@ -1756,6 +1777,25 @@ function drawHallOfFameAt(ctx, cx, cy){
   ctx.restore();
 }
 
+// Pointer-over highlight for a town NPC: a pulsing gold ring on the ground + a soft glow over the click area.
+function drawNpcHoverRing(ctx, npc){
+  const c = npcHitCenter(npc), t = performance.now() / 1000, pulse = 0.5 + 0.5 * Math.sin(t * 6);
+  const obj = !!TOWN_OBJECT_DRAW[npc.kind], rx = obj ? c.r * 1.1 : 26, ry = rx * 0.35;
+  ctx.save();
+  ctx.translate(npc.x, npc.y + 4);
+  ctx.fillStyle = `rgba(255,209,102,${0.18 + 0.12 * pulse})`;
+  ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = `rgba(255,209,102,${0.7 + 0.3 * pulse})`; ctx.lineWidth = 3;
+  ctx.shadowColor = "#ffd166"; ctx.shadowBlur = 10;
+  ctx.beginPath(); ctx.ellipse(0, 0, rx + pulse * 3, ry + pulse, 0, 0, Math.PI*2); ctx.stroke();
+  ctx.restore();
+  ctx.save(); // glow over the clickable body so "am I on it?" is obvious
+  const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r);
+  g.addColorStop(0, `rgba(255,233,168,${0.22 + 0.1 * pulse})`); g.addColorStop(1, "rgba(255,233,168,0)");
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
 // Castle — the town lord's building, a modest keep with a central tower and flag
 function drawCastleAt(ctx, cx, cy){
   ctx.save();
@@ -2186,7 +2226,7 @@ const STUN_DURATION_MS = { normal: 2000, boss: 1500 };
 const STUN_FLURRY_DMG_MULT = 0.6;      // of a normal hit's roll, per flurry hit (can still crit) — was 0.45; at late-game attack speed a
                                         // stun then cost DPS, so every stun skill was a trap pick (skill-balance sim)
 const STUN_FLURRY_MIN_GAP_MS = 100;     // mash cap: 10 hits/sec max
-const STUN_HOLD_INTERVAL_MS = 500;      // holding the button: 1 hit every 0.5s
+const STUN_HOLD_INTERVAL_MS = 250;      // holding the button: 1 hit every 0.25s (was 0.5s)
 const GRID_SIZE = 40;
 const WANDER_RADIUS = 70;
 const WANDER_SPEED = 40;
@@ -2649,6 +2689,9 @@ function createGameState(name, chosenLook){
    ============================================================ */
 const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "sb_publishable_9XOnf5NmpCL9XWkXOiGIeg_rTxfwnrX" }; // Supabase → Project Settings → API: Project URL + anon public key (public by design)
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
+// Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
+// app_config.min_version (SQL block) can force everything below it to refresh before saving again.
+const GAME_VERSION = 2;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -2739,7 +2782,48 @@ function loginMsg(text, isErr){
   el.textContent = text || ""; el.className = "login-msg" + (isErr ? " err" : "");
 }
 function loginBusy(on){ document.querySelectorAll("#loginCard button").forEach(b => { b.disabled = on || (b.dataset.needsWeb === "1" && !netCanRedirect()); }); }
+/* ---- New version uploaded? Every UPDATE_CHECK_MS a HEAD request compares the page's ETag/Last-Modified;
+   only when that changes is the page fetched once to read its GAME_VERSION. Newer → a banner offers a refresh
+   (saves first). Forced updates go through app_config.min_version instead (netBlock "version"). ---- */
+const UPDATE_CHECK_MS = 120000;
+const UPDATE_SNOOZE_MS = 600000; // "ภายหลัง" hides the banner this long
+const upd = { tag: null, busy: false, newer: 0, snoozeUntil: 0, lastAt: 0 };
+async function checkForUpdate(){
+  if(upd.busy || !netCanRedirect() || performance.now() - upd.lastAt < 30000) return;
+  upd.busy = true; upd.lastAt = performance.now();
+  try{
+    const url = location.pathname + "?uc=" + Date.now();
+    const head = await fetch(url, { method: "HEAD", cache: "no-store" });
+    const tag = head.headers.get("etag") || head.headers.get("last-modified") || "";
+    if(tag !== upd.tag){
+      upd.tag = tag;
+      const text = await (await fetch(url, { cache: "no-store" })).text();
+      const m = text.match(/const GAME_VERSION = (\d+);/);
+      if(m && +m[1] > GAME_VERSION) upd.newer = +m[1];
+    }
+  }catch(err){ /* offline for a moment — try again next round */ }
+  upd.busy = false;
+  renderUpdateBanner();
+}
+function renderUpdateBanner(){
+  document.getElementById("updateBanner").hidden = !upd.newer || performance.now() < upd.snoozeUntil || net.blocked;
+}
+async function applyUpdate(){
+  if(game && game.inBattle){ showToast("จบไฟต์ก่อน แล้วกดอัปเดตอีกครั้ง"); return; }
+  const btn = document.getElementById("updateNowBtn");
+  btn.disabled = true; btn.textContent = "กำลังบันทึก…";
+  if(game && net.session) await netSaveAndWait(); // keep this session's progress
+  netReloadFresh();
+}
+document.getElementById("updateNowBtn").addEventListener("click", ()=>{ sfx.click(); applyUpdate(); });
+document.getElementById("updateLaterBtn").addEventListener("click", ()=>{ sfx.click(); upd.snoozeUntil = performance.now() + UPDATE_SNOOZE_MS; renderUpdateBanner(); });
+if(NET_ONLINE){
+  setInterval(checkForUpdate, UPDATE_CHECK_MS);
+  document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState === "visible") checkForUpdate(); });
+}
+
 async function netBoot(){
+  if(new URLSearchParams(location.search).has("v")) history.replaceState(null, "", location.pathname + location.hash); // drop netReloadFresh's cache-buster
   document.getElementById("creationCard").hidden = true;
   document.getElementById("loginCard").hidden = false;
   loginBusy(false);
@@ -2803,6 +2887,7 @@ async function netAfterLogin(){
   try{
     const r = await netRpc("claim_session", JSON.stringify({ p_session: net.sessionId }));
     net.rev = r.rev || 0; net.admin = !!r.admin;
+    if(GAME_VERSION < (+r.mv || 0)){ netBlock("version"); return; }
     net.saveJson = r.data ? JSON.stringify(r.data) : null;
   }catch(err){ loginMsg(err.message, true); return; }
   try{ net.staff = new Set(await netRpc("staff_ids", "{}") || []); }catch(err){ /* no [GM] tags this session — harmless */ }
@@ -2862,8 +2947,11 @@ const NET_BLOCK_TEXT = {
   rev:     ["⏳", "ข้อมูลไม่ตรงกับบาเรีย", "มีการบันทึกที่ใหม่กว่าหน้านี้อยู่แล้ว — โหลดการเดินทางล่าสุดเพื่อเล่นต่อ"],
   dupe:    ["⚠️", "ตรวจพบไอเทมซ้ำ", "อุปกรณ์บางชิ้นเคยออกจากตัวคุณไปแล้ว หรือมีชิ้นเดียวกันสองที่ — บาเรียปฏิเสธการบันทึกครั้งนี้"],
   nouid:   ["⚠️", "ตรวจพบอุปกรณ์ผิดปกติ", "อุปกรณ์บางชิ้นไม่มีรหัสประจำชิ้น — บาเรียปฏิเสธการบันทึกครั้งนี้"],
-  auth:    ["🔑", "การเข้าสู่ระบบหมดอายุ", "เข้าสู่ระบบใหม่เพื่อเล่นต่อ ความคืบหน้าล่าสุดที่บันทึกไว้ยังอยู่ครบ"]
+  auth:    ["🔑", "การเข้าสู่ระบบหมดอายุ", "เข้าสู่ระบบใหม่เพื่อเล่นต่อ ความคืบหน้าล่าสุดที่บันทึกไว้ยังอยู่ครบ"],
+  version: ["✨", "มีอัปเดตสำคัญของ Menalars", "เวอร์ชันที่เปิดอยู่เก่าเกินไปแล้ว — โหลดใหม่เพื่อเล่นต่อ ความคืบหน้าที่บันทึกไว้อยู่ครบ"]
 };
+// Reload that skips the browser's cached copy of the page (GitHub Pages lets browsers keep it ~10 min).
+function netReloadFresh(){ location.replace(location.pathname + "?v=" + Date.now() + location.hash); }
 // A save the server refused (or a dead login): stop saving, cover the game, offer a reload from the server copy.
 function netBlock(reason, detail){
   if(net.blocked) return;
@@ -3168,6 +3256,7 @@ async function socPoll(){
   try{
     const p = game.player;
     const r = await netRpc("net_poll", JSON.stringify({ p_dim: game.dimension || 1, p_map: game.mapTier, p_x: Math.round(p.x), p_y: Math.round(p.y) }));
+    if(GAME_VERSION < (+r.mv || 0)) netBlock("version");
     (r.w || []).forEach(w => {
       if(soc.blocked.has(w.from)) return;
       socRemember(w.from, "[กระซิบ] " + w.body);
@@ -3562,7 +3651,7 @@ let lastSaveAt = 0;
 function buildSaveData(){
   const player = {};
   Object.keys(game.player).forEach(k => { if(!SAVE_PLAYER_SKIP.includes(k)) player[k] = game.player[k]; });
-  const data = { v: SAVE_VERSION, savedAt: Date.now(), player };
+  const data = { v: SAVE_VERSION, gv: GAME_VERSION, savedAt: Date.now(), player };
   SAVE_GAME_FIELDS.forEach(k => { data[k] = game[k]; });
   SAVE_GAME_SETS.forEach(k => { data[k] = [...game[k]]; });
   return data;
@@ -4617,6 +4706,31 @@ window.addEventListener("resize", resizeCanvas);
 /* ============================================================
    OVERWORLD INPUT (click to move / talk)
    ============================================================ */
+// Town NPC under the pointer: a generous box over the person / object itself (not just their feet).
+// Objects (storage house, Hall of Fame) and people get different defaults; npc.hitDy / hitR override.
+const NPC_TALK_RANGE = 70; // walk this close (any side) and the conversation opens — no fixed spot
+function npcHitCenter(npc){
+  const obj = !!TOWN_OBJECT_DRAW[npc.kind];
+  return { x: npc.x, y: npc.y - (npc.hitDy != null ? npc.hitDy : obj ? 26 : 32), r: npc.hitR != null ? npc.hitR : obj ? 38 : 32 };
+}
+function npcAtWorld(wx, wy){
+  let best = null, bestD = Infinity;
+  for(const npc of game.npcs){
+    const c = npcHitCenter(npc), d = dist(wx, wy, c.x, c.y);
+    if(d < c.r && d < bestD){ best = npc; bestD = d; }
+  }
+  return best;
+}
+function npcTalkRange(npc){ return Math.max(NPC_TALK_RANGE, npcHitCenter(npc).r + 20); }
+canvas.addEventListener("mousemove", (e)=>{
+  if(!game || game.inBattle){ if(game) game.hoverNpcId = null; return; }
+  const rect = canvas.getBoundingClientRect();
+  const npc = npcAtWorld(e.clientX - rect.left + game.camera.x, e.clientY - rect.top + game.camera.y);
+  game.hoverNpcId = npc ? npc.id : null;
+  canvas.style.cursor = npc ? "pointer" : "";
+});
+canvas.addEventListener("mouseleave", ()=>{ if(game) game.hoverNpcId = null; canvas.style.cursor = ""; });
+
 canvas.addEventListener("click", (e)=>{
   if(!game || game.inBattle || game.player.isMeditating) return;
   const rect = canvas.getBoundingClientRect();
@@ -4633,12 +4747,19 @@ canvas.addEventListener("click", (e)=>{
     return;
   }
 
-  let hitNpc = null;
-  for(const npc of game.npcs){ if(dist(worldX, worldY, npc.x, npc.y - (npc.hitDy || 0)) < (npc.hitR || 26)){ hitNpc = npc; break; } }
+  const hitNpc = npcAtWorld(worldX, worldY);
   if(hitNpc){
-    game.player.pendingNpcId = hitNpc.id;
-    game.player.targetMonsterId = null; game.player.pendingLocationId = null;
-    setPlayerDestination(hitNpc.x, hitNpc.y + 40);
+    const p = game.player;
+    p.targetMonsterId = null; p.pendingLocationId = null;
+    if(dist(p.x, p.y, hitNpc.x, hitNpc.y) <= npcTalkRange(hitNpc)){ // already close enough — talk right here
+      p.targetX = null; p.targetY = null; p.path = null; p.destinationMarker = null; p.pendingNpcId = null;
+      interactWithNpc(hitNpc);
+      return;
+    }
+    p.pendingNpcId = hitNpc.id;
+    // head for the near side of the NPC; updateOverworld stops the walk the moment we're in talking range
+    const dx = p.x - hitNpc.x, dy = p.y - hitNpc.y, len = Math.hypot(dx, dy) || 1;
+    setPlayerDestination(clamp(hitNpc.x + dx / len * 40, 20, WORLD_W - 20), clamp(hitNpc.y + dy / len * 40, 20, WORLD_H - 20));
     return;
   }
 
@@ -4736,10 +4857,15 @@ function updateOverworld(dt){
   }
   movePlayerToward(p, dt);
 
-  if(p.pendingNpcId != null && p.targetX == null){
+  if(p.pendingNpcId != null){
     const npc = game.npcs.find(n => n.id === p.pendingNpcId);
-    p.pendingNpcId = null;
-    if(npc && dist(p.x, p.y, npc.x, npc.y) < 60) interactWithNpc(npc);
+    if(npc && dist(p.x, p.y, npc.x, npc.y) <= npcTalkRange(npc)){ // in range from any side: stop and talk
+      p.pendingNpcId = null;
+      p.targetX = null; p.targetY = null; p.path = null; p.destinationMarker = null;
+      interactWithNpc(npc);
+    } else if(!npc || p.targetX == null){
+      p.pendingNpcId = null; // arrived but out of range (or the NPC is gone) — don't get stuck waiting
+    }
   }
   if(p.pendingLocationId && p.targetX == null){
     const loc = game.secretLocations.find(l => l.id === p.pendingLocationId);
@@ -4856,6 +4982,8 @@ function renderOverworld(){
     const tg = game.travelGate;
     drawables.push({ y: tg.y, draw: () => drawTravelGateAt(ctx, tg.x, tg.y) });
   }
+  const hoverNpc = game.hoverNpcId != null ? game.npcs.find(n => n.id === game.hoverNpcId) : null;
+  if(hoverNpc) drawables.push({ y: -1e9, draw: () => drawNpcHoverRing(ctx, hoverNpc) }); // ground ring, under everything
   for(const npc of game.npcs){
     const objectFn = TOWN_OBJECT_DRAW[npc.kind];
     if(objectFn){
@@ -4925,8 +5053,10 @@ function renderOverworld(){
   ctx.font = "11px 'Trebuchet MS', sans-serif";
   ctx.fillStyle = "#fff"; // reset — the lines above switched color/glow just for the player's nameplate
   for(const npc of game.npcs){
-    const labelY = npc.y - (npc.labelDy || 68);
+    const labelY = npc.y - (npc.labelDy || 68), hover = npc.id === game.hoverNpcId;
+    if(hover){ ctx.save(); ctx.font = "bold 13px 'Trebuchet MS', sans-serif"; ctx.fillStyle = "#ffd166"; }
     ctx.strokeText(npc.name, npc.x, labelY); ctx.fillText(npc.name, npc.x, labelY);
+    if(hover){ ctx.fillStyle = "#fff"; ctx.font = "10px 'Trebuchet MS', sans-serif"; ctx.strokeText("คลิกเพื่อคุย", npc.x, labelY + 13); ctx.fillText("คลิกเพื่อคุย", npc.x, labelY + 13); ctx.restore(); }
   }
 
   for(const m of game.monsters){
@@ -5835,10 +5965,20 @@ function renderSkillBar(){
       && now < game.battle.skillEmpowerUntil && info.weaponType === getEquippedWeaponMasteryType()));
     const remaining = Math.max(0, (game.player.skillCooldowns[skillId] || 0) - now);
     if(remaining > 0){
-      if(!oldOverlay){ const o = document.createElement("div"); o.className = "skill-cd"; btn.appendChild(o); o.textContent = Math.ceil(remaining/1000); }
-      else oldOverlay.textContent = Math.ceil(remaining/1000);
-    } else if(oldOverlay){
-      oldOverlay.remove();
+      const o = oldOverlay || btn.appendChild(Object.assign(document.createElement("div"), { className: "skill-cd" }));
+      const def = SKILL_DEFS[skillId], total = def ? getSkillCooldownMs(skillId, def) : remaining;
+      const text = remaining < 1000 ? (remaining / 1000).toFixed(1) : String(Math.ceil(remaining / 1000));
+      if(o.textContent !== text) o.textContent = text;
+      o.classList.toggle("soon", remaining < 1000);
+      o.style.setProperty("--cd", clamp(remaining / Math.max(1, total), 0, 1).toFixed(3));
+      btn.dataset.cooling = skillId;
+    } else {
+      if(oldOverlay) oldOverlay.remove();
+      if(btn.dataset.cooling === skillId){ // it was cooling a moment ago → it's ready right now
+        btn.classList.remove("cd-ready"); void btn.offsetWidth; btn.classList.add("cd-ready"); // restart the pulse
+        if(game.inBattle) sfx.skillReady();
+      }
+      delete btn.dataset.cooling;
     }
   });
 }
@@ -7296,7 +7436,7 @@ const TUTORIAL_STEPS = [
     "• มอนเลเวลสูงกว่า / แมพลึก สัญญาณเตือนสั้นลง\n• บอสมีท่าผสม 3 จังหวะ ช่วงนั้นตีไม่ได้ — หลบ หรือใช้สกิลป้องกัน/ยูทิลิตี้" },
   { title: "ทำให้มอนติดสตั้น", text: // STUN_* constants
     "ทุกฮิตเติมหลอดสีส้มใต้เลือดมอน (Perfect x1.5, อินพุตอาวุธ x1.5, สกิล x2, สวนกลับ x1.5) หยุดตี 2 วิ หลอดจะค่อยๆ ลด\n\n" +
-    "หลอดเต็ม = มอนมึน 2 วิ (บอส 1.5 วิ) ตีกลับไม่ได้:\n• รัวคลิกซ้าย (สูงสุด 10 ฮิต/วิ) หรือกดค้าง\n\n" +
+    "หลอดเต็ม = มอนมึน 2 วิ (บอส 1.5 วิ) ตีกลับไม่ได้:\n• รัวคลิกซ้าย (สูงสุด 10 ฮิต/วิ) หรือกดค้าง (4 ฮิต/วิ)\n\n" +
     "Elite และบอสต้านสตั้น เติมได้ช้ากว่า" },
   { title: "สกิล & ต้นสกิลอาวุธ", text:
     "กดปุ่ม 1-8 (หรือคลิกแอ็คชั่นบาร์) ใช้สกิล — มีสกิลพื้นฐาน 4 ตัวให้ทุกคน\n\n" +
@@ -9052,7 +9192,7 @@ document.getElementById("googleLoginBtn").addEventListener("click", ()=>{
   location.href = NET_CONFIG.url + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(netRedirectUrl());
 });
 document.getElementById("creationLogoutBtn").addEventListener("click", ()=>{ sfx.click(); netSetSession(null); location.reload(); });
-document.getElementById("netBlockReloadBtn").addEventListener("click", ()=> location.reload());
+document.getElementById("netBlockReloadBtn").addEventListener("click", ()=> netReloadFresh());
 document.getElementById("accountBtn").addEventListener("click", ()=>{
   sfx.click();
   closeAllPanels();
@@ -9213,6 +9353,16 @@ create table if not exists public.admins (
   user_id uuid primary key references auth.users(id) on delete cascade
 );
 
+-- Game version gate. min_version = the oldest game file still allowed to save; older open tabs are told to refresh.
+-- Force an update: update public.app_config set value = <GAME_VERSION> where key = 'min_version';
+create table if not exists public.app_config (key text primary key, value int not null);
+insert into public.app_config values ('min_version', 0) on conflict (key) do nothing;
+alter table public.app_config enable row level security;
+revoke all on public.app_config from anon, authenticated;
+create or replace function public.min_game_version() returns int language sql stable security definer set search_path = public as $$
+  select coalesce((select value from public.app_config where key = 'min_version'), 0) $$;
+revoke execute on function public.min_game_version() from public, anon, authenticated;
+
 -- Hall of Fame: when this account last moved up the ranking key (a full tie goes to whoever got there first).
 alter table public.saves add column if not exists progress_at timestamptz;
 update public.saves set progress_at = updated_at where progress_at is null;
@@ -9243,7 +9393,7 @@ begin
   insert into public.saves (user_id, session_id) values (me, p_session)
     on conflict (user_id) do update set session_id = excluded.session_id
     returning * into r;
-  return jsonb_build_object('data', r.data, 'rev', r.rev,
+  return jsonb_build_object('data', r.data, 'rev', r.rev, 'mv', public.min_game_version(),
                             'admin', exists (select 1 from public.admins a where a.user_id = me));
 end $$;
 
@@ -9264,6 +9414,7 @@ begin
     return jsonb_build_object('ok', false, 'reason', 'session');
   end if;
   if r.rev <> p_rev then return jsonb_build_object('ok', false, 'reason', 'rev'); end if;
+  if public.lb_num(p_data -> 'gv') < public.min_game_version() then return jsonb_build_object('ok', false, 'reason', 'version'); end if;
   if octet_length(p_data::text) > 1500000 then return jsonb_build_object('ok', false, 'reason', 'size'); end if;
   if jsonb_typeof(p_data -> 'inventory') is distinct from 'array'
      or jsonb_typeof(p_data -> 'storage') is distinct from 'array'
@@ -9387,7 +9538,8 @@ begin
   return jsonb_build_object('w', w,
     'req', (select coalesce(jsonb_agg(jsonb_build_object('id', f.user_id, 'name', public.soc_name(f.user_id))), '[]')
               from public.friends f where f.friend_id = me and not f.accepted),
-    'fc', (select count(*) from public.friends where user_id = me and accepted));
+    'fc', (select count(*) from public.friends where user_id = me and accepted),
+    'mv', public.min_game_version());
 end $$;
 
 create or replace function public.whisper_send(p_to uuid, p_body text)
