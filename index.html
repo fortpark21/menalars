@@ -466,11 +466,38 @@
   .equip-slot-box.dragging{ opacity:.35; transform:scale(.9); }
   #invList, #storeList{ min-height:64px; border-radius:10px; transition:background .15s, outline .15s; }
   .storage-hint{ font-size:11px; color:#7a7186; margin:0 0 10px; line-height:1.4; }
-  .snd-row{ display:grid; grid-template-columns:150px 1fr 38px; align-items:center; gap:8px; margin:8px 0; font-size:14px; color:#4b3f8f; }
-  .snd-tog{ display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:bold; }
-  .snd-row input[type=range]{ width:100%; accent-color:#4b3f8f; }
-  .snd-val{ font-size:12px; color:#7a7186; text-align:right; font-variant-numeric:tabular-nums; }
-  .snd-now{ margin-top:10px; padding:8px 10px; border-radius:8px; background:rgba(75,63,143,.08); font-size:13px; color:#4b3f8f; min-height:20px; }
+  .opt-tabs{ display:flex; flex-wrap:wrap; gap:4px; margin:0 0 12px; border-bottom:2px solid #e4dcc4; }
+  .opt-tab{ border:0; background:none; padding:7px 10px; font-size:13px; font-weight:bold; color:#7a7186; border-bottom:3px solid transparent; margin-bottom:-2px; cursor:pointer; }
+  .opt-tab[aria-selected="true"]{ color:#4b3f8f; border-bottom-color:#4b3f8f; }
+  .opt-row{ display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:6px 12px; padding:9px 2px; border-bottom:1px solid rgba(75,63,143,.1); }
+  .opt-row:last-child{ border-bottom:0; }
+  .opt-lbl{ font-size:14px; color:#3b3170; font-weight:bold; }
+  .opt-note{ display:block; font-size:11.5px; color:#8a8196; font-weight:normal; margin-top:1px; }
+  .opt-vol{ display:flex; align-items:center; gap:8px; }
+  .opt-vol input[type=range]{ width:150px; accent-color:#4b3f8f; }
+  .opt-val{ width:30px; text-align:right; font-size:12px; color:#7a7186; font-variant-numeric:tabular-nums; }
+  .opt-mute{ border:1px solid #d9cfb2; background:#fff; border-radius:8px; width:32px; height:28px; font-size:15px; cursor:pointer; }
+  .opt-mute[aria-pressed="true"]{ background:#f3e3e0; border-color:#d89a8f; }
+  .opt-sw{ position:relative; width:44px; height:24px; border-radius:12px; border:0; background:#cfc6b0; cursor:pointer; flex:none; }
+  .opt-sw::after{ content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.3); transition:left .15s; }
+  .opt-sw[aria-checked="true"]{ background:#4b3f8f; }
+  .opt-sw[aria-checked="true"]::after{ left:23px; }
+  .opt-seg{ display:flex; border:1px solid #d9cfb2; border-radius:8px; overflow:hidden; }
+  .opt-seg button{ border:0; background:#fff; padding:5px 10px; font-size:12.5px; color:#5a5170; cursor:pointer; border-left:1px solid #e4dcc4; }
+  .opt-seg button:first-child{ border-left:0; }
+  .opt-seg button[aria-pressed="true"]{ background:#4b3f8f; color:#fff; font-weight:bold; }
+  .opt-now{ grid-column:1 / -1; padding:8px 10px; border-radius:8px; background:rgba(75,63,143,.08); font-size:13px; color:#4b3f8f; }
+  .opt-keys{ display:grid; gap:12px; }
+  .opt-keys h4{ margin:0 0 4px; font-size:13px; color:#7a7186; }
+  .opt-keys dl{ margin:0; display:grid; grid-template-columns:130px 1fr; gap:4px 12px; font-size:13.5px; color:#3b3170; }
+  .opt-keys dt{ text-align:right; }
+  .opt-keys kbd{ display:inline-block; min-width:18px; padding:1px 6px; border:1px solid #cfc6b0; border-bottom-width:2px; border-radius:5px; background:#fff; font:bold 12px 'Trebuchet MS',sans-serif; text-align:center; color:#4b3f8f; }
+  .opt-foot{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; padding-top:10px; border-top:1px solid #e4dcc4; font-size:11.5px; color:#8a8196; }
+  .opt-reset{ border:1px solid #d9cfb2; background:#fff; border-radius:8px; padding:5px 12px; font-size:12.5px; color:#7a4a3a; cursor:pointer; }
+  .opt-reset.armed{ background:#a3260b; border-color:#a3260b; color:#fff; }
+  .opt-tab:focus-visible, .opt-sw:focus-visible, .opt-seg button:focus-visible, .opt-mute:focus-visible, .opt-reset:focus-visible{ outline:2px solid #4b3f8f; outline-offset:2px; }
+  body.opt-no-minimap #minimapCanvas{ display:none !important; }
+  body.opt-no-hint #hint{ display:none !important; }
   #titleSoundBtn{ position:absolute; top:14px; right:14px; z-index:5; width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.35);
     background:rgba(12,10,28,.55); color:#fff; font-size:18px; cursor:pointer; }
   .sell-drop-zone{
@@ -1349,7 +1376,7 @@
     <button class="menu-btn" id="weaponSkillBtn" type="button" style="position:relative;">⚔️ สกิลอาวุธ<span id="weaponSkillBadge" class="stat-badge" hidden>!</span></button>
     <button class="menu-btn" id="meditateBtn" type="button" style="position:relative;">🧘 ทำสมาธิ<span id="sanityLowBadge" class="stat-badge sanity-badge" hidden>!</span></button>
     <button class="menu-btn" id="tutorialBtn" type="button">❓ วิธีเล่น</button>
-    <button class="menu-btn" id="soundBtn" type="button">🔊 เสียง</button>
+    <button class="menu-btn" id="optionsBtn" type="button">⚙️ ออฟชั่น</button>
     <button class="menu-btn" id="friendsBtn" type="button" style="position:relative;" hidden>👥 เพื่อน<span id="friendsBadge" class="stat-badge" hidden>0</span></button>
     <button class="menu-btn" id="accountBtn" type="button" hidden>👤 บัญชี</button>
     <button class="menu-btn" id="gmBtn" type="button" hidden style="border:2px solid var(--gold);">🛡️ GM</button>
@@ -1360,7 +1387,7 @@
   <div id="artSplash" hidden><img id="artSplashImg" alt=""><div class="as-cap"><div class="as-t" id="artSplashTitle"></div><div class="as-s" id="artSplashSub"></div></div></div>
   <div id="letterOverlay" hidden><div class="letter-paper" id="letterPaper"></div></div>
 
-  <div id="hint">คลิกพื้นเพื่อเดิน · เดินชนมอนสเตอร์เพื่อเข้าสู้ · คลิก NPC เพื่อคุย · ปุ่มลัด C B K J</div>
+  <div id="hint">คลิกพื้นเพื่อเดิน · เดินชนมอนสเตอร์เพื่อเข้าสู้ · คลิก NPC เพื่อคุย · ปุ่มลัด C B K J O</div>
   <div id="attackGauge" hidden>
     <div id="attackGaugeFill"></div>
     <div id="attackGaugePerfect"></div>
@@ -1552,15 +1579,12 @@
 
   <div id="playerMenu" hidden></div>
 
-  <div class="panel" id="soundPanel" hidden style="width:360px;">
-    <button class="close-x" id="closeSoundBtn" type="button">✕</button>
-    <h2>🔊 เสียง</h2>
-    <div class="snd-row"><label class="snd-tog"><input type="checkbox" id="sndMusicOn"> 🎵 เพลง</label>
-      <input type="range" id="sndMusic" min="0" max="100" step="1" aria-label="ความดังเพลง"><span class="snd-val" id="sndMusicVal"></span></div>
-    <div class="snd-row"><label class="snd-tog"><input type="checkbox" id="sndSfxOn"> 🔔 เสียงเอฟเฟกต์</label>
-      <input type="range" id="sndSfx" min="0" max="100" step="1" aria-label="ความดังเสียงเอฟเฟกต์"><span class="snd-val" id="sndSfxVal"></span></div>
-    <div class="snd-now" id="sndNow"></div>
-    <p class="storage-hint" style="margin:8px 0 0;">ปุ่มลัด <b>M</b> = ปิด/เปิดเพลง · ตั้งค่าจำไว้ในเครื่องนี้ · เพลงหยุดเองเมื่อสลับไปแท็บอื่น</p>
+  <div class="panel" id="optionsPanel" hidden style="width:560px;">
+    <button class="close-x" id="closeOptionsBtn" type="button">✕</button>
+    <h2>⚙️ ออฟชั่น</h2>
+    <div class="opt-tabs" role="tablist" id="optTabs"></div>
+    <div id="optBody"></div>
+    <div class="opt-foot"><span>ตั้งค่าจำไว้ในเครื่องและเบราว์เซอร์นี้</span><button type="button" class="opt-reset" id="optReset">คืนค่าเริ่มต้น</button></div>
   </div>
 
   <div class="panel" id="accountPanel" hidden style="width:540px;">
@@ -2034,7 +2058,7 @@ function startChargeTone(){
     chargeOscillator.frequency.setValueAtTime(220, ctx.currentTime);
     chargeGainNode.gain.setValueAtTime(0.0001, ctx.currentTime);
     chargeGainNode.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.08); // quick fade-in, avoids a click/pop
-    chargeOscillator.connect(chargeGainNode).connect(sfxOut(ctx));
+    chargeOscillator.connect(chargeGainNode).connect(sfxOut(ctx, "battle"));
     chargeOscillator.start();
   }catch(e){ chargeOscillator = null; chargeGainNode = null; }
 }
@@ -2085,7 +2109,7 @@ const sfx = {
   coin:      () => { tone(1320, 0.05, "square", 0.04); setTimeout(()=>tone(1760, 0.08, "square", 0.04), 55); },
   equip:     () => { noiseBurst(0.05, 0.08, 3000, "highpass"); tone(300, 0.06, "square", 0.05); }
 };
-function chime3(){ [523,659,784].forEach((f,i)=> setTimeout(()=>tone(f,0.18,"triangle",0.12), i*90)); }
+function chime3(){ const c = sfxCat; [523,659,784].forEach((f,i)=> setTimeout(()=>{ const p = sfxCat; sfxCat = c; tone(f,0.18,"triangle",0.12); sfxCat = p; }, i*90)); }
 document.body.addEventListener("click", ()=>{ getAudio(); }, { once:true, capture:true });
 
 /* ============================================================
@@ -2096,12 +2120,23 @@ document.body.addEventListener("click", ()=>{ getAudio(); }, { once:true, captur
    ============================================================ */
 const AUDIO = {"bgm_city01": "assets/bgm_city01.mp3?v=575a34a2", "bgm_city02": "assets/bgm_city02.mp3?v=0966aaee", "bgm_fight01": "assets/bgm_fight01.mp3?v=9377d9ac", "bgm_map01": "assets/bgm_map01.mp3?v=90f205aa"};
 const AUDIO_TITLE = {"bgm_city01": "Lanterns in the Valley", "bgm_city02": "Morning in the Hidden Vale", "bgm_fight01": "Blade of the Winter Sun", "bgm_map01": "Vows in the Stone Arena"};
-const AUDIO_CFG_KEY = "menalars_audio_v1";
-const audioCfg = (()=>{
-  const d = { music:0.5, sfx:0.8, musicOn:true, sfxOn:true };
-  try{ return Object.assign(d, JSON.parse(localStorage.getItem(AUDIO_CFG_KEY) || "{}")); }catch(e){ return d; }
+// v44: every player option lives here (⚙️ ออฟชั่น window) — saved per device/browser, never in the cloud save
+const OPT_KEY = "menalars_options_v1", AUDIO_CFG_KEY = OPT_KEY;
+const OPT_DEFAULTS = { master:1, masterOn:true, music:0.5, musicOn:true, sfx:0.8, sfxOn:true, ui:0.7, uiOn:true, bgPlay:false,
+  uiScale:1, minimap:true, hint:true, talkSpeed:"normal", lowPower:false,
+  shake:true, dmgNums:true, callouts:true,
+  others:true, otherNames:true, bubbles:true };
+const OPT = (()=>{
+  const o = Object.assign({}, OPT_DEFAULTS);
+  try{ const old = JSON.parse(localStorage.getItem("menalars_audio_v1") || "null"); // v43 sound settings carry over
+       if(old) ["music", "musicOn", "sfx", "sfxOn"].forEach(k => { if(k in old) o[k] = old[k]; }); }catch(e){}
+  try{ const saved = JSON.parse(localStorage.getItem(OPT_KEY) || "{}");
+       for(const k in OPT_DEFAULTS) if(saved && k in saved && typeof saved[k] === typeof OPT_DEFAULTS[k]) o[k] = saved[k]; }catch(e){}
+  return o;
 })();
-function saveAudioCfg(){ try{ localStorage.setItem(AUDIO_CFG_KEY, JSON.stringify(audioCfg)); }catch(e){} }
+const audioCfg = OPT; // v43 name, same object
+function saveAudioCfg(){ try{ localStorage.setItem(OPT_KEY, JSON.stringify(OPT)); }catch(e){} }
+function masterVol(){ return OPT.masterOn ? OPT.master : 0; }
 
 let audioMissingShown = false;
 function audioMissingWarn(key){
@@ -2112,11 +2147,17 @@ function audioMissingWarn(key){
 }
 
 // ---- sound-effect files: decoded once into AudioBuffers, played through the shared SFX volume ----
-let sfxGainNode = null;
-function sfxOut(ctx){
-  if(!sfxGainNode || sfxGainNode.context !== ctx){ sfxGainNode = ctx.createGain(); sfxGainNode.connect(ctx.destination); }
-  sfxGainNode.gain.value = audioCfg.sfxOn ? audioCfg.sfx : 0;
-  return sfxGainNode;
+// two volume groups: "battle" (hits, dodges, skills) and "ui" (clicks, notifications, rewards, travel)
+const SFX_BATTLE = new Set(["attack", "crit", "miss", "dodge", "perfectDodge", "counter", "playerHurt", "die", "skillReady", "heal"]);
+let sfxCat = "ui"; // category of the beep being played right now (set by the sfx wrapper below)
+const sfxGainNodes = {};
+function sfxCatVol(cat){ return masterVol() * (cat === "battle" ? (OPT.sfxOn ? OPT.sfx : 0) : (OPT.uiOn ? OPT.ui : 0)); }
+function sfxOut(ctx, cat){
+  cat = cat || sfxCat;
+  let n = sfxGainNodes[cat];
+  if(!n || n.context !== ctx){ n = sfxGainNodes[cat] = ctx.createGain(); n.connect(ctx.destination); }
+  n.gain.value = sfxCatVol(cat);
+  return n;
 }
 const sfxBuf = {}; // key → AudioBuffer | "loading" | "failed"
 function loadSfxFile(key){
@@ -2132,7 +2173,8 @@ function preloadSfxFiles(){ Object.keys(AUDIO).forEach(k => { if(k.startsWith("s
 // true = a file handled it (or sfx is muted); false = caller should play the procedural beep instead
 const SFX_PITCH_JITTER = { attack:0.06, crit:0.04, miss:0.06, dodge:0.05, playerHurt:0.05, die:0.04, click:0.02, coin:0.05 };
 function playSfxFile(name){
-  if(!audioCfg.sfxOn || audioCfg.sfx <= 0) return true;
+  const cat = SFX_BATTLE.has(name) ? "battle" : "ui";
+  if(sfxCatVol(cat) <= 0) return true;
   const key = "sfx_" + name;
   if(!AUDIO[key]) return false;
   const buf = sfxBuf[key];
@@ -2145,14 +2187,18 @@ function playSfxFile(name){
     src.buffer = buf;
     const j = SFX_PITCH_JITTER[name] || 0;
     if(j) src.playbackRate.value = 1 + (Math.random() * 2 - 1) * j; // tiny pitch wobble so repeated hits don't sound copy-pasted
-    src.connect(sfxOut(ctx));
+    src.connect(sfxOut(ctx, cat));
     src.start();
     return true;
   }catch(e){ return false; }
 }
 Object.keys(sfx).forEach(name => {
   const synth = sfx[name];
-  sfx[name] = () => { if(!playSfxFile(name)) synth(); };
+  sfx[name] = () => {
+    if(playSfxFile(name)) return;
+    const prev = sfxCat; sfxCat = SFX_BATTLE.has(name) ? "battle" : "ui";
+    try{ synth(); } finally { sfxCat = prev; }
+  };
 });
 
 // ---- music: two <audio> elements crossfading, driven by musicTick() every 100 ms ----
@@ -2198,7 +2244,8 @@ function musicEl(i){
   }
   return music.els[i];
 }
-function musicVolume(){ return audioCfg.musicOn ? audioCfg.music : 0; }
+function musicVolume(){ return masterVol() * (OPT.musicOn ? OPT.music : 0); }
+function musicMayPlay(){ return !document.hidden || OPT.bgPlay; }
 function musicPlay(key, fadeS, fromStart){
   const old = music.cur;
   if(old >= 0){
@@ -2217,10 +2264,10 @@ function musicPlay(key, fadeS, fromStart){
   try{ el.currentTime = t; }catch(e){}
   music.level[i] = 0; music.target[i] = 1; music.fadeS[i] = fadeS;
   music.cur = i;
-  if(music.unlocked && !document.hidden) el.play().catch(() => {});
+  if(music.unlocked && musicMayPlay()) el.play().catch(() => {});
 }
 function playJingle(key){
-  if(!audioAvail(key) || !music.unlocked || !audioCfg.musicOn) return;
+  if(!audioAvail(key) || !music.unlocked || musicVolume() <= 0) return;
   try{
     if(music.jingle) music.jingle.pause();
     const j = music.jingle = new Audio(AUDIO[key]);
@@ -2270,7 +2317,7 @@ function musicTick(){
     music.level[i] += Math.sign(d) * Math.min(Math.abs(d), dt / Math.max(0.05, music.fadeS[i]));
     el.volume = clamp(music.level[i] * vol, 0, 1);
     const shouldPlay = music.target[i] > 0 || music.level[i] > 0.001;
-    if(!shouldPlay || document.hidden){ if(!el.paused) el.pause(); }
+    if(!shouldPlay || !musicMayPlay()){ if(!el.paused) el.pause(); }
     else if(el.paused && music.unlocked && el.getAttribute("src")) el.play().catch(() => {});
   }
   if(music.jingle){
@@ -2290,7 +2337,7 @@ function unlockAudio(){
 }
 ["pointerdown", "keydown", "touchstart"].forEach(ev => window.addEventListener(ev, unlockAudio, { capture:true, passive:true }));
 document.addEventListener("visibilitychange", () => {
-  if(document.hidden && music.jingle){ music.jingle.pause(); music.jingle = null; music.duckTarget = 1; }
+  if(!musicMayPlay() && music.jingle){ music.jingle.pause(); music.jingle = null; music.duckTarget = 1; }
   musicTick();
 });
 function musicNowTitle(){
@@ -2645,18 +2692,20 @@ function drawOtherPlayer(ctx, o){
     if(o.isMeditating) drawMeditationAura(ctx, o.x, o.y - 4, getWillColor(o));
     drawCharacterAt(ctx, o.x, o.y, o.look, PLAYER_OVERWORLD_SCALE, o.facing || "down", o.walkPhase);
   }
+  const labelY = o.inBattle ? o.y - 100 : charNameY(o.y, o.look, 118);
+  if(OPT.otherNames){
   ctx.save();
   ctx.font = "bold 12px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center";
   const gm = !!o.netId && net.staff.has(o.netId); // GM list comes from the server (public.admins), never from the player's own message
   ctx.lineWidth = 3; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.fillStyle = gm ? "#ffd166" : "#e9e6f5";
   const label = (gm ? "[GM] " : "") + o.name + (o.inBattle ? " ⚔️" : "");
-  const labelY = o.inBattle ? o.y - 100 : charNameY(o.y, o.look, 118);
   ctx.strokeText(label, o.x, labelY); ctx.fillText(label, o.x, labelY);
   ctx.font = "10px 'Trebuchet MS', sans-serif"; ctx.fillStyle = "#ffe9a8";
   const info = nameplateInfo(o.level || 1, o.maxDim || 1, o.maxMap || 1);
   ctx.strokeText(info, o.x, labelY + 13); ctx.fillText(info, o.x, labelY + 13);
   ctx.restore();
-  if(o.chatUntil > performance.now()) drawChatBubble(ctx, o.x, labelY - 14, o.chat);
+  }
+  if(OPT.bubbles && o.chatUntil > performance.now()) drawChatBubble(ctx, o.x, labelY - 14, o.chat);
 }
 
 function getActivePlayerAuraColor(){
@@ -4567,7 +4616,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 43;
+const GAME_VERSION = 44;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -6844,7 +6893,7 @@ const VIEW_H = 720;
 // The HTML UI (HUD, buttons, panels) grows with the screen too, so a 2K/4K monitor doesn't get tiny menus.
 let UI_ZOOM = 1;
 function applyUiZoom(){
-  UI_ZOOM = clamp(window.innerHeight / 1000, 1, 2.2);
+  UI_ZOOM = clamp(clamp(window.innerHeight / 1000, 1, 2.2) * (OPT.uiScale || 1), 0.75, 2.8); // screen size × ⚙️ ขนาดเมนู
   document.documentElement.style.setProperty("--uiz", UI_ZOOM);
   document.body.style.zoom = UI_ZOOM === 1 ? "" : UI_ZOOM;
 }
@@ -7204,7 +7253,7 @@ function renderOverworld(){
     } });
   }
   for(const o of game.otherPlayers){
-    if(o.mapTier === game.mapTier && (o.dimension === game.dimension || o.mapTier === TOWN_TIER)) drawables.push({ y: o.y, draw: () => drawOtherPlayer(ctx, o) });
+    if(OPT.others && o.mapTier === game.mapTier && (o.dimension === game.dimension || o.mapTier === TOWN_TIER)) drawables.push({ y: o.y, draw: () => drawOtherPlayer(ctx, o) });
   }
   const p = game.player;
   drawables.push({ y: p.y, draw: () => {
@@ -7234,7 +7283,7 @@ function renderOverworld(){
   const playerInfoY = playerNameY + 13;
   const playerInfoText = nameplateInfo(p.level, game.maxDimension || 1, getDimReach(game.maxDimension || 1));
   ctx.strokeText(playerInfoText, p.x, playerInfoY); ctx.fillText(playerInfoText, p.x, playerInfoY);
-  if(net.myBubble && net.myBubble.until > performance.now()) drawChatBubble(ctx, p.x, playerNameY - 14, net.myBubble.text);
+  if(OPT.bubbles && net.myBubble && net.myBubble.until > performance.now()) drawChatBubble(ctx, p.x, playerNameY - 14, net.myBubble.text);
   ctx.font = "11px 'Trebuchet MS', sans-serif";
   ctx.fillStyle = "#fff"; // reset — the lines above switched color/glow just for the player's nameplate
   for(const npc of game.npcs){
@@ -9240,8 +9289,8 @@ function renderBattle(){
   battleMonYFrac = my / h;
   b.monArtExt = mArt ? { rx: artH * mArt.naturalWidth / mArt.naturalHeight * 0.3, ry: artH * 0.42 } : null; // bow zones on the painting
   const bob = Math.sin(now/220) * 4;
-  const mShakeX = m.shake > 0 ? (Math.random()-0.5) * m.shake : 0;
-  const mShakeY = m.shake > 0 ? (Math.random()-0.5) * m.shake : 0;
+  const mShakeX = OPT.shake && m.shake > 0 ? (Math.random()-0.5) * m.shake : 0;
+  const mShakeY = OPT.shake && m.shake > 0 ? (Math.random()-0.5) * m.shake : 0;
   bctx.save();
   bctx.translate(mx + mShakeX, my + mShakeY);
   bctx.scale(battleScale, battleScale);
@@ -9284,8 +9333,8 @@ function renderBattle(){
   }
 
   // player, back view, bottom-left, offset for dodge (with hurt-shake jitter)
-  const pShakeX = b.playerShake > 0 ? (Math.random()-0.5) * b.playerShake : 0;
-  const pShakeY = b.playerShake > 0 ? (Math.random()-0.5) * b.playerShake : 0;
+  const pShakeX = OPT.shake && b.playerShake > 0 ? (Math.random()-0.5) * b.playerShake : 0;
+  const pShakeY = OPT.shake && b.playerShake > 0 ? (Math.random()-0.5) * b.playerShake : 0;
   const px = w*PLAYER_BATTLE_X + b.visualOffset + pShakeX, py = h*PLAYER_BATTLE_FEET_Y + pShakeY;
   bctx.save(); bctx.translate(px,py); bctx.scale(PLAYER_BATTLE_SCALE, PLAYER_BATTLE_SCALE); bctx.translate(-px,-py);
   const battleAuraColor = getActivePlayerAuraColor();
@@ -9381,7 +9430,7 @@ function renderBattle(){
   // floating battle messages — sized per kind (crit/perfect/counter read as bigger & bolder than a
   // plain hit), with a quick pop-in scale and a black outline so numbers stay legible over any background
   bctx.textAlign = "center";
-  for(const msg of b.messages){
+  for(const msg of (OPT.dmgNums ? b.messages : [])){
     const style = BATTLE_MSG_STYLES[msg.kind] || BATTLE_MSG_STYLES.normal;
     const age = now - msg.bornAt;
     const pop = age < 110 ? 0.4 + 0.6 * (age/110) : 1;
@@ -9401,7 +9450,7 @@ function renderBattle(){
 
   // big quick combat callouts (PERFECT/GREAT/MISS/CRITICAL/PERFECT DODGE/COUNTER) — fixed high up,
   // clear of the monster, so they never obscure it and read instantly
-  for(const c of b.callouts){
+  for(const c of (OPT.callouts ? b.callouts : [])){
     const t = clamp((now - c.start) / c.duration, 0, 1);
     const scale = t < 0.2 ? (0.6 + 0.5 * (t/0.2)) : 1;
     const alpha = t > 0.65 ? clamp(1 - (t-0.65)/0.35, 0, 1) : 1;
@@ -9878,6 +9927,7 @@ const NPC_TALK_PROFILE = {
   monk:       { name:"พระ",                 role:"⛩️ ศาลเจ้า · ฝึกสมาธิ",              bg:["#e0a050", "#2e1a06"] }
 };
 const TALK_CPS_MS = 18; // one letter every 18 ms (~55/s) — fast enough never to feel like waiting
+const TALK_SPEED_MS = { slow:34, normal:TALK_CPS_MS, fast:8 }; // ⚙️ ความเร็วข้อความ (instant = no typing at all)
 function talkGraphemes(t){ return String(t).match(/[\s\S][ัิ-ฺ็-๎️‍]*/gu) || []; } // Thai vowels/tones stay on their letter
 function talkParse(text){
   const out = [];
@@ -9913,14 +9963,14 @@ function talkStartTyping(text){
   talk.total = talk.segs.reduce((a, sg) => a + sg.g.length, 0);
   talk.shown = 0; talk.tick = 0;
   const reduce = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(reduce){ talkFinishTyping(); return; }
+  if(reduce || OPT.talkSpeed === "instant"){ talkFinishTyping(); return; }
   talkRenderText();
   talk.timer = setInterval(()=>{
     talk.tick++;
     talk.shown = Math.min(talk.total, talk.shown + 1);
     if(talk.tick % 5 === 0 && talk.shown < talk.total) tone(520 + (talk.tick % 3) * 60, 0.025, "triangle", 0.018); // soft "blip" while speaking
     if(talk.shown >= talk.total) talkFinishTyping(); else talkRenderText();
-  }, TALK_CPS_MS);
+  }, TALK_SPEED_MS[OPT.talkSpeed] || TALK_CPS_MS);
 }
 // Bust of a town NPC for the portrait frame — the same sprite as on the map, 2.35× bigger, plus a trademark item.
 function drawTalkPortrait(kind, mouthOpen){
@@ -10112,7 +10162,7 @@ function closeAllPanels(){
   document.getElementById("buyPanel").hidden = true;
   document.getElementById("refinePanel").hidden = true;
   document.getElementById("travelPanel").hidden = true;
-  document.getElementById("soundPanel").hidden = true;
+  document.getElementById("optionsPanel").hidden = true;
   document.getElementById("gmPanel").hidden = true;
   document.getElementById("gmPlayerPanel").hidden = true;
   document.getElementById("weaponSkillPanel").hidden = true;
@@ -13854,38 +13904,131 @@ window.addEventListener("keydown", e => {
 });
 
 
-/* ---- v43 sound settings window ---- */
-function renderSoundPanel(){
-  document.getElementById("sndMusicOn").checked = audioCfg.musicOn;
-  document.getElementById("sndSfxOn").checked = audioCfg.sfxOn;
-  document.getElementById("sndMusic").value = Math.round(audioCfg.music * 100);
-  document.getElementById("sndSfx").value = Math.round(audioCfg.sfx * 100);
-  document.getElementById("sndMusicVal").textContent = Math.round(audioCfg.music * 100);
-  document.getElementById("sndSfxVal").textContent = Math.round(audioCfg.sfx * 100);
+/* ---- v44 ⚙️ ออฟชั่น window ---- */
+const OPT_TABS = [
+  { id:"sound", label:"🔊 เสียง", rows:[
+    { type:"vol", key:"master", on:"masterOn", label:"เสียงทั้งหมด", note:"คุมทุกเสียงในเกมพร้อมกัน" },
+    { type:"vol", key:"music", on:"musicOn", label:"🎵 เพลง", note:"เพลงประกอบ และเพลงสั้นตอนชนะ/แพ้" },
+    { type:"vol", key:"sfx", on:"sfxOn", label:"⚔️ เสียงต่อสู้", note:"ฟัน คริ หลบ โดนตี สกิล", test:"attack" },
+    { type:"vol", key:"ui", on:"uiOn", label:"🔔 เสียงเมนูและแจ้งเตือน", note:"คลิกปุ่ม เลเวลอัป ภารกิจ ซื้อขาย วาป", test:"coin" },
+    { type:"toggle", key:"bgPlay", label:"เล่นเพลงต่อเมื่อสลับไปหน้าต่างอื่น", note:"ปิดไว้ = เพลงหยุดเองเมื่อไปเปิดแท็บอื่น" },
+    { type:"now" } ]},
+  { id:"display", label:"🖥️ การแสดงผล", rows:[
+    { type:"choice", key:"uiScale", label:"ขนาดเมนูและตัวหนังสือ", options:[[0.85, "เล็ก"], [1, "ปกติ"], [1.15, "ใหญ่"], [1.3, "ใหญ่มาก"]] },
+    { type:"choice", key:"talkSpeed", label:"ความเร็วข้อความบทสนทนา", options:[["slow", "ช้า"], ["normal", "ปกติ"], ["fast", "เร็ว"], ["instant", "ทันที"]] },
+    { type:"toggle", key:"minimap", label:"แผนที่ย่อ", note:"มุมขวาล่างตอนเดินสำรวจ" },
+    { type:"toggle", key:"hint", label:"แถบคำแนะนำด้านล่างจอ" },
+    { type:"toggle", key:"lowPower", label:"โหมดประหยัดพลังงาน", note:"จำกัด 30 ภาพต่อวินาที เครื่องไม่ร้อน แบตอยู่นานขึ้น แต่ภาพลื่นน้อยลง" } ]},
+  { id:"battle", label:"⚔️ การต่อสู้", rows:[
+    { type:"toggle", key:"shake", label:"ภาพสั่นเมื่อตีโดนหรือโดนตี", note:"ปิดได้ถ้าเวียนหัว" },
+    { type:"toggle", key:"dmgNums", label:"ตัวเลขดาเมจลอยขึ้น", note:"รวมตัวเลขฟื้นเลือด" },
+    { type:"toggle", key:"callouts", label:"ข้อความใหญ่กลางจอ", note:"PERFECT · CRITICAL · MISS · COUNTER" } ]},
+  { id:"online", label:"👥 ออนไลน์", rows:[
+    { type:"toggle", key:"others", label:"แสดงผู้เล่นคนอื่นบนแผนที่", note:"ปิดเมื่อคนเยอะจนบังทาง หรือเครื่องกระตุก" },
+    { type:"toggle", key:"otherNames", label:"ชื่อและเลเวลเหนือหัวผู้เล่นคนอื่น" },
+    { type:"toggle", key:"bubbles", label:"ข้อความแชทเหนือหัว", note:"ข้อความยังขึ้นในกล่องแชทตามปกติ" } ]},
+  { id:"keys", label:"⌨️ ปุ่มลัด" }
+];
+const OPT_KEYS_HTML = `<div class="opt-keys">
+  <div><h4>เดินสำรวจ</h4><dl>
+    <dt>คลิกพื้น</dt><dd>เดินไปจุดนั้น</dd><dt>เดินชนมอนสเตอร์</dt><dd>เข้าสู้</dd><dt>คลิก NPC</dt><dd>คุย</dd></dl></div>
+  <div><h4>เมนู</h4><dl>
+    <dt><kbd>C</kbd></dt><dd>สถานะ</dd><dt><kbd>B</kbd> / <kbd>I</kbd></dt><dd>กระเป๋า</dd><dt><kbd>K</kbd></dt><dd>สกิลอาวุธ</dd>
+    <dt><kbd>J</kbd></dt><dd>คอลเลกชัน / ฉายา</dd><dt><kbd>O</kbd></dt><dd>ออฟชั่น</dd><dt><kbd>M</kbd></dt><dd>ปิด/เปิดเพลง</dd>
+    <dt><kbd>Enter</kbd></dt><dd>พิมพ์แชท (เล่นออนไลน์)</dd><dt><kbd>Esc</kbd></dt><dd>ปิดหน้าต่าง / ไปต่อหลังสู้</dd></dl></div>
+  <div><h4>ต่อสู้</h4><dl>
+    <dt>คลิกซ้าย</dt><dd>โจมตีเมื่อเกจเต็ม (ตรงโซนเขียว = PERFECT)</dd><dt><kbd>A</kbd> / <kbd>D</kbd></dt><dd>หลบซ้าย / หลบขวา</dd>
+    <dt><kbd>1</kbd>–<kbd>8</kbd></dt><dd>ใช้สกิลในแอ็คชั่นบาร์</dd></dl></div>
+  <div><h4>บทสนทนา</h4><dl>
+    <dt><kbd>1</kbd>–<kbd>9</kbd></dt><dd>เลือกคำตอบ</dd><dt><kbd>Space</kbd></dt><dd>แสดงข้อความทั้งหมดทันที</dd></dl></div>
+  <p class="storage-hint" style="margin:0">ปุ่มลัดใช้ได้ทั้งแป้นพิมพ์ภาษาไทยและภาษาอังกฤษ</p>
+</div>`;
+let optTab = "sound", optResetArmed = false;
+try{ optTab = localStorage.getItem("menalars_opt_tab") || "sound"; }catch(e){}
+function optEsc(t){ return String(t).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c])); }
+function optLabel(r){ return `<div class="opt-lbl">${optEsc(r.label)}${r.note ? `<span class="opt-note">${optEsc(r.note)}</span>` : ""}</div>`; }
+function renderOptNow(){
+  const el = document.getElementById("optNow");
+  if(!el) return;
   const t = musicNowTitle();
-  document.getElementById("sndNow").textContent = !audioCfg.musicOn ? "🔇 ปิดเพลงอยู่" : t ? "♪ กำลังเล่น: " + t : "♪ ตอนนี้ไม่มีเพลงสำหรับที่นี่";
-  document.getElementById("titleSoundBtn").textContent = audioCfg.musicOn ? "🔊" : "🔇";
+  el.textContent = musicVolume() <= 0 ? "🔇 เพลงปิดอยู่" : t ? "♪ กำลังเล่น: " + t : "♪ ตอนนี้ไม่มีเพลงสำหรับที่นี่";
 }
-function setAudioCfg(k, v){ audioCfg[k] = v; saveAudioCfg(); musicTick(); renderSoundPanel(); }
-document.getElementById("soundBtn").addEventListener("click", ()=>{
-  sfx.click(); closeAllPanels(); renderSoundPanel(); document.getElementById("soundPanel").hidden = false;
+function renderOptionsPanel(){
+  if(!OPT_TABS.some(t => t.id === optTab)) optTab = "sound";
+  document.getElementById("optTabs").innerHTML = OPT_TABS.map(t =>
+    `<button type="button" class="opt-tab" role="tab" data-opttab="${t.id}" aria-selected="${t.id === optTab}">${t.label}</button>`).join("");
+  const tab = OPT_TABS.find(t => t.id === optTab);
+  document.getElementById("optBody").innerHTML = tab.id === "keys" ? OPT_KEYS_HTML : tab.rows.map(r => {
+    if(r.type === "now") return `<div class="opt-row"><div class="opt-now" id="optNow"></div></div>`;
+    if(r.type === "vol") return `<div class="opt-row">${optLabel(r)}<div class="opt-vol">
+      <button type="button" class="opt-mute" data-optmute="${r.on}" aria-pressed="${!OPT[r.on]}" title="${OPT[r.on] ? "ปิดเสียงนี้" : "เปิดเสียงนี้"}">${OPT[r.on] ? "🔊" : "🔇"}</button>
+      <input type="range" id="opt_${r.key}" min="0" max="100" step="1" value="${Math.round(OPT[r.key] * 100)}" data-optvol="${r.key}" data-opton="${r.on}" ${r.test ? `data-opttest="${r.test}"` : ""} aria-label="${optEsc(r.label)}">
+      <span class="opt-val">${OPT[r.on] ? Math.round(OPT[r.key] * 100) : "ปิด"}</span></div></div>`;
+    if(r.type === "toggle") return `<div class="opt-row">${optLabel(r)}<button type="button" class="opt-sw" role="switch" id="opt_${r.key}" data-optsw="${r.key}" aria-checked="${!!OPT[r.key]}" aria-label="${optEsc(r.label)}"></button></div>`;
+    if(r.type === "choice") return `<div class="opt-row">${optLabel(r)}<div class="opt-seg" role="group" aria-label="${optEsc(r.label)}">${
+      r.options.map(([v, l]) => `<button type="button" data-optkey="${r.key}" data-optval="${v}" aria-pressed="${OPT[r.key] === v}">${l}</button>`).join("")}</div></div>`;
+    return "";
+  }).join("");
+  const rs = document.getElementById("optReset");
+  rs.textContent = optResetArmed ? "กดอีกครั้งเพื่อยืนยัน" : "คืนค่าเริ่มต้น";
+  rs.classList.toggle("armed", optResetArmed);
+  renderOptNow();
+}
+// apply every option that isn't read live each frame
+function applyOptions(){
+  document.body.classList.toggle("opt-no-minimap", !OPT.minimap);
+  document.body.classList.toggle("opt-no-hint", !OPT.hint);
+  if(typeof applyUiZoom === "function") applyUiZoom();
+  const tb = document.getElementById("titleSoundBtn");
+  if(tb) tb.textContent = musicVolume() > 0 ? "🔊" : "🔇";
+  musicTick();
+}
+function setOpt(k, v){ OPT[k] = v; saveAudioCfg(); applyOptions(); }
+const setAudioCfg = (k, v) => { setOpt(k, v); if(!document.getElementById("optionsPanel").hidden) renderOptionsPanel(); }; // v43 name
+document.getElementById("optionsBtn").addEventListener("click", ()=>{
+  sfx.click(); closeAllPanels(); optResetArmed = false; renderOptionsPanel(); document.getElementById("optionsPanel").hidden = false;
 });
-document.getElementById("closeSoundBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("soundPanel").hidden = true; });
-document.getElementById("sndMusicOn").addEventListener("change", e => setAudioCfg("musicOn", e.target.checked));
-document.getElementById("sndSfxOn").addEventListener("change", e => { setAudioCfg("sfxOn", e.target.checked); if(e.target.checked) sfx.click(); });
-document.getElementById("sndMusic").addEventListener("input", e => { audioCfg.musicOn = true; setAudioCfg("music", e.target.value / 100); });
-document.getElementById("sndSfx").addEventListener("input", e => { audioCfg.sfxOn = true; setAudioCfg("sfx", e.target.value / 100); });
-document.getElementById("sndSfx").addEventListener("change", () => sfx.coin()); // let go of the slider → hear the new level
-document.getElementById("titleSoundBtn").addEventListener("click", ()=>{ setAudioCfg("musicOn", !audioCfg.musicOn); });
-setInterval(()=>{ if(!document.getElementById("soundPanel").hidden) renderSoundPanel(); }, 1000);
-renderSoundPanel();
+document.getElementById("closeOptionsBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("optionsPanel").hidden = true; });
+document.getElementById("optionsPanel").addEventListener("click", e => {
+  const t = e.target.closest("[data-opttab]");
+  if(t){ optTab = t.dataset.opttab; try{ localStorage.setItem("menalars_opt_tab", optTab); }catch(_){} sfx.click(); renderOptionsPanel(); return; }
+  const sw = e.target.closest("[data-optsw]");
+  if(sw){ setOpt(sw.dataset.optsw, !OPT[sw.dataset.optsw]); sfx.click(); renderOptionsPanel(); return; }
+  const ch = e.target.closest("[data-optkey]");
+  if(ch){ const k = ch.dataset.optkey, raw = ch.dataset.optval; setOpt(k, typeof OPT_DEFAULTS[k] === "number" ? parseFloat(raw) : raw); sfx.click(); renderOptionsPanel(); return; }
+  const mu = e.target.closest("[data-optmute]");
+  if(mu){ setOpt(mu.dataset.optmute, !OPT[mu.dataset.optmute]); sfx.click(); renderOptionsPanel(); return; }
+  if(e.target.id === "optReset"){
+    if(!optResetArmed){ optResetArmed = true; sfx.click(); renderOptionsPanel(); return; }
+    optResetArmed = false;
+    Object.assign(OPT, OPT_DEFAULTS); saveAudioCfg(); applyOptions(); sfx.click(); renderOptionsPanel();
+    showToast("⚙️ คืนค่าเริ่มต้นแล้ว");
+  }
+});
+document.getElementById("optionsPanel").addEventListener("input", e => {
+  const r = e.target.closest("[data-optvol]");
+  if(!r) return;
+  OPT[r.dataset.opton] = true;
+  setOpt(r.dataset.optvol, r.value / 100);
+  const val = r.parentNode.querySelector(".opt-val"), mb = r.parentNode.querySelector(".opt-mute");
+  if(val) val.textContent = Math.round(r.value);
+  if(mb){ mb.textContent = "🔊"; mb.setAttribute("aria-pressed", "false"); }
+  renderOptNow();
+});
+document.getElementById("optionsPanel").addEventListener("change", e => { // let go of a slider → hear the new level
+  const r = e.target.closest("[data-opttest]");
+  if(r && sfx[r.dataset.opttest]) sfx[r.dataset.opttest]();
+});
+document.getElementById("titleSoundBtn").addEventListener("click", ()=>{ setAudioCfg("musicOn", !OPT.musicOn); });
+setInterval(renderOptNow, 1000);
+applyOptions();
 window.addEventListener("keydown", e => {
   if(e.ctrlKey || e.altKey || e.metaKey || e.repeat) return;
   const tag = document.activeElement && document.activeElement.tagName;
   if(tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
   if(hotKey(e) !== "m") return;
-  setAudioCfg("musicOn", !audioCfg.musicOn);
-  if(typeof showToast === "function" && game) showToast(audioCfg.musicOn ? "🔊 เปิดเพลงแล้ว" : "🔇 ปิดเพลงแล้ว (กด M อีกครั้งเพื่อเปิด)");
+  setAudioCfg("musicOn", !OPT.musicOn);
+  if(typeof showToast === "function" && game) showToast(OPT.musicOn ? "🔊 เปิดเพลงแล้ว" : "🔇 ปิดเพลงแล้ว (กด M อีกครั้งเพื่อเปิด)");
 });
 
 /* ---- UI v5 window chrome ---- */
@@ -13902,8 +14045,8 @@ document.querySelectorAll(".panel").forEach(p => {
   if(x && h){ x.title = x.title || "ปิด (Esc)"; h.appendChild(x); }
 });
 const MENU_PANELS = { statusBtn:"statusPanel", bagBtn:"bagPanel", collectionBtn:"collectionPanel", weaponSkillBtn:"weaponSkillPanel",
-  meditateBtn:"meditatePanel", friendsBtn:"friendsPanel", accountBtn:"accountPanel", gmBtn:"gmPanel", soundBtn:"soundPanel" };
-const MENU_HOTKEYS = { c:"statusBtn", b:"bagBtn", i:"bagBtn", k:"weaponSkillBtn", j:"collectionBtn" };
+  meditateBtn:"meditatePanel", friendsBtn:"friendsPanel", accountBtn:"accountPanel", gmBtn:"gmPanel", optionsBtn:"optionsPanel" };
+const MENU_HOTKEYS = { c:"statusBtn", b:"bagBtn", i:"bagBtn", k:"weaponSkillBtn", j:"collectionBtn", o:"optionsBtn" };
 function syncMenuActive(){
   for(const [btnId, panelId] of Object.entries(MENU_PANELS)){
     const b = document.getElementById(btnId), pn = document.getElementById(panelId);
@@ -13914,7 +14057,7 @@ if(typeof MutationObserver !== "undefined"){
   const mo = new MutationObserver(syncMenuActive);
   Object.values(MENU_PANELS).forEach(id => { const el = document.getElementById(id); if(el) mo.observe(el, { attributes:true, attributeFilter:["hidden"] }); });
 }
-[["statusBtn","C","สถานะ"],["bagBtn","B","กระเป๋า"],["weaponSkillBtn","K","สกิลอาวุธ"],["collectionBtn","J","คอลเลกชัน"]].forEach(([id, k, label]) => {
+[["statusBtn","C","สถานะ"],["bagBtn","B","กระเป๋า"],["weaponSkillBtn","K","สกิลอาวุธ"],["collectionBtn","J","คอลเลกชัน"],["optionsBtn","O","ออฟชั่น"]].forEach(([id, k, label]) => {
   const b = document.getElementById(id);
   if(!b || !b.insertBefore) return;
   const hk = document.createElement("span"); hk.className = "hk"; hk.textContent = k;
@@ -13942,8 +14085,11 @@ window.addEventListener("keydown", e => {
 /* ============================================================
    MAIN LOOP
    ============================================================ */
+let lastLoopFrame = 0;
 function loop(now){
   if(!game) return;
+  if(OPT.lowPower && now - lastLoopFrame < 30){ requestAnimationFrame(loop); return; } // ⚙️ ประหยัดพลังงาน: ~30 FPS
+  lastLoopFrame = now;
   let dt = (now - game.lastTime) / 1000;
   dt = clamp(dt, 0, 0.1);
   game.lastTime = now;
