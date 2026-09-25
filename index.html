@@ -403,6 +403,40 @@
     opacity:0; transition:opacity .6s ease;
   }
   #sanityVignette.flicker{ animation:sanityFlicker 1.4s ease-in-out infinite; }
+  /* v46 madness warning — full card out of battle, a banner during a fight */
+  #sanityAlert{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse at center, rgba(40,0,10,.55), rgba(0,0,0,.82)); }
+  #sanityAlert[hidden]{ display:none; }
+  #sanityAlert .sa-card{ width:460px; max-width:calc(92vw / var(--uiz, 1)); padding:22px 24px 18px; border-radius:16px; color:#f6e9ec;
+    background:linear-gradient(180deg, #2a0d18, #16060d); border:2px solid #d0304a;
+    box-shadow:0 0 0 1px rgba(255,120,140,.25), 0 0 40px rgba(208,48,74,.55), 0 20px 60px rgba(0,0,0,.6); }
+  #sanityAlert.go .sa-card{ animation:saIn .5s cubic-bezier(.2,1.4,.4,1), saPulse 1.6s ease-in-out .5s infinite; }
+  @keyframes saIn{ 0%{ transform:scale(1.25) rotate(-1.5deg); opacity:0; } 40%{ transform:scale(.97) rotate(1deg); opacity:1; }
+    60%{ transform:translateX(-8px); } 75%{ transform:translateX(7px); } 90%{ transform:translateX(-3px); } 100%{ transform:none; } }
+  @keyframes saPulse{ 0%,100%{ box-shadow:0 0 0 1px rgba(255,120,140,.25), 0 0 30px rgba(208,48,74,.45), 0 20px 60px rgba(0,0,0,.6); }
+    50%{ box-shadow:0 0 0 1px rgba(255,120,140,.5), 0 0 60px rgba(208,48,74,.85), 0 20px 60px rgba(0,0,0,.6); } }
+  #sanityAlert .sa-eyebrow{ font-size:12px; letter-spacing:.12em; font-weight:bold; color:#ff8fa2; }
+  #sanityAlert h3{ margin:4px 0 12px; font-size:26px; color:#fff; text-shadow:0 0 14px rgba(255,60,90,.7); }
+  #sanityAlert .sa-meter{ position:relative; height:18px; border-radius:9px; background:rgba(255,255,255,.1); overflow:hidden; margin-bottom:12px; }
+  #sanityAlert .sa-meter i{ position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg, #6a1a9a, #c15ce0); }
+  #sanityAlert .sa-meter span{ position:relative; display:block; text-align:center; font-size:12px; font-weight:bold; line-height:18px; }
+  #sanityAlert ul{ margin:0 0 10px; padding:0; list-style:none; display:grid; gap:7px; font-size:13px; line-height:1.45; }
+  #sanityAlert li{ padding:7px 10px; border-radius:8px; background:rgba(255,255,255,.05); border-left:3px solid #d0304a; }
+  #sanityAlert li b{ color:#ffd0d8; }
+  #sanityAlert li.off{ opacity:.45; border-left-color:#665; }
+  #sanityAlert .sa-tip{ margin:0 0 14px; font-size:12px; color:#d9b8c0; }
+  #sanityAlert .sa-actions{ display:flex; gap:8px; justify-content:flex-end; }
+  #sanityBattleWarn{ position:fixed; left:50%; top:18%; transform:translateX(-50%); z-index:40; pointer-events:none; text-align:center;
+    padding:12px 22px; border-radius:12px; background:rgba(40,0,12,.88); border:2px solid #d0304a; color:#fff;
+    box-shadow:0 0 30px rgba(208,48,74,.7); max-width:calc(80vw / var(--uiz, 1)); }
+  #sanityBattleWarn[hidden]{ display:none; }
+  #sanityBattleWarn b{ display:block; font-size:20px; color:#ff9aac; text-shadow:0 0 10px rgba(255,60,90,.8); }
+  #sanityBattleWarn span{ display:block; font-size:13px; margin-top:2px; }
+  #sanityBattleWarn.go{ animation:sbwIn 4.2s ease both; }
+  @keyframes sbwIn{ 0%{ opacity:0; transform:translateX(-50%) scale(1.3); } 8%{ opacity:1; transform:translateX(-50%) scale(1); }
+    12%{ transform:translateX(calc(-50% - 8px)); } 16%{ transform:translateX(calc(-50% + 8px)); } 20%{ transform:translateX(-50%); }
+    85%{ opacity:1; } 100%{ opacity:0; transform:translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce){ #sanityAlert.go .sa-card, #sanityBattleWarn.go{ animation:none; } }
   @keyframes sanityFlicker{ 0%,100%{ opacity:var(--sanity-vignette-max, .85); } 50%{ opacity:calc(var(--sanity-vignette-max, .85) * 0.7); } }
 
   .dialog-box{
@@ -1679,6 +1713,17 @@
 </div>
 
 <div id="sanityVignette"></div>
+<div id="sanityBattleWarn" hidden aria-live="assertive"></div>
+<div id="sanityAlert" hidden role="alertdialog" aria-modal="true" aria-labelledby="saTitle">
+  <div class="sa-card">
+    <div class="sa-eyebrow">⚠️ ตัวละครไม่ปกติแล้ว</div>
+    <h3 id="saTitle"></h3>
+    <div class="sa-meter"><i id="saFill"></i><span id="saPct"></span></div>
+    <ul id="saList"></ul>
+    <p class="sa-tip">ทำสมาธิเพื่อดึงสติกลับคืน (นอกฉากต่อสู้) · จากต่ำสุดจนเต็มใช้ไม่เกิน 2 นาที · อยู่ในเมืองสติฟื้นเองช้าๆ</p>
+    <div class="sa-actions"><button type="button" class="btn-primary" id="saMeditate">🧘 นั่งสมาธิเลย</button><button type="button" class="btn-secondary" id="saLater">ไว้ทีหลัง</button></div>
+  </div>
+</div>
 
 <!-- Online: a save the server refused / a dead login covers the whole game (see netBlock) -->
 <div id="gmConfirm" hidden><div class="card" id="gmConfirmCard"></div></div>
@@ -2126,7 +2171,9 @@ const sfx = {
   notice:    () => chime3(),
   warp:      () => { noiseBurst(0.35, 0.06, 1400, "bandpass"); tone(440, 0.22, "sine", 0.05); setTimeout(()=>tone(880, 0.28, "sine", 0.05), 90); },
   coin:      () => { tone(1320, 0.05, "square", 0.04); setTimeout(()=>tone(1760, 0.08, "square", 0.04), 55); },
-  equip:     () => { noiseBurst(0.05, 0.08, 3000, "highpass"); tone(300, 0.06, "square", 0.05); }
+  equip:     () => { noiseBurst(0.05, 0.08, 3000, "highpass"); tone(300, 0.06, "square", 0.05); },
+  madness:   () => { tone(82, 1.1, "sawtooth", 0.07); tone(87, 1.1, "sawtooth", 0.06); noiseBurst(0.9, 0.06, 500, "lowpass");
+                     const c = sfxCat; setTimeout(()=>{ const p = sfxCat; sfxCat = c; tone(62, 0.9, "sine", 0.1); sfxCat = p; }, 350); }
 };
 function chime3(){ const c = sfxCat; [523,659,784].forEach((f,i)=> setTimeout(()=>{ const p = sfxCat; sfxCat = c; tone(f,0.18,"triangle",0.12); sfxCat = p; }, i*90)); }
 document.body.addEventListener("click", ()=>{ getAudio(); }, { once:true, capture:true });
@@ -4635,7 +4682,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 45;
+const GAME_VERSION = 46;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -7446,7 +7493,22 @@ const STAT_RATES = {
    existing level-gap penalty.
    ============================================================ */
 const SANITY_MAX = 100;
-const SANITY_FLOOR = 25;            // hard minimum — never fully incapacitated, just badly weakened
+const SANITY_FLOOR = 5;             // v46: hard minimum (was 25) — low enough to reach every madness stage below
+const SANITY_PENALTY_FLOOR = 25;    // the stat penalty stops growing here (max ~40%), as before v46
+// v46 madness stages — battles get harder to READ, on top of the stat penalty:
+//   below 50: every attack warning flashes on BOTH sides (plus a decoy projectile) — you can't tell which is real
+//   below 30: A and D are swapped (A dodges right, D dodges left)
+//   below 15: the right part of the battle screen (where the monster stands) sinks into ~90% darkness
+const SANITY_MADNESS = [
+  { below:50, name:"ภาพหลอน",         desc:"สัญญาณเตือนการโจมตีขึ้นทั้งสองฝั่ง แยกไม่ออกว่าฝั่งไหนของจริง", tag:"เตือนสองฝั่ง" },
+  { below:30, name:"สับสนทิศทาง",     desc:"กด A กลับหลบไปทางขวา กด D กลับหลบไปทางซ้าย", tag:"A↔D สลับ" },
+  { below:15, name:"ความมืดกลืนกิน", desc:"ครึ่งจอด้านขวาตอนต่อสู้มืดสนิท มองแทบไม่เห็นมอนสเตอร์", tag:"มืดบอด" }
+];
+function sanityTier(){
+  if(!game || !game.player) return 0;
+  const s = game.player.sanity;
+  return SANITY_MADNESS.filter(m => s < m.below).length;
+}
 const SANITY_SAFE_THRESHOLD = 90;   // no penalty, no warning, at or above this
 const SANITY_PENALTY_SLOPE = 0.625; // penalty% = (90 - sanity) * slope — gives exactly 50%→25% penalty
 const SANITY_KILL_DRAIN = 0.5;
@@ -7460,7 +7522,7 @@ const SANITY_TOWN_PASSIVE_SECONDS_FOR_FULL = 600; // just idling in town: much s
 function getSanityPenaltyMult(){
   const s = game.player.sanity;
   if(s >= SANITY_SAFE_THRESHOLD) return 1;
-  const penaltyPct = (SANITY_SAFE_THRESHOLD - s) * SANITY_PENALTY_SLOPE * (1 - fx("true_will")/100);
+  const penaltyPct = (SANITY_SAFE_THRESHOLD - Math.max(s, SANITY_PENALTY_FLOOR)) * SANITY_PENALTY_SLOPE * (1 - fx("true_will")/100);
   return 1 - penaltyPct / 100;
 }
 function checkSanityWarning(){
@@ -7471,8 +7533,47 @@ function checkSanityWarning(){
   } else if(p.sanity >= SANITY_SAFE_THRESHOLD && p.sanityWarnedLow){
     p.sanityWarnedLow = false; // reset so the banner can fire again the next time it dips below
   }
+  // v46: a loud warning each time a new madness stage starts (again after climbing back above it)
+  const tier = sanityTier();
+  if(tier > (p.sanityAlertTier || 0)){ p.sanityAlertTier = tier; showSanityAlert(tier); }
+  else if(tier < (p.sanityAlertTier || 0)) p.sanityAlertTier = tier;
   updateSanityBadge();
 }
+let sanityAlertPending = false, sanityBattleWarnTimer = null;
+function showSanityAlert(tier){
+  sfx.madness();
+  if(game.inBattle){ // never block a fight — a short banner now, the full warning once the fight is over
+    sanityAlertPending = true;
+    const el = document.getElementById("sanityBattleWarn");
+    const st = SANITY_MADNESS[tier - 1];
+    el.innerHTML = `<b>⚠️ สติแตกร้าว: ${st.name}</b><span>${st.desc}</span>`;
+    el.hidden = false; el.classList.remove("go"); void el.offsetWidth; el.classList.add("go");
+    clearTimeout(sanityBattleWarnTimer);
+    sanityBattleWarnTimer = setTimeout(() => { el.hidden = true; }, 4200);
+    return;
+  }
+  openSanityAlert();
+}
+const SANITY_ALERT_TITLES = ["", "จิตเริ่มหลอน", "สติสับสนหนัก", "ความมืดกำลังกลืนกินตัวตน"];
+function openSanityAlert(){
+  sanityAlertPending = false;
+  const tier = sanityTier();
+  if(!tier) return;
+  const p = game.player, s = Math.round(p.sanity);
+  document.getElementById("saTitle").textContent = SANITY_ALERT_TITLES[tier];
+  document.getElementById("saFill").style.width = clamp(p.sanity / SANITY_MAX * 100, 0, 100) + "%";
+  document.getElementById("saPct").textContent = `สติ ${s}%`;
+  const pen = Math.round((1 - getSanityPenaltyMult()) * 100);
+  document.getElementById("saList").innerHTML =
+    `<li><b>พลังลดลง ${pen}%</b> — ATK / ความแม่นยำ / DEF / HP</li>` +
+    SANITY_MADNESS.map((m, i) => `<li class="${i < tier ? "on" : "off"}"><b>${i < tier ? "⚠️" : "🔒"} ต่ำกว่า ${m.below}%: ${m.name}</b> — ${m.desc}</li>`).join("");
+  const med = document.getElementById("saMeditate");
+  med.textContent = game.player.isMeditating ? "🧘 กำลังทำสมาธิอยู่" : "🧘 นั่งสมาธิเลย";
+  med.disabled = !!game.player.isMeditating;
+  const el = document.getElementById("sanityAlert");
+  el.hidden = false; el.classList.remove("go"); void el.offsetWidth; el.classList.add("go");
+}
+function closeSanityAlert(){ document.getElementById("sanityAlert").hidden = true; }
 function drainSanity(amount){
   if(!game || !game.player) return;
   game.player.sanity = Math.max(SANITY_FLOOR, game.player.sanity - amount * (1 - fx("still_mind")/100) * dimRuleMult("sunburn"));
@@ -7539,6 +7640,12 @@ function updateSanityVignette(){
   else { el.classList.remove("flicker"); el.style.opacity = intensity; }
 }
 document.getElementById("meditateBtn").addEventListener("click", ()=>{ sfx.click(); startMeditating(); });
+document.getElementById("saLater").addEventListener("click", ()=>{ sfx.click(); closeSanityAlert(); });
+document.getElementById("saMeditate").addEventListener("click", ()=>{
+  sfx.click(); closeSanityAlert();
+  if(game && !game.inBattle && !game.player.isMeditating){ closeAllPanels(); startMeditating(); }
+});
+window.addEventListener("keydown", e => { if(e.key === "Escape" && !document.getElementById("sanityAlert").hidden) closeSanityAlert(); });
 document.getElementById("meditateStopBtn").addEventListener("click", ()=>{ sfx.click(); stopMeditating(); });
 
 // Weapon Mastery — separate from Equipment or Level. Tracked per weapon *category*, not per item,
@@ -8556,6 +8663,7 @@ function applyDeathPenalty(){
 
 function returnToOverworldView(){
   saveGameNow(); // a fight just ended (inBattle is already false here) — good checkpoint
+  if(sanityAlertPending) setTimeout(openSanityAlert, 350); // v46: the madness warning that was held back during the fight
   battleCanvas.style.display = "none";
   canvas.style.display = "block";
   document.getElementById("topMenu").style.display = "flex";
@@ -9050,7 +9158,8 @@ window.addEventListener("keydown", (e)=>{
   const dodgeCooldown = computePlayerBattleStats(game.player.level).dodgeCooldownMs; // AGI lowers this
   if(now - b.lastDodge < dodgeCooldown) return;
   b.lastDodge = now;
-  b.dodgeSide = key === "a" ? "left" : "right";
+  const pressedLeft = key === "a";
+  b.dodgeSide = (sanityTier() >= 2 ? !pressedLeft : pressedLeft) ? "left" : "right"; // v46 madness: below 30 the keys swap
   sfx.dodge();
 });
 
@@ -9411,8 +9520,9 @@ function renderBattle(){
     const Z0 = 4, depth = t => Z0 + (1 - Z0) * t, persp = t => (1 / depth(t) - 1 / Z0) / (1 - 1 / Z0);
     const posAt = t => getProjectilePos(b, persp(t), mx, my, hitY, w);
     const sizeAt = t => 48 / depth(t);
-    const { x: projX, y: projY } = posAt(progress);
     const projColor = hexToRgb(b.def.color);
+    const drawShot = posAt => { // v46: a function so a madness decoy can reuse the exact same look
+    const { x: projX, y: projY } = posAt(progress);
 
     for(let i=3;i>=1;i--){ // fading trail behind it
       const tp = posAt(clamp(progress - i*0.05, 0, 1)), r = sizeAt(clamp(progress - i*0.05, 0, 1)) * (1 - i*0.15);
@@ -9430,6 +9540,12 @@ function renderBattle(){
     bctx.fillStyle = "rgba(255,255,255,.55)";
     bctx.beginPath(); bctx.ellipse(-r * 0.3, -r * 0.3, r * 0.35, r * 0.22, -0.6, 0, Math.PI*2); bctx.fill();
     bctx.restore();
+    };
+    drawShot(posAt);
+    if(sanityTier() >= 1){ // madness: a mirror-image decoy flying at the other lane, same look, same feint curve
+      const decoy = { telegraphSide: oppositeSide(b.telegraphSide), feintSwitchProgress: b.feintSwitchProgress };
+      drawShot(t => getProjectilePos(decoy, persp(t), mx, my, hitY, w));
+    }
   }
 
   // telegraph flash on screen edge
@@ -9437,14 +9553,17 @@ function renderBattle(){
     const progress = clamp((now - b.telegraphStart) / b.telegraphTotalMs, 0, 1);
     const pulse = 0.35 + 0.25 * Math.sin(now/60);
     const alpha = pulse * (0.5 + 0.5*progress);
-    const grad = b.telegraphSide === "left"
+    const flashSides = sanityTier() >= 1 ? ["left", "right"] : [b.telegraphSide]; // v46 madness: both sides light up
+    for(const side of flashSides){
+    const grad = side === "left"
       ? bctx.createLinearGradient(0,0,w*0.3,0)
       : bctx.createLinearGradient(w,0,w*0.7,0);
     grad.addColorStop(0, `rgba(255,60,60,${alpha})`);
     grad.addColorStop(1, "rgba(255,60,60,0)");
     bctx.fillStyle = grad;
-    if(b.telegraphSide === "left") bctx.fillRect(0,0,w*0.3,h);
+    if(side === "left") bctx.fillRect(0,0,w*0.3,h);
     else bctx.fillRect(w*0.7,0,w*0.3,h);
+    }
   }
 
   // floating battle messages — sized per kind (crit/perfect/counter read as bigger & bolder than a
@@ -9487,6 +9606,10 @@ function renderBattle(){
     bctx.restore();
   }
   bctx.globalAlpha = 1;
+
+  const madTier = sanityTier();
+  if(madTier >= 3) drawSanityDarkness(w, h, now);
+  if(madTier >= 1) drawSanityBattleTag(w, h, madTier, now);
 
   // Sword-only: the telegraphed swipe direction, as a glowing arrow over the monster (not a small UI
   // icon) — and the live drag trail actually tracing the player's mouse path like a blade streak.
@@ -9591,6 +9714,35 @@ function renderBattle(){
     drawOrbGestureFeedback(b, mx, my + guideR + 28, now); // on top of the trail
   }
 
+  bctx.restore();
+}
+
+// v46 madness below 15: the right part of the battle screen (a slanted band over the monster, as the owner drew it)
+// sinks into ~90% black, with a soft left edge that breathes a little. The player's side stays visible.
+function drawSanityDarkness(w, h, now){
+  const xTop = w * 0.345, xBot = w * 0.6, F = 70; // F = width of the soft edge (px)
+  const dx = xBot - xTop, len = Math.hypot(dx, h), nx = h / len, ny = -dx / len; // unit normal of the slanted edge, pointing right
+  const mx = (xTop + xBot) / 2, my = h / 2;
+  const a = 0.9 + 0.02 * Math.sin(now / 700); // ~90% black, breathing a little
+  const g = bctx.createLinearGradient(mx - nx * F, my - ny * F, mx + nx * F * 0.4, my + ny * F * 0.4);
+  g.addColorStop(0, "rgba(4,2,8,0)"); g.addColorStop(1, `rgba(4,2,8,${a.toFixed(3)})`);
+  bctx.save();
+  bctx.fillStyle = g;
+  bctx.beginPath();
+  bctx.moveTo(xTop - F * 1.3, 0); bctx.lineTo(w, 0); bctx.lineTo(w, h); bctx.lineTo(xBot - F * 1.3, h);
+  bctx.closePath(); bctx.fill();
+  bctx.restore();
+}
+function drawSanityBattleTag(w, h, tier, now){
+  const x = w * PLAYER_BATTLE_X, y = h * 0.3;
+  const text = "🌀 สติ " + Math.round(game.player.sanity) + "% · " + SANITY_MADNESS.slice(0, tier).map(m => m.tag).join(" · ");
+  bctx.save();
+  bctx.font = "bold 15px 'Trebuchet MS', sans-serif"; bctx.textAlign = "center";
+  const tw = bctx.measureText(text).width + 22;
+  bctx.globalAlpha = 0.85 + 0.15 * Math.sin(now / 260);
+  bctx.fillStyle = "rgba(40,0,14,.82)"; roundRect(bctx, x - tw / 2, y - 18, tw, 28, 10); bctx.fill();
+  bctx.strokeStyle = "#d0304a"; bctx.lineWidth = 2; roundRect(bctx, x - tw / 2, y - 18, tw, 28, 10); bctx.stroke();
+  bctx.fillStyle = "#ffc2cd"; bctx.fillText(text, x, y + 1);
   bctx.restore();
 }
 
@@ -9824,7 +9976,9 @@ const TUTORIAL_STEPS = [
   { title: "🧘 สติ — อย่าปล่อยให้ต่ำ", text: // SANITY_* constants / SANITY_BADGE_THRESHOLD
     "หลอดม่วงใต้ EXP ลดเมื่อฆ่ามอนและโดนตี\n\n" +
     "• ต่ำกว่า 90% ทุกค่าลดลง (ATK/แม่นยำ/DEF/HP) หนักสุดราว 40%\n" +
-    "• ต่ำกว่า 50% ปุ่ม 🧘 ทำสมาธิ จะมีป้ายเตือน\n\n" +
+    "• ต่ำกว่า 50% ภาพหลอน: สัญญาณเตือนขึ้นทั้งสองฝั่ง แยกไม่ออกว่าของจริงมาทางไหน\n" +
+    "• ต่ำกว่า 30% สับสนทิศ: A หลบขวา / D หลบซ้าย\n" +
+    "• ต่ำกว่า 15% ความมืด: ครึ่งจอขวาตอนต่อสู้มืดสนิท\n\n" +
     "ฟื้นสติ:\n• กด 🧘 ทำสมาธิ นอกฉากสู้ — จากต่ำสุดจนเต็มใช้ไม่เกิน 2 นาที (สลับแท็บแล้วหยุดนับ)\n• อยู่ในเมืองฟื้นเองช้าๆ" },
   { title: "เก่งขึ้น: สเตตัส & อุปกรณ์", text:
     "• 📋 สถานะ: เลเวลอัพได้แต้มสเตตัส 6 ค่า (ป้ายตัวเลข = มีแต้มเหลือ)\n" +
