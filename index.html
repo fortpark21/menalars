@@ -3531,7 +3531,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 21;
+const GAME_VERSION = 22;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -6640,6 +6640,7 @@ function isMasteryMaxed(){
   return type ? (game.player.mastery[type] || 0) >= MASTERY_MAX : false;
 }
 
+const ATTACK_GAUGE_MIN_MS = 1000;
 function computePlayerBattleStats(level){
   const eq = getEquipmentBonuses();
   const sp = getStatTotals(); // allocated + gear stat points
@@ -6657,6 +6658,11 @@ function computePlayerBattleStats(level){
   let cooldown = clamp(820 - level*18, 300, 820);
   const atkSpeedPct = clamp(eq.atkSpeed, -60, 80) + sp.AGI * STAT_RATES.AGI_ATKSPEED_PCT;
   cooldown = clamp(cooldown * (1 - clamp(atkSpeedPct, -75, 90)/100), 200, 1400);
+  // the gauge never fills faster than once per second (time to read the swipe direction and draw it);
+  // any speed beyond that turns into extra damage on normal hits, so AGI / attack-speed gear keep their full worth.
+  // Haste-type skills still shorten the gauge below 1s (they multiply `cooldown` later, in battle).
+  const speedDmgMult = cooldown < ATTACK_GAUGE_MIN_MS ? ATTACK_GAUGE_MIN_MS / cooldown : 1;
+  cooldown = Math.max(cooldown, ATTACK_GAUGE_MIN_MS);
 
   // Perfect Zone: equipment "สมาธิ" (unchanged), plus MEDITATE (the main stat for this) and a
   // small DEX bonus, all pulling the START earlier. END is still permanently pinned at 98%.
@@ -6668,7 +6674,8 @@ function computePlayerBattleStats(level){
   const perfectZoneStart = getPerfectZoneStart(zoneWiden, cooldown);
 
   return {
-    cooldown,                                                    // attack speed (ms), equipment+AGI-adjusted
+    cooldown,                                                    // attack speed (ms), equipment+AGI-adjusted, never under 1s
+    speedDmgMult,                                                // normal hits only: speed past the 1s cap, as damage
     accuracy: clamp((0.78 + level*0.012 + sp.DEX * STAT_RATES.DEX_ACCURACY_PCT/100) * sanityMult, 0.4, 0.99),  // hit chance
     critRate: clamp(0.05 + level*0.015 + eq.critRate/100 + sp.LUK * STAT_RATES.LUK_CRIT_PCT/100, 0.03, 0.85),
     critMult: 1.5 + Math.min(level*0.03, 1.0) + eq.critDamage/100,       // crit damage multiplier
@@ -7646,7 +7653,7 @@ function battleAttack(){
     return;
   }
 
-  let dmg = randInt(stats.minDmg, stats.maxDmg);
+  let dmg = Math.round(randInt(stats.minDmg, stats.maxDmg) * (stats.speedDmgMult || 1));
   let isCrit = Math.random() < stats.critRate;
   if(isCrit) dmg = Math.round(dmg * stats.critMult);
   if(now < m.armorBrokenUntil) dmg = Math.round(dmg * (1 + m.armorBrokenBonus/100));
@@ -10694,7 +10701,8 @@ function renderStatusPanel(){
     statusRow("เงิน", `💰 ${p.gold}`),
     statusRow("พลังโจมตี (Final ATK)", `${stats.minDmg} - ${stats.maxDmg}`),
     statusRow("พลังป้องกัน (DEF)", stats.def),
-    statusRow("ความเร็วโจมตี", `${(1000/stats.cooldown).toFixed(2)} ครั้ง/วินาที`),
+    statusRow("ความเร็วโจมตี", `${(1000/stats.cooldown).toFixed(2)} ครั้ง/วินาที` + (stats.speedDmgMult > 1 ? ` (สูงสุดแล้ว)` : "")),
+    ...(stats.speedDmgMult > 1 ? [statusRow("ความเร็วส่วนเกิน → แรงตีปกติ", `x${stats.speedDmgMult.toFixed(2)}`)] : []),
     statusRow("ความแม่นยำ", `${Math.round(stats.accuracy*100)}%`),
     statusRow("อัตราคริติคอล", `${Math.round(stats.critRate*100)}%`),
     statusRow("แรงคริติคอล", `x${stats.critMult.toFixed(2)}`),
@@ -10706,7 +10714,7 @@ function renderStatusPanel(){
 
 const STAT_INFO = {
   STR:      { label:"เจตจำนง",     desc:"เพิ่ม ATK" },
-  AGI:      { label:"ความคล่องแคล่ว", desc:"เพิ่มความเร็วโจมตี + ลดดีเลกดหลบ" },
+  AGI:      { label:"ความคล่องแคล่ว", desc:"เพิ่มความเร็วโจมตี (เต็มที่ 1 ครั้ง/วิ ส่วนเกินกลายเป็นแรงตี) + ลดดีเลกดหลบ" },
   DEX:      { label:"ไหวพริบ",     desc:"เพิ่มความแม่นยำ + ขยาย Perfect Zone เล็กน้อย" },
   VIT:      { label:"ความทนทาน",   desc:"เพิ่ม HP + DEF" },
   LUK:      { label:"โชค",         desc:"เพิ่มคริ + โอกาสของหายากเล็กน้อย" },
