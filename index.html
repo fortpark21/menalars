@@ -4815,7 +4815,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 50;
+const GAME_VERSION = 51;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -11974,17 +11974,16 @@ function transferItem(fromArr, toArr, idx, toMax, fullMsg, qty){
    While a window stays open, every item keeps its square: selling or moving one leaves an empty gap instead of
    sliding every later item one step back (which made the next click land on the wrong item). The layout starts
    fresh each time the window opens. */
-/* v50: how every item grid is shown — what you're WEARING first (in body order), then the newest pickup.
-   New items are appended to the end of game.inventory / game.storage, so "newest first" = the array read
-   backwards. The ✨ จัดเรียง button stores its tidy order reversed, so tidy items read top-down and anything
-   picked up afterwards still appears at the very front. */
+/* v50/v51: how every item grid is shown — what you're WEARING first (in body order), then everything else in
+   the order it came in: new pickups join at the END (v51 — the owner didn't want them jumping in front).
+   The ✨ จัดเรียง button rewrites the array in its tidy order; anything picked up afterwards lines up after it. */
 function wornEntries(arr){
   return EQUIPMENT_SLOTS.map(k => game.player.equipment[k]).filter(Boolean)
     .map(id => arr.find(e => e.kind === "equipment" && e.instanceId === id)).filter(Boolean);
 }
 function itemDisplayOrder(arr){
   const worn = wornEntries(arr);
-  return worn.concat(arr.filter(e => !worn.includes(e)).reverse());
+  return worn.concat(arr.filter(e => !worn.includes(e)));
 }
 const SORT_RARITY = { legendary:5, epic:4, rare:3, uncommon:2, common:1 };
 const SORT_SLOT = { weapon:0, armor:1, headgear:2, accessory:3 };
@@ -12019,7 +12018,7 @@ function sortItemsArray(arr){
   const worn = wornEntries(merged);
   const tidy = merged.filter(e => !worn.includes(e)).sort(compareItems);
   arr.length = 0;
-  arr.push(...worn, ...tidy.reverse()); // stored reversed — the grid reads the array backwards
+  arr.push(...worn, ...tidy);
 }
 function sortItemsAction(which){
   const arrs = which === "storage" ? [game.storage] : which === "both" ? [game.inventory, game.storage] : [game.inventory];
@@ -12210,7 +12209,7 @@ function renderBagPanel(){
   countEl.className = game.inventory.length >= BAG_CAPACITY ? "full" : "";
   document.getElementById("bagStorageCount").textContent = `${game.storage.length}/${STORAGE_CAPACITY}`;
 
-  itemDisplayOrder(game.inventory).forEach(entry => { // v50: worn first, then newest
+  itemDisplayOrder(game.inventory).forEach(entry => { // v50/v51: worn first, then oldest → newest
     const slot = document.createElement("div");
     slot.className = "item-slot" + (entry === selectedBagIndex ? " selected" : "");
 
