@@ -1624,7 +1624,9 @@ const artSeen = {};
 let artSplashTimer = null;
 function showArtSplash(src, title, sub, ms){
   const el = document.getElementById("artSplash");
-  document.getElementById("artSplashImg").src = src;
+  const img = document.getElementById("artSplashImg");
+  img.onerror = () => { artMissingWarn(Object.keys(ART).find(k => ART[k] === src) || "splash"); hideArtSplash(); }; // no black screen if the picture is missing
+  img.src = src;
   document.getElementById("artSplashTitle").textContent = title || "";
   document.getElementById("artSplashSub").textContent = sub || "";
   el.hidden = false; el.classList.remove("out");
@@ -1658,12 +1660,27 @@ function lookPreset(look){
   const same = availablePresets().filter(p => p.gender === (look && look.gender === "female" ? "female" : "male"));
   return same[0] || availablePresets()[0] || null;
 }
+// A picture that won't load almost always means the assets/ folder wasn't uploaded next to index.html —
+// say so plainly once, instead of silently falling back to the old drawn graphics.
+let artMissingShown = false;
+function artMissingWarn(key){
+  console.warn("missing picture:", ART[key]);
+  if(artMissingShown) return;
+  artMissingShown = true;
+  const el = document.createElement("div");
+  el.style.cssText = "position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99;max-width:92vw;padding:10px 16px;border-radius:12px;" +
+    "background:#5b1a1a;color:#fff;font:13px/1.5 'Trebuchet MS',sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.5);border:2px solid #ff8a8a;text-align:center;cursor:pointer";
+  el.innerHTML = "⚠️ โหลดภาพในเกมไม่ได้ (" + key + ") — โฟลเดอร์ <b>assets</b> ยังไม่ได้อัปโหลดคู่กับ index.html<br>เกมเลยใช้กราฟิกแบบเก่าแทนชั่วคราว · คลิกเพื่อปิด";
+  el.onclick = () => el.remove();
+  document.body.appendChild(el);
+}
 function spriteImg(key){
   if(!SPRITES_OK || !ART[key]) return null;
   let im = spriteImgs[key];
   if(!im){
     im = spriteImgs[key] = new Image();
     im.onload = () => { if(document.getElementById("creation-screen").style.display !== "none") renderPreview(); };
+    im.onerror = () => artMissingWarn(key);
     im.src = ART[key];
   }
   return im.complete && im.naturalWidth ? im : null;
@@ -4149,7 +4166,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 37;
+const GAME_VERSION = 38;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
