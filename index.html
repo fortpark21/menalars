@@ -1516,6 +1516,16 @@
 // "?v=…" is a fingerprint of the file: when a picture changes, the fingerprint changes and players' browsers
 // fetch the new one instead of showing the old cached copy. Add/replace pictures with add_art.py.
 const ART = {
+  bossbody_10: "assets/bossbody_10.webp?v=d12eb7a4",
+  bossbody_9: "assets/bossbody_9.webp?v=a6888889",
+  bossbody_8: "assets/bossbody_8.webp?v=0295456a",
+  bossbody_7: "assets/bossbody_7.webp?v=fb0f58e0",
+  bossbody_6: "assets/bossbody_6.webp?v=a4b0d293",
+  bossbody_5: "assets/bossbody_5.webp?v=0e2354a7",
+  bossbody_4: "assets/bossbody_4.webp?v=0a73f38d",
+  bossbody_3: "assets/bossbody_3.webp?v=9ceaa40a",
+  bossbody_2: "assets/bossbody_2.webp?v=204ee641",
+  bossbody_1: "assets/bossbody_1.webp?v=f6a73b5e",
   boss4: "assets/boss4.webp?v=21bfe40d",
   boss5: "assets/boss5.webp?v=594a666f",
   boss6: "assets/boss6.webp?v=03c7d674",
@@ -1610,11 +1620,29 @@ const MONSTER_ART = { "1_0": "mon_1_0", "1_1": "mon_1_1", "1_2": "mon_1_2", "1_3
   "3_0": "mon_3_0", "3_1": "mon_3_1", "3_2": "mon_3_2", "3_3": "mon_3_3", "3_4": "mon_3_4" };
 // how tall each painting stands compared with a person-sized monster (slimes are squat, wolves low and long)
 const MONSTER_ART_SIZE = { "1_0": 0.6, "1_1": 0.6, "1_3": 0.72, "1_4": 1.1, "2_0": 0.62, "2_1": 0.62, "2_3": 0.72, "2_4": 1.1, "3_0": 0.65, "3_1": 0.62, "3_3": 0.75, "3_4": 1.1 };
-function monsterArtSize(m){ return MONSTER_ART_SIZE[game.mapTier + "_" + m.type] || 1; }
+function monsterArtSize(m){ return MONSTER_ART_SIZE[game.mapTier + "_" + m.type] || (m.type === BOSS_SLOT ? 0.92 : 1); }
 function monsterArtImg(m, tier){
   if(!SPRITES_OK || !m || m.isSpyBoss) return null;
-  const k = MONSTER_ART[(tier != null ? tier : game.mapTier) + "_" + m.type];
+  const tr = tier != null ? tier : game.mapTier;
+  // every map boss shares one painted body (bossbody_<map>: the same colossus recoloured for that map)
+  const k = MONSTER_ART[tr + "_" + m.type] || (m.type === BOSS_SLOT && !m.isDungeonRoom && ART["bossbody_" + tr] ? "bossbody_" + tr : null);
   return k ? spriteImg(k) : null;
+}
+const BOSS_SLOT = 5;
+// aura colour of each map's boss (matches its body tint)
+const BOSS_AURA_RGB = { 1:"200,150,90", 2:"90,220,110", 3:"255,120,40", 4:"120,220,255", 5:"170,150,220", 6:"170,230,60", 7:"200,120,255", 8:"255,210,80", 9:"255,50,90", 10:"255,240,190" };
+// boss presence: a slowly turning rune circle on the ground, a pulsing aura and embers rising around it
+function drawBossAura(ctx, x, y, w, rgb){
+  const t = performance.now() / 1000, pulse = 0.5 + 0.5 * Math.sin(t * 2.2);
+  ctx.save(); ctx.translate(x, y); ctx.globalCompositeOperation = "lighter";
+  ctx.save(); ctx.scale(1, 0.4); fxGlow(ctx, 0, 0, w * 0.75, rgb, 0.35 + 0.15 * pulse); ctx.restore();
+  const s = w / 140; ctx.save(); ctx.scale(s, s); fxRuneRing(ctx, 70, t * 0.6, rgb, 0.55); ctx.restore();
+  fxGlow(ctx, 0, -w * 0.55, w * 0.7, rgb, 0.12 + 0.08 * pulse);
+  for(let i = 0; i < 12; i++){
+    const ph = (t * (0.3 + fxRand(i, 1) * 0.3) + fxRand(i, 2)) % 1;
+    fxGlow(ctx, (fxRand(i, 3) - 0.5) * w * 0.9, -ph * w * 1.1, 3 + fxRand(i, 4) * 3, rgb, Math.sin(ph * Math.PI) * 0.9);
+  }
+  ctx.restore();
 }
 const MON_ART_OVERWORLD_H = 78;   // px on the walking map (the hero is ~114)
 const MON_ART_BATTLE_H = 0.4;     // fraction of the battle view's height
@@ -4166,7 +4194,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 38;
+const GAME_VERSION = 39;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -6770,7 +6798,9 @@ function renderOverworld(){
         // face the way it's walking (left/right only); keep the last facing while it stands still
         if(m.lastDrawX != null && Math.abs(m.x - m.lastDrawX) > 0.2) m.faceRight = m.x > m.lastDrawX;
         m.lastDrawX = m.x;
-        drawMonsterArt(ctx, art, m.x, m.y, MON_ART_OVERWORLD_H * eliteScale * monsterArtSize(m), 0, 0, m.id, !!m.faceRight);
+        const bossH = m.type === BOSS_SLOT ? 1.55 : 1; // bosses tower over the field
+        if(bossH > 1) drawBossAura(ctx, m.x, m.y, 90, BOSS_AURA_RGB[game.mapTier] || "255,80,80");
+        drawMonsterArt(ctx, art, m.x, m.y, MON_ART_OVERWORLD_H * eliteScale * monsterArtSize(m) * bossH, 0, 0, m.id, !!m.faceRight);
       }
       else { drawMonsterAt(ctx, m.x, m.y, m.type, bob, 0); ctx.restore(); }
       if(m.isElite){
@@ -6833,7 +6863,7 @@ function renderOverworld(){
     const isBoss = MONSTER_DEFS[m.type].isBoss;
     const sizeMult = m.isElite ? 1.35 : (isBoss ? 1.4 : 1);
     const w = isBoss ? 50 : (m.isElite ? 38 : 30), h = 4;
-    const barY = monsterArtImg(m) ? m.y - MON_ART_OVERWORLD_H * monsterArtSize(m) * (m.isElite ? 1.35 : 1) - 8 : m.y - (34 * MONSTER_OVERWORLD_SCALE / 1.1) * sizeMult - (m.isElite ? 20 : 0);
+    const barY = monsterArtImg(m) ? m.y - MON_ART_OVERWORLD_H * monsterArtSize(m) * (m.isElite ? 1.35 : 1) * (m.type === BOSS_SLOT ? 1.55 : 1) - 8 : m.y - (34 * MONSTER_OVERWORLD_SCALE / 1.1) * sizeMult - (m.isElite ? 20 : 0);
     const x = m.x - w/2;
     ctx.fillStyle = "rgba(0,0,0,.4)"; ctx.fillRect(x, barY, w, h);
     ctx.fillStyle = m.isElite ? "#ffd166" : "#ef476f"; ctx.fillRect(x, barY, w * (m.hp/m.maxHp), h);
@@ -8827,6 +8857,7 @@ function renderBattle(){
   if(mArt){
     bctx.restore();
     if(m.isElite) drawEliteAura(bctx, mx, my, artH * 0.3);
+    if(b.def.isBoss) drawBossAura(bctx, mx, my + mFeet, artH * 0.75, BOSS_AURA_RGB[game.mapTier] || "255,80,80");
     drawMonsterArt(bctx, mArt, mx + mShakeX, my + mFeet + mShakeY, artH, m.hitFlash, Math.sin(now / 900) * 0.02);
   } else {
     if(m.isElite) drawEliteAura(bctx, mx, my - 4, 30);
