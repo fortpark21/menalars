@@ -458,6 +458,20 @@
   .item-slot[draggable="true"]{ cursor:grab; }
   .item-slot[draggable="true"]:active{ cursor:grabbing; }
   .item-slot.dragging{ opacity:.35; transform:scale(.9); }
+  /* v45: the gap a sold/moved item leaves behind while the window stays open (nothing slides into its place) */
+  .item-slot.gap{ background:transparent; border:2px dashed #e2d9c0; cursor:default; }
+  .item-slot.gap:hover{ transform:none; }
+  .buyback{ margin-top:12px; padding-top:10px; border-top:1px solid #e4dcc4; }
+  .buyback h4{ margin:0 0 2px; font-size:14px; color:#4b3f8f; }
+  .buyback .storage-hint{ margin:0 0 8px; }
+  .buyback .item-grid{ grid-template-columns:repeat(12, minmax(0,1fr)); gap:5px; margin-bottom:10px; }
+  .buyback .item-slot{ font-size:16px; border-radius:8px; border-width:2px; padding-bottom:10px; }
+  .buyback .item-slot .icon-boost{ font-size:20px; }
+  .buyback .item-slot .item-art{ width:60%; }
+  .buyback .bb-price{ position:absolute; left:1px; right:1px; bottom:1px; font-size:9px; font-weight:bold; text-align:center; white-space:nowrap; overflow:hidden;
+    background:rgba(75,63,143,.85); color:#ffe9a8; border-radius:4px; line-height:13px; }
+  .buyback .item-slot.cant .bb-price{ background:rgba(140,50,40,.85); }
+  .buyback .item-slot .qty-badge{ bottom:auto; top:2px; }
   .item-grid.drop-target, .sell-drop-zone.drop-target, .equip-slot-box.drop-target{
     outline:3px dashed #4b3f8f; outline-offset:2px; background:#e9e3ff;
   }
@@ -1487,6 +1501,11 @@
     <p class="storage-hint">กด Alt ค้างแล้วคลิกซ้ายเพื่อขายทั้งกอง · กด Ctrl ค้างแล้วคลิกซ้ายเพื่อขายทีละ 1 ชิ้น · หรือลากไอเทมมาวางกล่องด้านล่าง</p>
     <div class="item-grid" id="sellGrid"></div>
     <div class="sell-drop-zone" id="sellDropZone">💰 ลากไอเทมมาวางที่นี่เพื่อขายด่วน</div>
+    <div class="buyback">
+      <h4>↩️ ซื้อคืน</h4>
+      <p class="storage-hint">ขายผิดชิ้น? คลิกของด้านล่างเพื่อซื้อคืนในราคาเดิม · เก็บ 12 ชิ้นล่าสุด จนกว่าจะออกจากเกม</p>
+      <div class="item-grid" id="buybackGrid"></div>
+    </div>
     <div class="item-detail" id="sellDetail" hidden></div>
   </div>
 
@@ -4616,7 +4635,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 44;
+const GAME_VERSION = 45;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -5616,7 +5635,7 @@ const SaveStore = {
 const SAVE_PLAYER_SKIP = ["x","y","targetX","targetY","path","pathIndex","destinationMarker","targetMonsterId",
   "pendingNpcId","pendingLocationId","pendingWarp","pendingTravelGate","skillCooldowns","isMeditating","meditateShownFull","facing","walkPhase"];
 const SAVE_GAME_FIELDS = ["inventory","storage","maxMapTierReached","maxMapTierReachedDim1","dimension","maxDimension",
-  "dimReach","dimCleared","stats","pity","huntCounts","hasNewTitleUnlock","mapTier"];
+  "dimReach","dimCleared","stats","pity","huntCounts","hasNewTitleUnlock","mapTier","buyback"];
 const SAVE_GAME_SETS = ["unlockedAchievements","unlockedMilestones","encounteredMonsters","discoveredItems","unlockedTitles","newTitles"];
 let lastSaveAt = 0;
 function buildSaveData(){
@@ -5645,6 +5664,7 @@ function continueGame(data){
   Object.assign(game.player, data.player);
   SAVE_GAME_FIELDS.forEach(k => { if(data[k] !== undefined) game[k] = data[k]; });
   SAVE_GAME_SETS.forEach(k => { game[k] = new Set(data[k] || []); });
+  game.buyback = []; // the NPC buy-back list lasts one play session
   migrateTitleSave();
   letterState();
   if(!game.player.story){ storyState(); setTimeout(()=> showDiscoveryBanner("📜 เนื้อเรื่องหลักมาแล้ว!", "ดูภารกิจที่มุมขวาบน — ย้อนเล่นได้ตั้งแต่บทที่ 1", 4000), 1500); }
@@ -11413,9 +11433,51 @@ function transferItem(fromArr, toArr, idx, toMax, fullMsg, qty){
   renderStoragePanel();
 }
 
+/* ---- v45: item windows that hold still ----
+   While a window stays open, every item keeps its square: selling or moving one leaves an empty gap instead of
+   sliding every later item one step back (which made the next click land on the wrong item). The layout starts
+   fresh each time the window opens. */
+const stableSlots = {};
+function slotKey(e){ return e.kind === "equipment" ? "eq:" + e.instanceId : (e.kind || "item") + ":" + e.id; }
+function stableLayout(key, items, keep){
+  let lay = keep && stableSlots[key];
+  if(!lay){ stableSlots[key] = items.map(e => ({ ref: e, k: slotKey(e) })); return items.slice(); }
+  const left = new Set(items);
+  const out = lay.map(sl => (left.has(sl.ref) ? (left.delete(sl.ref), sl.ref) : null));
+  // a stack that went out and came back is a new object — put it back in its old gap
+  lay.forEach((sl, i) => {
+    if(out[i]) return;
+    for(const e of left){ if(slotKey(e) === sl.k){ out[i] = e; sl.ref = e; left.delete(e); break; } }
+  });
+  left.forEach(e => { out.push(e); lay.push({ ref: e, k: slotKey(e) }); });
+  return out;
+}
+function gapSlot(){ const d = document.createElement("div"); d.className = "item-slot gap"; d.setAttribute("aria-hidden", "true"); return d; }
+// Item windows keep the top edge they opened with: new content (a detail box, a longer list) grows downward
+// instead of re-centering the whole window and shifting everything under the mouse.
+const PINNED_PANELS = ["sellPanel", "storagePanel", "bagPanel", "buyPanel", "refinePanel"];
+function pinPanel(el){
+  el.style.top = ""; el.style.transform = ""; el.style.maxHeight = "";
+  if(el.hidden) return;
+  const parentH = (el.offsetParent || document.body).clientHeight || window.innerHeight;
+  const top = Math.max(8, Math.round((parentH - el.offsetHeight) / 2));
+  el.style.top = top + "px";
+  el.style.transform = "translate(-50%, 0)";
+  el.style.maxHeight = Math.max(240, parentH - top - 12) + "px";
+}
+if(typeof MutationObserver !== "undefined"){
+  const PANEL_LAYOUTS = { sellPanel: ["sell"], storagePanel: ["storage_inv", "storage_store"] };
+  const pinMo = new MutationObserver(recs => recs.forEach(r => {
+    pinPanel(r.target);
+    if(r.target.hidden) (PANEL_LAYOUTS[r.target.id] || []).forEach(k => delete stableSlots[k]); // next opening starts tidy
+  }));
+  PINNED_PANELS.forEach(id => { const el = document.getElementById(id); if(el) pinMo.observe(el, { attributes:true, attributeFilter:["hidden"] }); });
+  window.addEventListener("resize", () => PINNED_PANELS.forEach(id => { const el = document.getElementById(id); if(el && !el.hidden) pinPanel(el); }));
+}
+
 /* ---- Storage panel: drag & drop between bag/box + Alt+click quick move ---- */
 let selectedStorageSide = null;  // "inv" | "store"
-let selectedStorageIndex = null;
+let selectedStorageIndex = null;  // v45: holds the selected item itself (positions shift when items move)
 const STORAGE_CAPACITY = 100; // storage box slot count — roomy on purpose: a full bag overflows new items into it
 // Each side's own cap/fullMsg — moveStorageItem looks these up via the DESTINATION side, so they must
 // describe that side's own array, not the source's.
@@ -11432,6 +11494,7 @@ function moveStorageItem(side, idx, qty){
 }
 
 function renderStoragePanel(){
+  storageLayoutKeep = !document.getElementById("storagePanel").hidden;
   document.getElementById("invCount").textContent = `(${game.inventory.length}/${BAG_CAPACITY})`;
   document.getElementById("storeCount").textContent = `(${game.storage.length}/${STORAGE_CAPACITY})`;
   renderStorageGrid(document.getElementById("invList"), game.inventory, "inv", "ไม่มีของในกระเป๋า");
@@ -11439,12 +11502,15 @@ function renderStoragePanel(){
   renderStorageDetail();
 }
 
+let storageLayoutKeep = false;
 function renderStorageGrid(containerEl, items, side, emptyText){
   containerEl.innerHTML = "";
-  if(items.length === 0){ containerEl.innerHTML = `<div class="empty-note">${emptyText}</div>`; return; }
-  items.forEach((entry, idx) => {
+  const shown = stableLayout("storage_" + side, items, storageLayoutKeep);
+  if(shown.length === 0){ containerEl.innerHTML = `<div class="empty-note">${emptyText}</div>`; return; }
+  shown.forEach(entry => {
+    if(!entry){ containerEl.appendChild(gapSlot()); return; }
     const slot = document.createElement("div");
-    slot.className = "item-slot" + (selectedStorageSide === side && idx === selectedStorageIndex ? " selected" : "");
+    slot.className = "item-slot" + (selectedStorageSide === side && entry === selectedStorageIndex ? " selected" : "");
     slot.draggable = true;
     slot.title = itemLabel(entry).replace(/<[^>]+>/g, "");
 
@@ -11475,15 +11541,17 @@ function renderStorageGrid(containerEl, items, side, emptyText){
     slot.addEventListener("dragstart", (e)=>{
       slot.classList.add("dragging");
       e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", JSON.stringify({ side, idx }));
+      e.dataTransfer.setData("text/plain", JSON.stringify({ side, idx: items.indexOf(entry) }));
     });
     slot.addEventListener("dragend", ()=> slot.classList.remove("dragging"));
 
     slot.addEventListener("click", (e)=>{
       sfx.click();
+      const idx = items.indexOf(entry);
+      if(idx < 0) return;
       if(e.altKey){ moveStorageItem(side, idx); return; }
       if(e.ctrlKey || e.metaKey){ moveStorageItem(side, idx, 1); return; }
-      selectedStorageSide = side; selectedStorageIndex = idx;
+      selectedStorageSide = side; selectedStorageIndex = entry;
       renderStoragePanel();
     });
 
@@ -11494,15 +11562,15 @@ function renderStorageGrid(containerEl, items, side, emptyText){
 function renderStorageDetail(){
   const detail = document.getElementById("storageDetail");
   if(selectedStorageSide == null){ detail.hidden = true; return; }
-  const entry = STORAGE_SIDE_CONFIG[selectedStorageSide].arr()[selectedStorageIndex];
-  if(!entry){ detail.hidden = true; selectedStorageSide = null; selectedStorageIndex = null; return; }
+  const entry = selectedStorageIndex;
+  if(!entry || !STORAGE_SIDE_CONFIG[selectedStorageSide].arr().includes(entry)){ detail.hidden = true; selectedStorageSide = null; selectedStorageIndex = null; return; }
   detail.hidden = false;
   detail.innerHTML = `<h4>${itemLabel(entry)}</h4>`;
   const btn = document.createElement("button");
   btn.className = "btn-primary"; btn.style.cssText = "padding:8px 14px; font-size:13px;";
   btn.textContent = selectedStorageSide === "inv" ? "ฝาก ➜" : "➜ รับคืน";
-  const side = selectedStorageSide, idx = selectedStorageIndex;
-  btn.addEventListener("click", ()=>{ sfx.click(); moveStorageItem(side, idx); });
+  const side = selectedStorageSide;
+  btn.addEventListener("click", ()=>{ sfx.click(); const idx = STORAGE_SIDE_CONFIG[side].arr().indexOf(entry); if(idx >= 0) moveStorageItem(side, idx); });
   detail.appendChild(btn);
 }
 
@@ -11703,23 +11771,26 @@ function isSellable(entry){
   return true;
 }
 
-let selectedSellIndex = null;
+let selectedSellIndex = null; // v45: holds the selected item itself, never a position
 function renderSellPanel(){
   const grid = document.getElementById("sellGrid");
   const detail = document.getElementById("sellDetail");
   grid.innerHTML = "";
+  const shown = stableLayout("sell", game.inventory, !document.getElementById("sellPanel").hidden);
+  renderBuybackGrid();
 
-  if(game.inventory.length === 0){
+  if(shown.length === 0){
     grid.innerHTML = '<div class="empty-note">ไม่มีของให้ขาย</div>';
     detail.hidden = true;
     selectedSellIndex = null;
     return;
   }
 
-  game.inventory.forEach((entry, idx) => {
+  shown.forEach(entry => {
+    if(!entry){ grid.appendChild(gapSlot()); return; }
     const sellable = isSellable(entry);
     const slot = document.createElement("div");
-    slot.className = "item-slot" + (idx === selectedSellIndex ? " selected" : "") + (sellable ? "" : " locked");
+    slot.className = "item-slot" + (entry === selectedSellIndex ? " selected" : "") + (sellable ? "" : " locked");
 
     if(entry.kind === "equipment" || entry.kind === "card"){
       const rarityDef = RARITY_DEFS[getEntryRarity(entry)];
@@ -11750,22 +11821,24 @@ function renderSellPanel(){
       slot.addEventListener("dragstart", (e)=>{
         slot.classList.add("dragging");
         e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/plain", String(idx));
+        e.dataTransfer.setData("text/plain", String(game.inventory.indexOf(entry)));
       });
       slot.addEventListener("dragend", ()=> slot.classList.remove("dragging"));
     }
 
     slot.addEventListener("click", (e)=>{
       sfx.click();
+      const idx = game.inventory.indexOf(entry);
+      if(idx < 0) return;
       if(e.altKey && sellable){ quickSellItem(idx); return; }
       if((e.ctrlKey || e.metaKey) && sellable){ sellItem(idx, 1); return; }
-      selectedSellIndex = idx; renderSellPanel();
+      selectedSellIndex = entry; renderSellPanel();
     });
     grid.appendChild(slot);
   });
 
-  if(selectedSellIndex == null || !game.inventory[selectedSellIndex]){ detail.hidden = true; return; }
-  renderSellDetail(game.inventory[selectedSellIndex]);
+  if(selectedSellIndex == null || !game.inventory.includes(selectedSellIndex)){ selectedSellIndex = null; detail.hidden = true; return; }
+  renderSellDetail(selectedSellIndex);
 }
 
 function renderSellDetail(entry){
@@ -11804,14 +11877,14 @@ function renderSellDetail(entry){
   const btn = document.createElement("button");
   btn.className = "btn-primary"; btn.style.cssText = "padding:8px 14px; font-size:13px;";
   btn.textContent = "ขาย" + (entry.kind !== "equipment" && entry.qty > 1 ? " 1 ชิ้น" : "");
-  btn.addEventListener("click", ()=> sellItem(selectedSellIndex, 1));
+  btn.addEventListener("click", ()=> sellItem(game.inventory.indexOf(entry), 1));
   detail.appendChild(btn);
 
   if(entry.kind !== "equipment" && entry.qty > 1){
     const btnAll = document.createElement("button");
     btnAll.className = "btn-secondary"; btnAll.style.cssText = "padding:8px 14px; font-size:13px; margin-left:6px;";
     btnAll.textContent = `ขายทั้งหมด (💰${price * entry.qty})`;
-    btnAll.addEventListener("click", ()=> sellItem(selectedSellIndex, entry.qty));
+    btnAll.addEventListener("click", ()=> sellItem(game.inventory.indexOf(entry), entry.qty));
     detail.appendChild(btnAll);
   }
 }
@@ -11824,20 +11897,87 @@ function sellItem(idx, qty){
   if(entry.kind === "equipment"){
     game.player.gold += price;
     game.inventory.splice(idx, 1);
-    showToast(`ขาย ${EQUIPMENT_DEFS[entry.defId].name} ได้ 💰${price}`);
+    pushBuyback(entry, 1, price);
+    showToast(`ขาย ${EQUIPMENT_DEFS[entry.defId].name} ได้ 💰${price} · ขายผิด? ซื้อคืนได้ด้านล่าง`);
   } else {
     const sellQty = Math.min(qty || 1, entry.qty);
     const total = price * sellQty;
     game.player.gold += total;
     entry.qty -= sellQty;
     if(entry.qty <= 0) game.inventory.splice(idx, 1);
-    showToast(`ขายได้ 💰${total}`);
+    pushBuyback(entry, sellQty, total);
+    showToast(`ขายได้ 💰${total} · ขายผิด? ซื้อคืนได้ด้านล่าง`);
   }
 
   sfx.coin();
   updateHud();
-  selectedSellIndex = null;
+  if(!game.inventory.includes(selectedSellIndex)) selectedSellIndex = null; // a stack sold one by one stays selected
   renderSellPanel();
+}
+
+/* ---- v45: buy back what was sold to the merchant, at the same price ----
+   game.buyback is part of the save (newest first, 12 max) and is emptied when the game is loaded, so it lasts one
+   play session. The server counts these items as still owned: it charges their price again when one comes back. */
+const BUYBACK_MAX = 12;
+function pushBuyback(entry, qty, total){
+  if(!Array.isArray(game.buyback)) game.buyback = [];
+  const item = entry.kind === "equipment" ? entry : { id: entry.id, kind: entry.kind, qty };
+  if(item.kind === undefined) delete item.kind;
+  item.bbPrice = total;
+  game.buyback.unshift(item);
+  while(game.buyback.length > BUYBACK_MAX) game.buyback.pop();
+}
+function buyBackItem(i){
+  const it = (game.buyback || [])[i];
+  if(!it) return;
+  const price = it.bbPrice || 0;
+  if(game.player.gold < price){ showToast(`เงินไม่พอซื้อคืน (ต้องใช้ 💰${price})`); return; }
+  if(it.kind === "equipment"){
+    if(game.inventory.length >= BAG_CAPACITY){ showToast("กระเป๋าเต็ม — ขายหรือฝากของก่อนแล้วค่อยซื้อคืน"); return; }
+    delete it.bbPrice;
+    game.inventory.push(it);
+  } else {
+    const same = game.inventory.find(e => e.id === it.id && e.kind === it.kind);
+    if(!same && game.inventory.length >= BAG_CAPACITY){ showToast("กระเป๋าเต็ม — ขายหรือฝากของก่อนแล้วค่อยซื้อคืน"); return; }
+    if(same) same.qty += it.qty;
+    else { const back = { id: it.id, qty: it.qty }; if(it.kind) back.kind = it.kind; game.inventory.push(back); }
+  }
+  game.player.gold -= price;
+  game.buyback.splice(i, 1);
+  sfx.coin();
+  showToast(`↩️ ซื้อคืน ${itemLabel(it).replace(/<[^>]+>/g, "").replace(/\s*\(สวมอยู่\)/, "")} แล้ว · -💰${price}`);
+  updateHud();
+  renderSellPanel();
+  saveGameNow();
+}
+function renderBuybackGrid(){
+  const grid = document.getElementById("buybackGrid");
+  if(!grid) return;
+  grid.innerHTML = "";
+  const list = Array.isArray(game.buyback) ? game.buyback : [];
+  for(let i = 0; i < BUYBACK_MAX; i++){ // always 12 squares, so the window never changes height
+    const it = list[i];
+    if(!it){ grid.appendChild(gapSlot()); continue; }
+    const slot = document.createElement("div");
+    const cant = game.player.gold < (it.bbPrice || 0);
+    slot.className = "item-slot" + (cant ? " cant" : "");
+    if(it.kind === "equipment" || it.kind === "card"){
+      const rarityDef = RARITY_DEFS[getEntryRarity(it)];
+      slot.style.borderColor = rarityDef.color;
+      slot.style.background = `linear-gradient(160deg, ${rarityDef.color}40, #f4efe0)`;
+    }
+    const icon = document.createElement("span");
+    if(it.kind === "equipment" || it.kind === "card") icon.className = "icon-boost";
+    icon.innerHTML = getItemIcon(it);
+    slot.appendChild(icon);
+    if(it.kind !== "equipment" && it.qty > 1){
+      const q = document.createElement("span"); q.className = "qty-badge"; q.textContent = "x" + it.qty; slot.appendChild(q);
+    }
+    const tag = document.createElement("span"); tag.className = "bb-price"; tag.textContent = "💰" + (it.bbPrice || 0); slot.appendChild(tag);
+    slot.title = itemLabel(it).replace(/<[^>]+>/g, "").replace(/\s*\(สวมอยู่\)/, "") + ` — คลิกเพื่อซื้อคืน 💰${it.bbPrice || 0}`;
+    slot.addEventListener("click", () => { sfx.click(); buyBackItem(list.indexOf(it)); });
+    grid.appendChild(slot);
+  }
 }
 
 function quickSellItem(idx){
@@ -14241,6 +14381,12 @@ create or replace function public.econ_items(d jsonb) returns setof jsonb langua
   select e from jsonb_array_elements(public.econ_arr(d -> 'inventory')) e
   union all
   select e from jsonb_array_elements(public.econ_arr(d -> 'storage')) e $$;
+-- v45: bag + box + the NPC buy-back list (items sold this session that can be bought back at the same price —
+-- still owned as far as duplicates and item checks go)
+create or replace function public.econ_items_all(d jsonb) returns setof jsonb language sql immutable as $$
+  select e from public.econ_items(d) e
+  union all
+  select e from jsonb_array_elements(public.econ_arr(d -> 'buyback')) e $$;
 -- weapon rank index for a rank EXP total
 create or replace function public.econ_rank(x numeric) returns int language sql immutable as $$
   select coalesce(max(i - 1), 0)::int from jsonb_array_elements_text(public.econ_data() -> 'rankExp') with ordinality t(v, i) where x >= v::numeric $$;
@@ -14310,6 +14456,7 @@ declare
   rk numeric := 0.3; ru numeric := 4; rb numeric := 1.0 / 30; bank_k numeric; bank_u numeric; bank_b numeric; bank_e numeric; bank_l numeric; acc numeric;
   luck numeric := 0; dboss numeric; neq numeric := 0; nstarter numeric := 0; nshop numeric := 0;
   qg numeric := 0; qx numeric := 0; qgear numeric := 0; lgone numeric := 0;
+  rebuy numeric := 0; rq numeric := 0;
 begin
   np := public.econ_obj(d -> 'player');
   if jsonb_typeof(o) is distinct from 'object' or jsonb_typeof(o -> 'player') is distinct from 'object' then o := '{}'::jsonb; end if;
@@ -14389,17 +14536,18 @@ begin
       into bad, rmana, rsteps, neq, luck, nstarter
       from (select n.e ne, oo.e oe, regexp_replace(coalesce(n.e ->> 'defId', ''), '_t[0-9]+$', '') base,
                    coalesce(substring(n.e ->> 'defId' from '_t([0-9]+)$')::int, 1) tier
-              from public.econ_items(d) n(e)
-              left join lateral (select x from public.econ_items(o) x where x ->> 'kind' = 'equipment' and x ->> 'instanceId' = n.e ->> 'instanceId' limit 1) oo(e) on true
+              from public.econ_items_all(d) n(e)
+              left join lateral (select x from public.econ_items_all(o) x where x ->> 'kind' = 'equipment' and x ->> 'instanceId' = n.e ->> 'instanceId' limit 1) oo(e) on true
              where n.e ->> 'kind' = 'equipment') q;
   end if;
   if bad is null and (jsonb_array_length(public.econ_arr(d -> 'inventory')) > greatest((B ->> 'bag')::int, jsonb_array_length(public.econ_arr(o -> 'inventory')))
-                      or jsonb_array_length(public.econ_arr(d -> 'storage')) > greatest((B ->> 'storage')::int, jsonb_array_length(public.econ_arr(o -> 'storage')))) then
+                      or jsonb_array_length(public.econ_arr(d -> 'storage')) > greatest((B ->> 'storage')::int, jsonb_array_length(public.econ_arr(o -> 'storage')))
+                      or jsonb_array_length(public.econ_arr(d -> 'buyback')) > 12) then
     bad := 'bag';
   end if;
   if bad is null then
     -- stackables: known ids, sane counts
-    if exists (select 1 from public.econ_items(d) x
+    if exists (select 1 from public.econ_items_all(d) x
                 where jsonb_typeof(x) <> 'object'
                    or (coalesce(x ->> 'kind', '') <> 'equipment' and coalesce(x ->> 'id', '') ~ '^sample_t[0-9]{1,2}$' and substring(x ->> 'id' from 9)::int > reach)
                    or (coalesce(x ->> 'kind', '') <> 'equipment' and (not ((C -> 'stack') ? coalesce(x ->> 'id', ''))
@@ -14413,16 +14561,32 @@ begin
       from public.econ_items(o) x
      where x ->> 'kind' = 'equipment' and (C -> 'eqPrice') ? coalesce(x ->> 'rarity', '')
        and not exists (select 1 from public.econ_items(d) y where y ->> 'kind' = 'equipment' and y ->> 'instanceId' = x ->> 'instanceId');
+    -- v45 buy-back: equipment that came back from the list costs its sale price again
+    select coalesce(sum((C -> 'eqPrice' ->> (x ->> 'rarity'))::numeric), 0) into rebuy
+      from jsonb_array_elements(public.econ_arr(o -> 'buyback')) x
+     where x ->> 'kind' = 'equipment' and (C -> 'eqPrice') ? coalesce(x ->> 'rarity', '')
+       and exists (select 1 from public.econ_items(d) y where y ->> 'kind' = 'equipment' and y ->> 'instanceId' = x ->> 'instanceId')
+       and not exists (select 1 from public.econ_items(o) y where y ->> 'kind' = 'equipment' and y ->> 'instanceId' = x ->> 'instanceId');
     for k in
-      with nq as (select x ->> 'id' id, sum(public.econ_n(x -> 'qty')) q from public.econ_items(d) x where coalesce(x ->> 'kind', '') <> 'equipment' group by 1),
-           oq as (select x ->> 'id' id, sum(public.econ_n(x -> 'qty')) q from public.econ_items(o) x where coalesce(x ->> 'kind', '') <> 'equipment' and (C -> 'stack') ? coalesce(x ->> 'id', '') group by 1)
-      select coalesce(nq.id, oq.id) id, coalesce(nq.q, 0) nqq, coalesce(oq.q, 0) oqq from nq full join oq on nq.id = oq.id
+      select x ->> 'id' id,
+             sum(case when w = 'n' then q else 0 end) nqq, sum(case when w = 'o' then q else 0 end) oqq,
+             sum(case when w = 'nb' then q else 0 end) nbq, sum(case when w = 'ob' then q else 0 end) obq
+        from (select 'n' w, x, public.econ_n(x -> 'qty') q from public.econ_items(d) x
+              union all select 'o', x, public.econ_n(x -> 'qty') from public.econ_items(o) x where (C -> 'stack') ? coalesce(x ->> 'id', '')
+              union all select 'nb', x, public.econ_n(x -> 'qty') from jsonb_array_elements(public.econ_arr(d -> 'buyback')) x
+              union all select 'ob', x, public.econ_n(x -> 'qty') from jsonb_array_elements(public.econ_arr(o -> 'buyback')) x) a
+       where coalesce(x ->> 'kind', '') <> 'equipment'
+       group by 1
     loop
+      -- stacks only enter the buy-back list by leaving the bag/box (being sold) — never from nowhere
+      if k.nbq - k.obq > greatest(k.oqq - k.nqq, 0) then bad := 'buyback'; exit; end if;
+      rq := least(greatest(k.nqq - k.oqq, 0), greatest(k.obq - k.nbq, 0));   -- bought back: paid for, not a drop
+      rebuy := rebuy + rq * coalesce((C -> 'price' ->> k.id)::numeric, 0);
       if k.id = 'old_letter' and k.oqq > k.nqq then lgone := k.oqq - k.nqq; end if;   -- letters handed in (v9: many at once)
-      if k.id = 'mana_stone' then newmana := greatest(k.nqq - k.oqq + rmana, 0);   -- refining spent some
+      if k.id = 'mana_stone' then newmana := greatest(k.nqq - k.oqq - rq + rmana, 0);   -- refining spent some
         units := units + newmana;
-      elsif (C -> 'shopOnly') ? k.id then nshop := nshop + greatest(k.nqq - k.oqq, 0);
-      else units := units + greatest(k.nqq - k.oqq, 0);
+      elsif (C -> 'shopOnly') ? k.id then nshop := nshop + greatest(k.nqq - k.oqq - rq, 0);
+      else units := units + greatest(k.nqq - k.oqq - rq, 0);
       end if;
       if k.oqq > k.nqq then sale := sale + (k.oqq - k.nqq) * coalesce((C -> 'price' ->> k.id)::numeric, 0); end if;
     end loop;
@@ -14529,12 +14693,12 @@ begin
   lim_x := ceil(lim_x * dm + delite * (C -> 'tiers' -> tr::text -> 'x' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm) + 80 + qx;
   -- shop goods cost money: a starter weapon 20, a herb/potion at least 8 (beyond what kills could have dropped) —
   -- so free copies from the console can't be sold back for gold
-  lim_g := lim_g - 20 * nstarter - 8 * greatest(nshop - 2 * dk, 0);
+  lim_g := lim_g - 20 * nstarter - 8 * greatest(nshop - 2 * dk, 0) - rebuy;   -- v45: buying back costs what the sale paid
   if g - og > lim_g then return jsonb_build_object('ok', false, 'reason', 'econ', 'detail', 'gold', 'n', g - og, 'max', lim_g); end if;
   if (50 * lv * (lv - 1) + xp) - (50 * olv * (olv - 1) + oxp) > lim_x then
     return jsonb_build_object('ok', false, 'reason', 'econ', 'detail', 'exp', 'n', (50 * lv * (lv - 1) + xp) - (50 * olv * (olv - 1) + oxp), 'max', lim_x);
   end if;
-  if public.econ_n(st -> 'goldEarned') - public.econ_n(ost -> 'goldEarned') > lim_g then bad := 'goldEarned'; end if;
+  if public.econ_n(st -> 'goldEarned') - public.econ_n(ost -> 'goldEarned') > lim_g + rebuy then bad := 'goldEarned'; end if;   -- spending on a buy-back isn't earning
   if bad is not null then return jsonb_build_object('ok', false, 'reason', 'invalid', 'detail', bad); end if;
 
   -- ---------- 6. how fast: kills and new items vs a budget that refills with time (30 min max) ----------
@@ -14570,7 +14734,7 @@ begin
   if units > bank_u then flags := flags || jsonb_build_array(jsonb_build_object('kind', 'fast_items', 'n', units, 'bank', floor(bank_u))); bank_u := 0; else bank_u := bank_u - units; end if;
   return jsonb_build_object('ok', true, 'econ', jsonb_build_object('k', round(bank_k, 2), 'u', round(bank_u, 2), 'b', round(bank_b, 3), 'e', round(bank_e, 3), 'l', round(bank_l, 2)), 'flags', flags);
 end $$;
-revoke execute on function public.econ_data(), public.econ_n(jsonb), public.econ_obj(jsonb), public.econ_arr(jsonb), public.econ_items(jsonb),
+revoke execute on function public.econ_data(), public.econ_n(jsonb), public.econ_obj(jsonb), public.econ_arr(jsonb), public.econ_items(jsonb), public.econ_items_all(jsonb),
   public.econ_rank(numeric), public.econ_title_stats(jsonb), public.econ_check(uuid, jsonb, jsonb, jsonb, numeric) from public, anon, authenticated;
 
 -- one flag row per kind per minute at most (a cheat client retrying can't flood the table)
@@ -14632,7 +14796,9 @@ begin
     into uids, missing
     from (select jsonb_array_elements(p_data -> 'inventory') e
           union all
-          select jsonb_array_elements(p_data -> 'storage')) x
+          select jsonb_array_elements(p_data -> 'storage')
+          union all
+          select jsonb_array_elements(public.econ_arr(p_data -> 'buyback'))) x   -- v45: buy-back list
    where e ->> 'kind' = 'equipment';
 
   if missing > 0 then return jsonb_build_object('ok', false, 'reason', 'nouid'); end if;
@@ -14657,7 +14823,7 @@ begin
   update public.item_registry set alive = false
    where user_id = me and alive and not (uid = any (uids));
   insert into public.item_registry (user_id, uid, def)
-    select me, x ->> 'instanceId', x ->> 'defId' from public.econ_items(p_data) x where x ->> 'kind' = 'equipment'
+    select me, x ->> 'instanceId', x ->> 'defId' from public.econ_items_all(p_data) x where x ->> 'kind' = 'equipment'
     on conflict (user_id, uid) do update set def = coalesce(public.item_registry.def, excluded.def);
 
   update public.saves set data = p_data, rev = rev + 1, updated_at = now(), econ = coalesce(chk -> 'econ', econ),
@@ -15346,7 +15512,7 @@ begin
     on conflict (user_id) do update set data = excluded.data, rev = public.saves.rev + 1, session_id = null, econ = null, updated_at = now(), progress_at = now();
   delete from public.item_registry where user_id = a.user_id;
   insert into public.item_registry (user_id, uid, def)
-    select a.user_id, x ->> 'instanceId', x ->> 'defId' from public.econ_items(a.data) x
+    select a.user_id, x ->> 'instanceId', x ->> 'defId' from public.econ_items_all(a.data) x
      where x ->> 'kind' = 'equipment' and coalesce(x ->> 'instanceId', '') <> ''
     on conflict (user_id, uid) do nothing;
   return jsonb_build_object('ok', true);
