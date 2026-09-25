@@ -562,6 +562,20 @@
   .item-detail h4{ margin:0 0 4px; font-size:14px; }
   .item-detail .stats-line{ color:#4b3f8f; font-size:12px; margin-bottom:4px; }
   .item-detail .effect-line{ color:#7a7186; font-size:11px; margin-bottom:8px; }
+  /* v48 refine: the button stays top-right of the detail box so it can be clicked again and again */
+  #refineDetail .refine-row{ display:flex; gap:12px; align-items:flex-start; }
+  #refineDetail .refine-info{ flex:1; min-width:0; }
+  #refineDetail .refine-info .effect-line:last-child{ margin-bottom:0; }
+  #refineDetail .refine-act{ flex:none; width:128px; display:flex; flex-direction:column; align-items:stretch; gap:4px; }
+  #refineDetail .refine-go{ padding:10px 8px; font-size:15px; line-height:1.2; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  #refineDetail .refine-go small{ font-size:11px; font-weight:normal; opacity:.85; }
+  #refineDetail .refine-go:disabled{ opacity:.5; cursor:not-allowed; }
+  #refineDetail .refine-go.refine-hit{ animation:refineHit .35s ease-out; }
+  @keyframes refineHit{ 0%{ transform:scale(.92); box-shadow:0 0 0 0 rgba(255,209,102,.9); } 60%{ transform:scale(1.04); box-shadow:0 0 0 8px rgba(255,209,102,0); } 100%{ transform:none; } }
+  #refineDetail .refine-note{ font-size:11px; color:#8a8196; text-align:center; min-height:14px; }
+  .item-slot .equipped-badge.refine-pop{ animation:refinePop .45s ease-out; }
+  @keyframes refinePop{ 0%{ transform:scale(1.9); background:#ffd166; color:#4b3f8f; } 100%{ transform:none; } }
+  @media (prefers-reduced-motion: reduce){ #refineDetail .refine-go.refine-hit, .item-slot .equipped-badge.refine-pop{ animation:none; } }
 
   /* Bag panel: paper doll (left) + 8-column bag grid (right) */
   .panel.bag-panel{ width:900px; }
@@ -4757,7 +4771,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 47;
+const GAME_VERSION = 48;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -10526,13 +10540,15 @@ function buyStarterWeapon(defId, price){
 }
 document.getElementById("closeBuyBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("buyPanel").hidden = true; });
 
-/* ---- Refine panel (blacksmith NPC) ---- */
-let selectedRefineIndex = null;
+/* ---- Refine panel (blacksmith NPC) ----
+   v48: the chosen piece stays chosen after each hit and the 🔨 button sits at the top-right of the detail box —
+   same spot every time — so the player can keep clicking to refine again and again. */
+let selectedRefineIndex = null; // holds the selected item itself (the bag shifts when a mana stack runs out)
 function renderRefinePanel(){
   const grid = document.getElementById("refineGrid");
   const detail = document.getElementById("refineDetail");
   grid.innerHTML = "";
-  const equipEntries = game.inventory.map((e, idx) => ({ e, idx })).filter(x => x.e.kind === "equipment");
+  const equipEntries = game.inventory.filter(e => e.kind === "equipment");
 
   if(equipEntries.length === 0){
     grid.innerHTML = '<div class="empty-note">ไม่มีอุปกรณ์ในกระเป๋าให้ตีบวก</div>';
@@ -10541,10 +10557,10 @@ function renderRefinePanel(){
     return;
   }
 
-  equipEntries.forEach(({ e: entry, idx }) => {
+  equipEntries.forEach(entry => {
     const rarityDef = RARITY_DEFS[entry.rarity];
     const slot = document.createElement("div");
-    slot.className = "item-slot" + (idx === selectedRefineIndex ? " selected" : "");
+    slot.className = "item-slot" + (entry === selectedRefineIndex ? " selected" : "");
     slot.style.borderColor = rarityDef.color;
     slot.style.background = `linear-gradient(160deg, ${rarityDef.color}40, #f4efe0)`;
     const icon = document.createElement("span");
@@ -10553,7 +10569,7 @@ function renderRefinePanel(){
     slot.appendChild(icon);
     if(entry.refineLevel > 0){
       const badge = document.createElement("span");
-      badge.className = "equipped-badge";
+      badge.className = "equipped-badge" + (entry === refineFlashEntry ? " refine-pop" : "");
       badge.textContent = "+" + entry.refineLevel;
       slot.appendChild(badge);
     }
@@ -10563,48 +10579,55 @@ function renderRefinePanel(){
       wornBadge.textContent = "สวม";
       slot.appendChild(wornBadge);
     }
-    slot.addEventListener("click", ()=>{ sfx.click(); selectedRefineIndex = idx; renderRefinePanel(); });
+    slot.addEventListener("click", ()=>{ sfx.click(); selectedRefineIndex = entry; renderRefinePanel(); });
     grid.appendChild(slot);
   });
 
-  if(selectedRefineIndex == null || !game.inventory[selectedRefineIndex] || game.inventory[selectedRefineIndex].kind !== "equipment"){
+  if(!selectedRefineIndex || !game.inventory.includes(selectedRefineIndex)){
+    selectedRefineIndex = null;
     detail.hidden = true;
     return;
   }
   renderRefineDetail(selectedRefineIndex);
 }
-function renderRefineDetail(idx){
+let refineFlashEntry = null;
+function renderRefineDetail(entry){
   const detail = document.getElementById("refineDetail");
-  const entry = game.inventory[idx];
   detail.hidden = false;
   const base = EQUIPMENT_DEFS[entry.defId];
   const rarityDef = RARITY_DEFS[entry.rarity];
   const level = entry.refineLevel || 0;
   const maxed = level >= REFINE_MAX;
   const manaHave = (game.inventory.find(e => e.id === "mana_stone") || {}).qty || 0;
+  const cost = maxed ? null : getRefineCost(level);
+  const short = !maxed && (manaHave < cost.mana ? `หินมานาไม่พอ (มี ${manaHave}/${cost.mana})` : game.player.gold < cost.gold ? `เงินไม่พอ (มี ${game.player.gold}/${cost.gold})` : "");
 
-  let bodyHtml = `<h4 style="color:${rarityDef.color}">${equipIconHtml(base)} ${equipDisplayName(entry)} <span style="font-size:11px;">[${rarityDef.label}]</span></h4>
+  let infoHtml = `<h4 style="color:${rarityDef.color}">${equipIconHtml(base)} ${equipDisplayName(entry)} <span style="font-size:11px;">[${rarityDef.label}]</span></h4>
     <div class="stats-line">${formatStatLine(entry)}</div>`;
-  if(entry.equipped) bodyHtml += `<div class="effect-line" style="color:#4b3f8f; font-weight:bold;">✅ กำลังสวมใส่อยู่</div>`;
+  if(entry.equipped) infoHtml += `<div class="effect-line" style="color:#4b3f8f; font-weight:bold;">✅ กำลังสวมใส่อยู่</div>`;
+  infoHtml += maxed
+    ? `<div class="effect-line">ตีบวกถึงขั้นสูงสุดแล้ว (+${REFINE_MAX})</div>`
+    : `<div class="effect-line">ครั้งถัดไป +${level} ➜ <b>+${level + 1}</b> · ใช้ 💠 ${cost.mana} ก้อน (มี ${manaHave}) · 💰${cost.gold} (มี ${game.player.gold})</div>`;
 
-  if(maxed){
-    bodyHtml += `<div class="effect-line">ตีบวกถึงขั้นสูงสุดแล้ว (+${REFINE_MAX})</div>`;
-  } else {
-    const cost = getRefineCost(level);
-    bodyHtml += `<div class="effect-line">ตีบวกครั้งถัดไป (+${level} ➜ +${level+1}) ต้องใช้ 💠 หินมานา ${cost.mana} ก้อน (มี ${manaHave}) และ 💰${cost.gold} (มี ${game.player.gold})</div>`;
-  }
-  detail.innerHTML = bodyHtml;
-
-  if(maxed) return;
+  detail.innerHTML = `<div class="refine-row"><div class="refine-info">${infoHtml}</div><div class="refine-act"></div></div>`;
+  const act = detail.querySelector(".refine-act");
   const btn = document.createElement("button");
-  btn.className = "btn-primary"; btn.style.cssText = "padding:8px 14px; font-size:13px;";
-  btn.textContent = "🔨 ตีบวก";
-  btn.addEventListener("click", ()=> refineEquipment(idx));
-  detail.appendChild(btn);
+  btn.type = "button";
+  btn.id = "refineGoBtn";
+  btn.className = "btn-primary refine-go" + (entry === refineFlashEntry ? " refine-hit" : "");
+  btn.disabled = maxed || !!short;
+  btn.innerHTML = maxed ? "✨ สูงสุดแล้ว" : `🔨 ตีบวก<small>+${level} ➜ +${level + 1}</small>`;
+  btn.addEventListener("click", ()=> refineEquipment(entry));
+  act.appendChild(btn);
+  const note = document.createElement("div");
+  note.className = "refine-note";
+  note.textContent = maxed ? "" : (short || "กดซ้ำได้เลย");
+  act.appendChild(note);
+  refineFlashEntry = null;
 }
-function refineEquipment(idx){
-  const entry = game.inventory[idx];
-  if(!entry || entry.kind !== "equipment") return;
+function refineEquipment(entry){
+  if(typeof entry === "number") entry = game.inventory[entry]; // older callers passed a bag position
+  if(!entry || entry.kind !== "equipment" || !game.inventory.includes(entry)) return;
   const level = entry.refineLevel || 0;
   if(level >= REFINE_MAX){ showToast("ตีบวกถึงขั้นสูงสุดแล้ว"); return; }
   const cost = getRefineCost(level);
@@ -10613,16 +10636,17 @@ function refineEquipment(idx){
   if(manaHave < cost.mana){ showToast(`ต้องใช้ 💠 หินมานา ${cost.mana} ก้อน (มี ${manaHave})`); return; }
   if(game.player.gold < cost.gold){ showToast(`ต้องใช้เงิน 💰${cost.gold} (มี ${game.player.gold})`); return; }
 
-  sfx.click();
   manaEntry.qty -= cost.mana;
   if(manaEntry.qty <= 0){ const mi = game.inventory.indexOf(manaEntry); game.inventory.splice(mi, 1); }
   game.player.gold -= cost.gold;
   entry.refineLevel = level + 1;
   game.stats.refines = (game.stats.refines || 0) + 1;
   sfx.refineOk();
-  showToast(`ตีบวกสำเร็จ! ${equipDisplayName(entry)}`);
+  showToast(`🔨 ตีบวกสำเร็จ! ${equipDisplayName(entry)}`);
   updateHud();
-  selectedRefineIndex = null;
+  updateHeaderChips();
+  selectedRefineIndex = entry;   // stay on the same piece — ready for the next click
+  refineFlashEntry = entry;
   renderRefinePanel();
   checkTitles(false);
 }
