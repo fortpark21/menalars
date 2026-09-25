@@ -322,6 +322,10 @@
     position:absolute; top:0; bottom:0; width:10%; left:90%;
     background:rgba(124,255,178,.85);
   }
+  /* v47: skills sealed while Sanity is below 7 */
+  .skill-btn.mad-locked .skill-content{ filter:grayscale(1) brightness(.55); }
+  .skill-btn.mad-locked::before{ content:"🌀"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:22px; background:rgba(60,0,20,.45); border-radius:inherit; z-index:3; pointer-events:none; }
   .skill-btn{
     position:relative; width:56px; height:52px; border:2px solid rgba(255,255,255,.35);
     border-radius:10px; background:rgba(20,16,40,.78); color:#fff;
@@ -2012,8 +2016,79 @@ function drawPlayerSprite(ctx, cx, cy, look, scale, facing, walkPhase){
   ctx.translate(0, 4 + bob); ctx.rotate(tilt);
   if(facing === "left") ctx.scale(-1, 1);
   ctx.drawImage(img, -w / 2, -h, w, h);
+  if(look.madHead != null) drawMadHead(ctx, look.madHead, view, h);
   ctx.restore();
   return true;
+}
+// v47 madness gag: a cartoon animal head over the painted one (sprite units: feet at 0, top at -h).
+// view "front" | "side" (faces +x; the caller mirrors it for left) | "back" (no face, just the shape).
+function drawMadHead(ctx, kind, view, h){
+  const R = h * 0.165, cx = view === "side" ? h * 0.02 : 0, cy = -h * 0.855;
+  const t = (typeof performance !== "undefined" ? performance.now() : 0) / 1000;
+  const ink = "rgba(45,25,30,.9)", fx = view === "side" ? R * 0.42 : 0; // face shift toward where it looks
+  const face = view !== "back";
+  ctx.save();
+  ctx.lineWidth = 1.3; ctx.strokeStyle = ink; ctx.lineJoin = "round";
+  const blob = (x, y, rx, ry, fill) => { ctx.fillStyle = fill; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); };
+  const eyes = (y, gap, r) => {
+    if(!face) return;
+    const xs = view === "side" ? [fx + R * 0.25] : [-gap, gap];
+    xs.forEach(x => { ctx.fillStyle = "#1a1014"; ctx.beginPath(); ctx.ellipse(x, y, r, r * 1.2, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(x - r * 0.3, y - r * 0.4, r * 0.38, 0, Math.PI * 2); ctx.fill(); });
+  };
+  if(kind === 0){ // jelly: a wobbling translucent green slime dome
+    const wob = Math.sin(t * 5) * 0.06;
+    ctx.fillStyle = "rgba(90,220,120,.88)";
+    ctx.beginPath();
+    ctx.moveTo(cx - R * (1.15 + wob), cy + R * 0.85);
+    ctx.bezierCurveTo(cx - R * 1.3, cy - R * 0.3, cx - R * 0.7, cy - R * (1.25 - wob), cx, cy - R * (1.2 - wob));
+    ctx.bezierCurveTo(cx + R * 0.7, cy - R * (1.25 - wob), cx + R * 1.3, cy - R * 0.3, cx + R * (1.15 + wob), cy + R * 0.85);
+    ctx.quadraticCurveTo(cx, cy + R * 1.1, cx - R * (1.15 + wob), cy + R * 0.85);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.beginPath(); ctx.ellipse(cx - R * 0.45, cy - R * 0.55, R * 0.28, R * 0.16, -0.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(90,220,120,.8)"; ctx.beginPath(); ctx.arc(cx + R * 0.9, cy + R * (1.05 + Math.sin(t * 3) * 0.12), R * 0.14, 0, Math.PI * 2); ctx.fill(); // a drip
+    eyes(cy + R * 0.05, R * 0.38, R * 0.13);
+    if(face){ ctx.beginPath(); ctx.arc(cx + fx * 0.6, cy + R * 0.38, R * 0.22, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke(); }
+  } else if(kind === 1){ // pig
+    const ear = s => { ctx.fillStyle = "#f59ab0"; ctx.beginPath(); ctx.moveTo(cx + s * R * 0.35, cy - R * 0.8); ctx.lineTo(cx + s * R * 1.05, cy - R * 1.2); ctx.lineTo(cx + s * R * 0.9, cy - R * 0.35); ctx.closePath(); ctx.fill(); ctx.stroke(); };
+    if(view === "side") ear(-1); else { ear(-1); ear(1); }
+    blob(cx, cy, R, R * 0.95, "#ffb3c6");
+    ctx.fillStyle = "rgba(255,120,150,.35)"; ctx.beginPath(); ctx.arc(cx - R * 0.55 + fx, cy + R * 0.3, R * 0.2, 0, Math.PI * 2); ctx.arc(cx + R * 0.55 + fx, cy + R * 0.3, R * 0.2, 0, Math.PI * 2); ctx.fill(); // cheeks
+    eyes(cy - R * 0.2, R * 0.38, R * 0.12);
+    if(face){
+      const sx = cx + (view === "side" ? R * 0.95 : 0);
+      blob(sx, cy + R * 0.28, R * (view === "side" ? 0.28 : 0.42), R * 0.3, "#ff8fab");
+      ctx.fillStyle = "#7a2e45"; ctx.beginPath();
+      ctx.ellipse(sx - R * 0.13, cy + R * 0.28, R * 0.07, R * 0.12, 0, 0, Math.PI * 2);
+      ctx.ellipse(sx + R * 0.13, cy + R * 0.28, R * 0.07, R * 0.12, 0, 0, Math.PI * 2); ctx.fill();
+    } else { ctx.beginPath(); ctx.arc(cx, cy + R * 0.9, R * 0.18, Math.PI, Math.PI * 2.6); ctx.stroke(); } // curly tail-ish swirl on the back
+  } else if(kind === 2){ // dog
+    const ear = s => { ctx.fillStyle = "#8a5a36"; ctx.beginPath(); ctx.ellipse(cx + s * R * 0.95, cy + R * 0.05, R * 0.3, R * 0.62, s * 0.35, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); };
+    if(view !== "side") ear(-1), ear(1);
+    blob(cx, cy, R, R * 0.95, "#d9a066");
+    if(view === "side") ear(-1);
+    if(face){
+      const mx = cx + (view === "side" ? R * 0.75 : 0);
+      blob(mx, cy + R * 0.35, R * 0.5, R * 0.36, "#f3d9b8");
+      ctx.fillStyle = "#1a1014"; ctx.beginPath(); ctx.ellipse(mx + (view === "side" ? R * 0.35 : 0), cy + R * 0.15, R * 0.17, R * 0.12, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#ff6f86"; ctx.beginPath(); ctx.ellipse(mx, cy + R * (0.66 + Math.sin(t * 8) * 0.04), R * 0.12, R * 0.18, 0, 0, Math.PI * 2); ctx.fill(); // panting tongue
+    }
+    eyes(cy - R * 0.22, R * 0.36, R * 0.12);
+  } else { // chicken
+    ctx.fillStyle = "#e8323c"; // comb
+    [-0.35, 0, 0.35].forEach((o, i) => { ctx.beginPath(); ctx.arc(cx + o * R, cy - R * 0.95 - (i === 1 ? R * 0.1 : 0), R * 0.24, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); });
+    blob(cx, cy, R * 0.92, R, "#fbfbf4");
+    if(face){
+      const bx = cx + (view === "side" ? R * 0.85 : 0), dir = view === "side" ? 1 : 0;
+      ctx.fillStyle = "#f5b82e"; ctx.beginPath();
+      if(dir){ ctx.moveTo(bx, cy - R * 0.12); ctx.lineTo(bx + R * 0.55, cy + R * 0.02); ctx.lineTo(bx, cy + R * 0.18); }
+      else { ctx.moveTo(bx - R * 0.22, cy + R * 0.05); ctx.lineTo(bx + R * 0.22, cy + R * 0.05); ctx.lineTo(bx, cy + R * 0.42); }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#e8323c"; ctx.beginPath(); ctx.ellipse(bx + (dir ? R * 0.05 : 0), cy + R * (dir ? 0.38 : 0.58), R * 0.1, R * 0.17, 0, 0, Math.PI * 2); ctx.fill(); // wattle
+    }
+    eyes(cy - R * 0.22, R * 0.34, R * 0.11);
+  }
+  ctx.restore();
 }
 // the name / info line sit above the painted head (the old drawn hero was shorter)
 function spriteReadyFor(look){ const p = SPRITES_OK && lookPreset(look); return !!(p && spriteImg(p.key + "_front")); }
@@ -4682,7 +4757,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 46;
+const GAME_VERSION = 47;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -5114,6 +5189,7 @@ function rtPeerUpdate(d){
   const lk = d.look || {};
   o.look = { preset: [0,1,2,3].includes(lk.preset) ? lk.preset : undefined, gender: lk.gender === "female" ? "female" : "male", hairStyle: [0,1,2].includes(lk.hairStyle) ? lk.hairStyle : 0,
              hairColor: NET_HEX_COLOR.test(lk.hairColor) ? lk.hairColor : "#4a2c1d", outfitColor: NET_HEX_COLOR.test(lk.outfitColor) ? lk.outfitColor : "#3a7bd5" };
+  if([0,1,2,3].includes(lk.madHead)) o.look.madHead = lk.madHead; // v47 madness gag (everyone sees it)
   o.name = String(d.name || "?").slice(0, 20);
   if(x !== o.tx || y !== o.ty) o.movingUntil = now + NET_MOVE_SEND_MS * 2;
   o.tx = x; o.ty = y;
@@ -5146,7 +5222,7 @@ function netTick(now, dt){
   }
   if(rt.joined){
     const pres = getPlayerPresence();
-    const key = [pres.name, pres.facing, pres.inBattle, pres.isMeditating, pres.willColor, pres.level, pres.maxDim, pres.maxMap].join("|");
+    const key = [pres.name, pres.facing, pres.inBattle, pres.isMeditating, pres.willColor, pres.level, pres.maxDim, pres.maxMap, pres.look && pres.look.madHead].join("|");
     const moved = Math.abs(pres.x - rt.lastX) + Math.abs(pres.y - rt.lastY) > 1;
     const since = now - rt.lastSent;
     if(since >= NET_MIN_SEND_MS && (rt.force || key !== rt.lastKey || (moved && since >= NET_MOVE_SEND_MS) || since >= NET_IDLE_SEND_MS)){
@@ -7502,8 +7578,13 @@ const SANITY_PENALTY_FLOOR = 25;    // the stat penalty stops growing here (max 
 const SANITY_MADNESS = [
   { below:50, name:"ภาพหลอน",         desc:"สัญญาณเตือนการโจมตีขึ้นทั้งสองฝั่ง แยกไม่ออกว่าฝั่งไหนของจริง", tag:"เตือนสองฝั่ง" },
   { below:30, name:"สับสนทิศทาง",     desc:"กด A กลับหลบไปทางขวา กด D กลับหลบไปทางซ้าย", tag:"A↔D สลับ" },
-  { below:15, name:"ความมืดกลืนกิน", desc:"ครึ่งจอด้านขวาตอนต่อสู้มืดสนิท มองแทบไม่เห็นมอนสเตอร์", tag:"มืดบอด" }
+  { below:15, name:"ความมืดกลืนกิน", desc:"ครึ่งจอด้านขวาตอนต่อสู้มืดสนิท มองแทบไม่เห็นมอนสเตอร์", tag:"มืดบอด" },
+  { below:7,  name:"สติแตกสลาย",      desc:"ใช้สกิลไม่ได้เลย และหัวกลายเป็นหัวสัตว์ — ผู้เล่นคนอื่นก็เห็น", tag:"ห้ามสกิล" }
 ];
+// v47: below 7 the head turns into one of these (random each time) — stored in look.madHead so the online
+// presence carries it and everyone nearby sees it too; it goes away once Sanity climbs back to 7+
+const MAD_HEADS = ["เยลลี่", "หมู", "หมา", "ไก่"];
+const MAD_HEAD_ICON = ["🟢", "🐷", "🐶", "🐔"];
 function sanityTier(){
   if(!game || !game.player) return 0;
   const s = game.player.sanity;
@@ -7535,6 +7616,11 @@ function checkSanityWarning(){
   }
   // v46: a loud warning each time a new madness stage starts (again after climbing back above it)
   const tier = sanityTier();
+  // v47: the animal head comes with stage 4 and leaves with it
+  if(p.look){
+    if(tier >= 4 && p.look.madHead == null){ p.look.madHead = Math.floor(Math.random() * MAD_HEADS.length); if(typeof updateHud === "function") updateHud(); }
+    else if(tier < 4 && p.look.madHead != null){ delete p.look.madHead; if(typeof updateHud === "function") updateHud(); showToast("✨ สติกลับมาแล้ว — หัวกลับเป็นปกติ ใช้สกิลได้อีกครั้ง"); }
+  }
   if(tier > (p.sanityAlertTier || 0)){ p.sanityAlertTier = tier; showSanityAlert(tier); }
   else if(tier < (p.sanityAlertTier || 0)) p.sanityAlertTier = tier;
   updateSanityBadge();
@@ -7554,7 +7640,7 @@ function showSanityAlert(tier){
   }
   openSanityAlert();
 }
-const SANITY_ALERT_TITLES = ["", "จิตเริ่มหลอน", "สติสับสนหนัก", "ความมืดกำลังกลืนกินตัวตน"];
+const SANITY_ALERT_TITLES = ["", "จิตเริ่มหลอน", "สติสับสนหนัก", "ความมืดกำลังกลืนกินตัวตน", "สติแตกสลาย!"];
 function openSanityAlert(){
   sanityAlertPending = false;
   const tier = sanityTier();
@@ -7566,7 +7652,8 @@ function openSanityAlert(){
   const pen = Math.round((1 - getSanityPenaltyMult()) * 100);
   document.getElementById("saList").innerHTML =
     `<li><b>พลังลดลง ${pen}%</b> — ATK / ความแม่นยำ / DEF / HP</li>` +
-    SANITY_MADNESS.map((m, i) => `<li class="${i < tier ? "on" : "off"}"><b>${i < tier ? "⚠️" : "🔒"} ต่ำกว่า ${m.below}%: ${m.name}</b> — ${m.desc}</li>`).join("");
+    SANITY_MADNESS.map((m, i) => `<li class="${i < tier ? "on" : "off"}"><b>${i < tier ? "⚠️" : "🔒"} ต่ำกว่า ${m.below}%: ${m.name}</b> — ${m.desc}</li>`).join("") +
+    (p.look && p.look.madHead != null ? `<li class="on"><b>${MAD_HEAD_ICON[p.look.madHead]} ตอนนี้หัวของคุณกลายเป็นหัว${MAD_HEADS[p.look.madHead]}!</b> — ทำสมาธิให้สติกลับเกิน 7% ถึงจะหาย</li>` : "");
   const med = document.getElementById("saMeditate");
   med.textContent = game.player.isMeditating ? "🧘 กำลังทำสมาธิอยู่" : "🧘 นั่งสมาธิเลย";
   med.disabled = !!game.player.isMeditating;
@@ -8034,6 +8121,11 @@ function spawnEffect(type, x, y, crit, masteryGlow, style){
 const COMBO_SAFE_SKILLS = new Set(["guard", "heal", "haste"]);
 function usePlayerSkill(skillId){
   if(!game || !game.inBattle) return;
+  if(sanityTier() >= 4 && SKILL_DEFS[skillId]){ // v47: Sanity below 7 — the mind can't hold a technique together
+    spawnCallout("🌀 สติแตก! ใช้สกิลไม่ได้", "#ff8fa2");
+    showToast("🌀 สติต่ำกว่า 7% ใช้สกิลไม่ได้ — ทำสมาธินอกฉากต่อสู้เพื่อฟื้นสติ");
+    return;
+  }
   const skillDef = SKILL_DEFS[skillId];
   if(!skillDef){
     // A skill-tree skill sitting in a slot — those are passive by design (see riposte/swift_blade/
@@ -8342,6 +8434,7 @@ function renderSkillBar(){
       return;
     }
     btn.draggable = true;
+    btn.classList.toggle("mad-locked", sanityTier() >= 4 && !!SKILL_DEFS[skillId]); // v47: skills sealed below 7 Sanity
     const info = getActionBarSkillInfo(skillId) || { icon:"❓", name:"?" };
     setSlotContent(contentEl, `<span class="skill-icon">${info.icon}</span><span class="skill-name">${info.name}</span>`);
     btn.classList.toggle("empowered", !!(info.castable && info.weaponType && game.inBattle && game.battle
@@ -9735,7 +9828,8 @@ function drawSanityDarkness(w, h, now){
 }
 function drawSanityBattleTag(w, h, tier, now){
   const x = w * PLAYER_BATTLE_X, y = h * 0.3;
-  const text = "🌀 สติ " + Math.round(game.player.sanity) + "% · " + SANITY_MADNESS.slice(0, tier).map(m => m.tag).join(" · ");
+  const text = "🌀 สติ " + Math.round(game.player.sanity) + "% · " + SANITY_MADNESS.slice(0, tier).map(m => m.tag).join(" · ")
+    + (game.player.look && game.player.look.madHead != null ? " · หัว" + MAD_HEADS[game.player.look.madHead] : "");
   bctx.save();
   bctx.font = "bold 15px 'Trebuchet MS', sans-serif"; bctx.textAlign = "center";
   const tw = bctx.measureText(text).width + 22;
@@ -9978,7 +10072,8 @@ const TUTORIAL_STEPS = [
     "• ต่ำกว่า 90% ทุกค่าลดลง (ATK/แม่นยำ/DEF/HP) หนักสุดราว 40%\n" +
     "• ต่ำกว่า 50% ภาพหลอน: สัญญาณเตือนขึ้นทั้งสองฝั่ง แยกไม่ออกว่าของจริงมาทางไหน\n" +
     "• ต่ำกว่า 30% สับสนทิศ: A หลบขวา / D หลบซ้าย\n" +
-    "• ต่ำกว่า 15% ความมืด: ครึ่งจอขวาตอนต่อสู้มืดสนิท\n\n" +
+    "• ต่ำกว่า 15% ความมืด: ครึ่งจอขวาตอนต่อสู้มืดสนิท\n" +
+    "• ต่ำกว่า 7% สติแตก: ใช้สกิลไม่ได้ + หัวกลายเป็นหัวสัตว์ (คนอื่นก็เห็น!)\n\n" +
     "ฟื้นสติ:\n• กด 🧘 ทำสมาธิ นอกฉากสู้ — จากต่ำสุดจนเต็มใช้ไม่เกิน 2 นาที (สลับแท็บแล้วหยุดนับ)\n• อยู่ในเมืองฟื้นเองช้าๆ" },
   { title: "เก่งขึ้น: สเตตัส & อุปกรณ์", text:
     "• 📋 สถานะ: เลเวลอัพได้แต้มสเตตัส 6 ค่า (ป้ายตัวเลข = มีแต้มเหลือ)\n" +
