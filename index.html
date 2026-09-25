@@ -606,6 +606,15 @@
   .doll-col{ flex:0 0 270px; display:flex; flex-direction:column; gap:10px; }
   .bag-col{ flex:1; min-width:320px; }
   .bag-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:13px; color:#4b3f8f; font-weight:bold; }
+  /* v50 ✨ จัดเรียง buttons */
+  .sort-btn{ font-size:11.5px; font-weight:bold; padding:3px 10px; border-radius:12px; border:1px solid #c9b8f0; background:#f3eeff; color:#4b3f8f; cursor:pointer; white-space:nowrap; }
+  .sort-btn:hover{ background:#e7ddff; border-color:#4b3f8f; }
+  .sort-btn:focus-visible{ outline:2px solid #4b3f8f; outline-offset:2px; }
+  .bag-head-btns{ display:inline-flex; gap:6px; align-items:center; }
+  .store-col-head{ display:flex; align-items:center; gap:6px; }
+  .store-col-head .sort-btn{ margin-left:auto; }
+  .sell-top{ display:flex; align-items:flex-start; gap:10px; }
+  .sell-top .storage-hint{ flex:1; }
   .bag-head .bag-sub{ font-size:11px; color:#7a7186; font-weight:normal; }
   .bag-head .full{ color:#c9401f; }
   .item-grid.bag{ grid-template-columns:repeat(8, minmax(0,1fr)); gap:6px; }
@@ -1523,11 +1532,11 @@
     <p class="storage-hint">ลากไอเทมข้ามไปอีกฝั่งเพื่อย้าย · กด Alt ค้างแล้วคลิกซ้ายเพื่อย้ายทั้งกอง · กด Ctrl ค้างแล้วคลิกซ้ายเพื่อย้ายทีละ 1 ชิ้น</p>
     <div class="panel-cols">
       <div class="panel-col">
-        <h4>กระเป๋าของฉัน <span id="invCount"></span></h4>
+        <h4 class="store-col-head">กระเป๋าของฉัน <span id="invCount"></span><button class="sort-btn" id="invSortBtn" type="button" title="จัดเรียงของในกระเป๋า">✨ จัดเรียง</button></h4>
         <div class="item-grid compact" id="invList"></div>
       </div>
       <div class="panel-col">
-        <h4>กล่องในบ้าน <span id="storeCount"></span></h4>
+        <h4 class="store-col-head">กล่องในบ้าน <span id="storeCount"></span><button class="sort-btn" id="storeSortBtn" type="button" title="จัดเรียงของในกล่อง">✨ จัดเรียง</button></h4>
         <div class="item-grid compact" id="storeList"></div>
       </div>
     </div>
@@ -1563,7 +1572,7 @@
         <div class="gear-summary" id="gearSummary"></div>
       </div>
       <div class="bag-col">
-        <div class="bag-head"><span>🎒 กระเป๋า <span id="bagCount">0/0</span></span><button class="letter-book-btn" id="letterBookBtn" type="button" title="อ่านจดหมายที่เก็บได้ทั้งหมด">✉️ จดหมาย</button><span class="bag-sub">📦 กล่องที่บ้าน <span id="bagStorageCount">0/0</span></span></div>
+        <div class="bag-head"><span>🎒 กระเป๋า <span id="bagCount">0/0</span></span><span class="bag-head-btns"><button class="sort-btn" id="bagSortBtn" type="button" title="จัดเรียงของในกระเป๋า: ของที่สวม → อุปกรณ์ดีสุด → การ์ด → ยา/วัตถุดิบ">✨ จัดเรียง</button><button class="letter-book-btn" id="letterBookBtn" type="button" title="อ่านจดหมายที่เก็บได้ทั้งหมด">✉️ จดหมาย</button></span><span class="bag-sub">📦 กล่องที่บ้าน <span id="bagStorageCount">0/0</span></span></div>
         <p class="storage-hint">คลิกไอเทมเพื่อดูรายละเอียด/เทียบกับของที่ใส่อยู่ · ลากอุปกรณ์ไปวางที่ช่องด้านซ้ายเพื่อสวม · ลากจากช่องกลับมาที่กระเป๋าเพื่อถอด · กระเป๋าเต็มแล้วของใหม่จะถูกส่งไปกล่องที่บ้านเอง</p>
         <div class="item-grid bag" id="bagGrid"></div>
         <div class="item-detail" id="bagDetail" hidden></div>
@@ -1574,7 +1583,7 @@
   <div class="panel" id="sellPanel" hidden>
     <button class="close-x" id="closeSellBtn" type="button">✕</button>
     <h2><button class="panel-back" type="button" data-back="merchant">‹ คุยต่อ</button>💰 ขายของให้พ่อค้า<span class="hdr-chip" data-hdr="gold"></span></h2>
-    <p class="storage-hint">กด Alt ค้างแล้วคลิกซ้ายเพื่อขายทั้งกอง · กด Ctrl ค้างแล้วคลิกซ้ายเพื่อขายทีละ 1 ชิ้น · หรือลากไอเทมมาวางกล่องด้านล่าง</p>
+    <div class="sell-top"><p class="storage-hint">กด Alt ค้างแล้วคลิกซ้ายเพื่อขายทั้งกอง · กด Ctrl ค้างแล้วคลิกซ้ายเพื่อขายทีละ 1 ชิ้น · หรือลากไอเทมมาวางกล่องด้านล่าง</p><button class="sort-btn" id="sellSortBtn" type="button" title="จัดเรียงของในกระเป๋า">✨ จัดเรียง</button></div>
     <div class="item-grid" id="sellGrid"></div>
     <div class="sell-drop-zone" id="sellDropZone">💰 ลากไอเทมมาวางที่นี่เพื่อขายด่วน</div>
     <div class="buyback">
@@ -4806,7 +4815,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 49;
+const GAME_VERSION = 50;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -10797,7 +10806,7 @@ function renderRefinePanel(){
   const grid = document.getElementById("refineGrid");
   const detail = document.getElementById("refineDetail");
   grid.innerHTML = "";
-  const equipEntries = game.inventory.filter(e => e.kind === "equipment");
+  const equipEntries = itemDisplayOrder(game.inventory).filter(e => e.kind === "equipment");
 
   if(equipEntries.length === 0){
     grid.innerHTML = '<div class="empty-note">ไม่มีอุปกรณ์ในกระเป๋าให้ตีบวก</div>';
@@ -11965,6 +11974,64 @@ function transferItem(fromArr, toArr, idx, toMax, fullMsg, qty){
    While a window stays open, every item keeps its square: selling or moving one leaves an empty gap instead of
    sliding every later item one step back (which made the next click land on the wrong item). The layout starts
    fresh each time the window opens. */
+/* v50: how every item grid is shown — what you're WEARING first (in body order), then the newest pickup.
+   New items are appended to the end of game.inventory / game.storage, so "newest first" = the array read
+   backwards. The ✨ จัดเรียง button stores its tidy order reversed, so tidy items read top-down and anything
+   picked up afterwards still appears at the very front. */
+function wornEntries(arr){
+  return EQUIPMENT_SLOTS.map(k => game.player.equipment[k]).filter(Boolean)
+    .map(id => arr.find(e => e.kind === "equipment" && e.instanceId === id)).filter(Boolean);
+}
+function itemDisplayOrder(arr){
+  const worn = wornEntries(arr);
+  return worn.concat(arr.filter(e => !worn.includes(e)).reverse());
+}
+const SORT_RARITY = { legendary:5, epic:4, rare:3, uncommon:2, common:1 };
+const SORT_SLOT = { weapon:0, armor:1, headgear:2, accessory:3 };
+const SORT_STACK_ORDER = ["potion", "herb", "mana_stone", "secret_key",
+  "sample_t10", "sample_t9", "sample_t8", "sample_t7", "sample_t6", "sample_t5", "sample_t4", "sample_t3", "sample_t2", "sample_t1",
+  "stone_fragment", "wolf_fang", "slime_jelly", "junk_scrap", "old_letter", "bark_tag", "barrier_lantern", "inscribed_wrap"];
+function itemSortKey(e){ // smaller = earlier (better / more useful first)
+  if(e.kind === "equipment"){
+    const base = EQUIPMENT_DEFS[e.defId] || {};
+    const tier = +((/_t(\d+)$/.exec(e.defId || "") || [])[1] || 1);
+    return [0, -(SORT_RARITY[e.rarity] || 0), SORT_SLOT[base.slot] ?? 9, -tier, -(e.refineLevel || 0), -(e.rollQuality || 0), 0];
+  }
+  if(e.kind === "card"){ const c = CARD_DEFS[e.id] || {}; return [1, -(SORT_RARITY[c.rarity] || 0), 0, 0, 0, 0, e.id]; }
+  const i = SORT_STACK_ORDER.indexOf(e.id);
+  return [2, i < 0 ? 99 : i, 0, 0, 0, 0, e.id];
+}
+function compareItems(a, b){
+  const ka = itemSortKey(a), kb = itemSortKey(b);
+  for(let i = 0; i < ka.length; i++){ if(ka[i] < kb[i]) return -1; if(ka[i] > kb[i]) return 1; }
+  return 0;
+}
+// ✨ จัดเรียง: merge split stacks of the same thing, then order by kind → rarity → slot → map → +refine → quality
+function sortItemsArray(arr){
+  const merged = [];
+  for(const e of arr){
+    if(e.kind !== "equipment"){
+      const same = merged.find(m => m.kind !== "equipment" && m.id === e.id && (m.kind || "") === (e.kind || ""));
+      if(same){ same.qty = (same.qty || 0) + (e.qty || 0); continue; }
+    }
+    merged.push(e);
+  }
+  const worn = wornEntries(merged);
+  const tidy = merged.filter(e => !worn.includes(e)).sort(compareItems);
+  arr.length = 0;
+  arr.push(...worn, ...tidy.reverse()); // stored reversed — the grid reads the array backwards
+}
+function sortItemsAction(which){
+  const arrs = which === "storage" ? [game.storage] : which === "both" ? [game.inventory, game.storage] : [game.inventory];
+  arrs.forEach(sortItemsArray);
+  Object.keys(stableSlots).forEach(k => delete stableSlots[k]); // the window lays itself out fresh
+  selectedStorageSide = null; selectedStorageIndex = null;
+  sfx.equip();
+  showToast("✨ จัดเรียงแล้ว — ของที่สวมอยู่ก่อน ตามด้วยอุปกรณ์ดีสุด → การ์ด → ยา/วัตถุดิบ");
+  if(!document.getElementById("bagPanel").hidden) renderBagPanel();
+  if(!document.getElementById("storagePanel").hidden){ storageLayoutKeep = false; renderStoragePanel(); }
+  if(!document.getElementById("sellPanel").hidden) renderSellPanel();
+}
 const stableSlots = {};
 function slotKey(e){ return e.kind === "equipment" ? "eq:" + e.instanceId : (e.kind || "item") + ":" + e.id; }
 function stableLayout(key, items, keep){
@@ -12022,7 +12089,7 @@ function moveStorageItem(side, idx, qty){
 }
 
 function renderStoragePanel(){
-  storageLayoutKeep = !document.getElementById("storagePanel").hidden;
+  storageLayoutKeep = !document.getElementById("storagePanel").hidden && !!(stableSlots.storage_inv || stableSlots.storage_store);
   document.getElementById("invCount").textContent = `(${game.inventory.length}/${BAG_CAPACITY})`;
   document.getElementById("storeCount").textContent = `(${game.storage.length}/${STORAGE_CAPACITY})`;
   renderStorageGrid(document.getElementById("invList"), game.inventory, "inv", "ไม่มีของในกระเป๋า");
@@ -12033,7 +12100,7 @@ function renderStoragePanel(){
 let storageLayoutKeep = false;
 function renderStorageGrid(containerEl, items, side, emptyText){
   containerEl.innerHTML = "";
-  const shown = stableLayout("storage_" + side, items, storageLayoutKeep);
+  const shown = stableLayout("storage_" + side, itemDisplayOrder(items), storageLayoutKeep);
   if(shown.length === 0){ containerEl.innerHTML = `<div class="empty-note">${emptyText}</div>`; return; }
   shown.forEach(entry => {
     if(!entry){ containerEl.appendChild(gapSlot()); return; }
@@ -12132,7 +12199,7 @@ function getItemIcon(entry){
   return def ? def.icon : "❓";
 }
 
-let selectedBagIndex = null;
+let selectedBagIndex = null; // v50: holds the selected item itself (the grid order isn't the array order)
 function renderBagPanel(){
   const grid = document.getElementById("bagGrid");
   const detail = document.getElementById("bagDetail");
@@ -12143,9 +12210,9 @@ function renderBagPanel(){
   countEl.className = game.inventory.length >= BAG_CAPACITY ? "full" : "";
   document.getElementById("bagStorageCount").textContent = `${game.storage.length}/${STORAGE_CAPACITY}`;
 
-  game.inventory.forEach((entry, idx) => {
+  itemDisplayOrder(game.inventory).forEach(entry => { // v50: worn first, then newest
     const slot = document.createElement("div");
-    slot.className = "item-slot" + (idx === selectedBagIndex ? " selected" : "");
+    slot.className = "item-slot" + (entry === selectedBagIndex ? " selected" : "");
 
     if(entry.kind === "equipment" || entry.kind === "card"){
       const rarityDef = RARITY_DEFS[getEntryRarity(entry)];
@@ -12181,7 +12248,7 @@ function renderBagPanel(){
       slot.addEventListener("dragend", ()=> slot.classList.remove("dragging"));
     }
 
-    slot.addEventListener("click", ()=>{ sfx.click(); selectedBagIndex = idx; renderBagPanel(); });
+    slot.addEventListener("click", ()=>{ sfx.click(); selectedBagIndex = entry; renderBagPanel(); });
     grid.appendChild(slot);
   });
   for(let i = game.inventory.length; i < BAG_CAPACITY; i++){ // empty slots, so capacity is visible at a glance
@@ -12190,8 +12257,8 @@ function renderBagPanel(){
     grid.appendChild(empty);
   }
 
-  if(selectedBagIndex == null || !game.inventory[selectedBagIndex]){ detail.hidden = true; return; }
-  renderBagDetail(game.inventory[selectedBagIndex]);
+  if(selectedBagIndex == null || !game.inventory.includes(selectedBagIndex)){ selectedBagIndex = null; detail.hidden = true; return; }
+  renderBagDetail(selectedBagIndex);
 }
 // Bag grid as a drop target — dropping an equipped item here unequips it. Bound once since the
 // container element itself persists across re-renders (only its innerHTML changes).
@@ -12304,7 +12371,7 @@ function renderSellPanel(){
   const grid = document.getElementById("sellGrid");
   const detail = document.getElementById("sellDetail");
   grid.innerHTML = "";
-  const shown = stableLayout("sell", game.inventory, !document.getElementById("sellPanel").hidden);
+  const shown = stableLayout("sell", itemDisplayOrder(game.inventory), !document.getElementById("sellPanel").hidden);
   renderBuybackGrid();
 
   if(shown.length === 0){
@@ -12514,6 +12581,10 @@ function quickSellItem(idx){
   sellItem(idx, entry.kind === "equipment" ? 1 : entry.qty); // full stack for stackables, the one piece for equipment
 }
 
+document.getElementById("bagSortBtn").addEventListener("click", ()=> sortItemsAction("bag"));
+document.getElementById("invSortBtn").addEventListener("click", ()=> sortItemsAction("bag"));
+document.getElementById("storeSortBtn").addEventListener("click", ()=> sortItemsAction("storage"));
+document.getElementById("sellSortBtn").addEventListener("click", ()=> sortItemsAction("bag"));
 document.getElementById("closeSellBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("sellPanel").hidden = true; });
 
 const sellDropZone = document.getElementById("sellDropZone");
@@ -13048,7 +13119,7 @@ function renderEquipmentSlots(){
     const instanceId = game.player.equipment[slotKey];
     const entry = instanceId ? findEquipmentEntry(instanceId) : null;
     const box = document.createElement("div");
-    box.className = "equip-slot-box" + (entry ? " filled" : "") + (entry && game.inventory[selectedBagIndex] === entry ? " selected" : "");
+    box.className = "equip-slot-box" + (entry ? " filled" : "") + (entry && selectedBagIndex === entry ? " selected" : "");
     box.style.gridArea = slotKey;
     if(entry){
       const base = EQUIPMENT_DEFS[entry.defId];
@@ -13059,7 +13130,7 @@ function renderEquipmentSlots(){
       box.innerHTML = `${entry.refineLevel > 0 ? `<span class="refine-tag">+${entry.refineLevel}</span>` : ""}<span>${equipIconHtml(base)}</span>
         <span class="equip-item-name" style="color:${rarityDef.color}">${base.name}</span><span class="equip-slot-label">${SLOT_LABELS[slotKey]}</span>`;
       // click = select (details + ถอด button below) — no more accidental one-click unequips
-      box.addEventListener("click", ()=>{ sfx.click(); selectedBagIndex = game.inventory.indexOf(entry); renderBagPanel(); });
+      box.addEventListener("click", ()=>{ sfx.click(); selectedBagIndex = entry; renderBagPanel(); });
       box.draggable = true;
       box.addEventListener("dragstart", (e)=>{
         box.classList.add("dragging");
