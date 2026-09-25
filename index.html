@@ -466,6 +466,13 @@
   .equip-slot-box.dragging{ opacity:.35; transform:scale(.9); }
   #invList, #storeList{ min-height:64px; border-radius:10px; transition:background .15s, outline .15s; }
   .storage-hint{ font-size:11px; color:#7a7186; margin:0 0 10px; line-height:1.4; }
+  .snd-row{ display:grid; grid-template-columns:150px 1fr 38px; align-items:center; gap:8px; margin:8px 0; font-size:14px; color:#4b3f8f; }
+  .snd-tog{ display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:bold; }
+  .snd-row input[type=range]{ width:100%; accent-color:#4b3f8f; }
+  .snd-val{ font-size:12px; color:#7a7186; text-align:right; font-variant-numeric:tabular-nums; }
+  .snd-now{ margin-top:10px; padding:8px 10px; border-radius:8px; background:rgba(75,63,143,.08); font-size:13px; color:#4b3f8f; min-height:20px; }
+  #titleSoundBtn{ position:absolute; top:14px; right:14px; z-index:5; width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.35);
+    background:rgba(12,10,28,.55); color:#fff; font-size:18px; cursor:pointer; }
   .sell-drop-zone{
     margin-top:10px; border:2px dashed #cfc6ad; border-radius:10px; padding:14px;
     text-align:center; font-size:13px; color:#7a7186; transition:background .15s, outline .15s, border-color .15s;
@@ -1195,6 +1202,7 @@
 
 <!-- ===================== CHARACTER CREATION ===================== -->
 <div id="creation-screen">
+  <button id="titleSoundBtn" type="button" title="ปิด/เปิดเพลง (M)">🔊</button>
   <svg class="creation-sky" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
     <path d="M-100 330 Q600 -40 1300 330" fill="none" stroke="rgba(143,243,255,.18)" stroke-width="2"/>
     <path d="M-100 360 Q600 0 1300 360" fill="none" stroke="rgba(143,243,255,.07)" stroke-width="10"/>
@@ -1341,6 +1349,7 @@
     <button class="menu-btn" id="weaponSkillBtn" type="button" style="position:relative;">⚔️ สกิลอาวุธ<span id="weaponSkillBadge" class="stat-badge" hidden>!</span></button>
     <button class="menu-btn" id="meditateBtn" type="button" style="position:relative;">🧘 ทำสมาธิ<span id="sanityLowBadge" class="stat-badge sanity-badge" hidden>!</span></button>
     <button class="menu-btn" id="tutorialBtn" type="button">❓ วิธีเล่น</button>
+    <button class="menu-btn" id="soundBtn" type="button">🔊 เสียง</button>
     <button class="menu-btn" id="friendsBtn" type="button" style="position:relative;" hidden>👥 เพื่อน<span id="friendsBadge" class="stat-badge" hidden>0</span></button>
     <button class="menu-btn" id="accountBtn" type="button" hidden>👤 บัญชี</button>
     <button class="menu-btn" id="gmBtn" type="button" hidden style="border:2px solid var(--gold);">🛡️ GM</button>
@@ -1542,6 +1551,17 @@
   </div>
 
   <div id="playerMenu" hidden></div>
+
+  <div class="panel" id="soundPanel" hidden style="width:360px;">
+    <button class="close-x" id="closeSoundBtn" type="button">✕</button>
+    <h2>🔊 เสียง</h2>
+    <div class="snd-row"><label class="snd-tog"><input type="checkbox" id="sndMusicOn"> 🎵 เพลง</label>
+      <input type="range" id="sndMusic" min="0" max="100" step="1" aria-label="ความดังเพลง"><span class="snd-val" id="sndMusicVal"></span></div>
+    <div class="snd-row"><label class="snd-tog"><input type="checkbox" id="sndSfxOn"> 🔔 เสียงเอฟเฟกต์</label>
+      <input type="range" id="sndSfx" min="0" max="100" step="1" aria-label="ความดังเสียงเอฟเฟกต์"><span class="snd-val" id="sndSfxVal"></span></div>
+    <div class="snd-now" id="sndNow"></div>
+    <p class="storage-hint" style="margin:8px 0 0;">ปุ่มลัด <b>M</b> = ปิด/เปิดเพลง · ตั้งค่าจำไว้ในเครื่องนี้ · เพลงหยุดเองเมื่อสลับไปแท็บอื่น</p>
+  </div>
 
   <div class="panel" id="accountPanel" hidden style="width:540px;">
     <button class="close-x" id="closeAccountBtn" type="button">✕</button>
@@ -1972,7 +1992,7 @@ function tone(freq, dur, type, vol){
     osc.frequency.value = freq;
     gain.gain.setValueAtTime(vol || 0.15, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    osc.connect(gain).connect(ctx.destination);
+    osc.connect(gain).connect(sfxOut(ctx));
     osc.start();
     osc.stop(ctx.currentTime + dur);
   }catch(e){ /* ignore audio failures */ }
@@ -1995,7 +2015,7 @@ function noiseBurst(dur, vol, filterFreq, filterType){
     const gain = ctx.createGain();
     gain.gain.setValueAtTime(vol || 0.15, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    src.connect(filter).connect(gain).connect(ctx.destination);
+    src.connect(filter).connect(gain).connect(sfxOut(ctx));
     src.start();
   }catch(e){ /* ignore audio failures */ }
 }
@@ -2014,7 +2034,7 @@ function startChargeTone(){
     chargeOscillator.frequency.setValueAtTime(220, ctx.currentTime);
     chargeGainNode.gain.setValueAtTime(0.0001, ctx.currentTime);
     chargeGainNode.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.08); // quick fade-in, avoids a click/pop
-    chargeOscillator.connect(chargeGainNode).connect(ctx.destination);
+    chargeOscillator.connect(chargeGainNode).connect(sfxOut(ctx));
     chargeOscillator.start();
   }catch(e){ chargeOscillator = null; chargeGainNode = null; }
 }
@@ -2051,10 +2071,231 @@ const sfx = {
   // perfect-dodge counter — the biggest, most triumphant hit in the game: a low slam plus a rising 3-note stab
   counter: () => { noiseBurst(0.09, 0.28, 2400, "lowpass"); tone(110, 0.17, "square", 0.24); tone(520, 0.06, "square", 0.15); tone(860, 0.07, "square", 0.15); tone(1280, 0.09, "square", 0.14); },
   playerHurt: () => { noiseBurst(0.08, 0.14, 900, "lowpass"); tone(140, 0.18, "sawtooth", 0.14); },
-  levelUp: () => { [523,659,784].forEach((f,i)=> setTimeout(()=>tone(f,0.18,"triangle",0.12), i*90)); },
-  skillReady: () => tone(1320, 0.05, "sine", 0.05) // a skill just came off cooldown — soft, short "ting"
+  levelUp: () => chime3(),
+  skillReady: () => tone(1320, 0.05, "sine", 0.05), // a skill just came off cooldown — soft, short "ting"
+  // v43: separate names so each can get its own AI sound file — until then they share the old beeps
+  heal:      () => chime3(),
+  rareDrop:  () => chime3(),
+  itemGet:   () => chime3(),
+  chest:     () => chime3(),
+  refineOk:  () => chime3(),
+  questDone: () => chime3(),
+  notice:    () => chime3(),
+  warp:      () => { noiseBurst(0.35, 0.06, 1400, "bandpass"); tone(440, 0.22, "sine", 0.05); setTimeout(()=>tone(880, 0.28, "sine", 0.05), 90); },
+  coin:      () => { tone(1320, 0.05, "square", 0.04); setTimeout(()=>tone(1760, 0.08, "square", 0.04), 55); },
+  equip:     () => { noiseBurst(0.05, 0.08, 3000, "highpass"); tone(300, 0.06, "square", 0.05); }
 };
+function chime3(){ [523,659,784].forEach((f,i)=> setTimeout(()=>tone(f,0.18,"triangle",0.12), i*90)); }
 document.body.addEventListener("click", ()=>{ getAudio(); }, { once:true, capture:true });
+
+/* ============================================================
+   MUSIC & SOUND FILES — assets/*.mp3 (v43)
+   The two lines below are written by add_audio.py — key → "assets/<key>.mp3?v=<md5>". Keys:
+   bgm_* = looping music, jgl_* = one-shot jingle, sfx_<name> = replaces sfx.<name>'s beep.
+   A sound that isn't listed here is simply not requested (no 404s) and falls back as described below.
+   ============================================================ */
+const AUDIO = {"bgm_city01": "assets/bgm_city01.mp3?v=575a34a2", "bgm_city02": "assets/bgm_city02.mp3?v=0966aaee", "bgm_fight01": "assets/bgm_fight01.mp3?v=9377d9ac", "bgm_map01": "assets/bgm_map01.mp3?v=90f205aa"};
+const AUDIO_TITLE = {"bgm_city01": "Lanterns in the Valley", "bgm_city02": "Morning in the Hidden Vale", "bgm_fight01": "Blade of the Winter Sun", "bgm_map01": "Vows in the Stone Arena"};
+const AUDIO_CFG_KEY = "menalars_audio_v1";
+const audioCfg = (()=>{
+  const d = { music:0.5, sfx:0.8, musicOn:true, sfxOn:true };
+  try{ return Object.assign(d, JSON.parse(localStorage.getItem(AUDIO_CFG_KEY) || "{}")); }catch(e){ return d; }
+})();
+function saveAudioCfg(){ try{ localStorage.setItem(AUDIO_CFG_KEY, JSON.stringify(audioCfg)); }catch(e){} }
+
+let audioMissingShown = false;
+function audioMissingWarn(key){
+  console.warn("missing sound:", AUDIO[key]);
+  if(audioMissingShown || location.protocol === "file:") return; // double-clicked file: fetch() is blocked there, not a missing upload
+  audioMissingShown = true;
+  if(typeof showToast === "function") showToast("🔇 โหลดเพลง/เสียงไม่ได้ (" + key + ") — อัปโหลดไฟล์ .mp3 ในโฟลเดอร์ assets ขึ้น GitHub ด้วย");
+}
+
+// ---- sound-effect files: decoded once into AudioBuffers, played through the shared SFX volume ----
+let sfxGainNode = null;
+function sfxOut(ctx){
+  if(!sfxGainNode || sfxGainNode.context !== ctx){ sfxGainNode = ctx.createGain(); sfxGainNode.connect(ctx.destination); }
+  sfxGainNode.gain.value = audioCfg.sfxOn ? audioCfg.sfx : 0;
+  return sfxGainNode;
+}
+const sfxBuf = {}; // key → AudioBuffer | "loading" | "failed"
+function loadSfxFile(key){
+  const ctx = getAudio();
+  if(!ctx || sfxBuf[key]) return;
+  sfxBuf[key] = "loading";
+  fetch(AUDIO[key]).then(r => { if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    .then(ab => new Promise((ok, bad) => ctx.decodeAudioData(ab, ok, bad)))
+    .then(buf => { sfxBuf[key] = buf; })
+    .catch(() => { sfxBuf[key] = "failed"; audioMissingWarn(key); });
+}
+function preloadSfxFiles(){ Object.keys(AUDIO).forEach(k => { if(k.startsWith("sfx_")) loadSfxFile(k); }); }
+// true = a file handled it (or sfx is muted); false = caller should play the procedural beep instead
+const SFX_PITCH_JITTER = { attack:0.06, crit:0.04, miss:0.06, dodge:0.05, playerHurt:0.05, die:0.04, click:0.02, coin:0.05 };
+function playSfxFile(name){
+  if(!audioCfg.sfxOn || audioCfg.sfx <= 0) return true;
+  const key = "sfx_" + name;
+  if(!AUDIO[key]) return false;
+  const buf = sfxBuf[key];
+  if(!buf){ loadSfxFile(key); return false; }
+  if(typeof buf === "string") return false; // still loading, or failed → beep this time
+  const ctx = getAudio();
+  if(!ctx) return false;
+  try{
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const j = SFX_PITCH_JITTER[name] || 0;
+    if(j) src.playbackRate.value = 1 + (Math.random() * 2 - 1) * j; // tiny pitch wobble so repeated hits don't sound copy-pasted
+    src.connect(sfxOut(ctx));
+    src.start();
+    return true;
+  }catch(e){ return false; }
+}
+Object.keys(sfx).forEach(name => {
+  const synth = sfx[name];
+  sfx[name] = () => { if(!playSfxFile(name)) synth(); };
+});
+
+// ---- music: two <audio> elements crossfading, driven by musicTick() every 100 ms ----
+// musicScene() says what should be playing right now: { list, playlist }. The first key in `list` that
+// exists in AUDIO plays; playlist:true instead rotates through every available key in `list`.
+// A scene with nothing available returns null → the next scene down decides (e.g. no meditation track = keep the map music).
+const TOWN_PLAYLIST = ["bgm_city01", "bgm_city02", "bgm_city03", "bgm_city04"];
+const MUSIC_FADE_S = 2.4;       // normal crossfade
+const MUSIC_FAST_FADE_S = 0.7;  // into / out of a fight
+const MUSIC_RESUME_MS = 150000; // back to a track within 2.5 min → continue where it left off
+function pad2(n){ return (n < 10 ? "0" : "") + n; }
+function audioAvail(k){ return !!AUDIO[k] && !music.failed.has(k); }
+function sceneOf(list, playlist){ return list.some(audioAvail) ? { list, playlist: !!playlist } : null; }
+function musicScene(){
+  const cs = document.getElementById("creation-screen");
+  if(!game || !game.player || (cs && cs.style.display !== "none"))
+    return sceneOf(["bgm_title"]) || sceneOf(TOWN_PLAYLIST, true);
+  if(game.inBattle && game.battle){
+    const b = game.battle, m = b.monster || {}, boss = !!(b.isBoss || (b.def && b.def.isBoss));
+    const tier = game.mapTier, fightN = tier >= 8 ? "bgm_fight03" : tier >= 4 ? "bgm_fight02" : "bgm_fight01";
+    if(m.isSpyBoss) return sceneOf(["bgm_boss_story", "bgm_boss", fightN, "bgm_fight01"]);
+    if(boss) return sceneOf(["bgm_boss", fightN, "bgm_fight01"]);
+    return sceneOf([fightN, "bgm_fight01"]);
+  }
+  return (game.player.isMeditating && sceneOf(["bgm_meditate"]))
+    || (game.dungeon && sceneOf(["bgm_dungeon"]))
+    || (game.mapTier === TOWN_TIER ? sceneOf(TOWN_PLAYLIST, true)
+        : sceneOf(["bgm_map" + pad2(game.mapTier), "bgm_map01"]));
+}
+const music = { els:[], cur:-1, key:null, scene:null, level:[0, 0], target:[0, 0], fadeS:[MUSIC_FADE_S, MUSIC_FADE_S],
+  duck:1, duckTarget:1, jingle:null, failed:new Set(), unlocked:false, pos:{}, playlistIdx:0, lastTick:0 };
+function musicEl(i){
+  if(!music.els[i]){
+    const el = new Audio();
+    el.preload = "auto";
+    el.addEventListener("error", () => {
+      const k = el.dataset.key;
+      if(!k || !el.src) return;
+      music.failed.add(k); audioMissingWarn(k);
+      if(music.key === k){ music.key = null; }
+    });
+    music.els[i] = el;
+  }
+  return music.els[i];
+}
+function musicVolume(){ return audioCfg.musicOn ? audioCfg.music : 0; }
+function musicPlay(key, fadeS, fromStart){
+  const old = music.cur;
+  if(old >= 0){
+    if(music.key) music.pos[music.key] = { t: music.els[old].currentTime || 0, at: performance.now() }; // remember where it was
+    music.target[old] = 0; music.fadeS[old] = fadeS;
+  }
+  music.key = key;
+  if(!key){ music.cur = -1; return; }
+  const i = old === 0 ? 1 : 0;
+  const el = musicEl(i);
+  el.dataset.key = key;
+  if(el.getAttribute("src") !== AUDIO[key]) el.src = AUDIO[key];
+  const p = music.pos[key];
+  let t = 0;
+  if(!fromStart && p && performance.now() - p.at < MUSIC_RESUME_MS) t = p.t;
+  try{ el.currentTime = t; }catch(e){}
+  music.level[i] = 0; music.target[i] = 1; music.fadeS[i] = fadeS;
+  music.cur = i;
+  if(music.unlocked && !document.hidden) el.play().catch(() => {});
+}
+function playJingle(key){
+  if(!audioAvail(key) || !music.unlocked || !audioCfg.musicOn) return;
+  try{
+    if(music.jingle) music.jingle.pause();
+    const j = music.jingle = new Audio(AUDIO[key]);
+    music.jingleAt = performance.now();
+    j.volume = clamp(musicVolume() * 1.1, 0, 1);
+    music.duckTarget = 0.12; // push the music under the jingle, bring it back when it ends
+    const done = () => { if(music.jingle === j){ music.jingle = null; music.duckTarget = 1; } };
+    j.addEventListener("ended", done); j.addEventListener("error", () => { music.failed.add(key); done(); });
+    j.play().catch(done);
+  }catch(e){ music.duckTarget = 1; }
+}
+function musicTick(){
+  const now = performance.now(), dt = Math.min(0.5, (now - (music.lastTick || now)) / 1000);
+  music.lastTick = now;
+  let scene = null;
+  try{ scene = musicScene(); }catch(e){ return; }
+  // pick the track this scene wants
+  let want = null;
+  if(scene){
+    const avail = scene.list.filter(audioAvail);
+    if(!scene.playlist) want = avail[0];                                    // best available track for this scene
+    else if(music.key && avail.includes(music.key)) want = music.key;      // playlist: keep the current song going
+    else want = avail[music.playlistIdx % avail.length];
+  }
+  const fightish = !!(game && game.inBattle);
+  if(want !== music.key) musicPlay(want, fightish || music.wasFight ? MUSIC_FAST_FADE_S : MUSIC_FADE_S, fightish);
+  music.wasFight = fightish;
+  // near the end: loop (crossfade back to 0:00) or move on to the next playlist song
+  const cur = music.cur >= 0 ? music.els[music.cur] : null;
+  if(cur && music.key && cur.duration > MUSIC_FADE_S * 3 && cur.currentTime > cur.duration - MUSIC_FADE_S - 0.3){
+    let next = music.key;
+    if(scene && scene.playlist){
+      const avail = scene.list.filter(audioAvail);
+      music.playlistIdx = (avail.indexOf(music.key) + 1) % avail.length;
+      next = avail[music.playlistIdx];
+    }
+    music.key = null; // force a real switch even when next === the same song
+    musicPlay(next, MUSIC_FADE_S, true);
+  }
+  // fades + volume
+  music.duck += Math.sign(music.duckTarget - music.duck) * Math.min(Math.abs(music.duckTarget - music.duck), dt / 0.5);
+  const vol = musicVolume() * music.duck;
+  for(let i = 0; i < music.els.length; i++){
+    const el = music.els[i];
+    if(!el) continue;
+    const d = music.target[i] - music.level[i];
+    music.level[i] += Math.sign(d) * Math.min(Math.abs(d), dt / Math.max(0.05, music.fadeS[i]));
+    el.volume = clamp(music.level[i] * vol, 0, 1);
+    const shouldPlay = music.target[i] > 0 || music.level[i] > 0.001;
+    if(!shouldPlay || document.hidden){ if(!el.paused) el.pause(); }
+    else if(el.paused && music.unlocked && el.getAttribute("src")) el.play().catch(() => {});
+  }
+  if(music.jingle){
+    // safety: a jingle that stalled (tab hidden, blocked, never fired "ended") must not keep the music ducked
+    if(music.jingle.ended || now - (music.jingleAt || 0) > 15000){ music.jingle.pause(); music.jingle = null; music.duckTarget = 1; }
+    else music.jingle.volume = clamp(musicVolume() * 1.1, 0, 1);
+  }
+}
+setInterval(musicTick, 100);
+// browsers only allow sound after the player clicks/presses something
+function unlockAudio(){
+  if(music.unlocked) return;
+  music.unlocked = true;
+  getAudio();
+  preloadSfxFiles();
+  musicTick();
+}
+["pointerdown", "keydown", "touchstart"].forEach(ev => window.addEventListener(ev, unlockAudio, { capture:true, passive:true }));
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden && music.jingle){ music.jingle.pause(); music.jingle = null; music.duckTarget = 1; }
+  musicTick();
+});
+function musicNowTitle(){
+  return music.key ? (AUDIO_TITLE[music.key] || music.key.replace(/^bgm_/, "")) : "";
+}
 
 /* ============================================================
    HELPERS
@@ -4157,6 +4398,7 @@ function warpToMap(tier, dim){
   }
 
   if(dim && dim !== game.dimension) setDimension(dim); // after the snapshot above, which used the old layer's key
+  if(game.player && game.player.name && game.mapTier !== tier) sfx.warp();
   game.mapTier = tier;
   useNavGridFor(tier);
   game.dungeon = null;
@@ -4325,7 +4567,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 42;
+const GAME_VERSION = 43;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -5802,6 +6044,7 @@ function proceedDungeonRoom(){
     const goldGained = randInt(20,50);
     game.player.gold += goldGained;
     game.stats.chestsOpened++;
+    sfx.chest();
     let itemMsg = "";
     if(Math.random() < 0.5){
       const pick = ITEM_TABLE[randInt(0, ITEM_TABLE.length-1)];
@@ -6481,6 +6724,7 @@ function equipItem(instanceId){
   if(currentId){ const curEntry = findEquipmentEntry(currentId); if(curEntry) curEntry.equipped = false; }
   game.player.equipment[slotKey] = instanceId;
   entry.equipped = true;
+  sfx.equip();
   showToast("สวมใส่ " + base.name + " แล้ว");
   updateHud();
 }
@@ -7679,7 +7923,7 @@ function usePlayerSkill(skillId){
     p.hp = Math.min(getEffectiveMaxHp(), p.hp + heal);
     updateHud();
     spawnBattleMsg("+" + heal + " HP", "#7CE0A8");
-    sfx.levelUp();
+    sfx.heal();
   } else if(skillId === "guard"){
     b.guardUntil = now + 5000;
     showToast("เพิ่มการป้องกัน 5 วินาที!");
@@ -8154,8 +8398,9 @@ function exitBattle(result){
 
     storyOnKill(m, b.isBoss, summary);
     const hasNotableDrop = resolvedDrops.some(d => ["rare","epic","legendary"].includes(getEntryRarity(d)));
-    if(hasNotableDrop || m.isElite) sfx.levelUp();
+    if(hasNotableDrop || m.isElite) sfx.rareDrop();
     showVictoryReward(expGained, goldGained, resolvedDrops, m.isElite, summary);
+    playJingle(b.isBoss || m.isSpyBoss ? (AUDIO.jgl_victory_boss ? "jgl_victory_boss" : "jgl_victory") : "jgl_victory");
 
     // one lightweight, auto-dismissing discovery banner per kill — never stacks, never blocks play
     const unlockedMilestone = checkMilestones();
@@ -8193,6 +8438,7 @@ function exitBattle(result){
   } else {
     const penalty = applyDeathPenalty();
     showDefeatPenalty(penalty, summary);
+    playJingle("jgl_defeat");
     game.stats.deaths = (game.stats.deaths || 0) + 1;
     // a lost fight's hits still count (its best Perfect streak already did — the server checks the two together)
     game.stats.perfectHits = (game.stats.perfectHits || 0) + summary.perfectHits;
@@ -9822,7 +10068,7 @@ function turnInOldLetterMerchantUnused(){
   const isNew = registerDiscovery({ kind:"equipment", defId });
   addEquipmentToInventory(rollEquipmentInstance(defId));
   updateHud();
-  sfx.levelUp();
+  sfx.itemGet();
   setTimeout(()=> checkTitles(false), 1500);
   const eq = EQUIPMENT_DEFS[defId];
   showToast(`พ่อค้าขอบคุณ! ได้รับ 💰${goldReward} และ ${eq.icon} ${eq.name}${isNew ? " (ใหม่!)" : ""}`);
@@ -9866,6 +10112,7 @@ function closeAllPanels(){
   document.getElementById("buyPanel").hidden = true;
   document.getElementById("refinePanel").hidden = true;
   document.getElementById("travelPanel").hidden = true;
+  document.getElementById("soundPanel").hidden = true;
   document.getElementById("gmPanel").hidden = true;
   document.getElementById("gmPlayerPanel").hidden = true;
   document.getElementById("weaponSkillPanel").hidden = true;
@@ -9914,6 +10161,7 @@ function buyItemMany(itemId, price, n){
   sfx.click();
   let got = 0;
   while(got < n && game.player.gold >= price && addToInventory(itemId)){ game.player.gold -= price; got++; }
+  if(got) sfx.coin();
   updateHud();
   const def = ITEM_TABLE.find(i => i.id === itemId);
   showToast(got ? `ซื้อ ${def.icon} ${def.name} ×${got} สำเร็จ!` : "เงินไม่พอ!");
@@ -9923,6 +10171,7 @@ function buyItem(itemId, price){
   if(game.player.gold < price){ showToast("เงินไม่พอ!"); return; }
   if(!addToInventory(itemId)) return; // bag and home box both full — nothing bought, no gold charged
   game.player.gold -= price;
+  sfx.coin();
   updateHud();
   const def = ITEM_TABLE.find(i => i.id === itemId);
   showToast(`ซื้อ ${def.icon} ${def.name} สำเร็จ!`);
@@ -10051,7 +10300,7 @@ function refineEquipment(idx){
   game.player.gold -= cost.gold;
   entry.refineLevel = level + 1;
   game.stats.refines = (game.stats.refines || 0) + 1;
-  sfx.levelUp();
+  sfx.refineOk();
   showToast(`ตีบวกสำเร็จ! ${equipDisplayName(entry)}`);
   updateHud();
   selectedRefineIndex = null;
@@ -10292,7 +10541,7 @@ function storyComplete(){
     if(next.from) s.st = "offer";
     else { s.st = "active"; s.base = next.goal.type === "stat" ? (game.stats[next.goal.key] || 0) : 0; storyEnsureSpots(); }
   }
-  sfx.levelUp();
+  sfx.questDone();
   showToast(`✅ ภารกิจสำเร็จ: ${q.name} · +${gold} 💰 +${exp} EXP` + (gearName ? ` · ได้ ${gearName}` : ""));
   if(q.finale) showDiscoveryBanner("🛕 เสาบาเรียต้นที่ " + storyPillarsLit() + " ถูกจุดขึ้นแล้ว!", `จบบทที่ ${q.ch}: ${STORY_CHAPTERS[q.ch].name}`, 3200);
   checkTitles(false);
@@ -10862,7 +11111,7 @@ function letterDeliverAll(){
   }
   game.player.gold += gold;
   game.stats.goldEarned = (game.stats.goldEarned || 0) + gold;
-  sfx.levelUp(); updateHud(); checkTitles(false); saveGameNow();
+  sfx.questDone(); updateHud(); checkTitles(false); saveGameNow();
   const unmasked = s.spy === 2;
   const line = unmasked
     ? `(เจ้าเมืองอ่านทีละฉบับอย่างตั้งใจ) ข้าจะส่งให้ถึงมือผู้รับ หรือครอบครัวของพวกเขาให้ได้ **ทุกฉบับ** — คราวนี้ข้าสัญญา`
@@ -11535,7 +11784,7 @@ function sellItem(idx, qty){
     showToast(`ขายได้ 💰${total}`);
   }
 
-  sfx.click();
+  sfx.coin();
   updateHud();
   selectedSellIndex = null;
   renderSellPanel();
@@ -13215,7 +13464,7 @@ function nextGmNotice(){
   document.getElementById("gmNoticeIcon").textContent = n[0];
   document.getElementById("gmNoticeTitle").textContent = n[1];
   document.getElementById("gmNoticeText").textContent = n[2];
-  sfx.levelUp();
+  sfx.notice();
 }
 document.getElementById("gmNoticeOk").addEventListener("click", ()=>{ sfx.click(); nextGmNotice(); });
 const ANN_SEEN_KEY = "menalars_ann_seen";
@@ -13228,7 +13477,7 @@ function showAnnouncement(a){
   document.getElementById("annText").textContent = body;
   document.getElementById("annBanner").hidden = false;
   chatAddLine("sys", "📢 ประกาศ", body);
-  sfx.levelUp();
+  sfx.notice();
   clearTimeout(annTimer);
   annTimer = setTimeout(()=>{ document.getElementById("annBanner").hidden = true; }, 15000);
 }
@@ -13604,6 +13853,41 @@ window.addEventListener("keydown", e => {
   chatOpen();
 });
 
+
+/* ---- v43 sound settings window ---- */
+function renderSoundPanel(){
+  document.getElementById("sndMusicOn").checked = audioCfg.musicOn;
+  document.getElementById("sndSfxOn").checked = audioCfg.sfxOn;
+  document.getElementById("sndMusic").value = Math.round(audioCfg.music * 100);
+  document.getElementById("sndSfx").value = Math.round(audioCfg.sfx * 100);
+  document.getElementById("sndMusicVal").textContent = Math.round(audioCfg.music * 100);
+  document.getElementById("sndSfxVal").textContent = Math.round(audioCfg.sfx * 100);
+  const t = musicNowTitle();
+  document.getElementById("sndNow").textContent = !audioCfg.musicOn ? "🔇 ปิดเพลงอยู่" : t ? "♪ กำลังเล่น: " + t : "♪ ตอนนี้ไม่มีเพลงสำหรับที่นี่";
+  document.getElementById("titleSoundBtn").textContent = audioCfg.musicOn ? "🔊" : "🔇";
+}
+function setAudioCfg(k, v){ audioCfg[k] = v; saveAudioCfg(); musicTick(); renderSoundPanel(); }
+document.getElementById("soundBtn").addEventListener("click", ()=>{
+  sfx.click(); closeAllPanels(); renderSoundPanel(); document.getElementById("soundPanel").hidden = false;
+});
+document.getElementById("closeSoundBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("soundPanel").hidden = true; });
+document.getElementById("sndMusicOn").addEventListener("change", e => setAudioCfg("musicOn", e.target.checked));
+document.getElementById("sndSfxOn").addEventListener("change", e => { setAudioCfg("sfxOn", e.target.checked); if(e.target.checked) sfx.click(); });
+document.getElementById("sndMusic").addEventListener("input", e => { audioCfg.musicOn = true; setAudioCfg("music", e.target.value / 100); });
+document.getElementById("sndSfx").addEventListener("input", e => { audioCfg.sfxOn = true; setAudioCfg("sfx", e.target.value / 100); });
+document.getElementById("sndSfx").addEventListener("change", () => sfx.coin()); // let go of the slider → hear the new level
+document.getElementById("titleSoundBtn").addEventListener("click", ()=>{ setAudioCfg("musicOn", !audioCfg.musicOn); });
+setInterval(()=>{ if(!document.getElementById("soundPanel").hidden) renderSoundPanel(); }, 1000);
+renderSoundPanel();
+window.addEventListener("keydown", e => {
+  if(e.ctrlKey || e.altKey || e.metaKey || e.repeat) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if(tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if(hotKey(e) !== "m") return;
+  setAudioCfg("musicOn", !audioCfg.musicOn);
+  if(typeof showToast === "function" && game) showToast(audioCfg.musicOn ? "🔊 เปิดเพลงแล้ว" : "🔇 ปิดเพลงแล้ว (กด M อีกครั้งเพื่อเปิด)");
+});
+
 /* ---- UI v5 window chrome ---- */
 function updateHeaderChips(){
   if(!game || !game.player) return;
@@ -13618,7 +13902,7 @@ document.querySelectorAll(".panel").forEach(p => {
   if(x && h){ x.title = x.title || "ปิด (Esc)"; h.appendChild(x); }
 });
 const MENU_PANELS = { statusBtn:"statusPanel", bagBtn:"bagPanel", collectionBtn:"collectionPanel", weaponSkillBtn:"weaponSkillPanel",
-  meditateBtn:"meditatePanel", friendsBtn:"friendsPanel", accountBtn:"accountPanel", gmBtn:"gmPanel" };
+  meditateBtn:"meditatePanel", friendsBtn:"friendsPanel", accountBtn:"accountPanel", gmBtn:"gmPanel", soundBtn:"soundPanel" };
 const MENU_HOTKEYS = { c:"statusBtn", b:"bagBtn", i:"bagBtn", k:"weaponSkillBtn", j:"collectionBtn" };
 function syncMenuActive(){
   for(const [btnId, panelId] of Object.entries(MENU_PANELS)){
