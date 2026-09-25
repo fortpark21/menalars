@@ -3023,6 +3023,13 @@ function pointSegmentDistance(px,py,ax,ay,bx,by){
   return dist(px, py, ax+t*dx, ay+t*dy);
 }
 function hasLineOfSight(a, b){
+  // walk the straight line in 10px steps (plus a body's width to each side) — any blocked cell on it = no shortcut
+  const len = dist(a.x, a.y, b.x, b.y), n = Math.max(1, Math.ceil(len / 10));
+  const ox = len ? -(b.y - a.y) / len * 12 : 0, oy = len ? (b.x - a.x) / len * 12 : 0;
+  for(let i = 1; i <= n; i++){
+    const x = a.x + (b.x - a.x) * i / n, y = a.y + (b.y - a.y) * i / n;
+    for(const k of [0, 1, -1]){ const c = worldToCell(x + ox * k, y + oy * k); if(isBlockedCell(c.gx, c.gy)) return false; }
+  }
   const buffer = TREE_RADIUS + 16;
   for(const t of game.trees){ if(pointSegmentDistance(t.x,t.y,a.x,a.y,b.x,b.y) < buffer) return false; }
   return true;
@@ -3044,7 +3051,8 @@ function findPath(startX, startY, goalX, goalY){
   let start = worldToCell(startX, startY);
   let goal = worldToCell(goalX, goalY);
   if(isBlockedCell(start.gx, start.gy)) start = findNearestFreeCell(start.gx, start.gy);
-  if(isBlockedCell(goal.gx, goal.gy)) goal = findNearestFreeCell(goal.gx, goal.gy);
+  const goalBlocked = isBlockedCell(goal.gx, goal.gy);
+  if(goalBlocked){ goal = findNearestFreeCell(goal.gx, goal.gy); const c = cellToWorld(goal.gx, goal.gy); goalX = c.x; goalY = c.y; } // stop at the edge, never on top of a wall
 
   const startIdx = cellIndex(start.gx, start.gy), goalIdx = cellIndex(goal.gx, goal.gy);
   if(startIdx === goalIdx) return [{x:goalX,y:goalY}];
@@ -3092,6 +3100,7 @@ function findPath(startX, startY, goalX, goalY){
   return null;
 }
 
+let badClickMark = null;
 function setPlayerDestination(x, y){
   const p = game.player;
   const raw = findPath(p.x, p.y, x, y);
@@ -3103,11 +3112,12 @@ function setPlayerDestination(x, y){
     p.path = simplifyPath(raw);
     p.pathIndex = 1;
   } else {
-    p.path = raw || [{x,y}]; // single-cell hop, or a direct line if no path is found
+    p.path = raw || [{ x: p.x, y: p.y }]; // single-cell hop — or no way there at all: stay put (never walk through walls)
     p.pathIndex = 0;
   }
   p.targetX = p.path[p.pathIndex].x; p.targetY = p.path[p.pathIndex].y;
-  p.destinationMarker = { x, y };
+  const last = p.path[p.path.length - 1];
+  p.destinationMarker = { x: last.x, y: last.y };
 }
 
 function pickFreeWorldPosition(margin){
@@ -3441,7 +3451,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 18;
+const GAME_VERSION = 19;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -5792,6 +5802,8 @@ canvas.addEventListener("click", (e)=>{
   game.player.targetMonsterId = null;
   game.player.pendingNpcId = null;
   game.player.pendingLocationId = null;
+  const tc = worldToCell(worldX, worldY);
+  if(isBlockedCell(tc.gx, tc.gy)){ badClickMark = { x: worldX, y: worldY, until: performance.now() + 600 }; return; } // wall/water/building: can't walk there
   setPlayerDestination(clamp(worldX, 20, WORLD_W-20), clamp(worldY, 20, WORLD_H-20));
   closeDialog();
 });
@@ -6111,6 +6123,12 @@ function renderDestinationMarker(p){
     for(let i=p.pathIndex; i<p.path.length; i++) ctx.lineTo(p.path[i].x, p.path[i].y);
     ctx.stroke();
     ctx.setLineDash([]);
+    ctx.restore();
+  }
+  if(badClickMark && badClickMark.until > performance.now()){ // small red ✕ where a blocked spot was clicked
+    const b = badClickMark, a = (b.until - performance.now()) / 600;
+    ctx.save(); ctx.strokeStyle = `rgba(239,71,111,${a})`; ctx.lineWidth = 4; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(b.x - 9, b.y - 9); ctx.lineTo(b.x + 9, b.y + 9); ctx.moveTo(b.x + 9, b.y - 9); ctx.lineTo(b.x - 9, b.y + 9); ctx.stroke();
     ctx.restore();
   }
   if(p.destinationMarker){
