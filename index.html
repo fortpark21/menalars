@@ -786,6 +786,102 @@
   .vb-form h4{ margin:0 0 8px; font-size:14px; color:#4b3f8f; }
   .vb-form input{ width:100%; box-sizing:border-box; border:2px solid #d8cdb0; border-radius:8px; padding:7px 9px; font:inherit; font-size:13px; margin-bottom:6px; }
   .vb-form .vb-optin{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  /* 🏪 Market — fixed-height window: filters / results scroll on their own, the item pop-up covers the window */
+  #marketPanel{ width:980px; height:calc(84vh / var(--uiz, 1)); max-height:calc(84vh / var(--uiz, 1)); overflow:hidden; display:flex; flex-direction:column; }
+  #marketPanel[hidden]{ display:none; }
+  #marketBody{ flex:1; min-height:0; display:flex; flex-direction:column; }
+  .mk-tabs{ flex:0 0 auto; }
+  .mk-view{ flex:1; min-height:0; overflow-y:auto; }
+  .mk-view.buy, .mk-view.sell{ overflow:hidden; display:flex; }
+  .mk-body{ flex:1; min-height:0; display:flex; gap:12px; }
+  .mk-side{ flex:0 0 232px; overflow-y:auto; background:rgba(255,255,255,.55); border:2px solid #e4dcc4; border-radius:12px; padding:10px; scrollbar-width:thin; }
+  .mk-side.sell{ flex-basis:300px; }
+  .mk-side h5{ margin:10px 0 5px; font-size:12px; color:#7a6a4a; letter-spacing:.2px; }
+  .mk-side h5:first-of-type{ margin-top:8px; }
+  .mk-main{ flex:1; min-width:0; overflow-y:auto; display:flex; flex-direction:column; scrollbar-width:thin; }
+  .mk-in{ width:100%; box-sizing:border-box; border:2px solid #d8cdb0; border-radius:8px; padding:6px 8px; font:inherit; font-size:12.5px; background:#fff; color:#2a2346; }
+  .mk-in:focus{ outline:none; border-color:#7a64c8; }
+  .mk-in.big{ font-size:18px; font-weight:bold; text-align:center; color:#7a4b00; }
+  .mk-row2{ display:flex; gap:6px; align-items:center; margin-top:6px; }
+  .mk-row2 > span{ font-size:12px; color:#7a7186; }
+  .mk-row2.qty input, .mk-row2.price input{ flex:1; text-align:center; }
+  .mk-chips{ display:flex; flex-wrap:wrap; gap:5px; }
+  .mk-chips.sub{ margin-top:6px; padding-left:8px; border-left:3px solid #d8cdb0; }
+  .mk-chip{ border:2px solid #e0d6bd; background:#fff; color:#4b3f8f; border-radius:16px; padding:3px 9px; font-size:12px; font-weight:bold; }
+  .mk-chip[style*="--rc"]{ color:var(--rc); border-color:color-mix(in srgb, var(--rc) 45%, #e0d6bd); }
+  .mk-chip:hover{ border-color:#7a64c8; }
+  .mk-chip.on{ background:#4b3f8f; border-color:#4b3f8f; color:#fff; }
+  .mk-chip.on[style*="--rc"]{ background:var(--rc); border-color:var(--rc); color:#fff; text-shadow:0 1px 1px rgba(0,0,0,.35); }
+  .mk-check{ display:flex; gap:6px; align-items:center; font-size:12px; color:#3a2a14; margin-top:8px; cursor:pointer; }
+  .mk-go{ flex:1; border:none; border-radius:9px; padding:8px 12px; background:#4b3f8f; color:#fff; font-size:13px; font-weight:bold; }
+  .mk-go.alt{ flex:0 0 auto; background:#fff; color:#4b3f8f; border:2px solid #d8cdb0; padding:6px 10px; }
+  .mk-go.buy{ background:linear-gradient(180deg,#f2b33d,#d98a1c); color:#3a2000; font-size:15px; padding:11px 14px; box-shadow:0 3px 0 #a8650e; margin-top:10px; width:100%; }
+  .mk-go.buy.arm{ background:linear-gradient(180deg,#43c678,#2f9e5b); color:#fff; box-shadow:0 3px 0 #1f7040; animation:mkPulse 1s ease-in-out infinite; }
+  .mk-go.wide{ width:100%; }
+  .mk-go:disabled{ opacity:.5; cursor:default; animation:none; }
+  @keyframes mkPulse{ 50%{ filter:brightness(1.15); } }
+  .mk-step{ flex:0 0 auto; border:2px solid #d8cdb0; background:#fff; color:#4b3f8f; border-radius:8px; padding:5px 9px; font-weight:bold; font-size:13px; }
+  .mk-bar{ display:flex; gap:8px; align-items:center; margin-bottom:8px; position:sticky; top:0; z-index:2; background:linear-gradient(180deg,var(--parch2),rgba(245,234,210,.92)); padding:2px 0 6px; }
+  .mk-bar b{ flex:1; font-size:13px; color:#5b4a2a; }
+  .mk-bar select{ width:auto; }
+  .mk-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(206px, 1fr)); gap:8px; }
+  .mk-card{ position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left; font:inherit; color:#2a2346; cursor:pointer;
+    background:linear-gradient(180deg,#fff,#fbf6ea); border:2px solid color-mix(in srgb, var(--rc) 55%, #e4dcc4); border-left:6px solid var(--rc);
+    border-radius:12px; padding:9px 10px 9px 58px; min-height:96px; transition:transform .1s, box-shadow .15s; }
+  .mk-card:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(60,40,10,.18); }
+  .mk-card.mine{ background:linear-gradient(180deg,#eef4ff,#e1ebff); }
+  .mk-ic{ position:relative; display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; font-size:26px; flex:0 0 auto;
+    background:radial-gradient(circle, color-mix(in srgb, var(--rc, #ccc) 22%, #fff) 0%, #fff 75%); border-radius:10px; border:1px solid color-mix(in srgb, var(--rc, #ccc) 40%, #eee); }
+  .mk-ic svg, .mk-ic img{ width:32px; height:32px; }
+  .mk-ic i{ position:absolute; right:-4px; bottom:-5px; font-style:normal; font-size:10px; font-weight:bold; background:#2a2346; color:#ffe6a6; border-radius:7px; padding:0 4px; }
+  .mk-card > .mk-ic{ position:absolute; left:9px; top:10px; }
+  .mk-ic.big{ width:56px; height:56px; font-size:36px; } .mk-ic.big svg, .mk-ic.big img{ width:46px; height:46px; }
+  .mk-nm{ font-size:13.5px; font-weight:bold; line-height:1.25; }
+  .mk-sub{ font-size:11px; color:#7a7186; }
+  .mk-bonus{ font-size:11px; color:#2f7a4f; }
+  .mk-pw{ font-size:11.5px; color:#5b4a9a; font-weight:bold; }
+  .mk-pw em{ font-style:normal; font-size:11px; margin-left:4px; } .mk-pw em.up{ color:#2f9e5b; } .mk-pw em.down{ color:#c9401f; }
+  .mk-foot{ margin-top:auto; width:100%; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:0 6px; padding-top:3px; }
+  .mk-price{ font-size:16px; font-weight:bold; color:#8a5200; white-space:nowrap; }
+  .mk-deal{ font-size:10.5px; font-weight:bold; border-radius:6px; padding:1px 6px; }
+  .mk-deal.lo{ background:#e3f6ea; color:#2f7a4f; } .mk-deal.hi{ background:#fdeaea; color:#b23a2a; } .mk-deal.eq{ background:#f1ecff; color:#5b4a9a; }
+  .mk-time{ font-size:10.5px; color:#8a7658; white-space:nowrap; }
+  .mk-empty{ text-align:center; color:#8a7e66; font-size:13.5px; padding:36px 12px; }
+  .mk-empty small{ color:#b3aa96; }
+  .mk-fine{ font-size:11px; color:#8a7e66; margin:6px 0 0; line-height:1.5; }
+  .mk-pop{ position:absolute; inset:46px 0 0 0; z-index:5; background:rgba(30,24,50,.45); display:flex; align-items:center; justify-content:center; padding:16px; border-radius:0 0 12px 12px; }
+  .mk-pop-card{ position:relative; width:480px; max-width:100%; max-height:100%; overflow-y:auto; background:linear-gradient(180deg,var(--parch),var(--parch2));
+    border:3px solid var(--rc); border-radius:14px; padding:14px 16px; box-shadow:0 14px 40px rgba(0,0,0,.45); animation:panelIn .14s ease-out; }
+  .mk-pop-x{ position:absolute; right:8px; top:8px; border:none; background:#fff; border-radius:8px; width:28px; height:28px; color:#7a7186; font-size:14px; }
+  .mk-pop-head{ display:flex; gap:12px; align-items:center; margin-bottom:8px; }
+  .mk-pop-head h3{ margin:0; font-size:17px; } .mk-pop-head small{ color:#7a7186; font-size:11.5px; }
+  .mk-pop-price{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:22px; font-weight:bold; color:#8a5200; margin:10px 0 4px; }
+  .mk-pop-price small{ flex-basis:100%; font-size:11.5px; font-weight:normal; color:#7a7186; }
+  .mk-hist{ display:flex; flex-wrap:wrap; gap:5px; align-items:center; font-size:12px; margin:6px 0; }
+  .mk-hist span{ background:#fff; border:1px solid #e4dcc4; border-radius:7px; padding:2px 7px; font-weight:bold; color:#8a5200; }
+  .mk-hist span i{ font-style:normal; font-weight:normal; color:#8a7e66; font-size:10px; margin-left:4px; }
+  .mk-hist small{ color:#7a7186; }
+  .mk-tiles{ display:grid; grid-template-columns:repeat(auto-fill, minmax(52px, 1fr)); gap:6px; }
+  .mk-tile{ position:relative; aspect-ratio:1; border:2px solid color-mix(in srgb, var(--rc) 50%, #e4dcc4); border-bottom-width:4px; border-bottom-color:var(--rc);
+    background:#fff; border-radius:10px; font-size:24px; display:flex; align-items:center; justify-content:center; padding:0; }
+  .mk-tile svg, .mk-tile img{ width:34px; height:34px; }
+  .mk-tile i{ position:absolute; right:2px; bottom:1px; font-style:normal; font-size:10px; font-weight:bold; color:#2a2346; }
+  .mk-tile b{ position:absolute; left:3px; top:1px; font-size:10px; color:#c9401f; }
+  .mk-tile:hover{ transform:translateY(-1px); box-shadow:0 3px 8px rgba(0,0,0,.15); }
+  .mk-tile.on{ outline:3px solid #4b3f8f; outline-offset:1px; }
+  .mk-form{ background:#fff; border:2px solid color-mix(in srgb, var(--rc) 45%, #e4dcc4); border-radius:14px; padding:12px 16px; }
+  .mk-lab{ display:block; font-size:12px; font-weight:bold; color:#6a5f7e; margin:10px 0 4px; }
+  .mk-quick{ display:flex; gap:5px; margin-top:6px; }
+  .mk-sum{ margin-top:12px; background:#fbf6ea; border:1px dashed #d8cdb0; border-radius:10px; padding:8px 12px; font-size:12.5px; }
+  .mk-sum > div{ display:flex; justify-content:space-between; padding:2px 0; color:#5b4a2a; }
+  .mk-sum > div.tot{ border-top:1px solid #e4dcc4; margin-top:3px; padding-top:5px; font-size:14px; color:#2f7a4f; }
+  .mk-sum small{ display:block; color:#8a7e66; margin-top:4px; font-size:11px; }
+  .mk-line{ display:flex; gap:10px; align-items:center; background:#fff; border:2px solid #e4dcc4; border-left:5px solid var(--rc, #d8cdb0); border-radius:10px; padding:7px 10px; margin-bottom:6px; }
+  .mk-line.gold{ --rc:#f2b33d; }
+  .mk-ln{ flex:1; min-width:0; display:flex; flex-direction:column; font-size:13px; }
+  .mk-lp{ text-align:right; font-weight:bold; color:#8a5200; font-size:14px; white-space:nowrap; }
+  .mk-lp small{ display:block; font-size:10.5px; font-weight:normal; color:#8a7e66; }
+  .mk-st{ font-size:11.5px; } .mk-st.on{ color:#2f9e5b; } .mk-st.wait{ color:#b07a10; } .mk-st.sold{ color:#2f7a4f; font-weight:bold; } .mk-st.off{ color:#8a7e66; }
   /* 🛡️ GM console + player moderation (reuses the vote board's .vb-tabs / .vb-card / .vb-row look) */
   #gmPanel{ width:860px; border:2px solid var(--gold); }
   #gmPlayerPanel{ width:720px; border:2px solid var(--gold); }
@@ -1426,6 +1522,12 @@
     <button class="close-x" id="closeVoteBtn" type="button">✕</button>
     <h2>🗳️ ป้ายประชามติ</h2>
     <div id="voteBody"></div>
+  </div>
+
+  <div class="panel" id="marketPanel" hidden>
+    <button class="close-x" id="closeMarketBtn" type="button">✕</button>
+    <h2>🏪 ตลาดกลาง<span class="hdr-chip" data-hdr="gold"></span></h2>
+    <div id="marketBody"></div>
   </div>
 
   <div class="panel" id="reportPanel" hidden style="width:440px;">
@@ -2867,7 +2969,7 @@ function drawShrineAt(ctx, cx, cy){
   ctx.restore();
 }
 // Town points that are just an object — no person standing in front (click the object itself)
-const TOWN_OBJECT_DRAW = { storage: drawSmallHouseAt, ranking: drawHallOfFameAt, vote: drawVoteBoardAt };
+const TOWN_OBJECT_DRAW = { storage: drawSmallHouseAt, ranking: drawHallOfFameAt, vote: drawVoteBoardAt, market: drawSmallHouseAt };
 
 // Temple of the Barrier — pale stone, a dome with a glowing barrier crack (brighter once the ritual is ready)
 function drawTempleAt(ctx, cx, cy){
@@ -4223,7 +4325,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 40;
+const GAME_VERSION = 42;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -4444,7 +4546,7 @@ function netAccountLabel(){
 function netQueueSave(json){
   if(!net.session || !net.sessionId || net.blocked) return false;
   net.pendingJson = json;
-  if(!net.saving) netFlushSave();
+  if(!net.saving && !net.marketBusy) netFlushSave(); // a market trade is rewriting the save on the server — wait for it
   return true;
 }
 async function netFlushSave(){
@@ -4501,7 +4603,7 @@ const ECON_FLAG_TEXT = {
   "econ:gold":"เงินเพิ่มเกินที่ฆ่ามอนได้", "econ:exp":"EXP เพิ่มเกินที่ฆ่ามอนได้", "econ:kills":"ฆ่ามอนเร็วเกินคน", "econ:items":"ได้ไอเทมเร็วเกินไป",
   "econ:bosses":"ฆ่าบอสถี่เกินที่บอสเกิด", "econ:elites":"ฆ่า Elite ถี่เกินที่เกิด", "econ:rare":"ได้ของหายากเกินดวงที่เป็นไปได้", bag:"ช่องกระเป๋า/กล่องเกิน",
   fast_kills:"ฆ่าเร็วผิดปกติ (ยังบันทึกให้)", fast_items:"ได้ไอเทมเร็วผิดปกติ (ยังบันทึกให้)", fast_bosses:"ฆ่าบอสถี่ผิดปกติ (ยังบันทึกให้)",
-  fast_elites:"ฆ่า Elite ถี่ผิดปกติ (ยังบันทึกให้)", lucky:"ดวงดีผิดปกติ — ได้ของหายากเยอะ (ยังบันทึกให้)", discovery_soft:"ค้นพบของที่ไม่มีในตัว (ยังบันทึกให้)"
+  fast_elites:"ฆ่า Elite ถี่ผิดปกติ (ยังบันทึกให้)", market_pair:"🏪 ซื้อขายกับคนเดิมซ้ำๆ (อาจโยกของ/ขายเงินจริง)", market_high:"🏪 ตั้ง/ซื้อราคาตั้งแต่ 2 เท่าของราคากลาง", market_snipe:"🏪 ซื้อของแพงทันทีที่ขึ้นตลาด (เหมือนนัดกันไว้)", market_newbie:"🏪 บัญชีใหม่/เลเวลต่ำ ซื้อขายราคาสูง", lucky:"ดวงดีผิดปกติ — ได้ของหายากเยอะ (ยังบันทึกให้)", discovery_soft:"ค้นพบของที่ไม่มีในตัว (ยังบันทึกให้)"
 };
 function econFlagText(kind){
   const k = String(kind || ""), bare = k.replace(/^(invalid|econ):/, ""), base = bare.split(":")[0];
@@ -6897,6 +6999,7 @@ function renderOverworld(){
     ctx.strokeText(npc.name, npc.x, labelY); ctx.fillText(npc.name, npc.x, labelY);
     if(hover){ ctx.fillStyle = "#fff"; ctx.font = "10px 'Trebuchet MS', sans-serif"; ctx.strokeText("คลิกเพื่อคุย", npc.x, labelY + 13); ctx.fillText("คลิกเพื่อคุย", npc.x, labelY + 13); ctx.restore(); }
     if(npc.kind === "vote" && vb.pending > 0) drawVoteBadge(ctx, npc.x, labelY - 22, vb.pending);
+    if(npc.kind === "market" && mk.ready > 0) drawVoteBadge(ctx, npc.x, labelY - 22, mk.ready);
     if(talk.open && talk.npcKind === npc.kind) drawTalkBubble(ctx, npc.x, labelY - 20);
     else { const mk = npcQuestMarker(npc); if(mk) drawQuestMarker(ctx, npc.x, labelY - 22, mk); }
   }
@@ -9468,6 +9571,7 @@ const VOTE_BOARD_SPOT = { dx: -TOWN_NPC_RADIUS * 1.35, dy: TOWN_NPC_RADIUS * 1.2
 function buildTownNpcs(){
   // spots match the painted town (T1): each person stands at the door of their own building
   return [
+    { id:"market",       kind:"market",   name:"🏪 ตลาดกลาง",        x: 985,  y: 1222, labelDy: 275, hitDy: 125, hitR: 122 }, // wooden house south-west of the gate
     { id:"vote_board",   kind:"vote",     name:"🗳️ ป้ายประชามติ",   x: 801,  y: 938,  labelDy: 135, hitDy: 60,  hitR: 62 },  // notice board west of the plaza
     { id:"hall_of_fame", kind:"ranking",  name:"🏆 หอเกียรติยศ",     x: 725,  y: 548,  labelDy: 268, hitDy: 130, hitR: 105 }, // trophy monument, north-west
     { id:"storage_box", kind:"storage",   name:"กล่องฝากของ",       x: 816,  y: 764,  labelDy: 230, hitDy: 100, hitR: 95 },  // wooden storehouse
@@ -9504,6 +9608,9 @@ function interactWithNpcDefault(npc){
   } else if(npc.kind === "vote"){
     sfx.click();
     openVoteBoard();
+  } else if(npc.kind === "market"){
+    sfx.click();
+    openMarket();
   } else if(npc.kind === "blacksmith"){
     openBlacksmithDialog();
   }
@@ -9767,6 +9874,7 @@ function closeAllPanels(){
   document.getElementById("profilePanel").hidden = true;
   document.getElementById("rankPanel").hidden = true;
   document.getElementById("votePanel").hidden = true;
+  document.getElementById("marketPanel").hidden = true;
   document.getElementById("reportPanel").hidden = true;
   if(typeof socCloseMenu === "function") socCloseMenu();
 }
@@ -12508,6 +12616,559 @@ function drawVoteBadge(ctx, x, y, n){
 }
 
 /* ============================================================
+   🏪 MARKET (ตลาดกลาง) — players sell spare gear / cards / mana stones to each other for gold.
+   Everything is decided on the server (see MARKET in the SQL block): who may trade, the price band, fees,
+   hidden inspection time, the 24 h hold on sale gold. Calls that change the save (list / buy / claim) first
+   flush the autosave, pause it, then copy the bag / box / gold the server sends back — so the next autosave
+   starts from exactly what the server has.
+   ============================================================ */
+const MK_REASON = {
+  guest: "ต้องผูกบัญชีกับอีเมลหรือ Google ก่อน (เมนู 👤 บัญชี) — Guest ซื้อ–ขายไม่ได้",
+  level: "ต้องเลเวล 5 ขึ้นไปถึงจะซื้อ–ขายได้ (ดูของได้ตามสบาย)",
+  new: "บัญชีต้องมีอายุอย่างน้อย 1 วันก่อนถึงจะซื้อ–ขายได้ — กันบัญชีปั๊มมาโยกของ",
+  banned: "บัญชีนี้ถูกระงับ", slots: "ช่องวางขายเต็มแล้ว — ยกเลิกหรือรอให้ของชิ้นอื่นขายได้ก่อน",
+  daily: "วันนี้วางขายครบ 30 ครั้งแล้ว — พรุ่งนี้ค่อยมาใหม่", price: "ราคาต้องอยู่ในช่วงที่ตลาดกำหนด",
+  gold: "เงินไม่พอ", noitem: "ไม่พบไอเทมนี้ในกระเป๋าแล้ว", equipped: "ถอดอุปกรณ์ออกก่อนวางขาย",
+  nosell: "ไอเทมนี้วางขายในตลาดไม่ได้", qty: "จำนวนไม่ถูกต้อง", hours: "ระยะเวลาไม่ถูกต้อง",
+  gone: "สินค้านี้ถูกซื้อหรือถูกถอนไปแล้ว", own: "ซื้อของที่ตัวเองวางขายไม่ได้",
+  full: "กระเป๋าและกล่องที่บ้านเต็ม — เคลียร์ช่องก่อน", empty: "ยังไม่มีของที่รับได้ตอนนี้", format: "ข้อมูลตัวละครผิดรูปแบบ"
+};
+const MK_CATS = [
+  { k:"",          label:"ทั้งหมด" },
+  { k:"weapon",    label:"⚔️ อาวุธ" },
+  { k:"armor",     label:"🛡️ เกราะ" },
+  { k:"headgear",  label:"⛑️ หมวก" },
+  { k:"accessory", label:"📿 เครื่องราง" },
+  { k:"card",      label:"🃏 การ์ด" },
+  { k:"material",  label:"💠 วัตถุดิบ" }
+];
+const MK_WTYPES = [["", "ทุกแบบ"], ["sword", "🗡️ ดาบ"], ["heavy", "🔨 ค้อน"], ["bow", "🏹 ธนู"], ["orb", "🪄 เวท"]];
+const MK_SORTS = [["cheap", "ราคาต่ำ → สูง"], ["dear", "ราคาสูง → ต่ำ"], ["power", "⚡ พลังรวมสูงสุด"], ["deal", "💎 คุ้มสุด (เทียบราคากลาง)"],
+                  ["new", "🆕 วางขายล่าสุด"], ["ending", "⏳ ใกล้หมดเวลา"]];
+const MK_STACKS = ["mana_stone"]; // besides cards
+const MK_NEVER = ["kings_oath_secret", "collector_medal"];
+const MK_DEFAULT_F = () => ({ q:"", cat:"", wtype:"", rar:[], tmin:1, tmax:10, rmin:0, stats:[], pmin:"", pmax:"", star:false, better:false, sort:"cheap" });
+const mk = { tab:"buy", home:null, rows:null, err:"", msg:"", busy:false, loading:false, homeAt:0, skew:0, f:MK_DEFAULT_F(),
+             sel:null, confirm:false, hist:{}, sellSel:null, sellPrice:0, sellQty:1, sellHours:24, sellArm:false, ready:0 };
+
+function mkOnline(){ return NET_ONLINE && net.user && !net.blocked; }
+function mkCfg(){ return (mk.home && mk.home.cfg) || { lv:15, fee:0.02, tax:0.12, holdH:24, bandLo:0.5, bandHi:3, hours:[12,24,48], maxQty:99, minPrice:10 }; }
+function mkNum(n){ return Math.round(+n || 0).toLocaleString("en-US"); }
+// same rounding as the server: 2 significant digits from 100 up
+function mkNice(p){
+  p = +p || 0;
+  if(p < 100) return Math.round(p);
+  const step = Math.pow(10, Math.floor(Math.log10(p)) - 1);
+  return Math.round(p / step) * step;
+}
+// next / previous allowed price (…, 98, 99, 100, 110, …, 990, 1000, 1100, …)
+function mkStep(p, dir){
+  p = mkNice(p);
+  const d = dir < 0 && p > 100 && /^10+$/.test(String(p)) ? p - 1 : p; // just under 1,000 the steps are 10s again
+  const step = d < 100 ? 1 : Math.pow(10, Math.floor(Math.log10(d)) - 1);
+  return Math.max(1, mkNice(p + dir * step));
+}
+function mkNiceUp(p){ let n = mkNice(p); while(n < p) n = mkStep(n, 1); return n; }
+function mkNiceDown(p){ let n = mkNice(p); while(n > p && n > 1) n = mkStep(n, -1); return n; }
+function mkTier(item){ const m = /_t(\d+)$/.exec(item.defId || ""); return m ? +m[1] : 1; }
+function mkIsEquip(item){ return item && item.kind === "equipment"; }
+// server's reference price, mirrored so the sell form can show the band before asking
+function mkRef(item, qty){
+  const h = mk.home; if(!h) return 0;
+  const c = h.cfg;
+  if(mkIsEquip(item)){
+    const g = +h.tg[String(Math.min(Math.max(mkTier(item), 1), 10))] || 34;
+    const v = g * (c.kills[item.rarity] || 2) * (1 + 0.15 * (item.refineLevel || 0)) * (0.85 + 0.3 * (item.rollQuality == null ? 50 : item.rollQuality) / 100);
+    return mkNice(Math.max(v, (h.eqPrice[item.rarity] || 15) * 2));
+  }
+  const mult = c.stackMult[item.id] || ((h.cards || []).includes(item.id) ? c.cardMult : 4);
+  return mkNice(Math.max(qty * (h.price[item.id] || 5) * mult, 10));
+}
+// the prices the server accepts for this reference price: [lowest, highest]
+function mkBand(ref){ const c = mkCfg(); return [mkNiceUp(Math.max(c.minPrice, Math.ceil(ref * c.bandLo))), mkNiceDown(Math.floor(ref * c.bandHi))]; }
+function mkClampPrice(p, ref){
+  const [lo, hi] = mkBand(ref);
+  return Math.min(Math.max(mkNice(p), lo), hi);
+}
+function mkItemName(item){
+  if(mkIsEquip(item)) return EQUIPMENT_DEFS[item.defId] ? equipDisplayName(item) : item.defId;
+  if(item.kind === "card") return (CARD_DEFS[item.id] || {}).name || item.id;
+  return (ITEM_TABLE.find(i => i.id === item.id) || {}).name || item.id;
+}
+function mkRarity(item){
+  if(mkIsEquip(item)) return item.rarity || "common";
+  if(item.kind === "card") return (CARD_DEFS[item.id] || {}).rarity || "common";
+  return "uncommon";
+}
+function mkIcon(item){ try{ return getItemIcon(item); }catch(err){ return "❓"; } }
+// one number to rank gear by: base stats (after refine) + bonus points
+function mkPower(item){
+  if(!mkIsEquip(item)) return 0;
+  const b = EQUIPMENT_DEFS[item.defId]; if(!b) return 0;
+  const rm = 1 + (item.refineLevel || 0) * REFINE_BONUS_PCT_PER_LEVEL;
+  const pts = Object.values(item.rolledStats || {}).reduce((s, v) => s + (+v || 0), 0);
+  return Math.round((b.baseAtk || 0) * rm + (b.baseDef || 0) * rm * 2 + (b.baseMaxHp || 0) * rm * 0.35 + (b.baseCritRate || 0) * 3 + (b.baseCritDamage || 0) + pts * 1.5);
+}
+// what's worn in that item's slot (the weaker accessory for charms)
+function mkWornPower(item){
+  if(!mkIsEquip(item)) return null;
+  const eq = game.player.equipment, keys = item.slot === "accessory" ? ["accessory1", "accessory2"] : [item.slot];
+  const worn = keys.map(k => eq[k] && findEquipmentEntry(eq[k])).map(e => e ? mkPower(e) : 0);
+  if(item.slot === "weapon"){ // a different weapon type isn't a straight swap — still compare, the detail says the type
+    return worn[0];
+  }
+  return Math.min(...worn);
+}
+function mkLeft(iso){
+  const ms = Date.parse(iso) - (Date.now() + mk.skew);
+  if(!(ms > 0)) return "หมดเวลา";
+  const h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000);
+  return h ? `${h} ชม. ${m} น.` : `${Math.max(1, m)} นาที`;
+}
+function mkWhy(){ return mk.home && mk.home.why; }
+
+/* ---- server calls ---- */
+async function mkLoadHome(quiet){
+  if(!mkOnline()) return;
+  try{
+    const h = await netRpc("market_home", "{}");
+    mk.home = h; mk.homeAt = performance.now(); mk.skew = Date.parse(h.now) - Date.now();
+    mk.ready = (h.mail || []).filter(m => m.ready).length;
+  }catch(err){ if(!quiet) mk.err = err.message; }
+  if(!document.getElementById("marketPanel").hidden) mkRender();
+}
+function mkFilterBody(){
+  const f = mk.f, out = {};
+  if(f.cat) out.cat = f.cat;
+  if(f.cat === "weapon" && f.wtype) out.wtype = f.wtype;
+  if(f.rar.length) out.rar = f.rar;
+  if(+f.tmin > 1) out.tmin = +f.tmin;
+  if(+f.tmax < 10) out.tmax = +f.tmax;
+  if(+f.rmin > 0) out.rmin = +f.rmin;
+  if(f.stats.length) out.stats = f.stats;
+  if(f.pmin !== "" && +f.pmin > 0) out.pmin = Math.floor(+f.pmin);
+  if(f.pmax !== "" && +f.pmax > 0) out.pmax = Math.floor(+f.pmax);
+  const q = f.q.trim().toLowerCase();
+  if(q){
+    const defs = new Set();
+    Object.keys(EQUIPMENT_DEFS).forEach(id => { if(EQUIPMENT_DEFS[id].name.toLowerCase().includes(q)) defs.add(id.replace(/_t\d+$/, "")); });
+    Object.keys(CARD_DEFS).forEach(id => { if(!CARD_DEFS[id].isSecret && CARD_DEFS[id].name.toLowerCase().includes(q)) defs.add(id); });
+    ITEM_TABLE.forEach(it => { if(it.name.toLowerCase().includes(q)) defs.add(it.id); });
+    out.defs = [...defs];
+  }
+  out.sort = f.sort === "power" ? "ref" : f.sort;
+  return out;
+}
+async function mkSearch(){
+  if(!mkOnline() || mk.loading) return;
+  const body = mkFilterBody();
+  if(body.defs && !body.defs.length){ mk.rows = []; mkRender(); return; }
+  mk.loading = true; mk.err = ""; mkRender();
+  try{
+    const r = await netRpc("market_search", JSON.stringify({ p_f: body }));
+    mk.rows = r.rows || []; mk.skew = Date.parse(r.now) - Date.now();
+  }catch(err){ mk.err = err.message; }
+  mk.loading = false;
+  mkRender();
+}
+async function mkHistory(def){
+  const key = def.replace(/_t\d+$/, "");
+  if(mk.hist[key] && performance.now() - mk.hist[key].at < 60000) return;
+  mk.hist[key] = { at: performance.now(), rows: null };
+  try{ mk.hist[key].rows = await netRpc("market_history", JSON.stringify({ p_def: key })); }catch(err){ mk.hist[key].rows = []; }
+  mkRender();
+}
+// a call that changes the save: flush → pause autosave → call → copy what the server sent → resume
+async function mkSaveOp(fn, args){
+  if(mk.busy || !mkOnline() || !game || game.inBattle) return null;
+  mk.busy = true; mk.err = ""; mk.msg = ""; mkRender();
+  try{
+    await netSaveAndWait();
+    if(net.blocked) return null;
+    net.marketBusy = true;
+    const r = await netRpc(fn, JSON.stringify(Object.assign({ p_session: net.sessionId, p_rev: net.rev }, args)));
+    if(r && r.ok){
+      net.rev = r.rev;
+      game.inventory = Array.isArray(r.inventory) ? r.inventory : game.inventory;
+      game.storage = Array.isArray(r.storage) ? r.storage : game.storage;
+      game.player.gold = Math.max(0, Math.floor(+r.gold || 0));
+      updateHud();
+    } else if(r && ["rev", "session", "kicked", "banned"].includes(r.reason)){
+      netBlock(r.reason);
+    } else if(r){
+      mk.err = MK_REASON[r.reason] || ("ทำรายการไม่สำเร็จ (" + r.reason + ")");
+    }
+    return r;
+  }catch(err){ mk.err = err.message; return null; }
+  finally{
+    net.marketBusy = false; mk.busy = false;
+    if(!net.blocked) saveGameNow(); // the snapshot queued meanwhile had the old rev — replace it with a fresh one
+  }
+}
+
+/* ---- actions ---- */
+async function mkBuy(row){
+  const r = await mkSaveOp("market_buy", { p_id: row.id, p_price: row.price });
+  if(r && r.ok){
+    const it = r.item || row.item;
+    registerDiscovery(mkIsEquip(it) ? { kind:"equipment", defId: it.defId } : it.kind === "card" ? { kind:"card", defId: it.id } : { kind:"consumable", id: it.id });
+    sfx.buy ? sfx.buy() : sfx.click();
+    showToast(`🏪 ซื้อ ${mkItemName(it)}${row.qty > 1 ? " ×" + row.qty : ""} แล้ว — 💰 -${mkNum(row.price)}`);
+    mk.sel = null; mk.confirm = false;
+    mk.rows = (mk.rows || []).filter(x => x.id !== row.id);
+  } else if(r && r.reason === "gone"){
+    mk.rows = (mk.rows || []).filter(x => x.id !== row.id); mk.sel = null;
+  }
+  mkRender();
+}
+async function mkList(){
+  const s = mk.sellSel; if(!s) return;
+  const item = s.item, eq = mkIsEquip(item);
+  const r = await mkSaveOp("market_list", { p_uid: eq ? item.instanceId : null, p_id: eq ? null : item.id, p_qty: eq ? 1 : mk.sellQty,
+                                           p_price: mk.sellPrice, p_hours: mk.sellHours });
+  if(r && r.ok){
+    sfx.click();
+    showToast(`📤 วางขาย ${mkItemName(item)}${!eq && mk.sellQty > 1 ? " ×" + mk.sellQty : ""} แล้ว — จะขึ้นตลาดหลังตรวจสอบ 1–10 นาที`);
+    mk.sellSel = null; mk.sellArm = false;
+    mk.tab = "mine";
+    mkLoadHome();
+  } else if(r && r.reason === "price" && r.ref){ // our mirror of the reference price was off — take the server's
+    mk.sellRefOverride = r.ref; mk.sellPrice = mkClampPrice(mk.sellPrice, r.ref);
+  }
+  mkRender();
+}
+async function mkCancel(id){
+  if(mk.busy) return;
+  mk.busy = true; mkRender();
+  try{
+    const r = await netRpc("market_cancel", JSON.stringify({ p_id: id }));
+    if(r.ok) showToast("↩️ ถอนสินค้าแล้ว — ของรออยู่ในกล่องรับของ 📬");
+    else mk.err = MK_REASON[r.reason] || r.reason;
+  }catch(err){ mk.err = err.message; }
+  mk.busy = false;
+  await mkLoadHome();
+}
+async function mkClaim(){
+  const r = await mkSaveOp("market_claim", {});
+  if(r && r.ok){
+    (r.inventory || []).concat(r.storage || []).forEach(e => { if(mkIsEquip(e) && /^eq_r/.test(e.instanceId || "")) registerDiscovery({ kind:"equipment", defId: e.defId }); });
+    showToast(`📬 รับของแล้ว ${r.got} รายการ${r.goldGot ? " · 💰 +" + mkNum(r.goldGot) : ""}${r.left ? ` · อีก ${r.left} ชิ้นรอช่องว่าง` : ""}`);
+  }
+  await mkLoadHome();
+}
+
+/* ---- window ---- */
+function openMarket(){
+  closeAllPanels();
+  document.getElementById("marketPanel").hidden = false;
+  mk.err = ""; mk.msg = ""; mk.sel = null; mk.confirm = false;
+  if(mk.ready > 0) mk.tab = "mail";
+  mkRender();
+  if(mkOnline()){
+    mkLoadHome();
+    if(!mk.rows) mkSearch();
+  }
+}
+function mkTabs(){
+  const h = mk.home, used = h ? (h.mine || []).filter(l => l.status === "active").length : 0;
+  const tab = (k, label, dot) => `<button type="button" data-mk="tab" data-v="${k}" class="${mk.tab === k ? "on" : ""}">${label}${dot ? `<span class="vb-dot">${dot}</span>` : ""}</button>`;
+  return `<div class="vb-tabs mk-tabs">${tab("buy", "🔎 ซื้อของ")}${tab("sell", "💰 ลงขาย")}${tab("mine", `📦 ของที่วางขาย${h ? ` (${used}/${h.slots})` : ""}`)}${tab("mail", "📬 กล่องรับของ", mk.ready || "")}</div>`;
+}
+function mkRarityChip(r, on){ const d = RARITY_DEFS[r]; return `<button type="button" class="mk-chip${on ? " on" : ""}" data-mk="rar" data-v="${r}" style="--rc:${d.color}">${d.label}</button>`; }
+function mkBuyTab(){
+  const f = mk.f, tiers = Array.from({ length: 10 }, (_, i) => i + 1);
+  const opt = (v, cur, label) => `<option value="${v}"${String(v) === String(cur) ? " selected" : ""}>${label}</option>`;
+  const side = `
+    <aside class="mk-side">
+      <input type="search" id="mkQ" class="mk-in" placeholder="🔎 ชื่อไอเทม เช่น ดาบ, หยก, การ์ด" value="${netEsc(f.q)}">
+      <h5>หมวด</h5>
+      <div class="mk-chips">${MK_CATS.map(c => `<button type="button" class="mk-chip${f.cat === c.k ? " on" : ""}" data-mk="cat" data-v="${c.k}">${c.label}</button>`).join("")}</div>
+      ${f.cat === "weapon" ? `<div class="mk-chips sub">${MK_WTYPES.map(w => `<button type="button" class="mk-chip${f.wtype === w[0] ? " on" : ""}" data-mk="wtype" data-v="${w[0]}">${w[1]}</button>`).join("")}</div>` : ""}
+      <h5>ระดับความหายาก</h5>
+      <div class="mk-chips">${Object.keys(RARITY_DEFS).map(r => mkRarityChip(r, f.rar.includes(r))).join("")}</div>
+      <h5>แมพที่ดรอป</h5>
+      <div class="mk-row2"><select id="mkTmin" class="mk-in">${tiers.map(t => opt(t, f.tmin, "แมพ " + t)).join("")}</select><span>ถึง</span>
+        <select id="mkTmax" class="mk-in">${tiers.map(t => opt(t, f.tmax, "แมพ " + t)).join("")}</select></div>
+      <h5>ตีบวกอย่างน้อย</h5>
+      <select id="mkRmin" class="mk-in">${Array.from({ length: 11 }, (_, i) => opt(i, f.rmin, i ? "+" + i + " ขึ้นไป" : "ไม่กำหนด")).join("")}</select>
+      <h5>ต้องมีโบนัส</h5>
+      <div class="mk-chips">${STAT_KEYS.map(k => `<button type="button" class="mk-chip${f.stats.includes(k) ? " on" : ""}" data-mk="stat" data-v="${k}">${STAT_INFO[k].label}</button>`).join("")}</div>
+      <h5>ราคา (💰)</h5>
+      <div class="mk-row2"><input type="number" min="0" id="mkPmin" class="mk-in" placeholder="ต่ำสุด" value="${f.pmin}"><span>–</span><input type="number" min="0" id="mkPmax" class="mk-in" placeholder="สูงสุด" value="${f.pmax}"></div>
+      <label class="mk-check"><input type="checkbox" id="mkStar"${f.star ? " checked" : ""}> ✦ เฉพาะคุณภาพสูง (95%+)</label>
+      <label class="mk-check"><input type="checkbox" id="mkBetter"${f.better ? " checked" : ""}> ⚡ เฉพาะที่แรงกว่าของที่ใส่อยู่</label>
+      <div class="mk-row2"><button type="button" class="mk-go" data-mk="search">🔎 ค้นหา</button><button type="button" class="mk-go alt" data-mk="reset">ล้าง</button></div>
+    </aside>`;
+  let rows = (mk.rows || []).slice();
+  if(f.star) rows = rows.filter(r => mkIsEquip(r.item) && r.item.rollQuality >= ROLL_QUALITY_STAR);
+  if(f.better) rows = rows.filter(r => mkIsEquip(r.item) && mkPower(r.item) > (mkWornPower(r.item) || 0));
+  if(f.sort === "power") rows.sort((a, b) => mkPower(b.item) - mkPower(a.item) || a.price - b.price);
+  const cards = rows.map(r => mkCardHtml(r)).join("");
+  const main = `
+    <section class="mk-main">
+      <div class="mk-bar"><b>${mk.rows ? rows.length + " รายการ" : ""}</b>
+        <select id="mkSort" class="mk-in">${MK_SORTS.map(s => opt(s[0], f.sort, s[1])).join("")}</select>
+        <button type="button" class="mk-go alt" data-mk="search" title="โหลดใหม่">🔄</button></div>
+      ${mk.loading ? `<div class="mk-empty">⏳ กำลังค้นหา…</div>` : mk.rows && !rows.length ? `<div class="mk-empty">ไม่พบสินค้าที่ตรงเงื่อนไข<br><small>ของใหม่จะขึ้นตลาดหลังผ่านการตรวจสอบ 1–10 นาที</small></div>` : `<div class="mk-grid">${cards}</div>`}
+    </section>`;
+  return `<div class="mk-body">${side}${main}</div>`;
+}
+function mkDealHtml(price, ref){
+  if(!ref) return "";
+  const pct = Math.round((price / ref - 1) * 100);
+  if(Math.abs(pct) < 3) return `<span class="mk-deal eq">≈ ราคากลาง</span>`;
+  return pct < 0 ? `<span class="mk-deal lo">ถูกกว่าราคากลาง ${-pct}%</span>` : `<span class="mk-deal hi">แพงกว่าราคากลาง ${pct}%</span>`;
+}
+function mkCardHtml(r){
+  const it = r.item, rar = mkRarity(it), col = RARITY_DEFS[rar].color, eq = mkIsEquip(it);
+  const base = eq ? EQUIPMENT_DEFS[it.defId] : null;
+  const pw = eq ? mkPower(it) : 0, worn = eq ? mkWornPower(it) : null;
+  const diff = eq && worn != null ? pw - worn : null;
+  const sub = eq ? `${slotDisplayName(it.slot)} · แมพ ${mkTier(it)}${it.refineLevel ? " · +" + it.refineLevel : ""}` : (it.kind === "card" ? "การ์ดสะสม" : "วัตถุดิบ") + (r.qty > 1 ? ` · ×${r.qty}` : "");
+  const bonus = eq ? Object.entries(it.rolledStats || {}).map(([k, v]) => `${STAT_INFO[k] ? STAT_INFO[k].label : k} +${v}`).join(" · ") : "";
+  return `<button type="button" class="mk-card${r.mine ? " mine" : ""}" data-mk="open" data-v="${r.id}" style="--rc:${col}">
+      <span class="mk-ic">${mkIcon(it)}${r.qty > 1 ? `<i>×${r.qty}</i>` : ""}</span>
+      <span class="mk-nm" style="color:${col}">${netEsc(mkItemName(it))}</span>
+      <span class="mk-sub">${sub}</span>
+      ${bonus ? `<span class="mk-bonus">${bonus}</span>` : ""}
+      ${eq ? `<span class="mk-pw">⚡ ${pw}${diff != null ? ` <em class="${diff > 0 ? "up" : diff < 0 ? "down" : ""}">${diff > 0 ? "▲+" + diff : diff < 0 ? "▼" + diff : "เท่าที่ใส่"}</em>` : ""}</span>` : ""}
+      <span class="mk-foot"><span class="mk-price">💰 ${mkNum(r.price)}</span><span class="mk-time">${r.mine ? (r.show ? "🏷️ ของคุณ" : "🔍 ตรวจสอบอยู่") : "⏳ " + mkLeft(r.exp)}</span></span>
+      ${mkDealHtml(r.price, r.ref)}
+    </button>`;
+}
+// try the piece on for a moment with the real stat functions (same trick as the bag's compare line)
+function mkCompareHtml(item){
+  if(!mkIsEquip(item) || !EQUIPMENT_DEFS[item.defId]) return "";
+  const probe = Object.assign({}, item, { instanceId: "__mk_probe", equipped: false });
+  game.inventory.push(probe);
+  try{ return getEquipCompareHtml(probe); }
+  catch(err){ return ""; }
+  finally{ const i = game.inventory.indexOf(probe); if(i >= 0) game.inventory.splice(i, 1); }
+}
+function mkHistHtml(def){
+  const h = mk.hist[def.replace(/_t\d+$/, "")];
+  if(!h || !h.rows) return `<div class="mk-hist"><small>⏳ กำลังโหลดราคาที่เคยขายได้…</small></div>`;
+  if(!h.rows.length) return `<div class="mk-hist"><small>ยังไม่เคยมีการซื้อขายไอเทมแบบนี้</small></div>`;
+  return `<div class="mk-hist"><small>ขายได้ล่าสุด:</small> ${h.rows.slice(0, 8).map(x => `<span>💰${mkNum(x.price)}${x.qty > 1 ? "/" + x.qty : ""}<i>แมพ${x.tier}${x.refine ? " +" + x.refine : ""}</i></span>`).join("")}</div>`;
+}
+function mkPopHtml(){
+  const r = (mk.rows || []).find(x => x.id === mk.sel);
+  if(!r) return "";
+  const it = r.item, rar = mkRarity(it), d = RARITY_DEFS[rar], eq = mkIsEquip(it), base = eq ? EQUIPMENT_DEFS[it.defId] : null;
+  const why = mkWhy(), poor = game.player.gold < r.price;
+  let btn;
+  if(r.mine) btn = `<button type="button" class="mk-go" disabled>ของที่คุณวางขายเอง</button>`;
+  else if(why) btn = `<div class="vb-note warn">${MK_REASON[why] || why}</div>`;
+  else if(poor) btn = `<button type="button" class="mk-go" disabled>เงินไม่พอ (มี 💰${mkNum(game.player.gold)})</button>`;
+  else btn = `<button type="button" class="mk-go buy${mk.confirm ? " arm" : ""}" data-mk="buy"${mk.busy ? " disabled" : ""}>${mk.busy ? "⏳ กำลังซื้อ…" : mk.confirm ? `✔ ยืนยันจ่าย 💰${mkNum(r.price)}` : `🛒 ซื้อ 💰${mkNum(r.price)}`}</button>`;
+  return `<div class="mk-pop" data-mk="close-pop"><div class="mk-pop-card" style="--rc:${d.color}">
+    <button type="button" class="mk-pop-x" data-mk="close-pop">✕</button>
+    <div class="mk-pop-head"><span class="mk-ic big">${mkIcon(it)}</span><div>
+      <h3 style="color:${d.color}">${netEsc(mkItemName(it))}${r.qty > 1 ? " ×" + r.qty : ""}</h3>
+      <small>[${d.label}${eq ? " · " + slotDisplayName(it.slot) + " · แมพ " + mkTier(it) : ""}]</small></div></div>
+    ${eq ? `<div class="stats-line">${formatStatLine(it)}</div>${mkCompareHtml(it)}<div class="effect-line">${netEsc(base ? base.desc : "")}</div>`
+         : `<div class="effect-line">${netEsc(it.kind === "card" ? (CARD_DEFS[it.id] || {}).desc || "" : (ITEM_TABLE.find(i => i.id === it.id) || {}).desc || "")}</div>`}
+    <div class="mk-pop-price">💰 ${mkNum(r.price)} ${mkDealHtml(r.price, r.ref)}<small>ราคากลาง 💰${mkNum(r.ref)} · ${r.mine ? "" : "เหลือเวลา " + mkLeft(r.exp)}</small></div>
+    ${mkHistHtml(eq ? it.defId : it.id)}
+    ${btn}
+    <p class="mk-fine">ผู้ขายไม่เปิดเผยชื่อ · ของเข้ากระเป๋าทันที (กระเป๋าเต็ม → กล่องที่บ้าน)</p>
+  </div></div>`;
+}
+function mkSellable(e){
+  if(mkIsEquip(e)) return !e.equipped && EQUIPMENT_DEFS[e.defId] && !EQUIPMENT_DEFS[e.defId].cosmeticOnly && !MK_NEVER.includes(e.defId);
+  if(e.kind === "card") return CARD_DEFS[e.id] && !CARD_DEFS[e.id].isSecret && !MK_NEVER.includes(e.id);
+  return MK_STACKS.includes(e.id);
+}
+function mkSellTab(){
+  const why = mkWhy(), c = mkCfg();
+  const items = game.inventory.map((e, i) => ({ e, i })).filter(x => mkSellable(x.e));
+  const tiles = items.map(({ e, i }) => {
+    const col = RARITY_DEFS[mkRarity(e)].color, on = mk.sellSel && mk.sellSel.item === e;
+    return `<button type="button" class="mk-tile${on ? " on" : ""}" data-mk="pick" data-v="${i}" style="--rc:${col}" title="${netEsc(mkItemName(e))}">${mkIcon(e)}${e.qty > 1 ? `<i>×${e.qty}</i>` : ""}${mkIsEquip(e) && e.refineLevel ? `<b>+${e.refineLevel}</b>` : ""}</button>`;
+  }).join("");
+  let form = `<div class="mk-empty">เลือกไอเทมทางซ้ายเพื่อตั้งราคา</div>`;
+  const s = mk.sellSel;
+  if(s && game.inventory.includes(s.item)){
+    const it = s.item, eq = mkIsEquip(it), d = RARITY_DEFS[mkRarity(it)];
+    const qty = eq ? 1 : Math.min(Math.max(1, mk.sellQty), Math.min(it.qty, c.maxQty));
+    mk.sellQty = qty;
+    const ref = mk.sellRefOverride || mkRef(it, qty), [lo, hi] = mkBand(ref);
+    mk.sellPrice = mkClampPrice(mk.sellPrice || ref, ref);
+    form = `<div class="mk-form" style="--rc:${d.color}">
+      <div class="mk-pop-head"><span class="mk-ic big">${mkIcon(it)}</span><div><h3 style="color:${d.color}">${netEsc(mkItemName(it))}</h3>
+        <small>[${d.label}${eq ? " · " + slotDisplayName(it.slot) + " · แมพ " + mkTier(it) : ` · มี ×${it.qty}`}]</small></div></div>
+      ${eq ? `<div class="stats-line">${formatStatLine(it)}</div>` : `<label class="mk-lab">จำนวน</label><div class="mk-row2 qty">
+         <button type="button" class="mk-step" data-mk="qty" data-v="-10">-10</button><button type="button" class="mk-step" data-mk="qty" data-v="-1">−</button>
+         <input type="number" id="mkQty" class="mk-in" min="1" max="${Math.min(it.qty, c.maxQty)}" value="${qty}">
+         <button type="button" class="mk-step" data-mk="qty" data-v="1">+</button><button type="button" class="mk-step" data-mk="qty" data-v="10">+10</button></div>`}
+      <label class="mk-lab">ราคาขาย ${eq || qty === 1 ? "" : `(รวม ${qty} ชิ้น)`}</label>
+      <div class="mk-row2 price"><button type="button" class="mk-step" data-mk="price" data-v="-1">−</button>
+        <input type="number" id="mkPrice" class="mk-in big" value="${mk.sellPrice}"><button type="button" class="mk-step" data-mk="price" data-v="1">+</button></div>
+      <div class="mk-quick">${[["ถูก", 0.7], ["ราคากลาง", 1], ["สูง", 1.5], ["สูงสุด", 99]].map(q => `<button type="button" class="mk-chip" data-mk="pq" data-v="${q[1]}">${q[0]}</button>`).join("")}</div>
+      <p class="mk-fine">ราคากลาง 💰${mkNum(ref)} · ตั้งได้ 💰${mkNum(lo)} – ${mkNum(hi)} · ปัดเป็นเลข 2 หลักแรกอัตโนมัติ (กันราคารหัสลับ)</p>
+      ${mkHistHtml(eq ? it.defId : it.id)}
+      <label class="mk-lab">วางขายนาน</label>
+      <div class="mk-chips">${c.hours.map(h => `<button type="button" class="mk-chip${mk.sellHours === h ? " on" : ""}" data-mk="hours" data-v="${h}">${h} ชม.</button>`).join("")}</div>
+      <div id="mkSum">${mkSumHtml()}</div>
+    </div>`;
+  }
+  return `<div class="mk-body"><aside class="mk-side sell"><h5>ไอเทมในกระเป๋าที่ขายได้ (${items.length})</h5>
+      ${items.length ? `<div class="mk-tiles">${tiles}</div>` : `<div class="mk-empty">ไม่มีของที่ขายได้<br><small>อุปกรณ์ที่ไม่ได้สวม · การ์ด · หินมานา</small></div>`}
+      <p class="mk-fine">ของที่สวมอยู่ ของเควส และจดหมาย ขายไม่ได้ · ของในกล่องที่บ้านต้องย้ายมาใส่กระเป๋าก่อน</p></aside>
+    <section class="mk-main">${form}</section></div>`;
+}
+// fee / tax / take-home + the list button — redrawn on its own while the price is typed (a full redraw would eat the click)
+function mkSumHtml(){
+  const c = mkCfg(), p = mk.sellPrice, why = mkWhy();
+  const fee = Math.max(Math.ceil(p * c.fee), 1), tax = Math.ceil(p * c.tax), poor = game.player.gold < fee;
+  return `<div class="mk-sum">
+      <div><span>ค่าวางขาย ${Math.round(c.fee * 100)}% (จ่ายตอนนี้ ไม่คืน)</span><b>💰 ${mkNum(fee)}</b></div>
+      <div><span>ภาษีเมื่อขายได้ ${Math.round(c.tax * 100)}%</span><b>💰 ${mkNum(tax)}</b></div>
+      <div class="tot"><span>ได้รับจริงเมื่อขายได้</span><b>💰 ${mkNum(p - tax)}</b></div>
+      <small>เงินเข้า 📬 กล่องรับของ รับได้หลังขายได้ ${c.holdH} ชม. · ขายไม่ออก/ถอนเอง → ของกลับกล่องรับของ</small>
+    </div>
+    ${why ? `<div class="vb-note warn">${MK_REASON[why] || why}</div>`
+          : `<button type="button" class="mk-go buy wide${mk.sellArm ? " arm" : ""}" data-mk="list"${mk.busy || poor ? " disabled" : ""}>${mk.busy ? "⏳ กำลังวางขาย…" : poor ? "เงินไม่พอจ่ายค่าวาง" : mk.sellArm ? `✔ ยืนยันวางขาย 💰${mkNum(p)}` : "📤 วางขาย"}</button>`}`;
+}
+function mkSellPriceTyped(clamp){
+  const el = document.getElementById("mkPrice"), s = mk.sellSel;
+  if(!el || !s) return;
+  const ref = mk.sellRefOverride || mkRef(s.item, mk.sellQty);
+  mk.sellPrice = clamp ? mkClampPrice(+el.value || 0, ref) : Math.max(0, Math.floor(+el.value || 0));
+  if(clamp) el.value = mk.sellPrice;
+  mk.sellArm = false;
+  const sum = document.getElementById("mkSum");
+  if(sum) sum.innerHTML = mkSumHtml();
+}
+function mkStatusHtml(l){
+  if(l.status === "active") return l.show ? `<span class="mk-st on">🟢 วางขายอยู่ · เหลือ ${mkLeft(l.exp)}</span>` : `<span class="mk-st wait">🔍 กำลังตรวจสอบ · ขึ้นตลาดในอีก ${mkLeft(l.at)}</span>`;
+  if(l.status === "sold") return `<span class="mk-st sold">✅ ขายได้แล้ว</span>`;
+  if(l.status === "expired") return `<span class="mk-st off">⌛ หมดเวลา → ของคืนกล่องรับของ</span>`;
+  return `<span class="mk-st off">↩️ ถอนแล้ว → ของคืนกล่องรับของ</span>`;
+}
+function mkMineTab(){
+  const h = mk.home;
+  if(!h) return `<div class="mk-empty">⏳ กำลังโหลด…</div>`;
+  const rows = (h.mine || []).map(l => {
+    const it = l.item, col = RARITY_DEFS[mkRarity(it)].color;
+    return `<div class="mk-line" style="--rc:${col}"><span class="mk-ic">${mkIcon(it)}</span>
+      <span class="mk-ln"><b style="color:${col}">${netEsc(mkItemName(it))}${l.qty > 1 ? " ×" + l.qty : ""}</b>${mkStatusHtml(l)}</span>
+      <span class="mk-lp">💰 ${mkNum(l.price)}<small>${l.status === "sold" ? "ได้ " + mkNum(l.price - Math.ceil(l.price * mkCfg().tax)) : "ค่าวาง " + mkNum(l.fee)}</small></span>
+      ${l.status === "active" ? `<button type="button" class="mk-go alt" data-mk="cancel" data-v="${l.id}"${mk.busy ? " disabled" : ""}>ถอน</button>` : ""}</div>`;
+  }).join("");
+  const used = (h.mine || []).filter(l => l.status === "active").length;
+  return `<div class="vb-note">ใช้ช่องวางขาย <b>${used}/${h.slots}</b> ช่อง (ทุก 20 เลเวลได้เพิ่ม 1 ช่อง สูงสุด 10) · ถอนได้ทุกเมื่อ แต่ค่าวางไม่คืน</div>
+    ${rows || `<div class="mk-empty">ยังไม่มีของที่วางขาย — ไปที่แท็บ 💰 ลงขาย</div>`}`;
+}
+function mkMailTab(){
+  const h = mk.home;
+  if(!h) return `<div class="mk-empty">⏳ กำลังโหลด…</div>`;
+  const mail = h.mail || [];
+  const rows = mail.map(m => {
+    const it = m.item, when = m.ready ? `<span class="mk-st on">พร้อมรับ</span>` : `<span class="mk-st wait">รับได้ในอีก ${mkLeft(m.at)}</span>`;
+    if(m.kind === "gold") return `<div class="mk-line gold"><span class="mk-ic">💰</span><span class="mk-ln"><b>เงินจากการขาย</b>${when}</span><span class="mk-lp">+${mkNum(m.gold)}</span></div>`;
+    const col = RARITY_DEFS[mkRarity(it)].color;
+    return `<div class="mk-line" style="--rc:${col}"><span class="mk-ic">${mkIcon(it)}</span><span class="mk-ln"><b style="color:${col}">${netEsc(mkItemName(it))}${it.qty > 1 ? " ×" + it.qty : ""}</b>
+      ${when}</span><span class="mk-lp"><small>${m.note === "expired" ? "⌛ หมดเวลา" : "↩️ ถอนคืน"}</small></span></div>`;
+  }).join("");
+  const ready = mail.filter(m => m.ready).length;
+  return `<div class="vb-note">เงินที่ขายได้จะพักไว้ ${mkCfg().holdH} ชม. ก่อนรับได้ (ช่วงตรวจสอบการโกง/ซื้อขายเงินจริง) · ของที่ขายไม่ออกหรือถอนคืนรับได้ทันที</div>
+    ${rows || `<div class="mk-empty">กล่องว่าง</div>`}
+    ${mail.length ? `<button type="button" class="mk-go buy wide" data-mk="claim"${!ready || mk.busy ? " disabled" : ""}>${mk.busy ? "⏳ กำลังรับ…" : `📥 รับทั้งหมดที่พร้อม (${ready})`}</button>` : ""}`;
+}
+function mkRender(){
+  const body = document.getElementById("marketBody");
+  if(!body || document.getElementById("marketPanel").hidden || !game) return;
+  if(!NET_ONLINE){ body.innerHTML = `<div class="mk-empty">🏪 ตลาดกลางเปิดเฉพาะตอนเล่นออนไลน์ (ต้องมีบาเรียคอยตรวจสอบการซื้อขาย)</div>`; return; }
+  if(!net.user){ body.innerHTML = `<div class="mk-empty">เข้าสู่ระบบก่อนนะ</div>`; return; }
+  const keepScroll = [...body.querySelectorAll(".mk-side, .mk-main")].map(el => el.scrollTop);
+  const focusId = document.activeElement && document.activeElement.id, selStart = focusId && document.activeElement.selectionStart;
+  const tab = mk.tab === "sell" ? mkSellTab() : mk.tab === "mine" ? mkMineTab() : mk.tab === "mail" ? mkMailTab() : mkBuyTab();
+  body.innerHTML = mkTabs() + (mk.err ? `<div class="vb-note warn">⚠️ ${netEsc(mk.err)}</div>` : "") + `<div class="mk-view ${mk.tab}">${tab}</div>` + (mk.tab === "buy" && mk.sel ? mkPopHtml() : "");
+  body.querySelectorAll(".mk-side, .mk-main").forEach((el, i) => { if(keepScroll[i]) el.scrollTop = keepScroll[i]; });
+  if(focusId){ const el = document.getElementById(focusId); if(el){ el.focus(); try{ if(selStart != null) el.setSelectionRange(selStart, selStart); }catch(err){ /* number inputs */ } } }
+}
+function mkReadFilters(){
+  const v = id => { const el = document.getElementById(id); return el ? el.value : null; };
+  const f = mk.f;
+  if(v("mkQ") != null) f.q = v("mkQ");
+  if(v("mkTmin") != null){ f.tmin = +v("mkTmin"); f.tmax = Math.max(f.tmin, +v("mkTmax")); }
+  if(v("mkRmin") != null) f.rmin = +v("mkRmin");
+  if(v("mkPmin") != null){ f.pmin = v("mkPmin"); f.pmax = v("mkPmax"); }
+  const st = document.getElementById("mkStar"), bt = document.getElementById("mkBetter");
+  if(st) f.star = st.checked;
+  if(bt) f.better = bt.checked;
+}
+document.getElementById("marketBody").addEventListener("click", e => {
+  const b = e.target.closest("[data-mk]");
+  if(!b || !game) return;
+  const act = b.dataset.mk, v = b.dataset.v;
+  if(act === "close-pop"){ if(e.target !== b) return; mk.sel = null; mk.confirm = false; mkRender(); return; }
+  sfx.click();
+  mkReadFilters();
+  if(act === "tab"){ mk.tab = v; mk.err = ""; mk.sel = null; mk.confirm = false; mk.sellArm = false; if(v !== "buy") mkLoadHome(); mkRender(); return; }
+  if(act === "cat"){ mk.f.cat = v; mk.f.wtype = ""; mkSearch(); return; }
+  if(act === "wtype"){ mk.f.wtype = v; mkSearch(); return; }
+  if(act === "rar"){ const a = mk.f.rar; a.includes(v) ? a.splice(a.indexOf(v), 1) : a.push(v); mkSearch(); return; }
+  if(act === "stat"){ const a = mk.f.stats; a.includes(v) ? a.splice(a.indexOf(v), 1) : a.push(v); mkSearch(); return; }
+  if(act === "search"){ mkSearch(); return; }
+  if(act === "reset"){ mk.f = MK_DEFAULT_F(); mkSearch(); return; }
+  if(act === "open"){
+    mk.sel = +v; mk.confirm = false;
+    const r = (mk.rows || []).find(x => x.id === mk.sel);
+    if(r) mkHistory(mkIsEquip(r.item) ? r.item.defId : r.item.id);
+    mkRender(); return;
+  }
+  if(act === "buy"){
+    const r = (mk.rows || []).find(x => x.id === mk.sel);
+    if(!r) return;
+    if(!mk.confirm){ mk.confirm = true; mkRender(); return; }
+    mkBuy(r); return;
+  }
+  if(act === "pick"){
+    const it = game.inventory[+v];
+    if(!it) return;
+    mk.sellSel = { item: it }; mk.sellQty = mkIsEquip(it) ? 1 : Math.min(it.qty, mkCfg().maxQty); mk.sellPrice = 0; mk.sellArm = false; mk.sellRefOverride = 0;
+    mkHistory(mkIsEquip(it) ? it.defId : it.id);
+    mkRender(); return;
+  }
+  if(act === "qty"){ mk.sellQty = Math.max(1, mk.sellQty + +v); mk.sellPrice = 0; mk.sellArm = false; mk.sellRefOverride = 0; mkRender(); return; }
+  if(act === "price"){ const el = document.getElementById("mkPrice"); mk.sellPrice = mkStep(el ? +el.value : mk.sellPrice, +v); mk.sellArm = false; mkRender(); return; }
+  if(act === "pq"){ const s = mk.sellSel; if(s){ const ref = mkRef(s.item, mk.sellQty); mk.sellPrice = mkClampPrice(ref * +v, ref); } mk.sellArm = false; mkRender(); return; }
+  if(act === "hours"){ mk.sellHours = +v; mk.sellArm = false; mkRender(); return; }
+  if(act === "list"){
+    const el = document.getElementById("mkPrice");
+    if(el && mkClampPrice(+el.value || 0, mk.sellRefOverride || mkRef(mk.sellSel.item, mk.sellQty)) !== mk.sellPrice) mkSellPriceTyped(true);
+    if(!mk.sellArm){ mk.sellArm = true; const sum = document.getElementById("mkSum"); if(sum) sum.innerHTML = mkSumHtml(); return; }
+    mkList(); return;
+  }
+  if(act === "cancel"){ mkCancel(+v); return; }
+  if(act === "claim"){ mkClaim(); return; }
+});
+document.getElementById("marketBody").addEventListener("change", e => {
+  const id = e.target.id;
+  if(id === "mkSort"){ mk.f.sort = e.target.value; mkReadFilters(); mkSearch(); return; }
+  if(["mkTmin", "mkTmax", "mkRmin", "mkStar", "mkBetter"].includes(id)){ mkReadFilters(); if(id === "mkStar" || id === "mkBetter") mkRender(); else mkSearch(); return; }
+  if(id === "mkPrice"){ mkSellPriceTyped(true); return; }
+  if(id === "mkQty"){ mk.sellQty = Math.max(1, Math.floor(+e.target.value || 1)); mk.sellPrice = 0; mk.sellArm = false; mk.sellRefOverride = 0; mkRender(); return; }
+});
+document.getElementById("marketBody").addEventListener("input", e => { if(e.target.id === "mkPrice") mkSellPriceTyped(false); });
+document.getElementById("marketBody").addEventListener("keydown", e => {
+  if(e.key !== "Enter") return;
+  e.stopPropagation(); // Enter here never opens the chat box
+  const id = e.target.id;
+  if(id === "mkQ" || id === "mkPmin" || id === "mkPmax"){ e.preventDefault(); mkReadFilters(); mkSearch(); }
+  if(id === "mkPrice" || id === "mkQty"){ e.preventDefault(); e.target.blur(); }
+});
+document.getElementById("closeMarketBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("marketPanel").hidden = true; });
+setInterval(()=>{ // countdowns + the "📬 n" badge over the market house while in town
+  if(!game || !mkOnline()) return;
+  const open = !document.getElementById("marketPanel").hidden;
+  if(open && document.activeElement && document.activeElement.closest && document.activeElement.closest("#marketBody input")) return;
+  if(open || (game.mapTier === TOWN_TIER && performance.now() - mk.homeAt > 120000)) mkLoadHome(true);
+}, 30000);
+
+/* ============================================================
    🛡️ GM CONSOLE — 🧪 test tools (also the offline dev build's debug panel) + online moderation:
    find players, reports inbox, running sanctions, announcements. The server decides everything
    (public.admins, see MODERATION in the SQL block); this is only the control surface.
@@ -14263,6 +14924,390 @@ end $$;
 
 revoke execute on function public.gm_flags(), public.gm_wipe(uuid, text), public.gm_restore(bigint) from public, anon;
 grant execute on function public.gm_flags(), public.gm_wipe(uuid, text), public.gm_restore(bigint) to authenticated;
+
+-- ============================================================
+-- MARKET (v41) — ตลาดกลาง: players sell spare gear / cards / mana stones to each other for gold.
+-- No direct trades or gifts. Built so real-money trading is slow, visible and costs money:
+--   • price must sit inside 0.5×–3× a server "reference price" (market_ref) and use 2 significant digits
+--     (no secret code prices like 12,345)
+--   • listings are anonymous and only appear after a random 1–10 min "inspection" — a buyer can't wait for a
+--     particular seller's listing, and cheap listings get sniped by everyone else
+--   • 2% listing fee (kept even if it doesn't sell) + 12% sales tax, both burned
+--   • sale gold waits in the market mailbox for 24 h before it can be claimed (time for the GM to look)
+--   • Lv5+, account older than 1 day, not a Guest (GM exempt)
+--   • flagged for the GM (econ_flags): the same seller→buyer pair twice in 7 days (market_pair), prices ≥ 2× reference
+--     (market_high), paying ≥ 1.5× reference within 3 min of the listing appearing (market_snipe — someone was told
+--     what to look for), and a young account (under Lv15 or 3 days) paying / being paid ≥ 1.5× reference (market_newbie)
+-- Every function that changes a save locks the save row and checks session + rev like save_game does, writes the
+-- new save itself (rev + 1) and returns the new bag / box / gold so the game copies them exactly — the next autosave
+-- is then compared against a save that already contains the trade (econ_check stays happy).
+-- Items that enter a save through the market get a fresh instanceId (eq_m… / eq_r…), so item_registry never sees
+-- an id come back to life.
+-- ============================================================
+create table if not exists public.market_listings (
+  id         bigserial primary key,
+  seller     uuid not null references auth.users(id) on delete cascade,
+  item       jsonb not null,
+  def        text not null,                 -- equipment defId, or the stack item id
+  cat        text not null,                 -- weapon | armor | headgear | accessory | card | material
+  wtype      text,                          -- sword / heavy / bow / orb (weapons) — the defId without _N_tN
+  rarity     text,
+  tier       int not null default 1,
+  refine     int not null default 0,
+  qty        int not null default 1,
+  price      bigint not null,
+  ref        bigint not null,
+  fee        bigint not null,
+  status     text not null default 'active', -- active | sold | cancelled | expired
+  buyer      uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now(),
+  visible_at timestamptz not null,
+  expires_at timestamptz not null,
+  closed_at  timestamptz
+);
+create index if not exists market_active_idx on public.market_listings (visible_at) where status = 'active';
+create index if not exists market_seller_idx on public.market_listings (seller, status);
+create index if not exists market_sold_idx on public.market_listings (def, closed_at desc) where status = 'sold';
+create table if not exists public.market_mail (
+  id           bigserial primary key,
+  user_id      uuid not null references auth.users(id) on delete cascade,
+  kind         text not null,               -- gold | item
+  gold         bigint not null default 0,
+  item         jsonb,
+  note         text,                        -- sold | expired | cancelled
+  listing      bigint,
+  available_at timestamptz not null default now(),
+  created_at   timestamptz not null default now(),
+  claimed_at   timestamptz
+);
+create index if not exists market_mail_user_idx on public.market_mail (user_id) where claimed_at is null;
+alter table public.market_listings enable row level security;
+alter table public.market_mail enable row level security;
+revoke all on public.market_listings, public.market_mail from anon, authenticated;
+
+-- tuning knobs — change here and re-run this function only
+create or replace function public.market_cfg() returns jsonb language sql immutable as $$
+  select '{"lv":5,"ageDays":1,"fee":0.02,"tax":0.12,"holdH":24,"bandLo":0.5,"bandHi":3,"slots":5,"slotsMax":10,"perDay":30,
+           "hours":[12,24,48],"showMin":1,"showMax":10,"maxQty":99,"minPrice":10,
+           "kills":{"common":2,"uncommon":5,"rare":12,"epic":30,"legendary":80},
+           "stackMult":{"mana_stone":4},"cardMult":8,"never":["kings_oath_secret","collector_medal"],
+           "flag":{"pairN":2,"pairDays":7,"high":2,"snipeMin":3,"snipeX":1.5,"youngLv":15,"youngDays":3,"youngX":1.5},
+           "cardRar":{"green_slime_card":"common","pink_slime_card":"common","goblin_card":"uncommon","wolf_card":"uncommon",
+                      "skeleton_card":"rare","stone_king_card":"legendary"}}'::jsonb $$;
+
+-- 2 significant digits (1,234 → 1,200 · 45,678 → 46,000); under 100 stays as is
+create or replace function public.market_nice(p numeric) returns bigint language sql immutable as $$
+  select case when p < 100 then round(p)::bigint
+              else (round(p / power(10, floor(log(p)) - 1)) * power(10, floor(log(p)) - 1))::bigint end $$;
+
+-- what one listing is worth to the server: kills of that map it would take to earn (gear), or a multiple of the NPC price
+create or replace function public.market_ref(it jsonb, q int) returns bigint language plpgsql immutable as $$
+declare C jsonb := public.econ_data(); M jsonb := public.market_cfg(); t int; g numeric; base text;
+begin
+  if it ->> 'kind' = 'equipment' then
+    t := least(greatest(coalesce(substring(it ->> 'defId' from '_t([0-9]+)$')::int, 1), 1), 10);
+    select avg(v::numeric) into g from (select jsonb_array_elements_text(C -> 'tiers' -> t::text -> 'g') v limit 5) x;
+    return public.market_nice(greatest(
+      g * coalesce((M -> 'kills' ->> (it ->> 'rarity'))::numeric, 2)
+        * (1 + 0.15 * public.econ_n(it -> 'refineLevel'))
+        * (0.85 + 0.3 * coalesce(public.econ_n(it -> 'rollQuality'), 50) / 100),
+      coalesce((C -> 'eqPrice' ->> (it ->> 'rarity'))::numeric, 15) * 2));
+  end if;
+  base := it ->> 'id';
+  return public.market_nice(greatest(q * coalesce((C -> 'price' ->> base)::numeric, 5)
+         * coalesce((M -> 'stackMult' ->> base)::numeric, case when (C -> 'cards') ? base then (M ->> 'cardMult')::numeric else 4 end), 10));
+end $$;
+
+-- null = may use the market, else why not
+create or replace function public.market_ineligible(p uuid) returns text language sql stable security definer set search_path = public as $$
+  select case when public.is_gm(p) then null
+              when coalesce((select is_anonymous from auth.users where id = p), true) then 'guest'
+              when public.mod_active(p, 'ban') is not null then 'banned'
+              when public.lb_num((select data -> 'player' -> 'level' from public.saves where user_id = p)) < (public.market_cfg() ->> 'lv')::int then 'level'
+              when (select created_at from auth.users where id = p) > now() - make_interval(days => (public.market_cfg() ->> 'ageDays')::int) then 'new'
+              else null end $$;
+
+-- lazy clock: expired listings go back to their seller's mailbox
+create or replace function public.market_tick() returns void language sql security definer set search_path = public as $$
+  with ex as (update public.market_listings set status = 'expired', closed_at = now()
+               where status = 'active' and expires_at <= now() returning id, seller, item)
+  insert into public.market_mail (user_id, kind, item, note, listing) select seller, 'item', item, 'expired', id from ex $$;
+
+-- one listing as the game sees it (no seller, no instanceId)
+create or replace function public.market_row(l public.market_listings, me uuid) returns jsonb language sql stable as $$
+  select jsonb_build_object('id', l.id, 'item', l.item - 'instanceId' - 'equipped', 'qty', l.qty, 'price', l.price, 'ref', l.ref,
+                            'cat', l.cat, 'tier', l.tier, 'refine', l.refine, 'exp', l.expires_at, 'at', l.visible_at,
+                            'mine', l.seller = me, 'status', l.status, 'show', l.visible_at <= now()) $$;
+
+-- shared checks for the save-changing calls: the locked save row, or an error reason
+create or replace function public.market_lock(me uuid, p_session uuid, p_rev bigint) returns jsonb language plpgsql security definer set search_path = public as $$
+declare r public.saves;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  select * into r from public.saves where user_id = me for update;
+  if not found or r.session_id is distinct from p_session then return jsonb_build_object('ok', false, 'reason', 'session'); end if;
+  if r.rev <> p_rev then return jsonb_build_object('ok', false, 'reason', 'rev'); end if;
+  if public.mod_kicked(me) is not null then return jsonb_build_object('ok', false, 'reason', 'kicked'); end if;
+  if public.market_ineligible(me) is not null then return jsonb_build_object('ok', false, 'reason', public.market_ineligible(me)); end if;
+  if jsonb_typeof(r.data -> 'inventory') is distinct from 'array' or jsonb_typeof(r.data -> 'storage') is distinct from 'array' then
+    return jsonb_build_object('ok', false, 'reason', 'format'); end if;
+  return jsonb_build_object('ok', true, 'data', r.data);
+end $$;
+
+-- a save written by the market: rev + 1, returns what the game copies
+create or replace function public.market_write(me uuid, d jsonb) returns jsonb language plpgsql security definer set search_path = public as $$
+declare nr bigint;
+begin
+  update public.saves set data = d, rev = rev + 1 where user_id = me returning rev into nr;
+  return jsonb_build_object('ok', true, 'rev', nr, 'inventory', d -> 'inventory', 'storage', d -> 'storage', 'gold', d -> 'player' -> 'gold');
+end $$;
+
+-- put a stack / equipment into bag, then box; null = no room
+create or replace function public.market_stash(d jsonb, it jsonb) returns jsonb language plpgsql immutable as $$
+declare B jsonb := public.econ_data() -> 'base'; arr text; mx int; i int;
+begin
+  foreach arr in array array['inventory', 'storage'] loop
+    mx := (B ->> case when arr = 'inventory' then 'bag' else 'storage' end)::int;
+    if it ->> 'kind' is distinct from 'equipment' then
+      select o - 1 into i from jsonb_array_elements(d -> arr) with ordinality x(e, o)
+       where coalesce(e ->> 'kind', 'item') = coalesce(it ->> 'kind', 'item') and e ->> 'id' = it ->> 'id' limit 1;
+      if i is not null then
+        return jsonb_set(d, array[arr, i::text, 'qty'], to_jsonb(public.econ_n(d -> arr -> i -> 'qty') + public.econ_n(it -> 'qty')));
+      end if;
+    end if;
+    if jsonb_array_length(d -> arr) < mx then return jsonb_set(d, array[arr], (d -> arr) || jsonb_build_array(it)); end if;
+  end loop;
+  return null;
+end $$;
+
+-- ---------- sell: take the item out of the bag, pay the fee, list it ----------
+create or replace function public.market_list(p_session uuid, p_rev bigint, p_uid text, p_id text, p_qty int, p_price bigint, p_hours int)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare
+  me uuid := auth.uid(); M jsonb := public.market_cfg(); C jsonb := public.econ_data();
+  chk jsonb; d jsonb; i int; it jsonb; q int := 1; ref bigint; fee bigint; lv int; used int; cat text; base text; lid bigint;
+begin
+  chk := public.market_lock(me, p_session, p_rev);
+  if not (chk ->> 'ok')::boolean then return chk; end if;
+  d := chk -> 'data';
+  if not (M -> 'hours') @> to_jsonb(p_hours) then return jsonb_build_object('ok', false, 'reason', 'hours'); end if;
+  lv := public.lb_num(d -> 'player' -> 'level');
+  select count(*) into used from public.market_listings where seller = me and status = 'active';
+  if used >= least((M ->> 'slots')::int + lv / 20, (M ->> 'slotsMax')::int) then return jsonb_build_object('ok', false, 'reason', 'slots'); end if;
+  if (select count(*) from public.market_listings where seller = me and created_at > now() - interval '1 day') >= (M ->> 'perDay')::int then
+    return jsonb_build_object('ok', false, 'reason', 'daily'); end if;
+
+  if coalesce(p_uid, '') <> '' then   -- one equipment piece
+    select o - 1, e into i, it from jsonb_array_elements(d -> 'inventory') with ordinality x(e, o)
+     where e ->> 'kind' = 'equipment' and e ->> 'instanceId' = p_uid limit 1;
+    if i is null then return jsonb_build_object('ok', false, 'reason', 'noitem'); end if;
+    if coalesce((it ->> 'equipped')::boolean, false)
+       or exists (select 1 from jsonb_each_text(public.econ_obj(d -> 'player' -> 'equipment')) s where s.value = p_uid) then
+      return jsonb_build_object('ok', false, 'reason', 'equipped'); end if;
+    base := regexp_replace(coalesce(it ->> 'defId', ''), '_t[0-9]+$', '');
+    if (C -> 'items') -> base is null or (M -> 'never') ? base then return jsonb_build_object('ok', false, 'reason', 'nosell'); end if;
+    cat := case when base ~ '^(sword|heavy|bow|orb)_' then 'weapon' else split_part(base, '_', 1) end;
+    if cat not in ('weapon', 'armor', 'headgear', 'accessory') then return jsonb_build_object('ok', false, 'reason', 'nosell'); end if;
+    d := jsonb_set(d, '{inventory}', (d -> 'inventory') - i);
+    insert into public.item_registry (user_id, uid, def, alive) values (me, p_uid, it ->> 'defId', false)
+      on conflict (user_id, uid) do update set alive = false;
+  else                                 -- part of a stack (cards, mana stones)
+    q := coalesce(p_qty, 0);
+    if q < 1 or q > (M ->> 'maxQty')::int then return jsonb_build_object('ok', false, 'reason', 'qty'); end if;
+    if (M -> 'never') ? p_id or not ((C -> 'cards') ? p_id or (M -> 'stackMult') ? p_id) then return jsonb_build_object('ok', false, 'reason', 'nosell'); end if;
+    select o - 1, e into i, it from jsonb_array_elements(d -> 'inventory') with ordinality x(e, o)
+     where e ->> 'id' = p_id and coalesce(e ->> 'kind', 'item') <> 'equipment' limit 1;
+    if i is null or public.econ_n(it -> 'qty') < q then return jsonb_build_object('ok', false, 'reason', 'noitem'); end if;
+    if public.econ_n(it -> 'qty') = q then d := jsonb_set(d, '{inventory}', (d -> 'inventory') - i);
+    else d := jsonb_set(d, array['inventory', i::text, 'qty'], to_jsonb(public.econ_n(it -> 'qty') - q)); end if;
+    it := jsonb_set(it, '{qty}', to_jsonb(q));
+    cat := case when (C -> 'cards') ? p_id then 'card' else 'material' end;
+    base := p_id;
+  end if;
+
+  ref := public.market_ref(it, q);
+  if p_price is null or p_price <> public.market_nice(p_price) or p_price < (M ->> 'minPrice')::int
+     or p_price < ceil(ref * (M ->> 'bandLo')::numeric) or p_price > floor(ref * (M ->> 'bandHi')::numeric) then
+    return jsonb_build_object('ok', false, 'reason', 'price', 'ref', ref); end if;
+  fee := greatest(ceil(p_price * (M ->> 'fee')::numeric), 1);
+  if public.econ_n(d -> 'player' -> 'gold') < fee then return jsonb_build_object('ok', false, 'reason', 'gold'); end if;
+  d := jsonb_set(d, '{player,gold}', to_jsonb(public.econ_n(d -> 'player' -> 'gold') - fee));
+
+  insert into public.market_listings (seller, item, def, cat, wtype, rarity, tier, refine, qty, price, ref, fee, visible_at, expires_at)
+  values (me, it, coalesce(it ->> 'defId', p_id), cat, case when cat = 'weapon' then split_part(base, '_', 1) end,
+          coalesce(it ->> 'rarity', M -> 'cardRar' ->> p_id, 'common'),
+          coalesce(substring(it ->> 'defId' from '_t([0-9]+)$')::int, 1), public.econ_n(it -> 'refineLevel')::int, q, p_price, ref, fee,
+          now() + make_interval(mins => (M ->> 'showMin')::int + floor(random() * ((M ->> 'showMax')::int - (M ->> 'showMin')::int + 1))::int),
+          now() + make_interval(hours => p_hours))
+  returning id into lid;
+  if p_price >= ref * (M -> 'flag' ->> 'high')::numeric then perform public.econ_flag(me, 'market_high', jsonb_build_object('kind', 'market_high', 'listing', lid, 'price', p_price, 'ref', ref), false); end if;
+  return public.market_write(me, d) || jsonb_build_object('listing', lid, 'fee', fee);
+end $$;
+
+-- ---------- take a listing back (any time) → mailbox ----------
+create or replace function public.market_cancel(p_id bigint)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); l public.market_listings;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  select * into l from public.market_listings where id = p_id and seller = me for update;
+  if not found or l.status <> 'active' then return jsonb_build_object('ok', false, 'reason', 'gone'); end if;
+  update public.market_listings set status = 'cancelled', closed_at = now() where id = p_id;
+  insert into public.market_mail (user_id, kind, item, note, listing) values (me, 'item', l.item, 'cancelled', l.id);
+  return jsonb_build_object('ok', true);
+end $$;
+
+-- ---------- buy: gold out, item straight into the bag (or box), seller's gold into their mailbox ----------
+create or replace function public.market_buy(p_session uuid, p_rev bigint, p_id bigint, p_price bigint)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare
+  me uuid := auth.uid(); M jsonb := public.market_cfg(); chk jsonb; d jsonb; l public.market_listings; it jsonb; nd jsonb; pairs int; tax bigint;
+begin
+  chk := public.market_lock(me, p_session, p_rev);
+  if not (chk ->> 'ok')::boolean then return chk; end if;
+  d := chk -> 'data';
+  select * into l from public.market_listings where id = p_id for update;
+  if not found or l.status <> 'active' or l.expires_at <= now() or l.visible_at > now() then return jsonb_build_object('ok', false, 'reason', 'gone'); end if;
+  if l.seller = me then return jsonb_build_object('ok', false, 'reason', 'own'); end if;
+  if l.price is distinct from p_price then return jsonb_build_object('ok', false, 'reason', 'gone'); end if;
+  if public.econ_n(d -> 'player' -> 'gold') < l.price then return jsonb_build_object('ok', false, 'reason', 'gold'); end if;
+  it := l.item - 'equipped';
+  if it ->> 'kind' = 'equipment' then
+    it := it || jsonb_build_object('instanceId', 'eq_m' || l.id, 'equipped', false);
+  end if;
+  nd := public.market_stash(d, it);
+  if nd is null then return jsonb_build_object('ok', false, 'reason', 'full'); end if;
+  nd := jsonb_set(nd, '{player,gold}', to_jsonb(public.econ_n(d -> 'player' -> 'gold') - l.price));
+  if it ->> 'kind' = 'equipment' then
+    insert into public.item_registry (user_id, uid, def) values (me, it ->> 'instanceId', it ->> 'defId') on conflict (user_id, uid) do update set alive = true;
+  end if;
+  update public.market_listings set status = 'sold', buyer = me, closed_at = now() where id = l.id;
+  tax := ceil(l.price * (M ->> 'tax')::numeric);
+  insert into public.market_mail (user_id, kind, gold, note, listing, available_at)
+  values (l.seller, 'gold', l.price - tax, 'sold', l.id, now() + make_interval(hours => (M ->> 'holdH')::int));
+  -- GM flags (thresholds in market_cfg().flag)
+  select count(*) into pairs from public.market_listings where seller = l.seller and buyer = me and status = 'sold'
+     and closed_at > now() - make_interval(days => (M -> 'flag' ->> 'pairDays')::int);
+  if pairs >= (M -> 'flag' ->> 'pairN')::int then
+    perform public.econ_flag(me, 'market_pair', jsonb_build_object('kind', 'market_pair', 'seller', l.seller, 'buyer', me, 'n', pairs, 'listing', l.id), false);
+    perform public.econ_flag(l.seller, 'market_pair', jsonb_build_object('kind', 'market_pair', 'seller', l.seller, 'buyer', me, 'n', pairs, 'listing', l.id), false);
+  end if;
+  if l.price >= l.ref * (M -> 'flag' ->> 'high')::numeric then
+    perform public.econ_flag(me, 'market_high', jsonb_build_object('kind', 'market_high', 'seller', l.seller, 'listing', l.id, 'price', l.price, 'ref', l.ref), false);
+  end if;
+  if l.price >= l.ref * (M -> 'flag' ->> 'snipeX')::numeric and now() - l.visible_at < make_interval(mins => (M -> 'flag' ->> 'snipeMin')::int) then
+    perform public.econ_flag(me, 'market_snipe', jsonb_build_object('kind', 'market_snipe', 'seller', l.seller, 'buyer', me, 'listing', l.id, 'price', l.price, 'ref', l.ref,
+                                                                    'secs', round(extract(epoch from now() - l.visible_at))), false);
+  end if;
+  if l.price >= l.ref * (M -> 'flag' ->> 'youngX')::numeric then
+    perform public.econ_flag(y.id, 'market_newbie', jsonb_build_object('kind', 'market_newbie', 'seller', l.seller, 'buyer', me, 'listing', l.id, 'price', l.price, 'ref', l.ref), false)
+       from auth.users y left join public.saves s on s.user_id = y.id
+      where y.id in (me, l.seller) and not public.is_gm(y.id)
+        and (y.created_at > now() - make_interval(days => (M -> 'flag' ->> 'youngDays')::int)
+             or public.lb_num(s.data -> 'player' -> 'level') < (M -> 'flag' ->> 'youngLv')::int);
+  end if;
+  return public.market_write(me, nd) || jsonb_build_object('item', it);
+end $$;
+
+-- ---------- mailbox → save (all that are ready and fit) ----------
+create or replace function public.market_claim(p_session uuid, p_rev bigint)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); chk jsonb; d jsonb; nd jsonb; m record; it jsonb; got int := 0; gold bigint := 0; left_ int := 0;
+begin
+  chk := public.market_lock(me, p_session, p_rev);
+  if not (chk ->> 'ok')::boolean and chk ->> 'reason' not in ('level', 'new') then return chk; end if;  -- what's already yours can always come home
+  if not (chk ->> 'ok')::boolean then
+    select jsonb_build_object('ok', true, 'data', data) into chk from public.saves where user_id = me;
+  end if;
+  d := chk -> 'data';
+  for m in select * from public.market_mail where user_id = me and claimed_at is null and available_at <= now() order by id for update loop
+    if m.kind = 'gold' then
+      d := jsonb_set(d, '{player,gold}', to_jsonb(public.econ_n(d -> 'player' -> 'gold') + m.gold));
+      gold := gold + m.gold;
+    else
+      it := m.item - 'equipped';
+      if it ->> 'kind' = 'equipment' then it := it || jsonb_build_object('instanceId', 'eq_r' || m.id, 'equipped', false); end if;
+      nd := public.market_stash(d, it);
+      if nd is null then left_ := left_ + 1; continue; end if;
+      d := nd;
+      if it ->> 'kind' = 'equipment' then
+        insert into public.item_registry (user_id, uid, def) values (me, it ->> 'instanceId', it ->> 'defId') on conflict (user_id, uid) do update set alive = true;
+      end if;
+    end if;
+    update public.market_mail set claimed_at = now() where id = m.id;
+    got := got + 1;
+  end loop;
+  if got = 0 then return jsonb_build_object('ok', false, 'reason', case when left_ > 0 then 'full' else 'empty' end); end if;
+  return public.market_write(me, d) || jsonb_build_object('got', got, 'goldGot', gold, 'left', left_);
+end $$;
+
+-- ---------- browse ----------
+-- p_f: {cat, wtype, rar:[..], tmin, tmax, rmin, pmin, pmax, defs:[..], stats:[..], sort: cheap|dear|new|ending|deal|ref}
+create or replace function public.market_search(p_f jsonb)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); f jsonb := coalesce(p_f, '{}'::jsonb); res jsonb;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  perform public.market_tick();
+  select coalesce(jsonb_agg(public.market_row(x.l, me) order by x.rn), '[]'::jsonb) into res from (
+    select l, row_number() over (order by
+        case f ->> 'sort' when 'dear' then -l.price when 'cheap' then l.price when 'ref' then -l.ref end nulls last,
+        case f ->> 'sort' when 'deal' then l.price::numeric / greatest(l.ref, 1) end nulls last,
+        case f ->> 'sort' when 'ending' then l.expires_at end nulls last,
+        l.visible_at desc) rn
+      from public.market_listings l
+     where l.status = 'active' and l.expires_at > now() and (l.visible_at <= now() or l.seller = me)
+       and (f ->> 'cat' is null or l.cat = f ->> 'cat')
+       and (f ->> 'wtype' is null or l.wtype = f ->> 'wtype')
+       and (jsonb_typeof(f -> 'rar') is distinct from 'array' or jsonb_array_length(f -> 'rar') = 0 or (f -> 'rar') ? coalesce(l.rarity, ''))
+       and (f ->> 'tmin' is null or l.tier >= (f ->> 'tmin')::int)
+       and (f ->> 'tmax' is null or l.tier <= (f ->> 'tmax')::int)
+       and (f ->> 'rmin' is null or l.refine >= (f ->> 'rmin')::int)
+       and (f ->> 'pmin' is null or l.price >= (f ->> 'pmin')::bigint)
+       and (f ->> 'pmax' is null or l.price <= (f ->> 'pmax')::bigint)
+       and (jsonb_typeof(f -> 'defs') is distinct from 'array' or (f -> 'defs') ? l.def or (f -> 'defs') ? regexp_replace(l.def, '_t[0-9]+$', ''))
+       and (jsonb_typeof(f -> 'stats') is distinct from 'array'
+            or not exists (select 1 from jsonb_array_elements_text(f -> 'stats') s where public.econ_n(l.item -> 'rolledStats' -> s) <= 0))
+     order by rn limit 300) x;
+  return jsonb_build_object('ok', true, 'rows', res, 'now', now());
+end $$;
+
+-- my side of the market: who may trade, my listings (active + last 7 days), mailbox, knobs
+create or replace function public.market_home()
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); M jsonb := public.market_cfg(); lv int;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  perform public.market_tick();
+  lv := public.lb_num((select data -> 'player' -> 'level' from public.saves where user_id = me));
+  return jsonb_build_object('ok', true, 'now', now(), 'cfg', M, 'why', public.market_ineligible(me),
+    'tg', (select jsonb_object_agg(t.key, (select avg(v::numeric) from (select jsonb_array_elements_text(t.value -> 'g') v limit 5) x))
+             from jsonb_each(public.econ_data() -> 'tiers') t),
+    'price', public.econ_data() -> 'price', 'eqPrice', public.econ_data() -> 'eqPrice', 'cards', public.econ_data() -> 'cards',
+    'slots', least((M ->> 'slots')::int + lv / 20, (M ->> 'slotsMax')::int),
+    'mine', (select coalesce(jsonb_agg(public.market_row(l, me) || jsonb_build_object('fee', l.fee, 'closed', l.closed_at) order by l.status <> 'active', l.created_at desc), '[]'::jsonb)
+               from (select * from public.market_listings where seller = me and (status = 'active' or closed_at > now() - interval '7 days')
+                      order by created_at desc limit 60) l),
+    'mail', (select coalesce(jsonb_agg(jsonb_build_object('id', id, 'kind', kind, 'gold', gold, 'item', item, 'note', note, 'at', available_at, 'ready', available_at <= now()) order by id), '[]'::jsonb)
+               from public.market_mail where user_id = me and claimed_at is null));
+end $$;
+
+-- recent sale prices of one item kind (all tiers of the same base when p_def has no _tN)
+create or replace function public.market_history(p_def text)
+returns jsonb language sql stable security definer set search_path = public as $$
+  select coalesce(jsonb_agg(jsonb_build_object('price', price, 'qty', qty, 'tier', tier, 'refine', refine, 'at', closed_at) order by closed_at desc), '[]'::jsonb)
+    from (select * from public.market_listings where status = 'sold' and (def = p_def or regexp_replace(def, '_t[0-9]+$', '') = p_def)
+           order by closed_at desc limit 12) x $$;
+
+revoke execute on function public.market_cfg(), public.market_nice(numeric), public.market_ref(jsonb, int), public.market_ineligible(uuid),
+  public.market_tick(), public.market_row(public.market_listings, uuid), public.market_lock(uuid, uuid, bigint), public.market_write(uuid, jsonb),
+  public.market_stash(jsonb, jsonb) from public, anon, authenticated;
+revoke execute on function public.market_list(uuid, bigint, text, text, int, bigint, int), public.market_cancel(bigint),
+  public.market_buy(uuid, bigint, bigint, bigint), public.market_claim(uuid, bigint), public.market_search(jsonb),
+  public.market_home(), public.market_history(text) from public, anon;
+grant execute on function public.market_list(uuid, bigint, text, text, int, bigint, int), public.market_cancel(bigint),
+  public.market_buy(uuid, bigint, bigint, bigint), public.market_claim(uuid, bigint), public.market_search(jsonb),
+  public.market_home(), public.market_history(text) to authenticated;
 ------------------------------------------------------------------------------------------------ -->
 </body>
 </html>
