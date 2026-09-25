@@ -2735,7 +2735,8 @@ const BATTLE_TRIGGER_DIST = 32;
 const DODGE_COOLDOWN = 1000; // ms, per requirements
 const PLAYER_OVERWORLD_SCALE = 1.5;
 const MONSTER_OVERWORLD_SCALE = 1.5;
-const PLAYER_BATTLE_SCALE = 2.6 * 1.5;
+const PLAYER_BATTLE_SCALE = 2.6 * 1.5 * 1.35; // big and close to the camera, so the monster reads as standing further away
+const PLAYER_BATTLE_X = 0.22, PLAYER_BATTLE_FEET_Y = 0.98;
 const MONSTER_BATTLE_SCALE = 2.2 * 1.5;
 const BOSS_BATTLE_SCALE = 3.6;
 const DODGE_LANE_OFFSET = 90;
@@ -3920,7 +3921,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 24;
+const GAME_VERSION = 26;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -7200,8 +7201,8 @@ function usePlayerSkill(skillId){
     m.hp -= dmg; m.hitFlash = 1; m.shake = 12;
     addStun(STUN_FILL_SKILL_MULT);
     spawnBattleMsg((isCrit ? "คริ! " : "") + "โจมตีหนัก -" + dmg, "#ff9d3f");
-    spawnEffect("slash", 0.62, 0.46, true, isMasteryMaxed());
-    spawnEffect("impact", 0.62, 0.46, isCrit);
+    spawnEffect("slash", 0.62, battleMonYFrac, true, isMasteryMaxed());
+    spawnEffect("impact", 0.62, battleMonYFrac, isCrit);
     sfx.crit();
     gainWeaponMastery(2);
     const weaponType = getEquippedWeaponMasteryType();
@@ -7274,7 +7275,7 @@ function landSkillHit(stats, mult, forceCrit, label, color){
   if(dmg > b.stats.maxHit) b.stats.maxHit = dmg;
   if(isCrit) b.stats.critHits++;
   spawnBattleMsg((isCrit ? "คริ! " : "") + label + " -" + dmg, color, isCrit ? "crit" : "perfect");
-  spawnEffect("impact", 0.62, 0.46, isCrit);
+  spawnEffect("impact", 0.62, battleMonYFrac, isCrit);
   return dmg;
 }
 
@@ -7335,7 +7336,7 @@ function castWeaponActiveSkill(skillId, skillDef, now){
   }
   if(empowered) mult *= getEmpowerMult();
   if(empowered) spawnCallout("EMPOWERED!", "#ffd166");
-  spawnEffect("slash", 0.62, 0.46, true, isMasteryMaxed());
+  spawnEffect("slash", 0.62, battleMonYFrac, true, isMasteryMaxed());
   gainWeaponMastery(2); // same as heavy_attack
   train(skillId);
 
@@ -7945,7 +7946,7 @@ function applyWeaponProcs(stats, dmgDealt){
     const bonus = Math.round((randInt(6,12) + Math.floor(p.level*1.2)) * getLevelGapPenaltyMult(b.def.level));
     m.hp -= bonus;
     m.hitFlash = 1; m.shake = Math.max(m.shake, 8);
-    spawnEffect("impact", 0.62, 0.46, false);
+    spawnEffect("impact", 0.62, battleMonYFrac, false);
     spawnBattleMsg("⚡ -" + bonus, "#7fd8ff", "lightning");
     sfx.crit();
     b.stats.totalDamage += bonus;
@@ -7981,8 +7982,8 @@ function battleAttack(){
 
     m.hp -= dmg;
     m.hitFlash = 1; m.shake = 10;
-    spawnEffect("slash", 0.62, 0.46, true, isMasteryMaxed());
-    spawnEffect("impact", 0.62, 0.46, true, false, "counter");
+    spawnEffect("slash", 0.62, battleMonYFrac, true, isMasteryMaxed());
+    spawnEffect("impact", 0.62, battleMonYFrac, true, false, "counter");
     spawnBattleMsg((isCrit ? "คริ! " : "") + "สวนกลับ! -" + dmg, "#ffb84d", "counter");
     spawnCallout("COUNTER!", "#ffb84d");
     sfx.counter();
@@ -8028,7 +8029,7 @@ function battleAttack(){
   rerollBowTargetZone();
   rerollOrbGestureShape();
 
-  spawnEffect("slash", 0.62, 0.46, false, isMasteryMaxed()); // the swing itself always plays, hit or miss
+  spawnEffect("slash", 0.62, battleMonYFrac, false, isMasteryMaxed()); // the swing itself always plays, hit or miss
 
   if(Math.random() > stats.accuracy){
     sfx.miss();
@@ -8085,7 +8086,7 @@ function battleAttack(){
       if(wind){ b.lastDodge -= wind; train("wind_step"); }
     }
     if(getEquippedWeaponMasteryType() === "bow" && battleClickPoint && requiredBowZone){
-      const mx = battleCanvas.width * 0.62, my = battleCanvas.height * 0.46;
+      const mx = battleCanvas.width * 0.62, my = battleCanvas.height * battleMonYFrac;
       const zoneCircles = getBowZoneCircles(b, mx, my)[requiredBowZone];
       if(isPointInAnyCircle(battleClickPoint.x, battleClickPoint.y, zoneCircles)){
         weaponInputBonus = true;
@@ -8121,7 +8122,7 @@ function battleAttack(){
   m.hp -= dmg;
   m.hitFlash = 1;
   m.shake = isCrit ? 10 : 6;
-  spawnEffect("impact", 0.62, 0.46, isCrit);
+  spawnEffect("impact", 0.62, battleMonYFrac, isCrit);
   gainWeaponMastery(1);
   b.stats.totalDamage += dmg;
   if(dmg > b.stats.maxHit) b.stats.maxHit = dmg;
@@ -8495,6 +8496,9 @@ function updateBattle(){
   renderAttackGauge();
 }
 
+// feet line of each painted battle backdrop (M1…M10), as a fraction of the picture's height
+const MAP_GROUND = { 1: 0.68, 2: 0.72, 3: 0.76, 4: 0.74, 5: 0.72, 6: 0.72, 7: 0.74, 8: 0.72, 9: 0.74, 10: 0.8 };
+let battleMonYFrac = 0.46; // monster centre (fraction of the battle canvas height) — hit effects and bow zones follow it
 function renderBattle(){
   if(!game.battle) return; // battle may have just ended (win/lose) this frame
   const b = game.battle, p = game.player, m = b.monster;
@@ -8503,9 +8507,11 @@ function renderBattle(){
 
   bctx.save();
   const bgImg = SPRITES_OK && MAP_ART[game.mapTier] && !m.isSpyBoss ? spriteImg(MAP_ART[game.mapTier]) : null;
+  let monGroundY = null; // where the monster's feet touch the painted ground (px), or null on the plain backdrop
   if(bgImg){ // painted map backdrop, cover-fit, with a soft dark floor so the UI and numbers stay readable
     const k = Math.max(w / bgImg.naturalWidth, h / bgImg.naturalHeight), iw = bgImg.naturalWidth * k, ih = bgImg.naturalHeight * k;
     bctx.drawImage(bgImg, (w - iw) / 2, (h - ih) * 0.6, iw, ih);
+    monGroundY = (h - ih) * 0.6 + (MAP_GROUND[game.mapTier] || 0.7) * ih;
     const shade = bctx.createLinearGradient(0, h * 0.55, 0, h);
     shade.addColorStop(0, "rgba(10,6,24,0)"); shade.addColorStop(1, "rgba(10,6,24,.45)");
     bctx.fillStyle = shade; bctx.fillRect(0, h * 0.55, w, h * 0.45);
@@ -8518,11 +8524,14 @@ function renderBattle(){
   }
 
   // monster, centered-right, drawn larger via scale transform (with hit-shake jitter)
-  const mx = w*0.62, my = h*0.46;
+  const battleScale = (b.def.isBoss ? BOSS_BATTLE_SCALE : MONSTER_BATTLE_SCALE) * (m.isElite ? 1.35 : 1);
+  // painted maps: stand the monster on the ground in the picture (feet = its sprite's bottom edge)
+  const mFeet = getMonsterSpriteBaseExtents(b.def).ry * battleScale;
+  const mx = w*0.62, my = monGroundY != null ? clamp(monGroundY - mFeet, h * 0.46, h * 0.72) : h*0.46;
+  battleMonYFrac = my / h;
   const bob = Math.sin(now/220) * 4;
   const mShakeX = m.shake > 0 ? (Math.random()-0.5) * m.shake : 0;
   const mShakeY = m.shake > 0 ? (Math.random()-0.5) * m.shake : 0;
-  const battleScale = (b.def.isBoss ? BOSS_BATTLE_SCALE : MONSTER_BATTLE_SCALE) * (m.isElite ? 1.35 : 1);
   bctx.save();
   bctx.translate(mx + mShakeX, my + mShakeY);
   bctx.scale(battleScale, battleScale);
@@ -8560,7 +8569,7 @@ function renderBattle(){
   // player, back view, bottom-left, offset for dodge (with hurt-shake jitter)
   const pShakeX = b.playerShake > 0 ? (Math.random()-0.5) * b.playerShake : 0;
   const pShakeY = b.playerShake > 0 ? (Math.random()-0.5) * b.playerShake : 0;
-  const px = w*0.28 + b.visualOffset + pShakeX, py = h*0.8 + pShakeY;
+  const px = w*PLAYER_BATTLE_X + b.visualOffset + pShakeX, py = h*PLAYER_BATTLE_FEET_Y + pShakeY;
   bctx.save(); bctx.translate(px,py); bctx.scale(PLAYER_BATTLE_SCALE, PLAYER_BATTLE_SCALE); bctx.translate(-px,-py);
   const battleAuraColor = getActivePlayerAuraColor();
   if(battleAuraColor) drawEliteAura(bctx, px, py - 4, 26, battleAuraColor);
@@ -8610,7 +8619,8 @@ function renderBattle(){
   // monster attack projectile — shoots toward the side it's about to hit
   if(b.telegraphSide !== null){
     const progress = clamp((now - b.telegraphStart) / b.telegraphTotalMs, 0, 1);
-    const posAt = t => getProjectilePos(b, t, mx, my, py, w);
+    const hitY = py - SPRITE_H * PLAYER_BATTLE_SCALE * 0.45; // aim at the chest, not the feet
+    const posAt = t => getProjectilePos(b, t, mx, my, hitY, w);
     const { x: projX, y: projY } = posAt(progress);
     const projColor = hexToRgb(b.def.color);
 
@@ -8622,7 +8632,7 @@ function renderBattle(){
     }
 
     const prev = posAt(Math.max(0, progress - 0.02));
-    const angle = Math.atan2(projY - prev.y, projX - prev.x) || Math.atan2(py - my, posAt(1).x - mx);
+    const angle = Math.atan2(projY - prev.y, projX - prev.x) || Math.atan2(hitY - my, posAt(1).x - mx);
     bctx.save();
     bctx.translate(projX, projY);
     bctx.rotate(angle);
@@ -8803,7 +8813,7 @@ function renderBattle(){
 // feint it keeps its original heading at the switch point and bends smoothly into the new lane
 // (quadratic curve through where the original path was heading) instead of jumping across.
 function getProjectilePos(b, t, mx, my, py, w){
-  const laneOf = side => w*0.28 + (side === "left" ? -DODGE_LANE_OFFSET : DODGE_LANE_OFFSET);
+  const laneOf = side => w*PLAYER_BATTLE_X + (side === "left" ? -DODGE_LANE_OFFSET : DODGE_LANE_OFFSET);
   const straight = (side, u) => ({ x: mx + (laneOf(side) - mx) * u, y: my + (py - my) * u });
   const ps = b.feintSwitchProgress;
   if(ps == null) return straight(b.telegraphSide, t);
