@@ -114,14 +114,30 @@
   #gameCanvas{ position:absolute; inset:0; display:block; width:100%; height:100%; background:#7fbf8a; z-index:1; }
 
   #hud{
-    position:absolute; top:12px; left:12px; background:rgba(20,16,40,.72);
-    color:#fff; padding:10px 14px; border-radius:10px; min-width:220px; font-size:13px; z-index:10;
+    position:absolute; top:12px; left:12px; width:250px; z-index:10; cursor:pointer; color:#fff; font-size:13px;
+    padding:10px 12px 9px; border-radius:14px; border:1px solid rgba(255,209,102,.55);
+    background:linear-gradient(160deg, rgba(52,36,92,.9), rgba(16,12,34,.9));
+    box-shadow:0 8px 22px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.06), inset 0 1px 0 rgba(255,236,170,.25);
+    transition:transform .12s, box-shadow .15s, border-color .15s;
   }
-  #hud .name-row{ display:flex; justify-content:space-between; font-weight:bold; margin-bottom:6px; }
+  #hud:hover{ border-color:#ffd166; box-shadow:0 10px 26px rgba(0,0,0,.5), 0 0 14px rgba(255,209,102,.35); transform:translateY(-1px); }
+  #hud .hud-top{ display:flex; gap:10px; align-items:center; margin-bottom:7px; }
+  #hud .hud-ava{ position:relative; flex:0 0 auto; width:60px; height:60px; border-radius:50%; overflow:visible;
+    background:radial-gradient(circle at 50% 35%, #3b2f6e, #140f2a 72%); border:2px solid #ffd166; box-shadow:0 0 10px rgba(255,209,102,.35); }
+  #hud .hud-ava canvas{ width:56px; height:56px; border-radius:50%; display:block; }
+  #hudLevel{ position:absolute; left:50%; bottom:-8px; transform:translateX(-50%); white-space:nowrap; font-size:10.5px; font-weight:bold;
+    padding:1px 7px; border-radius:9px; background:linear-gradient(180deg,#ffe08a,#e0a32a); color:#3a2400; border:1px solid #7a5200; }
+  #hud .hud-id{ min-width:0; flex:1; }
+  #hud .name-row{ font-weight:bold; font-size:15px; letter-spacing:.2px; text-shadow:0 1px 2px #000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #hudMap{ font-size:10.5px; color:#cfc6ea; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #hud .hud-bar{ display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+  #hud .hud-bar i{ font-style:normal; font-size:11px; width:15px; text-align:center; }
+  #hud .hud-bar .bar-bg{ position:relative; flex:1; height:13px; margin:0; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.12); }
+  #hud .bar-txt{ position:absolute; inset:0; font-size:9.5px; line-height:12px; text-align:center; font-weight:bold; text-shadow:0 1px 2px #000, 0 0 2px #000; pointer-events:none; }
   .bar-bg{ background:rgba(255,255,255,.2); border-radius:6px; height:10px; margin-bottom:5px; overflow:hidden; }
   .bar-fill{ height:100%; border-radius:6px; transition: width .2s; }
-  #hud .gold{ margin-top:4px; color:var(--gold); font-weight:bold; }
-  #hudTitle{ font-size:11px; color:var(--gold); margin-bottom:4px; }
+  #hud .gold{ margin-top:5px; color:var(--gold); font-weight:bold; }
+  #hudTitle{ font-size:11px; color:var(--gold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #letterOverlay{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:16px;
     background:rgba(10,6,18,.62); animation:ltFade .25s ease; }
   #letterOverlay[hidden]{ display:none; }
@@ -156,7 +172,7 @@
   .letter-paper .lt-empty{ font-size:12px; color:#8a7658; font-style:italic; }
   .letter-book-btn{ font-size:11.5px; padding:2px 9px; border-radius:12px; border:1px solid rgba(255,209,102,.45); background:rgba(0,0,0,.25); color:#ffe6a6; cursor:pointer; }
   .letter-book-btn:hover{ border-color:#ffd166; }
-  #storyTracker{ position:absolute; top:62px; right:12px; width:260px; z-index:9; cursor:pointer;
+  #storyTracker{ position:absolute; top:100px; right:12px; width:260px; z-index:9; cursor:pointer;
     background:linear-gradient(180deg, rgba(42,26,6,.86), rgba(20,16,40,.8)); border:1px solid rgba(255,209,102,.45);
     color:#fff; padding:8px 12px; border-radius:10px; font-size:12px; line-height:1.45; box-shadow:0 4px 14px rgba(0,0,0,.3); }
   #storyTracker:empty{ display:none; }
@@ -173,7 +189,9 @@
     font-size:12px; pointer-events:none; z-index:10;
   }
 
-  #topMenu{ position:absolute; top:12px; right:12px; display:flex; gap:8px; z-index:10; }
+  /* two tidy rows of equal buttons (5 on top), right-aligned, so small screens don't cover the HUD */
+  #topMenu{ position:absolute; top:12px; right:12px; width:626px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; z-index:10; }
+  #topMenu > .menu-btn{ width:120px; padding:7px 6px; font-size:12.5px; white-space:nowrap; }
 
   #discoveryBanner{
     position:absolute; top:70px; left:50%; transform:translateX(-50%) scale(0.85);
@@ -871,6 +889,12 @@
   .hdr-chip + .hdr-chip{ margin-left:0; }
   .panel h4{ color:#6a5f7e; }
   .slot-item{ transition:border-color .15s, box-shadow .15s; }
+  .travel-row{ width:100%; margin-bottom:6px; font:inherit; font-size:13.5px; text-align:left; color:#2d2a32; cursor:pointer; padding:9px 12px; }
+  .travel-row .tr-go{ font-size:12px; font-weight:bold; color:#5b4a9a; opacity:.55; transition:opacity .15s, transform .15s; }
+  .travel-row:hover{ border-color:#7a64c8; box-shadow:0 3px 10px rgba(91,74,154,.25); background:linear-gradient(90deg,#fff,#f1ecff); }
+  .travel-row:hover .tr-go{ opacity:1; transform:translateX(3px); }
+  .travel-row.here{ cursor:default; background:#f4efe0; }
+  .travel-row.here .tr-go{ color:#8a7658; opacity:.9; }
   .slot-item:hover{ border-color:#cdbb8a; box-shadow:0 2px 8px rgba(90,70,20,.08); }
   .slot-item button{ transition:filter .12s, transform .08s; }
   .slot-item button:hover:not(:disabled){ filter:brightness(1.18); }
@@ -1189,13 +1213,18 @@
   <canvas id="battleCanvas"></canvas>
   <canvas id="minimapCanvas" width="180" height="120"></canvas>
 
-  <div id="hud">
-    <div class="name-row"><span id="hudName">-</span><span id="hudLevel">Lv.1</span></div>
-    <div id="hudTitle" hidden></div>
-    <div id="hudMap" style="font-size:10px; color:#d8d3e8; margin-bottom:4px;"></div>
-    <div class="bar-bg"><div class="bar-fill" id="hpBar" style="width:100%; background:var(--hp);"></div></div>
-    <div class="bar-bg"><div class="bar-fill" id="expBar" style="width:0%; background:var(--exp);"></div></div>
-    <div class="bar-bg" style="height:6px;"><div class="bar-fill" id="sanityBar" style="width:100%; background:#c15ce0;"></div></div>
+  <div id="hud" title="คลิกเพื่อดูข้อมูลตัวละครของคุณ">
+    <div class="hud-top">
+      <div class="hud-ava"><canvas id="hudAvatar" width="60" height="60"></canvas><span id="hudLevel">Lv.1</span></div>
+      <div class="hud-id">
+        <div class="name-row"><span id="hudName">-</span></div>
+        <div id="hudTitle" hidden></div>
+        <div id="hudMap"></div>
+      </div>
+    </div>
+    <div class="hud-bar"><i>❤️</i><div class="bar-bg"><div class="bar-fill" id="hpBar" style="width:100%; background:linear-gradient(90deg,#c9184a,#ff4d6d);"></div><span class="bar-txt" id="hpText"></span></div></div>
+    <div class="hud-bar"><i>✨</i><div class="bar-bg"><div class="bar-fill" id="expBar" style="width:0%; background:linear-gradient(90deg,#1b9e77,#3ee6a8);"></div><span class="bar-txt" id="expText"></span></div></div>
+    <div class="hud-bar"><i>🧘</i><div class="bar-bg"><div class="bar-fill" id="sanityBar" style="width:100%; background:#c15ce0;"></div><span class="bar-txt" id="sanityText"></span></div></div>
     <div class="gold">💰 <span id="hudGold">0</span></div>
     <div id="hudNet" hidden>⚠ ขาดการเชื่อมต่อ — จะบันทึกเมื่อกลับมาออนไลน์</div>
   </div>
@@ -4194,7 +4223,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 39;
+const GAME_VERSION = 40;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -4973,6 +5002,19 @@ async function openProfile(id, name, from){
     renderProfile();
   }catch(err){ document.getElementById("profileBody").innerHTML = `<div class="empty-note">${netEsc(err.message)}</div>`; }
 }
+// your own card — built from the local save (no server call), same layout other players see
+function openSelfProfile(){
+  closeAllPanels();
+  const p = game.player, inv = id => game.inventory.find(e => e.instanceId === id) || null;
+  soc.profile = { id:"self", name:p.name, data:{ ok:true, name:p.name, level:p.level, maxDimension:game.maxDimension || 1,
+    maxMapTierReachedDim1:game.maxMapTierReachedDim1, dimReach:game.dimReach || {}, willColor:p.willColor,
+    weapon:inv(p.equipment.weapon), weaponRank:p.weaponRank, equipment:p.equipment,
+    equipped:EQUIPMENT_SLOTS.map(sk => inv(p.equipment[sk])).filter(Boolean), statPoints:p.statPoints,
+    title:p.title, look:p.look, online:true, gm:!!net.admin } };
+  document.getElementById("profileBackBtn").hidden = true;
+  document.getElementById("profilePanel").hidden = false;
+  renderProfile();
+}
 function renderProfile(){
   const { id, data: d } = soc.profile;
   const name = String(d.name || "?").slice(0, 20), st = socState(id);
@@ -5010,12 +5052,13 @@ function renderProfile(){
         <div class="pf-badges"><span>Lv.${level}</span><span>🌌 มิติ ${maxDim}</span><span>🗺️ แมพ ${reach}</span></div>
         <div class="pf-will"><i style="background:${will.color}; box-shadow:0 0 8px ${will.color}"></i>${will.name}</div>
       </div>
-      <div class="pf-status"><span class="net-dot${d.online ? "" : " off"}"></span>${d.online ? "ออนไลน์" : "ออฟไลน์"}${st === "friends" ? "<br><small>👥 เพื่อน</small>" : ""}</div>
+      <div class="pf-status">${id === "self" ? "⭐ ตัวคุณเอง" : `<span class="net-dot${d.online ? "" : " off"}"></span>${d.online ? "ออนไลน์" : "ออฟไลน์"}`}${st === "friends" ? "<br><small>👥 เพื่อน</small>" : ""}</div>
     </div>
     <div class="pf-weapon">${weapon ? `<span class="pf-ic">${equipIconHtml(wdef)}</span><div><b>${netEsc(equipDisplayName(weapon))} <span class="pf-rar" style="background:${RARITY_DEFS[weapon.rarity].color}">${RARITY_DEFS[weapon.rarity].label}</span></b>
       <small>${wtype && WEAPON_CATEGORIES[wtype] ? WEAPON_CATEGORIES[wtype].icon + " " + WEAPON_CATEGORIES[wtype].name + " · Rank " + rankName : ""}</small></div>` : `<small>ไม่ได้ถืออาวุธ</small>`}</div>
     ${inspect}
-    ${net.user && id === net.user.id ? "" : `<div class="pf-actions">${st === "blocked" ? "" : `<button type="button" data-act="whisper">💬 กระซิบ</button>`}${friendBtn}
+    ${id === "self" ? `<div class="pf-actions"><button type="button" data-act="selfstatus">📋 ดูสถานะละเอียด</button><button type="button" data-act="selfbag">🎒 เปิดกระเป๋า</button></div>`
+      : net.user && id === net.user.id ? "" : `<div class="pf-actions">${st === "blocked" ? "" : `<button type="button" data-act="whisper">💬 กระซิบ</button>`}${friendBtn}
       <button type="button" data-act="report" class="warn">🚩 รายงาน</button>${net.admin && !d.gm ? `<button type="button" data-act="gm">🛡️ จัดการ (GM)</button>` : ""}</div>`}`;
   const cv = document.getElementById("profileAvatar");
   const c2 = cv.getContext("2d");
@@ -9222,6 +9265,20 @@ function addToInventory(itemId){
 /* ============================================================
    HUD / DIALOG / STORAGE UI
    ============================================================ */
+// only touch the DOM when the text really changed (updateHud runs every frame)
+function hudText(id, t){ const el = document.getElementById(id); if(el && el.textContent !== t) el.textContent = t; }
+// little round portrait: the hero's head and shoulders, redrawn only when the look (or its sprite) changes
+let hudAvatarKey = "";
+function drawHudAvatar(){
+  const look = game.player.look, key = JSON.stringify(look) + (spriteReadyFor(look) ? "1" : "0");
+  if(key === hudAvatarKey) return;
+  hudAvatarKey = key;
+  const cv = document.getElementById("hudAvatar"); if(!cv || !cv.getContext) return;
+  const big = document.createElement("canvas"); big.width = 240; big.height = 300;
+  drawCharacterAt(big.getContext("2d"), 120, 292, look, 3, "down", null);
+  const c = cv.getContext("2d"); c.clearRect(0, 0, 60, 60);
+  c.drawImage(big, 45, 0, 150, 150, 0, 2, 60, 60); // head & shoulders
+}
 function updateHud(){
   if(!game) return;
   const p = game.player;
@@ -9234,8 +9291,13 @@ function updateHud(){
   mapEl.textContent = game.mapTier === TOWN_TIER
     ? "🏙️ " + TOWN_DEF.name
     : `🗺️ แมพ ${game.mapTier}: ${getMapDisplayDef(game.mapTier).name}` + (game.maxDimension > 1 ? ` · มิติ ${game.dimension}` : "");
-  document.getElementById("hpBar").style.width = clamp(p.hp/getEffectiveMaxHp(),0,1)*100 + "%";
+  const maxHp = getEffectiveMaxHp();
+  document.getElementById("hpBar").style.width = clamp(p.hp/maxHp,0,1)*100 + "%";
   document.getElementById("expBar").style.width = clamp(p.exp/p.expNeeded,0,1)*100 + "%";
+  hudText("hpText", Math.max(0, Math.round(p.hp)) + " / " + Math.round(maxHp));
+  hudText("expText", "EXP " + (clamp(p.exp/p.expNeeded,0,1)*100).toFixed(1) + "%");
+  hudText("sanityText", "สติ " + Math.round(p.sanity) + " / " + SANITY_MAX);
+  drawHudAvatar();
   const sanityBarEl = document.getElementById("sanityBar");
   sanityBarEl.style.width = clamp(p.sanity/SANITY_MAX,0,1)*100 + "%";
   sanityBarEl.style.background = p.sanity < SANITY_SAFE_THRESHOLD ? "#e05fd0" : "#c15ce0";
@@ -10857,16 +10919,20 @@ function interactWithTravelGate(){
   renderTravelPanel();
   document.getElementById("travelPanel").hidden = false;
 }
+// one clickable row per destination (click anywhere on it); the current spot is shown but not clickable
+function travelRow(label, go){
+  const row = document.createElement(go ? "button" : "div");
+  row.className = "slot-item travel-row" + (go ? "" : " here");
+  if(go) row.type = "button";
+  row.innerHTML = `<span>${label}</span><span class="tr-go">${go ? "วาป ➜" : "📍 อยู่ที่นี่"}</span>`;
+  if(go) row.addEventListener("click", ()=>{ sfx.click(); document.getElementById("travelPanel").hidden = true; go(); });
+  return row;
+}
 function renderTravelPanel(){
   const list = document.getElementById("travelList");
   list.innerHTML = "";
   if(game.mapTier !== TOWN_TIER){
-    const row = document.createElement("div"); row.className = "slot-item";
-    row.innerHTML = `<span>🏙️ ${TOWN_DEF.name}</span>`;
-    const btn = document.createElement("button"); btn.textContent = "วาปไป";
-    btn.addEventListener("click", ()=>{ sfx.click(); document.getElementById("travelPanel").hidden = true; warpToMap(TOWN_TIER); });
-    row.appendChild(btn);
-    list.appendChild(row);
+    list.appendChild(travelRow(`🏙️ ${TOWN_DEF.name}`, ()=> warpToMap(TOWN_TIER)));
   }
   // Layer tabs — only once a second layer exists. Any unlocked layer and any map reached in it is open (farming allowed).
   if(travelDimView < 1 || travelDimView > game.maxDimension) travelDimView = game.dimension;
@@ -10894,14 +10960,7 @@ function renderTravelPanel(){
   for(let tier = getDimReach(dim); tier >= 1; tier--){
     const mapDef = MAP_DEFS[tier-1];
     const isCurrent = tier === game.mapTier && dim === game.dimension;
-    const row = document.createElement("div"); row.className = "slot-item";
-    row.innerHTML = `<span>🗺️ แมพ ${tier}: ${mapDef.name}${isCurrent ? " (อยู่ที่นี่)" : ""}</span>`;
-    if(!isCurrent){
-      const btn = document.createElement("button"); btn.textContent = "วาปไป";
-      btn.addEventListener("click", ()=>{ sfx.click(); document.getElementById("travelPanel").hidden = true; warpToMap(tier, dim); });
-      row.appendChild(btn);
-    }
-    list.appendChild(row);
+    list.appendChild(travelRow(`🗺️ แมพ ${tier}: ${mapDef.name}`, isCurrent ? null : ()=> warpToMap(tier, dim)));
   }
 }
 let travelDimView = 0; // which layer tab the travel panel shows (0 = follow the current layer)
@@ -12288,6 +12347,8 @@ document.getElementById("playerMenu").addEventListener("click", e => {
 });
 document.getElementById("profileBody").addEventListener("click", e => {
   const btn = e.target.closest("button[data-act]");
+  if(btn && btn.dataset.act === "selfstatus"){ sfx.click(); document.getElementById("statusBtn").click(); return; }
+  if(btn && btn.dataset.act === "selfbag"){ sfx.click(); document.getElementById("bagBtn").click(); return; }
   if(btn && !btn.disabled && soc.profile){ sfx.click(); socMenuAction(btn.dataset.act, soc.profile.id, soc.profile.name); }
 });
 document.getElementById("friendsBody").addEventListener("click", e => {
@@ -12863,6 +12924,7 @@ document.getElementById("rankBody").addEventListener("click", e => {
 });
 document.getElementById("closeRankBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("rankPanel").hidden = true; });
 document.getElementById("profileBackBtn").addEventListener("click", ()=>{ sfx.click(); openLeaderboard(false); });
+document.getElementById("hud").addEventListener("click", ()=>{ if(!game || game.inBattle) return; sfx.click(); openSelfProfile(); });
 document.getElementById("closeProfileBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("profilePanel").hidden = true; });
 document.getElementById("closeReportBtn").addEventListener("click", ()=>{ sfx.click(); document.getElementById("reportPanel").hidden = true; });
 document.getElementById("reportReasons").addEventListener("click", e => {
