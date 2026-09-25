@@ -53,7 +53,7 @@
   .creation-card{
     position:relative; background: rgba(22,19,46,.86); backdrop-filter: blur(3px);
     border:1px solid rgba(143,243,255,.3); border-radius: 14px;
-    padding: 22px 28px; width: 760px; max-width: 94vw; max-height: 92vh; overflow-y:auto;
+    padding: 22px 28px; width: 760px; max-width: calc(94vw / var(--uiz, 1)); max-height: calc(92vh / var(--uiz, 1)); overflow-y:auto;
     box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 24px 70px rgba(0,0,0,.6);
   }
   .creation-card h1{ margin: 0 0 8px; font-size: 25px; color:#fff; letter-spacing:.3px; }
@@ -126,7 +126,7 @@
     background:rgba(10,6,18,.62); animation:ltFade .25s ease; }
   #letterOverlay[hidden]{ display:none; }
   @keyframes ltFade{ from{ opacity:0; } to{ opacity:1; } }
-  .letter-paper{ position:relative; width:min(560px, 94vw); max-height:86vh; overflow:auto; padding:26px 30px 18px; border-radius:6px;
+  .letter-paper{ position:relative; width:min(560px, calc(94vw / var(--uiz, 1))); max-height:calc(86vh / var(--uiz, 1)); overflow:auto; padding:26px 30px 18px; border-radius:6px;
     background:linear-gradient(180deg, #f6ecd2, #ecdcb4); color:#3b2a18; box-shadow:0 12px 40px rgba(0,0,0,.55), inset 0 0 60px rgba(150,110,50,.25);
     border:1px solid #c9ad78; font-size:15px; line-height:1.75; animation:ltIn .35s ease; }
   @keyframes ltIn{ from{ transform:translateY(14px) rotate(-.6deg); opacity:0; } to{ transform:none; opacity:1; } }
@@ -188,7 +188,7 @@
   #dungeonPanel{
     position:absolute; top:130px; left:50%; transform:translateX(-50%);
     background:rgba(20,16,40,.88); color:#fff; padding:12px 18px; border-radius:12px;
-    z-index:11; text-align:center; width:280px; max-width:90vw; border:2px solid #ffd166;
+    z-index:11; text-align:center; width:280px; max-width:calc(90vw / var(--uiz, 1)); border:2px solid #ffd166;
     box-shadow:0 10px 30px rgba(0,0,0,.4);
   }
   #dungeonRoomProgress{ font-size:12px; color:#ffd166; font-weight:bold; margin-bottom:2px; }
@@ -345,11 +345,11 @@
   }
   #tutorialOverlay.show{ display:flex; }
   .tutorial-card{
-    background:var(--cream); border-radius:16px; padding:24px 28px; width:480px; max-width:88vw;
+    background:var(--cream); border-radius:16px; padding:24px 28px; width:480px; max-width:calc(88vw / var(--uiz, 1));
     box-shadow:0 20px 60px rgba(0,0,0,.5); text-align:center;
   }
   .tutorial-card h3{ margin:0 0 10px; color:#4b3f8f; font-size:19px; }
-  .tutorial-card p{ margin:0 0 20px; font-size:13.5px; line-height:1.6; color:#2D2A32; text-align:left; white-space:pre-line; max-height:52vh; overflow-y:auto; }
+  .tutorial-card p{ margin:0 0 20px; font-size:13.5px; line-height:1.6; color:#2D2A32; text-align:left; white-space:pre-line; max-height:calc(52vh / var(--uiz, 1)); overflow-y:auto; }
   .tutorial-dots{ display:flex; justify-content:center; gap:6px; margin-bottom:14px; }
   .tutorial-dots span{ width:7px; height:7px; border-radius:50%; background:#d8cdb0; display:inline-block; }
   .tutorial-dots span.active{ background:#4b3f8f; }
@@ -363,7 +363,7 @@
     background:radial-gradient(circle at 50% 40%, rgba(42,36,80,.85) 0%, rgba(20,16,31,.92) 70%);
   }
   #meditatePanel.show{ display:flex; }
-  .meditate-card{ width:420px; max-width:90vw; text-align:center; }
+  .meditate-card{ width:420px; max-width:calc(90vw / var(--uiz, 1)); text-align:center; }
   .meditate-title{ font-size:16px; color:#c9bfe0; letter-spacing:1px; margin-bottom:4px; }
   .meditate-sub{ font-size:12px; color:#8a7fa8; margin-bottom:20px; }
   .meditate-circle-wrap{ position:relative; width:200px; height:200px; margin:0 auto 22px; }
@@ -389,7 +389,7 @@
 
   .dialog-box{
     position:absolute; left:50%; bottom:90px; transform:translateX(-50%);
-    background:var(--cream); border-radius:12px; padding:14px 18px; width:340px; max-width:88vw;
+    background:var(--cream); border-radius:12px; padding:14px 18px; width:340px; max-width:calc(88vw / var(--uiz, 1));
     box-shadow:0 10px 30px rgba(0,0,0,.4); z-index:10;
   }
   .dialog-box h3{ margin:0 0 6px; color:#4b3f8f; font-size:16px; }
@@ -398,8 +398,8 @@
 
   .panel{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    background:var(--cream); border-radius:14px; padding:18px 20px; width:560px; max-width:92vw;
-    max-height:80vh; overflow-y:auto; overflow-x:hidden; box-shadow:0 20px 50px rgba(0,0,0,.5); z-index:12;
+    background:var(--cream); border-radius:14px; padding:18px 20px; width:560px; max-width:calc(92vw / var(--uiz, 1));
+    max-height:calc(80vh / var(--uiz, 1)); overflow-y:auto; overflow-x:hidden; box-shadow:0 20px 50px rgba(0,0,0,.5); z-index:12;
   }
   .panel h2{ margin:0 0 10px; color:#4b3f8f; font-size:18px; }
   .panel-cols{ display:flex; gap:16px; }
@@ -489,7 +489,7 @@
   .compare-line .up{ color:#1f9d55; font-weight:bold; } .compare-line .down{ color:#c9401f; font-weight:bold; }
   /* storage panel: wider, 6 per row each side, scrolls instead of growing forever */
   #storagePanel{ width:780px; }
-  #storagePanel .item-grid.compact{ grid-template-columns:repeat(6, minmax(0,1fr)); gap:6px; max-height:52vh; overflow-y:auto; padding:4px; align-content:start; }
+  #storagePanel .item-grid.compact{ grid-template-columns:repeat(6, minmax(0,1fr)); gap:6px; max-height:calc(52vh / var(--uiz, 1)); overflow-y:auto; padding:4px; align-content:start; }
   #storagePanel .item-slot{ font-size:20px; } #storagePanel .item-slot .icon-boost{ font-size:28px; }
 
   /* Paper-doll style equipment slot grid in the status panel */
@@ -616,7 +616,7 @@
   #hudNet{ margin-top:5px; font-size:11px; color:#ffb3b3; }
   #hudNet[hidden]{ display:none; }
 
-  #chatBox{ position:absolute; left:12px; bottom:12px; width:340px; max-width:calc(100vw - 24px); z-index:11; display:flex; flex-direction:column; gap:5px; pointer-events:none; }
+  #chatBox{ position:absolute; left:12px; bottom:12px; width:340px; max-width:calc(calc(100vw / var(--uiz, 1)) - 24px); z-index:11; display:flex; flex-direction:column; gap:5px; pointer-events:none; }
   #chatBox[hidden]{ display:none; }
   #chatLog{ display:flex; flex-direction:column; gap:2px; max-height:170px; overflow-y:auto; padding:6px 9px; border-radius:10px; }
   #chatLog:empty{ display:none; }
@@ -795,7 +795,7 @@
   .gm-act button:disabled{ opacity:.4; cursor:default; }
   #gmConfirm, #gmNotice{ position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; background:rgba(8,6,20,.72); }
   #gmConfirm[hidden], #gmNotice[hidden]{ display:none; }
-  #gmConfirm .card, #gmNotice .card{ width:440px; max-width:92vw; background:var(--cream); border-radius:14px; padding:18px 20px; box-shadow:0 20px 60px rgba(0,0,0,.6); border:3px solid #c9401f; }
+  #gmConfirm .card, #gmNotice .card{ width:440px; max-width:calc(92vw / var(--uiz, 1)); background:var(--cream); border-radius:14px; padding:18px 20px; box-shadow:0 20px 60px rgba(0,0,0,.6); border:3px solid #c9401f; }
   #gmNotice .card{ border-color:var(--gold); text-align:center; }
   #gmConfirm h3, #gmNotice h3{ margin:0 0 8px; color:#2a2346; }
   #gmConfirm .gm-line label{ min-width:90px; }
@@ -803,7 +803,7 @@
   #gmConfirm .gm-go.safe{ background:#4b3f8f; }
   #gmConfirm .gm-cancel{ width:100%; margin-top:6px; padding:8px; border:none; border-radius:10px; background:#e4dcc4; color:#4b3f8f; font-weight:bold; }
   #gmNotice p{ white-space:pre-line; font-size:14px; color:#2a2346; }
-  #annBanner{ position:fixed; top:112px; left:50%; transform:translateX(-50%); z-index:56; max-width:80vw; padding:10px 18px; border-radius:14px;
+  #annBanner{ position:fixed; top:112px; left:50%; transform:translateX(-50%); z-index:56; max-width:calc(80vw / var(--uiz, 1)); padding:10px 18px; border-radius:14px;
     background:rgba(28,24,56,.96); color:#fff; font-size:15px; border:2px solid var(--gold); box-shadow:0 0 22px rgba(255,209,102,.6); text-align:center; }
   #annBanner[hidden]{ display:none; }
   #annBanner b{ color:var(--gold); }
@@ -908,7 +908,7 @@
   /* ---- NPC conversation window ---- */
   #talkDialog{
     position:absolute; left:50%; bottom:106px; transform:translateX(-50%); z-index:11;
-    width:min(700px, 94vw); display:flex; gap:14px; align-items:flex-start; padding:16px 16px 14px;
+    width:min(700px, calc(94vw / var(--uiz, 1))); display:flex; gap:14px; align-items:flex-start; padding:16px 16px 14px;
     background:linear-gradient(180deg, rgba(40,34,74,.97), rgba(22,18,42,.97));
     border:2px solid var(--trim); border-radius:14px; color:#f3ecff;
     box-shadow:0 0 0 3px rgba(20,16,40,.85), 0 18px 44px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
@@ -939,7 +939,7 @@
   .talk-portrait .talk-emoji{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:58px;
     filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); animation:emojiFloat 3s ease-in-out infinite; }
   @keyframes emojiFloat{ 0%,100%{ translate:0 0; } 50%{ translate:0 -4px; } }
-  .talk-main{ flex:1; min-width:0; position:relative; max-height:calc(100vh - 230px); overflow-y:auto; overflow-x:hidden; padding-right:2px;
+  .talk-main{ flex:1; min-width:0; position:relative; max-height:calc(calc(100vh / var(--uiz, 1)) - 230px); overflow-y:auto; overflow-x:hidden; padding-right:2px;
     scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.2) transparent; }
   .talk-nameplate{ display:flex; align-items:center; gap:8px; margin:-2px 34px 7px 0; flex-wrap:wrap; }
   .talk-nameplate b{ font-size:17px; color:#ffd166; letter-spacing:.3px; text-shadow:0 2px 0 rgba(0,0,0,.45); }
@@ -3921,7 +3921,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 26;
+const GAME_VERSION = 27;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -4553,8 +4553,8 @@ function socRemember(id, text){ // the last few lines per player, attachable to 
 
 /* context menu */
 function socPeerAt(clientX, clientY){
-  const rect = canvas.getBoundingClientRect();
-  const wx = clientX - rect.left + game.camera.x, wy = clientY - rect.top + game.camera.y;
+  const cp = canvasPoint(canvas, clientX, clientY);
+  const wx = cp.x + game.camera.x, wy = cp.y + game.camera.y;
   let best = null, bestD = 1e9;
   for(const o of game.otherPlayers){
     if(!o.netId || o.mapTier !== game.mapTier) continue;
@@ -4571,8 +4571,9 @@ function socOpenMenu(id, name, clientX, clientY){
   const el = document.getElementById("playerMenu");
   el.hidden = false;
   const w = el.offsetWidth, h = el.offsetHeight;
-  el.style.left = Math.max(8, Math.min(clientX, innerWidth - w - 8)) + "px";
-  el.style.top = Math.max(8, Math.min(clientY, innerHeight - h - 8)) + "px";
+  const z = UI_ZOOM, cx = clientX / z, cy = clientY / z; // client px → CSS px inside the zoomed page
+  el.style.left = Math.max(8, Math.min(cx, innerWidth / z - w - 8)) + "px";
+  el.style.top = Math.max(8, Math.min(cy, innerHeight / z - h - 8)) + "px";
 }
 function socCloseMenu(){ document.getElementById("playerMenu").hidden = true; soc.menu = null; }
 function renderPlayerMenu(){
@@ -6174,11 +6175,31 @@ const ctx = canvas.getContext("2d");
 const battleCanvas = document.getElementById("battleCanvas");
 const bctx = battleCanvas.getContext("2d");
 
+// Fixed view: the game always draws a 720-px-tall picture (1280×720 on a 16:9 screen) and the browser
+// stretches it to fill the window, so a 2K/4K monitor shows the same scene, just sharper-looking and bigger —
+// not a tiny hero lost in a huge map. Width follows the window's shape, so there are never black bars.
+const VIEW_H = 720;
+// The HTML UI (HUD, buttons, panels) grows with the screen too, so a 2K/4K monitor doesn't get tiny menus.
+let UI_ZOOM = 1;
+function applyUiZoom(){
+  UI_ZOOM = clamp(window.innerHeight / 1000, 1, 2.2);
+  document.documentElement.style.setProperty("--uiz", UI_ZOOM);
+  document.body.style.zoom = UI_ZOOM === 1 ? "" : UI_ZOOM;
+}
 function resizeCanvas(){
-  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-  battleCanvas.width = window.innerWidth; battleCanvas.height = window.innerHeight;
+  applyUiZoom();
+  const vw = Math.max(1, window.innerWidth), vh = Math.max(1, window.innerHeight);
+  const W = Math.round(vw * VIEW_H / vh);
+  canvas.width = W; canvas.height = VIEW_H;
+  battleCanvas.width = W; battleCanvas.height = VIEW_H;
+}
+// mouse position (client px) → canvas drawing px, whatever size the canvas is shown at
+function canvasPoint(el, clientX, clientY){
+  const r = el.getBoundingClientRect();
+  return { x: (clientX - r.left) * el.width / (r.width || 1), y: (clientY - r.top) * el.height / (r.height || 1) };
 }
 window.addEventListener("resize", resizeCanvas);
+applyUiZoom(); // login / character-creation screens too
 
 /* ============================================================
    OVERWORLD INPUT (click to move / talk)
@@ -6201,8 +6222,8 @@ function npcAtWorld(wx, wy){
 function npcTalkRange(npc){ return Math.max(NPC_TALK_RANGE, npcHitCenter(npc).r + 20); }
 canvas.addEventListener("mousemove", (e)=>{
   if(!game || game.inBattle){ if(game) game.hoverNpcId = null; return; }
-  const rect = canvas.getBoundingClientRect();
-  const npc = npcAtWorld(e.clientX - rect.left + game.camera.x, e.clientY - rect.top + game.camera.y);
+  const cp = canvasPoint(canvas, e.clientX, e.clientY);
+  const npc = npcAtWorld(cp.x + game.camera.x, cp.y + game.camera.y);
   game.hoverNpcId = npc ? npc.id : null;
   canvas.style.cursor = npc ? "pointer" : "";
 });
@@ -6210,9 +6231,9 @@ canvas.addEventListener("mouseleave", ()=>{ if(game) game.hoverNpcId = null; can
 
 canvas.addEventListener("click", (e)=>{
   if(!game || game.inBattle || game.player.isMeditating) return;
-  const rect = canvas.getBoundingClientRect();
-  const worldX = (e.clientX - rect.left) + game.camera.x;
-  const worldY = (e.clientY - rect.top) + game.camera.y;
+  const cp = canvasPoint(canvas, e.clientX, e.clientY);
+  const worldX = cp.x + game.camera.x;
+  const worldY = cp.y + game.camera.y;
 
   const alive = game.monsters.filter(m => m.alive);
   let hitMonster = null;
@@ -8197,8 +8218,7 @@ let battleLastDragDirection = null; // classified direction of the most recent c
 let battleDragTrail = [];         // live trail points (canvas-local), sword-only visual — see renderBattle()
 let battleClickPoint = null;      // {x,y} canvas-local coords of the click that triggered the current attack — bow-only
 function canvasPointFromEvent(e){
-  const rect = battleCanvas.getBoundingClientRect();
-  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  return canvasPoint(battleCanvas, e.clientX, e.clientY);
 }
 battleCanvas.addEventListener("mousedown", (e)=>{
   battleDragStart = canvasPointFromEvent(e);
@@ -11436,11 +11456,12 @@ function showSkillTip(node, type, tier, skill, pin){
     if(unlockWeaponSkill(type, skill.id)){ renderWeaponSkillPanel(); updateHud(); }
   });
   // place beside the node, flipped/clamped to stay on screen
-  const r = node.getBoundingClientRect(), tw = 260, th = tip.offsetHeight || 200;
+  const z = UI_ZOOM, rr = node.getBoundingClientRect(), tw = 260, th = tip.offsetHeight || 200;
+  const r = { left: rr.left / z, right: rr.right / z, top: rr.top / z }, vw = window.innerWidth / z, vh = window.innerHeight / z;
   let x = r.right + 10, y = r.top - 6;
-  if(x + tw > window.innerWidth - 8) x = r.left - tw - 10;
-  x = clamp(x, 8, Math.max(8, window.innerWidth - tw - 8));
-  y = clamp(y, 8, Math.max(8, window.innerHeight - th - 8));
+  if(x + tw > vw - 8) x = r.left - tw - 10;
+  x = clamp(x, 8, Math.max(8, vw - tw - 8));
+  y = clamp(y, 8, Math.max(8, vh - th - 8));
   tip.style.left = x + "px"; tip.style.top = y + "px";
 }
 function hideSkillTip(force){
