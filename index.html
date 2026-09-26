@@ -112,6 +112,7 @@
   /* ---------- Game screen (overworld) ---------- */
   #game-screen{ position:fixed; inset:0; display:none; }
   #gameCanvas{ position:absolute; inset:0; display:block; width:100%; height:100%; background:#7fbf8a; z-index:1; }
+  #labelCanvas{ position:absolute; inset:0; display:block; width:100%; height:100%; z-index:1; pointer-events:none; } /* v61: sharp names over the world */
 
   #hud{
     position:absolute; top:12px; left:12px; width:250px; z-index:10; cursor:pointer; color:#fff; font-size:13px;
@@ -1492,6 +1493,7 @@
 <!-- ===================== GAME SCREEN (overworld + battle share this) ===================== -->
 <div id="game-screen">
   <canvas id="gameCanvas"></canvas>
+  <canvas id="labelCanvas"></canvas>
   <canvas id="battleCanvas"></canvas>
   <canvas id="minimapCanvas" width="180" height="120"></canvas>
 
@@ -2592,6 +2594,7 @@ function musicPlay(key, fadeS, fromStart){
   music.cur = i;
   if(music.unlocked && musicMayPlay()) el.play().catch(() => {});
 }
+const JINGLE_MAX_S = { jgl_victory: 3 }; // v61: the normal win fanfare is cut to 3 s (with a short fade); boss / defeat play in full
 function playJingle(key){
   if(!audioAvail(key) || !music.unlocked || musicVolume() <= 0) return;
   try{
@@ -2603,6 +2606,16 @@ function playJingle(key){
     const done = () => { if(music.jingle === j){ music.jingle = null; music.duckTarget = 1; } };
     j.addEventListener("ended", done); j.addEventListener("error", () => { music.failed.add(key); done(); });
     j.play().catch(done);
+    const cap = JINGLE_MAX_S[key];
+    if(cap){
+      const FADE = 0.6, v0 = j.volume;
+      const tick = setInterval(() => {
+        if(music.jingle !== j){ clearInterval(tick); return; }
+        const t = j.currentTime;
+        if(t >= cap){ clearInterval(tick); j.pause(); done(); return; }
+        if(t > cap - FADE) j.volume = clamp(v0 * (cap - t) / FADE, 0, 1);
+      }, 50);
+    }
   }catch(e){ music.duckTarget = 1; }
 }
 function musicTick(){
@@ -3021,14 +3034,14 @@ function drawOtherPlayer(ctx, o){
   const labelY = o.inBattle ? o.y - 100 : charNameY(o.y, o.look, 118);
   if(OPT.otherNames){
   ctx.save();
-  ctx.font = "bold 12px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center";
+  ctx.font = "bold 13px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center";
   const gm = !!o.netId && net.staff.has(o.netId); // GM list comes from the server (public.admins), never from the player's own message
-  ctx.lineWidth = 3; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.fillStyle = gm ? "#ffd166" : "#e9e6f5";
+  ctx.lineWidth = 3.5; ctx.strokeStyle = "rgba(0,0,0,.75)"; ctx.fillStyle = gm ? "#ffd166" : "#e9e6f5";
   const label = (gm ? "[GM] " : "") + o.name + (o.inBattle ? " ⚔️" : "");
   ctx.strokeText(label, o.x, labelY); ctx.fillText(label, o.x, labelY);
-  ctx.font = "10px 'Trebuchet MS', sans-serif"; ctx.fillStyle = "#ffe9a8";
+  ctx.font = "bold 11px 'Trebuchet MS', sans-serif"; ctx.fillStyle = "#ffe9a8";
   const info = nameplateInfo(o.level || 1, o.maxDim || 1, o.maxMap || 1);
-  ctx.strokeText(info, o.x, labelY + 13); ctx.fillText(info, o.x, labelY + 13);
+  ctx.strokeText(info, o.x, labelY + 14); ctx.fillText(info, o.x, labelY + 14);
   ctx.restore();
   }
   if(OPT.bubbles && o.chatUntil > performance.now()) drawChatBubble(ctx, o.x, labelY - 14, o.chat);
@@ -4957,7 +4970,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 60;
+const GAME_VERSION = 61;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -7664,7 +7677,44 @@ function getPlayerRankTier(){
   return picked;
 }
 
+/* v61: SHARP LABELS — the world canvas is always 720 px tall and stretched to the window, so small text
+   (names, levels, NPC labels) came out soft on big screens. While the overworld draws, every fillText/strokeText
+   on the world context is recorded instead, then replayed on #labelCanvas at the screen's real resolution. */
+const labelCanvas = document.getElementById("labelCanvas"), lctx = labelCanvas.getContext("2d");
+let labelOps = null;
+(function(){
+  const rec = (kind, orig) => function(t, x, y, mw){
+    const m = labelOps && ctx.getTransform ? ctx.getTransform() : null;
+    if(!m) return arguments.length > 3 ? orig.call(ctx, t, x, y, mw) : orig.call(ctx, t, x, y);
+    labelOps.push({ kind, t, x, y, mw: arguments.length > 3 ? mw : null, m: [m.a, m.b, m.c, m.d, m.e, m.f],
+      font: ctx.font, fill: ctx.fillStyle, stroke: ctx.strokeStyle, lw: ctx.lineWidth, lj: ctx.lineJoin,
+      align: ctx.textAlign, base: ctx.textBaseline, sc: ctx.shadowColor, sb: ctx.shadowBlur, a: ctx.globalAlpha });
+  };
+  ctx.fillText = rec("f", ctx.fillText); ctx.strokeText = rec("s", ctx.strokeText);
+})();
+function labelFlush(ops){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = Math.max(1, Math.round(window.innerWidth * dpr)), h = Math.max(1, Math.round(window.innerHeight * dpr));
+  if(labelCanvas.width !== w || labelCanvas.height !== h){ labelCanvas.width = w; labelCanvas.height = h; }
+  lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, w, h);
+  if(!ops || !ops.length) return;
+  const kx = w / canvas.width, ky = h / canvas.height;
+  for(const o of ops){
+    const m = o.m;
+    lctx.setTransform(m[0] * kx, m[1] * ky, m[2] * kx, m[3] * ky, m[4] * kx, m[5] * ky);
+    lctx.font = o.font; lctx.textAlign = o.align; lctx.textBaseline = o.base; lctx.globalAlpha = o.a;
+    lctx.shadowColor = o.sc; lctx.shadowBlur = o.sb * ky;
+    if(o.kind === "f"){ lctx.fillStyle = o.fill; o.mw != null ? lctx.fillText(o.t, o.x, o.y, o.mw) : lctx.fillText(o.t, o.x, o.y); }
+    else { lctx.strokeStyle = o.stroke; lctx.lineWidth = o.lw; lctx.lineJoin = "round"; o.mw != null ? lctx.strokeText(o.t, o.x, o.y, o.mw) : lctx.strokeText(o.t, o.x, o.y); }
+  }
+  lctx.shadowBlur = 0; lctx.globalAlpha = 1;
+}
 function renderOverworld(){
+  labelOps = [];
+  try{ renderOverworldScene(); }
+  finally{ const ops = labelOps; labelOps = null; labelFlush(ops); }
+}
+function renderOverworldScene(){
   ctx.save();
   ctx.fillStyle = getGroundPattern();
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -7754,19 +7804,19 @@ function renderOverworld(){
   const playerNameY = charNameY(p.y, p.look, 78 * PLAYER_OVERWORLD_SCALE / 1.1);
   const rank = getPlayerRankTier();
   const nameColor = rank.rainbow ? `hsl(${(performance.now()/12) % 360},85%,65%)` : rank.color;
-  ctx.font = rank.minTier >= 7 ? "bold 13px 'Trebuchet MS', sans-serif" : "12px 'Trebuchet MS', sans-serif";
+  ctx.font = rank.minTier >= 7 ? "bold 14px 'Trebuchet MS', sans-serif" : "bold 13px 'Trebuchet MS', sans-serif";
   if(rank.glow > 0){
     const pulse = (rank.pulse || rank.rainbow) ? 0.7 + 0.3 * Math.sin(performance.now()/260) : 1;
     ctx.shadowColor = nameColor;
     ctx.shadowBlur = rank.glow * pulse;
   }
-  ctx.fillStyle = nameColor; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.lineWidth = 3;
+  ctx.fillStyle = nameColor; ctx.strokeStyle = "rgba(0,0,0,.75)"; ctx.lineWidth = 3.5;
   const shownName = (net.admin ? "[GM] " : "") + p.name; // online GM accounts only — offline net.admin is always false
   ctx.strokeText(shownName, p.x, playerNameY); ctx.fillText(shownName, p.x, playerNameY);
   ctx.shadowBlur = 0; // reset — otherwise every later draw call this frame inherits the glow
-  ctx.font = "10px 'Trebuchet MS', sans-serif";
-  ctx.fillStyle = "#ffe9a8"; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.lineWidth = 3;
-  const playerInfoY = playerNameY + 13;
+  ctx.font = "bold 11px 'Trebuchet MS', sans-serif";
+  ctx.fillStyle = "#ffe9a8"; ctx.strokeStyle = "rgba(0,0,0,.75)"; ctx.lineWidth = 3.5;
+  const playerInfoY = playerNameY + 14;
   const playerInfoText = nameplateInfo(p.level, game.maxDimension || 1, getDimReach(game.maxDimension || 1));
   ctx.strokeText(playerInfoText, p.x, playerInfoY); ctx.fillText(playerInfoText, p.x, playerInfoY);
   if(OPT.bubbles && net.myBubble && net.myBubble.until > performance.now()) drawChatBubble(ctx, p.x, playerNameY - 14, net.myBubble.text);
@@ -9066,6 +9116,7 @@ function renderAttackGauge(){
 }
 
 function enterBattle(monster){
+  labelFlush(null); // v61: no world names left over under the battle screen
   if(game.inBattle) return;
   game.inBattle = true;
   if(talk.open) closeTalk();
@@ -10528,9 +10579,21 @@ function drawHudAvatar(){
   hudAvatarKey = key;
   const cv = document.getElementById("hudAvatar"); if(!cv || !cv.getContext) return;
   const big = document.createElement("canvas"); big.width = 240; big.height = 300;
-  drawCharacterAt(big.getContext("2d"), 120, 292, look, 3, "down", null);
-  const c = cv.getContext("2d"); c.clearRect(0, 0, 60, 60);
-  c.drawImage(big, 45, 0, 150, 150, 0, 2, 60, 60); // head & shoulders
+  const bx = big.getContext("2d");
+  drawCharacterAt(bx, 120, 292, look, 3, "down", null);
+  // v61: find where the figure actually is (the old fixed crop mostly caught empty space above the head)
+  const px = bx.getImageData(0, 0, 240, 300).data;
+  let top = 300, bot = 0, lft = 240, rgt = 0;
+  for(let y = 0; y < 300; y++) for(let x = 0; x < 240; x++) if(px[(y * 240 + x) * 4 + 3] > 40){
+    if(y < top) top = y; if(y > bot) bot = y; if(x < lft) lft = x; if(x > rgt) rgt = x;
+  }
+  if(bot <= top){ top = 0; bot = 299; lft = 0; rgt = 239; }
+  const size = Math.max(40, Math.round((bot - top) * 0.64));      // head to about the chest
+  const cx = (lft + rgt) / 2, sx = Math.round(cx - size / 2), sy = Math.max(0, top - Math.round(size * 0.1));
+  if(cv.width !== 120){ cv.width = 120; cv.height = 120; }
+  const c = cv.getContext("2d"); c.clearRect(0, 0, 120, 120);
+  c.imageSmoothingQuality = "high";
+  c.drawImage(big, sx, sy, size, size, 0, 4, 120, 120);
 }
 function updateHud(){
   if(!game) return;
@@ -11136,7 +11199,9 @@ function tutRender(){
 }
 function tutPointerTarget(st){
   if(!st || TUT.passing) return null;
-  if(st.point === "gauge") return { el: document.getElementById("attackGauge"), label: st.id === "gauge" ? "เกจโจมตี" : "โซนสีเขียว = PERFECT" };
+  if(st.point === "gauge") return st.id === "gauge"
+    ? { el: document.getElementById("attackGauge"), label: "เกจโจมตี" }
+    : { el: document.getElementById("attackGauge"), focus: document.getElementById("attackGaugePerfect"), label: "โซนสีเขียว = PERFECT" }; // v61: aim at the green zone itself
   if(st.point === "skill" && TUT.skillSlot >= 0) return { el: document.querySelector(`#skillBar .skill-btn[data-slot="${TUT.skillSlot}"]`), label: `กด ${TUT.skillSlot + 1}` };
   return null;
 }
@@ -11166,7 +11231,11 @@ function tutFrame(now){
   }
   const lab = ptr.querySelector(".cp-label");
   if(lab.textContent !== tg.label) lab.textContent = tg.label;
-  const left = el.offsetLeft + el.offsetWidth / 2 + "px", top = el.offsetTop - 6 + "px";
+  // v61: position from the real on-screen boxes (the gauge uses translateX(-50%), so offsetLeft was half a gauge off),
+  // converted back into the offsetParent's own px so the page zoom (⚙️ ขนาดเมนู) still doesn't matter
+  const par = el.offsetParent, pr = par.getBoundingClientRect(), zx = pr.width / (par.offsetWidth || 1) || 1, zy = pr.height / (par.offsetHeight || 1) || 1;
+  const fr = (tg.focus && tg.focus.offsetParent ? tg.focus : el).getBoundingClientRect(), er = el.getBoundingClientRect();
+  const left = (fr.left + fr.width / 2 - pr.left) / zx + "px", top = (er.top - pr.top) / zy - 6 + "px";
   if(ptr.style.left !== left) ptr.style.left = left;
   if(ptr.style.top !== top) ptr.style.top = top;
 }
