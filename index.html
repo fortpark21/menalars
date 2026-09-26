@@ -379,6 +379,59 @@
   .tutorial-dots span.active{ background:#4b3f8f; }
   .tutorial-actions{ display:flex; gap:10px; }
   .tutorial-actions .btn-primary, .tutorial-actions .btn-secondary{ flex:1; }
+  .tutorial-train{ display:block; width:100%; margin:-6px 0 14px; padding:10px; border-radius:10px; border:2px solid #d9b45a;
+    background:linear-gradient(180deg,#fff6dc,#f7e7b8); color:#4b3f8f; font-weight:bold; font-size:14px; cursor:pointer; }
+  .tutorial-train:hover{ background:#ffefc0; }
+
+  /* ---------- v52 🎯 hand-held combat training (coach card + modal + pointer) ---------- */
+  #coach{ position:fixed; left:12px; top:186px; width:340px; max-width:calc(100vw / var(--uiz, 1) - 24px); z-index:22;
+    background:linear-gradient(180deg, rgba(44,35,86,.96), rgba(25,19,50,.96)); color:#f3eeff;
+    border:2px solid #d9b45a; border-radius:14px; padding:11px 14px 10px; box-shadow:0 10px 30px rgba(0,0,0,.45);
+    font-size:13.5px; line-height:1.55; transition:border-color .2s, box-shadow .2s; }
+  #coach[hidden]{ display:none; }
+  #coach.in-battle{ left:auto; right:14px; top:14px; }
+  #coach .coach-top{ display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:#cdbdf5; margin-bottom:5px; }
+  #coach .coach-bar{ height:4px; background:rgba(255,255,255,.12); border-radius:3px; overflow:hidden; margin-bottom:8px; }
+  #coach .coach-bar i{ display:block; height:100%; width:0; background:linear-gradient(90deg,#ffd166,#7CFFB2); transition:width .4s; }
+  #coach h4{ margin:0 0 5px; font-size:16px; color:#ffd166; }
+  #coach .coach-text{ white-space:pre-line; }
+  #coach .coach-text b{ color:#ffe7a3; }
+  #coach .coach-text kbd{ display:inline-block; min-width:18px; padding:0 5px; border-radius:5px; background:#f3eeff; color:#2a2152; font:bold 12px/18px 'Trebuchet MS',sans-serif; text-align:center; box-shadow:0 2px 0 #9d8fd0; }
+  #coach .coach-prog{ margin-top:8px; font-weight:bold; color:#7CFFB2; letter-spacing:.5px; }
+  #coach .coach-prog:empty{ display:none; }
+  #coach .coach-tip{ margin-top:6px; font-size:12.5px; border-radius:8px; padding:6px 8px; }
+  #coach .coach-tip[hidden]{ display:none; }
+  #coach .coach-tip.warn{ background:rgba(255,120,80,.18); color:#ffc9b3; }
+  #coach .coach-tip.good{ background:rgba(124,255,178,.14); color:#bdffd9; }
+  #coach .coach-pass{ display:none; font-size:18px; font-weight:bold; color:#7CFFB2; margin-top:6px; }
+  #coach.pass{ border-color:#7CFFB2; box-shadow:0 0 0 3px rgba(124,255,178,.35), 0 10px 30px rgba(0,0,0,.45); }
+  #coach.pass .coach-pass{ display:block; }
+  #coach .coach-foot{ display:flex; gap:8px; margin-top:10px; }
+  #coach .coach-foot button{ flex:1; font-size:12px; padding:6px 8px; border-radius:8px; border:1px solid rgba(217,200,255,.4);
+    background:rgba(255,255,255,.06); color:#e8e0ff; cursor:pointer; }
+  #coach .coach-foot button:hover{ background:rgba(255,255,255,.14); }
+  #coach .coach-foot button:focus-visible{ outline:2px solid #ffd166; outline-offset:2px; }
+  #coach.stuck #coachSkipBtn{ border-color:#ffd166; color:#ffd166; animation:coachPulse 1s infinite; }
+  .coach-pointer{ position:absolute; z-index:23; pointer-events:none; transform:translate(-50%,-100%); display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .coach-pointer .cp-label{ background:#ffd166; color:#3a2e00; font-weight:bold; font-size:12px; padding:3px 9px; border-radius:10px; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,.4); }
+  .coach-pointer .cp-arrow{ font-size:26px; line-height:1; animation:coachBob .6s ease-in-out infinite alternate; filter:drop-shadow(0 2px 3px rgba(0,0,0,.6)); }
+  .coach-ring{ outline:3px solid #ffd166 !important; outline-offset:3px; animation:coachRing 1s ease-in-out infinite; }
+  @keyframes coachBob{ from{ transform:translateY(-3px); } to{ transform:translateY(5px); } }
+  @keyframes coachRing{ 50%{ outline-color:rgba(255,209,102,.25); } }
+  @keyframes coachPulse{ 50%{ box-shadow:0 0 0 4px rgba(255,209,102,.35); } }
+  #coachModal{ position:fixed; inset:0; z-index:58; display:flex; align-items:center; justify-content:center; background:rgba(10,8,20,.6); }
+  #coachModal[hidden]{ display:none; }
+  #coachModal .coach-card{ background:linear-gradient(180deg,#2e2560,#1b1540); color:#f3eeff; border:2px solid #d9b45a; border-radius:18px;
+    padding:20px 26px; width:500px; max-width:calc(92vw / var(--uiz, 1)); box-shadow:0 20px 60px rgba(0,0,0,.55); text-align:center; }
+  #coachModal .cm-icon{ font-size:44px; line-height:1.1; }
+  #coachModal h3{ margin:6px 0 10px; color:#ffd166; font-size:21px; }
+  #coachModal p{ text-align:left; white-space:pre-line; font-size:14px; line-height:1.65; margin:0 0 18px; max-height:calc(56vh / var(--uiz, 1)); overflow-y:auto; }
+  #coachModal p b{ color:#ffe7a3; }
+  #coachModal .cm-actions{ display:flex; gap:10px; }
+  #coachModal .cm-actions .btn-primary{ flex:2; background:linear-gradient(180deg,#7a5fd9,#5a3fb0); cursor:pointer; }
+  #coachModal .cm-actions .btn-secondary{ flex:1; background:rgba(255,255,255,.06); color:#d9ceff; border-color:rgba(217,200,255,.4); cursor:pointer; }
+  #coachModal .cm-actions .btn-secondary[hidden]{ display:none; }
+  @media (prefers-reduced-motion: reduce){ .coach-pointer .cp-arrow, .coach-ring, #coach.stuck #coachSkipBtn{ animation:none; } }
 
   /* ---------- Meditation overlay ---------- */
   #meditatePanel{
@@ -1504,6 +1557,30 @@
     <button class="skill-btn" data-slot="7" type="button"><span class="skill-key">8</span><div class="skill-content"></div></button>
   </div>
   <div id="toast"></div>
+  <div id="coach" hidden aria-live="polite">
+    <div class="coach-top"><span id="coachStep"></span><span>🎯 ลานฝึก</span></div>
+    <div class="coach-bar"><i id="coachBar"></i></div>
+    <h4 id="coachTitle"></h4>
+    <div class="coach-text" id="coachText"></div>
+    <div class="coach-prog" id="coachProg"></div>
+    <div class="coach-pass">✅ ผ่าน!</div>
+    <div class="coach-tip" id="coachTip" hidden></div>
+    <div class="coach-foot">
+      <button type="button" id="coachSkipBtn" title="ข้ามขั้นนี้ไปขั้นถัดไป">⏭ ข้ามขั้นนี้</button>
+      <button type="button" id="coachQuitBtn" title="ออกจากลานฝึก (ฝึกใหม่ได้ที่ ❓ วิธีเล่น)">✖ ออกจากการฝึก</button>
+    </div>
+  </div>
+  <div id="coachModal" hidden role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+    <div class="coach-card">
+      <div class="cm-icon" id="cmIcon">🎯</div>
+      <h3 id="cmTitle"></h3>
+      <p id="cmText"></p>
+      <div class="cm-actions">
+        <button class="btn-secondary" id="cmSkipBtn" type="button"></button>
+        <button class="btn-primary" id="cmGoBtn" type="button"></button>
+      </div>
+    </div>
+  </div>
 
   <div id="talkDialog" hidden role="dialog" aria-live="polite">
     <div class="talk-portrait" id="talkPortraitBox"><canvas id="talkPortrait" width="224" height="248"></canvas><img id="talkPortraitImg" alt="" hidden><div class="talk-emoji" id="talkEmoji" hidden></div></div>
@@ -1737,6 +1814,7 @@
     <div class="tutorial-dots" id="tutorialDots"></div>
     <h3 id="tutorialTitle"></h3>
     <p id="tutorialText"></p>
+    <button class="tutorial-train" id="tutorialTrainBtn" type="button">🎯 ฝึกต่อสู้แบบจับมือทำ (ลานฝึก)</button>
     <div class="tutorial-actions">
       <button class="btn-secondary" id="tutorialSkipBtn" type="button">ข้าม</button>
       <button class="btn-secondary" id="tutorialPrevBtn" type="button">ย้อนกลับ</button>
@@ -1817,6 +1895,41 @@
 // "?v=…" is a fingerprint of the file: when a picture changes, the fingerprint changes and players' browsers
 // fetch the new one instead of showing the old cached copy. Add/replace pictures with add_art.py.
 const ART = {
+  mon_10_4: "assets/mon_10_4.webp?v=e271c245",
+  mon_10_3: "assets/mon_10_3.webp?v=ed6cbbf6",
+  mon_10_2: "assets/mon_10_2.webp?v=6be700b7",
+  mon_10_1: "assets/mon_10_1.webp?v=882e4918",
+  mon_10_0: "assets/mon_10_0.webp?v=ae136017",
+  mon_9_4: "assets/mon_9_4.webp?v=6666e79b",
+  mon_9_3: "assets/mon_9_3.webp?v=f5a8a58a",
+  mon_9_2: "assets/mon_9_2.webp?v=f73446c6",
+  mon_9_1: "assets/mon_9_1.webp?v=c07e772c",
+  mon_9_0: "assets/mon_9_0.webp?v=c69ab75d",
+  mon_8_4: "assets/mon_8_4.webp?v=b6837d44",
+  mon_8_3: "assets/mon_8_3.webp?v=39075b8a",
+  mon_8_2: "assets/mon_8_2.webp?v=116cbd1a",
+  mon_8_1: "assets/mon_8_1.webp?v=9b64d277",
+  mon_8_0: "assets/mon_8_0.webp?v=39c9f8ab",
+  mon_7_4: "assets/mon_7_4.webp?v=8f3491b6",
+  mon_7_3: "assets/mon_7_3.webp?v=eec247c4",
+  mon_7_2: "assets/mon_7_2.webp?v=cf710e71",
+  mon_7_1: "assets/mon_7_1.webp?v=091729bc",
+  mon_7_0: "assets/mon_7_0.webp?v=8d99e7fc",
+  mon_6_4: "assets/mon_6_4.webp?v=53f4d70b",
+  mon_6_3: "assets/mon_6_3.webp?v=758e0398",
+  mon_6_2: "assets/mon_6_2.webp?v=a2bbd0cf",
+  mon_6_1: "assets/mon_6_1.webp?v=9a5372fb",
+  mon_6_0: "assets/mon_6_0.webp?v=e4f38597",
+  mon_5_4: "assets/mon_5_4.webp?v=46f8b6c6",
+  mon_5_3: "assets/mon_5_3.webp?v=f88e1272",
+  mon_5_2: "assets/mon_5_2.webp?v=7d6cf286",
+  mon_5_1: "assets/mon_5_1.webp?v=bf1a0e4e",
+  mon_5_0: "assets/mon_5_0.webp?v=43886ccb",
+  mon_4_4: "assets/mon_4_4.webp?v=856e740a",
+  mon_4_3: "assets/mon_4_3.webp?v=7d4c8cc2",
+  mon_4_2: "assets/mon_4_2.webp?v=7de3a8d7",
+  mon_4_1: "assets/mon_4_1.webp?v=06a8e459",
+  mon_4_0: "assets/mon_4_0.webp?v=9d982b0d",
   bossbody_10: "assets/bossbody_10.webp?v=d12eb7a4",
   bossbody_9: "assets/bossbody_9.webp?v=a6888889",
   bossbody_8: "assets/bossbody_8.webp?v=0295456a",
@@ -1918,11 +2031,20 @@ const BOSS_ART = { 1: ART.boss1, 2: ART.boss2, 3: ART.boss3, 4: ART.boss4, 5: AR
 // painted monsters (X…): "<map>_<slot>" → ART key. Slot = the monster's type index on that map (0–4, 5 = boss).
 const MONSTER_ART = { "1_0": "mon_1_0", "1_1": "mon_1_1", "1_2": "mon_1_2", "1_3": "mon_1_3", "1_4": "mon_1_4",
   "2_0": "mon_2_0", "2_1": "mon_2_1", "2_2": "mon_2_2", "2_3": "mon_2_3", "2_4": "mon_2_4",
-  "3_0": "mon_3_0", "3_1": "mon_3_1", "3_2": "mon_3_2", "3_3": "mon_3_3", "3_4": "mon_3_4" };
+  "3_0": "mon_3_0", "3_1": "mon_3_1", "3_2": "mon_3_2", "3_3": "mon_3_3", "3_4": "mon_3_4",
+  "4_0": "mon_4_0", "4_1": "mon_4_1", "4_2": "mon_4_2", "4_3": "mon_4_3", "4_4": "mon_4_4",
+  "5_0": "mon_5_0", "5_1": "mon_5_1", "5_2": "mon_5_2", "5_3": "mon_5_3", "5_4": "mon_5_4",
+  "6_0": "mon_6_0", "6_1": "mon_6_1", "6_2": "mon_6_2", "6_3": "mon_6_3", "6_4": "mon_6_4",
+  "7_0": "mon_7_0", "7_1": "mon_7_1", "7_2": "mon_7_2", "7_3": "mon_7_3", "7_4": "mon_7_4",
+  "8_0": "mon_8_0", "8_1": "mon_8_1", "8_2": "mon_8_2", "8_3": "mon_8_3", "8_4": "mon_8_4",
+  "9_0": "mon_9_0", "9_1": "mon_9_1", "9_2": "mon_9_2", "9_3": "mon_9_3", "9_4": "mon_9_4",
+  "10_0": "mon_10_0", "10_1": "mon_10_1", "10_2": "mon_10_2", "10_3": "mon_10_3", "10_4": "mon_10_4" }; // v52: maps 4–10
 // how tall each painting stands compared with a person-sized monster (slimes are squat, wolves low and long)
-const MONSTER_ART_SIZE = { "1_0": 0.6, "1_1": 0.6, "1_3": 0.72, "1_4": 1.1, "2_0": 0.62, "2_1": 0.62, "2_3": 0.72, "2_4": 1.1, "3_0": 0.65, "3_1": 0.62, "3_3": 0.75, "3_4": 1.1 };
+const MONSTER_ART_SIZE = { "1_0": 0.6, "1_1": 0.6, "1_3": 0.72, "1_4": 1.1, "2_0": 0.62, "2_1": 0.62, "2_3": 0.72, "2_4": 1.1, "3_0": 0.65, "3_1": 0.62, "3_3": 0.75, "3_4": 1.1,
+  "4_0": 0.62, "4_1": 0.62, "4_3": 0.74, "4_4": 1.1, "5_0": 0.66, "5_1": 0.66, "5_3": 0.74, "5_4": 1.1, "6_0": 0.62, "6_1": 0.62, "6_3": 0.74, "6_4": 1.1, "7_0": 0.62, "7_1": 0.62, "7_3": 0.74, "7_4": 1.1, "8_0": 0.6, "8_1": 0.62, "8_3": 0.74, "8_4": 1.1, "9_0": 0.62, "9_1": 0.62, "9_3": 0.74, "9_4": 1.1, "10_0": 0.6, "10_1": 0.66, "10_3": 0.8, "10_4": 1.15 };
 function monsterArtSize(m){ return MONSTER_ART_SIZE[game.mapTier + "_" + m.type] || (m.type === BOSS_SLOT ? 0.92 : 1); }
 function monsterArtImg(m, tier){
+  if(m && m.isTraining) return SPRITES_OK && ART.dummy ? spriteImg("dummy") : null; // v52 🎯 (drawn by hand when there's no painting)
   if(!SPRITES_OK || !m || m.isSpyBoss) return null;
   const tr = tier != null ? tier : game.mapTier;
   // every map boss shares one painted body (bossbody_<map>: the same colossus recoloured for that map)
@@ -2046,6 +2168,7 @@ function dyedSprite(key, color){
       if(px[i + 3] < 8) continue;
       const [h, s, l] = hexToHsl("#" + ((1 << 24) | (px[i] << 16) | (px[i + 1] << 8) | px[i + 2]).toString(16).slice(1));
       if(h < 140 || h > 205 || s < 0.18 || l < 0.06) continue; // only the teal cloth
+      if(h >= 178 && s > 0.35 && l > 0.3) continue; // v52: glowing cyan charms/crystals (P4's amulet) keep their own colour
       const nl = Math.max(0.03, Math.min(0.94, l + (tl - 0.38) * 0.85));
       const ns = Math.max(0, Math.min(1, s * (ts / 0.68)));
       const [r, g, b] = hslToRgb(th, ns, nl);
@@ -2317,8 +2440,8 @@ document.body.addEventListener("click", ()=>{ getAudio(); }, { once:true, captur
    bgm_* = looping music, jgl_* = one-shot jingle, sfx_<name> = replaces sfx.<name>'s beep.
    A sound that isn't listed here is simply not requested (no 404s) and falls back as described below.
    ============================================================ */
-const AUDIO = {"bgm_city01": "assets/bgm_city01.mp3?v=575a34a2", "bgm_city02": "assets/bgm_city02.mp3?v=0966aaee", "bgm_fight01": "assets/bgm_fight01.mp3?v=9377d9ac", "bgm_map01": "assets/bgm_map01.mp3?v=90f205aa"};
-const AUDIO_TITLE = {"bgm_city01": "Lanterns in the Valley", "bgm_city02": "Morning in the Hidden Vale", "bgm_fight01": "Blade of the Winter Sun", "bgm_map01": "Vows in the Stone Arena"};
+const AUDIO = {"bgm_boss": "assets/bgm_boss.mp3?v=6b37b056", "bgm_boss_story": "assets/bgm_boss_story.mp3?v=6e2c1fb1", "bgm_city01": "assets/bgm_city01.mp3?v=575a34a2", "bgm_city02": "assets/bgm_city02.mp3?v=0966aaee", "bgm_city03": "assets/bgm_city03.mp3?v=d91505d3", "bgm_city04": "assets/bgm_city04.mp3?v=321eaed4", "bgm_dungeon": "assets/bgm_dungeon.mp3?v=ca25b685", "bgm_fight01": "assets/bgm_fight01.mp3?v=9377d9ac", "bgm_fight02": "assets/bgm_fight02.mp3?v=9e55529c", "bgm_fight03": "assets/bgm_fight03.mp3?v=449016a6", "bgm_map01": "assets/bgm_map01.mp3?v=90f205aa", "bgm_map02": "assets/bgm_map02.mp3?v=b397915d", "bgm_map03": "assets/bgm_map03.mp3?v=f07eb46b", "bgm_map04": "assets/bgm_map04.mp3?v=4ff3cf33", "bgm_map05": "assets/bgm_map05.mp3?v=064f608b", "bgm_map06": "assets/bgm_map06.mp3?v=0f4aac07", "bgm_map07": "assets/bgm_map07.mp3?v=8a21e652", "bgm_map08": "assets/bgm_map08.mp3?v=becc3550", "bgm_map09": "assets/bgm_map09.mp3?v=41a0d334", "bgm_map10": "assets/bgm_map10.mp3?v=29554f04", "bgm_meditate": "assets/bgm_meditate.mp3?v=5585b64e", "bgm_title": "assets/bgm_title.mp3?v=0f7f6487", "jgl_defeat": "assets/jgl_defeat.mp3?v=ac4d4844", "jgl_victory": "assets/jgl_victory.mp3?v=e0493aaf", "jgl_victory_boss": "assets/jgl_victory_boss.mp3?v=dbb4c34b", "sfx_attack": "assets/sfx_attack.mp3?v=2cadc579", "sfx_chest": "assets/sfx_chest.mp3?v=5e0a4e2f", "sfx_click": "assets/sfx_click.mp3?v=1685ed0e", "sfx_coin": "assets/sfx_coin.mp3?v=a4639933", "sfx_counter": "assets/sfx_counter.mp3?v=78b5f09d", "sfx_crit": "assets/sfx_crit.mp3?v=904a8bdd", "sfx_die": "assets/sfx_die.mp3?v=829fe678", "sfx_dodge": "assets/sfx_dodge.mp3?v=d94c700c", "sfx_equip": "assets/sfx_equip.mp3?v=879a388e", "sfx_heal": "assets/sfx_heal.mp3?v=b4054b39", "sfx_itemGet": "assets/sfx_itemGet.mp3?v=af493c34", "sfx_levelUp": "assets/sfx_levelUp.mp3?v=7541540c", "sfx_madness": "assets/sfx_madness.mp3?v=8e427bbf", "sfx_miss": "assets/sfx_miss.mp3?v=145d427e", "sfx_notice": "assets/sfx_notice.mp3?v=02d68148", "sfx_perfectDodge": "assets/sfx_perfectDodge.mp3?v=3208bdce", "sfx_playerHurt": "assets/sfx_playerHurt.mp3?v=c1ff1908", "sfx_questDone": "assets/sfx_questDone.mp3?v=135b01cf", "sfx_rareDrop": "assets/sfx_rareDrop.mp3?v=b435377d", "sfx_refineOk": "assets/sfx_refineOk.mp3?v=d771e040", "sfx_skillReady": "assets/sfx_skillReady.mp3?v=c3771a40", "sfx_talk": "assets/sfx_talk.mp3?v=3f4553c7", "sfx_warp": "assets/sfx_warp.mp3?v=937b105d"};
+const AUDIO_TITLE = {"bgm_boss": "Guardian of the Crag", "bgm_boss_story": "The Lord's False Face", "bgm_city01": "Lanterns in the Valley", "bgm_city02": "Morning in the Hidden Vale", "bgm_city03": "Where the Lanterns Drift", "bgm_city04": "Market Day on the Temple Steps", "bgm_dungeon": "Chamber of Ticking Steel", "bgm_fight01": "Blade of the Winter Sun", "bgm_fight02": "Strike at the Crimson Gate", "bgm_fight03": "Against the Rising Twilight", "bgm_map01": "Vows in the Stone Arena", "bgm_map02": "Dark Forest Exploration", "bgm_map03": "Fire Desert Exploration", "bgm_map04": "Frozen Peaks Exploration", "bgm_map05": "Crystal Caverns Exploration", "bgm_map06": "Poison Swamp Exploration", "bgm_map07": "Crystal Realm Exploration", "bgm_map08": "Holy Desert Exploration", "bgm_map09": "Abyss Exploration", "bgm_map10": "Heavenly Throne Exploration", "bgm_meditate": "Mountain Shrine at Dawn", "bgm_title": "Rain Over the Jade Peak"};
 // v44: every player option lives here (⚙️ ออฟชั่น window) — saved per device/browser, never in the cloud save
 const OPT_KEY = "menalars_options_v1", AUDIO_CFG_KEY = OPT_KEY;
 const OPT_DEFAULTS = { master:1, masterOn:true, music:0.5, musicOn:true, sfx:0.8, sfxOn:true, ui:0.7, uiOn:true, bgPlay:false,
@@ -2370,6 +2493,8 @@ function loadSfxFile(key){
 }
 function preloadSfxFiles(){ Object.keys(AUDIO).forEach(k => { if(k.startsWith("sfx_")) loadSfxFile(k); }); }
 // true = a file handled it (or sfx is muted); false = caller should play the procedural beep instead
+// v52: the ElevenLabs files are all loudness-matched (-14 LUFS); UI ticks sit a little under the battle hits
+const SFX_FILE_GAIN = { click:0.4, talk:0.5, skillReady:0.45, coin:0.6, equip:0.6, itemGet:0.6, notice:0.7, dodge:0.7, miss:0.65, madness:0.8 };
 const SFX_PITCH_JITTER = { attack:0.06, crit:0.04, miss:0.06, dodge:0.05, playerHurt:0.05, die:0.04, click:0.02, coin:0.05 };
 function playSfxFile(name){
   const cat = SFX_BATTLE.has(name) ? "battle" : "ui";
@@ -2386,7 +2511,9 @@ function playSfxFile(name){
     src.buffer = buf;
     const j = SFX_PITCH_JITTER[name] || 0;
     if(j) src.playbackRate.value = 1 + (Math.random() * 2 - 1) * j; // tiny pitch wobble so repeated hits don't sound copy-pasted
-    src.connect(sfxOut(ctx, cat));
+    const fg = SFX_FILE_GAIN[name] || 0.85;
+    const g = ctx.createGain(); g.gain.value = fg;
+    src.connect(g).connect(sfxOut(ctx, cat));
     src.start();
     return true;
   }catch(e){ return false; }
@@ -3663,7 +3790,7 @@ function getTelegraphDurationMs(def){
   const gap = Math.max(0, def.level - game.player.level);
   return clamp(TELEGRAPH_BASE_MS - gap * TELEGRAPH_MS_PER_LEVEL_GAP - ((game.mapTier || 1) - 1) * TELEGRAPH_MS_PER_MAP_TIER, TELEGRAPH_MIN_MS, TELEGRAPH_BASE_MS);
 }
-function getFeintChance(){ return Math.min(FEINT_MAX_CHANCE, FEINT_BASE_CHANCE + ((game.mapTier || 1) - 1) * FEINT_CHANCE_PER_MAP_TIER); }
+function getFeintChance(){ if(game && game.battle && game.battle.training) return 0; return Math.min(FEINT_MAX_CHANCE, FEINT_BASE_CHANCE + ((game.mapTier || 1) - 1) * FEINT_CHANCE_PER_MAP_TIER); }
 const COUNTER_WINDOW_MS = 1200;     // brief window after a Perfect Dodge to land a free Counter attack
 // Hammer-only bonus: if the player started holding the mouse down before the gauge reached this
 // fraction (i.e. a real early hold, not a last-instant tap) AND still releases inside the Perfect
@@ -4731,7 +4858,8 @@ function startGame(name, chosenLook, startWeapon){
   storyPendingScene = { text: STORY_QUESTS[0].give, art: STORY_QUESTS[0].art, artPos: STORY_QUESTS[0].artPos, extra: storyCard(STORY_QUESTS[0], '<span class="tk-tag">กำลังทำ</span>') };
   updateHud();
   requestAnimationFrame(loop);
-  if(!hasSeenTutorial()) openTutorial();
+  game.player.tutorialDone = false; // v52: a new character plays the 🎯 hand-held training first (skippable)
+  tutBegin({ newChar: true });
   saveGameNow();
 }
 // Fresh world + default game state (shared by a new game and by loading a save).
@@ -4815,7 +4943,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 51;
+const GAME_VERSION = 52;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -5016,6 +5144,7 @@ async function netAfterLogin(){
     net.saveJson = r.data ? JSON.stringify(r.data) : null;
   }catch(err){ loginMsg(err.message, true); return; }
   try{ net.staff = new Set(await netRpc("staff_ids", "{}") || []); }catch(err){ /* no [GM] tags this session — harmless */ }
+  try{ net.storyMax = Math.max(3, +(await netRpc("story_chapters", "{}")) || 3); }catch(err){ net.storyMax = 3; } // v52: before the SQL is run → stays at chapter 3
   document.getElementById("loginCard").hidden = true;
   document.getElementById("creationCard").hidden = false;
   document.getElementById("creationAcct").hidden = false;
@@ -5860,6 +5989,7 @@ function continueGame(data){
   renderSkillBar();
   requestAnimationFrame(loop);
   showToast(`ยินดีต้อนรับกลับ ${game.player.name}`);
+  if(game.player.tutorialDone === false) tutBegin({ newChar: true }); // closed the game mid-training — offer it again
 }
 // Runs at load (offline build) and again after login (online build, once the cloud save has arrived).
 function showContinueOption(){
@@ -6676,6 +6806,9 @@ const TITLE_DEFS = [
   mkTitle("story_c1",        "adventure", 1, "🛒", "ผู้รอดจากเกวียน",          "จบเนื้อเรื่องหลักบทที่ 1",                1,     "chapters",    { VIT:3 }),
   mkTitle("story_c2",        "adventure", 1, "🏮", "ผู้ไม่หลงทางในเงามืด",      "จบเนื้อเรื่องหลักบทที่ 2",                2,     "chapters",    { MEDITATE:3 }),
   mkTitle("story_c3",        "adventure", 2, "🗿", "ผู้ถอดรหัสพันปี",            "จบเนื้อเรื่องหลักบทที่ 3",                3,     "chapters",    { DEX:6 }),
+  mkTitle("story_c5",        "adventure", 2, "⛏️", "ผู้ฟังเสียงกระซิบใต้พิภพ",   "จบเนื้อเรื่องหลักบทที่ 5",                5,     "chapters",    { VIT:6 }),
+  mkTitle("story_c7",        "adventure", 2, "🏮", "ผู้พามิวกลับบ้าน",           "จบเนื้อเรื่องหลักบทที่ 7",                7,     "chapters",    { LUK:6 }),
+  mkTitle("story_c10",       "adventure", 3, "🛕", "ผู้จุดบาเรียทั้งสิบ",          "จบเนื้อเรื่องหลักครบ 10 บท",              10,    "chapters",    { MEDITATE:5, STR:5 }),
   mkTitle("whisper_listener","adventure", 1, "👂", "ผู้รับฟังเสียงกระซิบ",        "ฟังผู้เผยแผ่ชุดขาวพูดจนจบ",               1,     "listened",    { LUK:3 }, { secret:true, hint:"ฉายาลับ — บางคำพูด ต้องฟังให้จบก่อนตัดสิน" }),
   mkTitle("secret_seeker",   "adventure", 1, "🔍", "นักตามหาความลับ",        "ค้นพบจุดลับ 5 แห่ง",                     5,     "secrets",     { LUK:3 }),
   mkTitle("secret_keeper",   "adventure", 2, "🗝️", "ผู้ไขปริศนาแห่งพงไพร",    "ค้นพบจุดลับ 30 แห่ง",                    30,    "secrets",     { LUK:6 }),
@@ -7146,6 +7279,7 @@ canvas.addEventListener("click", (e)=>{
   const cp = canvasPoint(canvas, e.clientX, e.clientY);
   const worldX = cp.x + game.camera.x;
   const worldY = cp.y + game.camera.y;
+  if(tutWorldClick(worldX, worldY)) return; // v52: clicking the 🎯 training dummy
 
   const alive = game.monsters.filter(m => m.alive);
   let hitMonster = null;
@@ -7275,6 +7409,7 @@ function updateOverworld(dt){
     else if(p.path === null){ setPlayerDestination(m.x, m.y); } // repath once the previous leg finishes, tracking the monster's movement
   }
   movePlayerToward(p, dt);
+  if(TUT.active) tutWorldTick();
   if(talk.open && talk.anchor && dist(p.x, p.y, talk.anchor.x, talk.anchor.y) > talk.anchor.r) closeTalk(); // walked away mid-conversation
 
   if(p.pendingNpcId != null){
@@ -7322,7 +7457,7 @@ function updateOverworld(dt){
   // in combat (lower damage output the further underleveled you are).
   // A brief cooldown after leaving a fight (see exitBattle) stops an instant re-trigger — and the
   // visual glitch that came with it — when monsters happen to be standing right next to each other.
-  if(performance.now() >= game.battleCooldownUntil && !p.isMeditating){ // meditating players can't be attacked
+  if(performance.now() >= game.battleCooldownUntil && !p.isMeditating && !tutBusy()){ // meditating players can't be attacked; nor while training
     for(const m of game.monsters){
       if(!m.alive) continue;
       if(dist(p.x, p.y, m.x, m.y) < BATTLE_TRIGGER_DIST){
@@ -7401,6 +7536,7 @@ function renderOverworld(){
     drawables.push({ y: wp.y, draw: () => drawWarpPortal(ctx, wp.x, wp.y) });
   }
   for(const sp of storyActiveSpots()) drawables.push({ y: sp.y, draw: () => drawQuestBeacon(ctx, sp.x, sp.y) });
+  if(TUT.active) tutWorldDrawables(drawables);
   if(game.travelGate){
     const tg = game.travelGate;
     const gs = painted ? 1 : 0.85; // the town's circle is big; field platforms are smaller
@@ -7933,6 +8069,7 @@ function openSanityAlert(){
 function closeSanityAlert(){ document.getElementById("sanityAlert").hidden = true; }
 function drainSanity(amount){
   if(!game || !game.player) return;
+  if(inTraining()) return; // v52: the training dummy doesn't hurt the mind
   if(monkBuffActive()) return; // v49 🪷 blessing: Sanity doesn't drop
   game.player.sanity = Math.max(SANITY_FLOOR, game.player.sanity - amount * (1 - fx("still_mind")/100) * dimRuleMult("sunburn"));
   checkSanityWarning();
@@ -8191,6 +8328,7 @@ function getSkillProficiencyLevel(proficiencyExp){
   return 1 + Math.floor((proficiencyExp || 0) / SKILL_PROFICIENCY_EXP_PER_LEVEL);
 }
 function gainSkillProficiency(type, skillId, amount){
+  if(inTraining()) return;
   const entry = game.player.weaponRank[type];
   if(!entry || entry.unlockedSkills[skillId] == null) return;
   const maxExp = (SKILL_PROFICIENCY_MAX - 1) * SKILL_PROFICIENCY_EXP_PER_LEVEL;
@@ -8236,6 +8374,7 @@ function getEquippedWeaponMasteryType(){
   return (def && def.weaponType) || null;
 }
 function gainWeaponMastery(amount){
+  if(inTraining()) return; // v52: the 🎯 training gives no Mastery
   const type = getEquippedWeaponMasteryType();
   if(!type) return;
   const m = game.player.mastery;
@@ -8289,7 +8428,8 @@ function computePlayerBattleStats(level){
   const zoneWiden = eq.concentration * PERFECT_ZONE_STEP_PER_POINT
     + sp.MEDITATE * PERFECT_ZONE_STEP_PER_POINT
     + sp.DEX * (PERFECT_ZONE_STEP_PER_POINT * STAT_RATES.DEX_ZONE_FRACTION)
-    + fx("momentum")/100;
+    + fx("momentum")/100
+    + (game.inBattle && game.battle && game.battle.training ? TUT_ZONE_WIDEN : 0); // v52: a friendlier Perfect zone in the 🎯 training
   const perfectZoneStart = getPerfectZoneStart(zoneWiden, cooldown);
 
   return {
@@ -8423,6 +8563,7 @@ function usePlayerSkill(skillId){
     return;
   }
   p.skillCooldowns[skillId] = now + getSkillCooldownMs(skillId, skillDef);
+  if(b.training) tutEvent("skill", { id: skillId });
 
   if(skillId === "heavy_attack"){ // heavy single hit
     const stats = computePlayerBattleStats(p.level);
@@ -8521,6 +8662,10 @@ function addStun(baseMult){
 function addStunAmount(amount){
   const b = game.battle, now = performance.now();
   if(!b || now < b.stunnedUntil) return;
+  if(b.training){ // v52: the orange bar only fills from the stun lesson on (earlier it would stun the dummy mid-lesson)
+    if(!tutIn("stun") && !tutIn("final")) return;
+    if(tutIn("stun")) amount *= 1.6;
+  }
   if(b.stunNextMult){ amount *= b.stunNextMult; b.stunNextMult = 0; } // เปิดช่องโหว่
   const resist = b.isBoss ? STUN_RESIST.boss + fx("rift")/100 : (b.monster.isElite ? STUN_RESIST.elite : 1);
   b.stunGauge += amount * resist * dimRuleMult("quake");
@@ -8532,6 +8677,7 @@ function addStunAmount(amount){
   b.stunnedUntil = now + (b.isBoss ? STUN_DURATION_MS.boss : STUN_DURATION_MS.normal) + crushMs;
   b.telegraphSide = null; b.telegraphFeintAt = 0; // an incoming attack is cancelled — the monster is reeling
   spawnCallout("STUN! รัวคลิก!", "#ffd166");
+  if(b.training) tutEvent("stun");
   document.getElementById("hint").textContent = "💫 มอนติดสตั้น! รัวคลิกซ้าย (หรือกดค้างไว้)";
   sfx.counter();
 }
@@ -8546,6 +8692,7 @@ function stunFlurryHit(){
   if(rapid) train("rapid_flurry", 1);
   landSkillHit(computePlayerBattleStats(game.player.level), STUN_FLURRY_DMG_MULT + rapid/100, false, "💫", "#ffd166");
   sfx.attack();
+  if(b.training) tutEvent("flurry");
   if(b.monster.hp <= 0) exitBattle("win");
 }
 
@@ -8772,9 +8919,11 @@ function enterBattle(monster){
   game.player.targetMonsterId = null; game.player.pendingNpcId = null;
   document.getElementById("dungeonPanel").hidden = true; // re-shown by returnToOverworldView if the run is still active
 
-  const def = MONSTER_DEFS[monster.type];
-  game.encounteredMonsters.add(game.mapTier + "_" + monster.type);
-  storyOnBattleStart(!!def.isBoss && !monster.isDungeonRoom);
+  const def = monster.trainingDef || MONSTER_DEFS[monster.type]; // v52: the 🎯 training dummy brings its own
+  if(!monster.isTraining){
+    game.encounteredMonsters.add(game.mapTier + "_" + monster.type);
+    storyOnBattleStart(!!def.isBoss && !monster.isDungeonRoom);
+  }
 
   game.battle = {
     monster,
@@ -8865,6 +9014,7 @@ function buildBattleSummary(b){
 
 function exitBattle(result){
   const b = game.battle;
+  if(b && b.training){ tutBattleExit(result); return; } // v52: a training fight never pays out or penalises
   const m = b.monster;
   const p = game.player;
   const summary = buildBattleSummary(b);
@@ -9229,6 +9379,7 @@ function battleAttack(){
     b.perfectCombo = 0; b.perfectStreakUncapped = 0; // counters sit outside the normal Perfect Attack combo chain
     gainWeaponMastery(1);
     b.stats.counters++;
+    if(b.training) tutEvent("counter");
     b.stats.totalDamage += dmg;
     if(dmg > b.stats.maxHit) b.stats.maxHit = dmg;
     addStun(STUN_FILL_COUNTER_MULT);
@@ -9256,6 +9407,7 @@ function battleAttack(){
   };
   if(chargeRatio < zoneStart){ // still charging — too early to swing at all
     if(orbDrawing) recordOrbFeedback("เกจยังไม่ถึงโซน — ยังโจมตีไม่ได้");
+    if(b.training) tutEvent("early");
     return;
   }
   const isPerfect = chargeRatio >= zoneStart && chargeRatio <= stats.perfectZoneEnd;
@@ -9270,7 +9422,7 @@ function battleAttack(){
 
   spawnEffect("slash", 0.62, battleMonYFrac, false, isMasteryMaxed()); // the swing itself always plays, hit or miss
 
-  if(Math.random() > stats.accuracy){
+  if(!b.training && Math.random() > stats.accuracy){ // the training dummy never dodges — a miss there would only confuse
     sfx.miss();
     spawnBattleMsg("พลาด!", "#cfcfcf", "miss");
     spawnCallout("MISS!", "#cfcfcf");
@@ -9303,7 +9455,7 @@ function battleAttack(){
     dmg = Math.round(dmg * PERFECT_COMBO_MULT[comboTier]);
     // separate, uncapped streak counter just for the "Perfect Warrior" achievement (perfectCombo itself caps at 4 for damage tuning)
     b.perfectStreakUncapped = (b.perfectStreakUncapped || 0) + 1;
-    if(b.perfectStreakUncapped > game.stats.bestPerfectStreak) game.stats.bestPerfectStreak = b.perfectStreakUncapped;
+    if(!b.training && b.perfectStreakUncapped > game.stats.bestPerfectStreak) game.stats.bestPerfectStreak = b.perfectStreakUncapped;
     const swiftBladeMs = getActiveSkillEffect("swift_blade"); // ms of free Speed Boost, 0 if not unlocked
     if(swiftBladeMs > 0){
       b.hasteUntil = Math.max(b.hasteUntil, now + swiftBladeMs);
@@ -9384,6 +9536,8 @@ function battleAttack(){
 
   sfx.attack();
   if(isCrit || isPerfect) sfx.crit();
+  if(b.training) tutEvent("hit", { perfect: isPerfect, input: weaponInputBonus, late: chargeRatio > stats.perfectZoneEnd,
+    dragDir: battleLastDragDirection, reqDir: requiredSwipeDirection });
 
   if(m.hp <= 0){ exitBattle("win"); return; }
 
@@ -9559,6 +9713,7 @@ function updateBattle(){
   if(!game.battle) return; // battle may have just ended (win/lose) this frame
   const b = game.battle, p = game.player, m = b.monster;
   const now = performance.now();
+  if(b.training) tutBattleTick(b, now);
 
   if(m.hitFlash > 0) m.hitFlash = Math.max(0, m.hitFlash - 0.04);
   if(m.shake > 0) m.shake = Math.max(0, m.shake - 0.8);
@@ -9644,6 +9799,7 @@ function updateBattle(){
       } else {
         spawnBattleMsg("หลบสำเร็จ!", "#7CE0A8", "dodge");
       }
+      if(b.training) tutEvent("dodge", { perfect: isPerfectDodge });
       if(autoDodge === "retreat"){
         landSkillHit(computePlayerBattleStats(p.level), SKILL_DEFS.retreat_shot.mult, false, "🍃 ยิงสวน", "#c9a876");
         if(m.hp <= 0){ exitBattle("win"); return; }
@@ -9695,6 +9851,7 @@ function updateBattle(){
         b.stats.hpLost += dmg;
         sfx.playerHurt();
         spawnBattleMsg("โดน! -" + dmg, "#ff8080", "playerHurt");
+        if(b.training) tutEvent("hurt");
         updateHud();
         if(p.hp <= 0){ exitBattle("lose"); return; }
       }
@@ -9776,11 +9933,12 @@ function renderBattle(){
   // painted maps: stand the monster on the ground in the picture (feet = its sprite's bottom edge)
   const mArt = monsterArtImg(m);
   const artH = mArt ? h * MON_ART_BATTLE_H * monsterArtSize(m) * (b.def.isBoss ? 1.45 : 1) * (m.isElite ? 1.2 : 1) : 0;
-  const mFeet = mArt ? artH / 2 : getMonsterSpriteBaseExtents(b.def).ry * battleScale;
-  const groundY = monGroundY != null ? monGroundY : (mArt ? h * 0.62 : null);
+  const dumH = !mArt && m.isTraining ? h * 0.44 : 0; // v52: the hand-drawn training dummy stands like a painting
+  const mFeet = mArt ? artH / 2 : dumH ? dumH / 2 : getMonsterSpriteBaseExtents(b.def).ry * battleScale;
+  const groundY = monGroundY != null ? monGroundY : (mArt || dumH ? h * 0.62 : null);
   const mx = w*0.62, my = groundY != null ? clamp(groundY - mFeet, h * 0.3, h * 0.72) : h*0.46;
   battleMonYFrac = my / h;
-  b.monArtExt = mArt ? { rx: artH * mArt.naturalWidth / mArt.naturalHeight * 0.3, ry: artH * 0.42 } : null; // bow zones on the painting
+  b.monArtExt = mArt ? { rx: artH * mArt.naturalWidth / mArt.naturalHeight * 0.3, ry: artH * 0.42 } : dumH ? { rx: dumH * 0.2, ry: dumH * 0.42 } : null; // bow zones on the painting
   const bob = Math.sin(now/220) * 4;
   const mShakeX = OPT.shake && m.shake > 0 ? (Math.random()-0.5) * m.shake : 0;
   const mShakeY = OPT.shake && m.shake > 0 ? (Math.random()-0.5) * m.shake : 0;
@@ -9793,6 +9951,9 @@ function renderBattle(){
     if(m.isElite) drawEliteAura(bctx, mx, my, artH * 0.3);
     if(b.def.isBoss) drawBossAura(bctx, mx, my + mFeet, artH * 0.75, BOSS_AURA_RGB[game.mapTier] || "255,80,80");
     drawMonsterArt(bctx, mArt, mx + mShakeX, my + mFeet + mShakeY, artH, m.hitFlash, Math.sin(now / 900) * 0.02);
+  } else if(dumH){
+    bctx.restore();
+    drawTrainingDummy(bctx, mx + mShakeX, my + mFeet + mShakeY, dumH, m.hitFlash);
   } else {
     if(m.isElite) drawEliteAura(bctx, mx, my - 4, 30);
     drawMonsterAt(bctx, mx, my, m.type, bob, m.hitFlash);
@@ -9801,7 +9962,7 @@ function renderBattle(){
 
   // monster hp bar
   const barW = b.def.isBoss ? 220 : (m.isElite ? 190 : 160);
-  const barX = mx - barW/2, barY = mArt ? my - mFeet - 34 : my - (b.def.isBoss ? 230 : (m.isElite ? 215 : 178));
+  const barX = mx - barW/2, barY = mArt || dumH ? my - mFeet - 34 : my - (b.def.isBoss ? 230 : (m.isElite ? 215 : 178));
   bctx.fillStyle = "rgba(0,0,0,.4)"; bctx.fillRect(barX, barY, barW, 10);
   bctx.fillStyle = m.isElite ? "#ffd166" : "#ef476f"; bctx.fillRect(barX, barY, barW * clamp(m.hp/m.maxHp,0,1), 10);
   bctx.fillStyle = m.isElite ? "#ffd166" : "#fff"; bctx.font = "bold 14px 'Trebuchet MS', sans-serif"; bctx.textAlign = "center";
@@ -9971,6 +10132,7 @@ function renderBattle(){
   }
   bctx.globalAlpha = 1;
 
+  if(b.training) tutDrawBattle(b, w, h, mx, my, barX, barY, barW, now);
   const madTier = sanityTier();
   if(madTier >= 3) drawSanityDarkness(w, h, now);
   if(madTier >= 1) drawSanityBattleTag(w, h, madTier, now);
@@ -10396,6 +10558,538 @@ document.getElementById("tutorialNextBtn").addEventListener("click", ()=>{
 document.getElementById("tutorialSkipBtn").addEventListener("click", ()=>{ sfx.click(); closeTutorial(); });
 document.getElementById("tutorialPrevBtn").addEventListener("click", ()=>{ sfx.click(); tutorialStep = Math.max(0, tutorialStep - 1); renderTutorialStep(); });
 document.getElementById("tutorialBtn").addEventListener("click", ()=>{ sfx.click(); closeAllPanels(); openTutorial(); });
+document.getElementById("tutorialTrainBtn").addEventListener("click", ()=>{ sfx.click(); closeTutorial(); tutBegin({}); });
+
+/* ============================================================
+   v52 🎯 ลานฝึก — HAND-HELD COMBAT TRAINING
+   A new character plays this before the real game (skippable); anyone can replay it from ❓ วิธีเล่น.
+   It is a real fight on the real battle code against a straw dummy (monster.isTraining), with the coach
+   deciding what may happen in each lesson: the dummy only swings in the dodge lessons, stands back up
+   until the last lesson, and a training fight never pays out — exitBattle hands it to tutBattleExit, and
+   Mastery / skill proficiency / Sanity / game.stats are all left alone — so the server's economy and
+   combat checks never see it. Each lesson waits for the player to actually do the thing (tutEvent).
+   ============================================================ */
+const TUT_ZONE_WIDEN = 0.14; // the Perfect zone is this much wider (share of the gauge) while training
+const TUT = { active:false, steps:[], i:0, count:0, fails:0, passing:0, newChar:false, withWalk:false,
+  marker:null, dummy:null, tipUntil:0, savedHp:null, finalDmg:[3,5], skillSlot:0, modal:null, pointerFor:null };
+function tutStep(){ return TUT.active ? TUT.steps[TUT.i] || null : null; }
+function tutIn(id){ const st = tutStep(); return !!st && st.id === id; }
+function inTraining(){ return !!(game && game.inBattle && game.battle && game.battle.training); }
+// true while the training (or its intro/outro card) owns the screen — story / letter popups and real fights wait
+function tutBusy(){ return TUT.active || !document.getElementById("coachModal").hidden; }
+// which key dodges toward a side, with the v46 madness swap (A/D trade places below 30% Sanity)
+function tutDodgeKey(goSide){ const left = goSide === "left"; return (sanityTier() >= 2 ? !left : left) ? "A" : "D"; }
+function tutDodgeHint(){ return `ขอบจอ แดงซ้าย → กด ${tutDodgeKey("right")} · แดงขวา → กด ${tutDodgeKey("left")}`; }
+
+const TUT_INPUT = {
+  sword: { title:"🗡️ ท่าพิเศษดาบ: PERFECT SLASH", need:2,
+    text:"ดู **ลูกศร** เหนือหัวหุ่น (⬆️⬇️⬅️➡️) — สุ่มใหม่ทุกครั้ง\n① **กดเมาส์ค้าง** ② **ลากไปทางลูกศร** (ลากยาวหน่อย) ③ **ปล่อยตอนเกจเป็นสีเขียว**\n= PERFECT SLASH แรงกว่า PERFECT ธรรมดาอีก!",
+    tip: e => e.dragDir && e.dragDir !== e.reqDir ? `ลากผิดทาง! รอบนั้นต้องลากไป ${SWORD_SWIPE_ARROWS[e.reqDir]}` : "จังหวะดีแล้ว — แต่ต้อง กดค้างแล้วลาก ไปตามลูกศรด้วย (ลากยาวๆ แล้วปล่อยตอนเขียว)" },
+  heavy: { title:"🔨 ท่าพิเศษค้อน: CHARGED STRIKE", need:2,
+    text:"① **กดเมาส์ค้างไว้เลย** ตั้งแต่เกจยังไม่ถึง **ขีดขาว (30%)** — เกจจะเป็น **สีส้ม** มีเสียงชาร์จ\n② ค้างไว้เรื่อยๆ… ③ **ปล่อยตอนเกจเป็นสีเขียว**\n= CHARGED STRIKE แรงกว่า PERFECT ธรรมดาอีก!",
+    tip: () => "ต้องเริ่มกดค้างให้เร็วกว่านี้ (ก่อนเกจถึงขีดขาว) แล้วค้างไว้จนเกจเขียวค่อยปล่อย" },
+  bow: { title:"🏹 ท่าพิเศษธนู: CALLED SHOT", need:2,
+    text:"บนตัวหุ่นมี **วงเป้าสีแดง** (หัว/ตัว/แขน/ขา) สุ่มใหม่ทุกครั้ง\nเอาเมาส์ไปรอที่วง แล้ว **คลิกในวง ตอนเกจเป็นสีเขียว**\n= CALLED SHOT แรงกว่า PERFECT ธรรมดาอีก!",
+    tip: () => "จังหวะดีแล้ว — แต่ต้องคลิกให้โดน วงเป้าสีแดง บนตัวหุ่นด้วย" },
+  orb: { title:"🪄 ท่าพิเศษสื่อเวทย์: ARCANE CIRCLE", need:1,
+    text:"ดู **เส้นประสีม่วง** รอบตัวหุ่น (วงกลม / ครึ่งวงบน / ครึ่งวงล่าง)\n① **กดเมาส์ค้าง** ② **วาดตามรูปนั้นให้ครบ** ③ **ปล่อยตอนเกจเป็นสีเขียว**\nเริ่มวาดตั้งแต่เกจยังอยู่กลางๆ จะทันพอดี = ARCANE CIRCLE แรงที่สุด!",
+    tip: () => "วาดตามเส้นประให้ครบองศา แล้วปล่อยตอนเกจเขียว (ดูคำแนะนำใต้หุ่นประกอบ)" }
+};
+
+function tutBuildSteps(withWalk){
+  const S = [];
+  if(withWalk){
+    S.push({ id:"walk", world:true, title:"🚶 เดิน",
+      text:"**คลิกซ้ายที่พื้น** ตรง **วงแสงสีทอง ✨** เพื่อเดินไปหา\n(ในเกมจริง คลิกพื้นตรงไหนก็เดินไปตรงนั้น)" });
+    S.push({ id:"engage", world:true, title:"⚔️ เข้าต่อสู้",
+      text:"เห็น **🎯 หุ่นฝึก** ไหม? **คลิกที่หุ่น** (หรือเดินไปชน) เพื่อเข้าฉากต่อสู้\nในเกมจริงก็แบบนี้ — เดินชนมอนสเตอร์ = เริ่มสู้" });
+  }
+  S.push({ id:"gauge", title:"⏳ เกจโจมตี", need:3, unit:"ครั้ง", point:"gauge",
+    text:"ดู **แถบเกจใต้จอ** — มันวิ่งจากซ้ายไปขวาเรื่อยๆ\nรอให้เกจ **เกือบเต็ม** แล้ว **คลิกซ้ายตรงไหนก็ได้บนจอ** = ฟัน!\n(คลิกตอนเกจยังไม่ถึง = ไม่ตี)" });
+  S.push({ id:"perfect", title:"✨ จังหวะ PERFECT", need:3, unit:"ครั้ง", point:"gauge",
+    text:"ท้ายเกจมี **โซนสีเขียว** — คลิกตอนแถบกลายเป็น **สีเขียว** = **PERFECT!** แรงขึ้น\nPERFECT ติดกันหลายครั้ง ยิ่งแรงขึ้นเรื่อยๆ" });
+  const w = getEquippedWeaponMasteryType(), wi = w && TUT_INPUT[w];
+  if(wi) S.push({ id:"input", title:wi.title, need:wi.need, unit:"ครั้ง", text:wi.text, weapon:w, point:"gauge" });
+  S.push({ id:"skill", title:"💥 ใช้สกิล", need:1, unit:"ครั้ง", point:"skill",
+    text:"กดปุ่ม <kbd>{KEY}</kbd> บนคีย์บอร์ด (หรือคลิกปุ่ม **{SKILL}** ที่แถบล่าง) = ใช้สกิล\nใช้แล้วต้องรอ **คูลดาวน์** (ตัวเลขนับถอยหลังบนปุ่ม) · ปุ่ม <kbd>1</kbd>–<kbd>8</kbd> คือช่องสกิลทั้งหมด" });
+  S.push({ id:"dodge", title:"🛡️ หลบการโจมตี", need:3, unit:"ครั้ง", attacks:true,
+    text:"คราวนี้หุ่นจะ **ยิงลูกพลัง** ใส่!\nขอบจอฝั่งไหน **กระพริบแดง** = ลูกพลังพุ่งมาฝั่งนั้น → **หลบไปอีกฝั่ง**\n• แดงซ้าย → กด <kbd>{RIGHT}</kbd> (หลบขวา)\n• แดงขวา → กด <kbd>{LEFT}</kbd> (หลบซ้าย)" });
+  S.push({ id:"counter", title:"⚡ หลบเฉียบขาด + สวนกลับ", need:1, unit:"ครั้ง", attacks:true,
+    text:"**อย่ารีบหลบ!** รอให้ลูกพลังเกือบถึงตัว (ตอนขึ้นว่า **\"ตอนนี้!\"**) ค่อยกดหลบ = **PERFECT DODGE**\nแล้ว **คลิกซ้ายทันที** = **COUNTER!** สวนแรงและโดนแน่นอน" });
+  S.push({ id:"stun", title:"💫 ทำให้มอนมึน (สตั้น)", need:6, unit:"ฮิต",
+    text:"ตีโดนแต่ละครั้ง **หลอดสีส้ม** ใต้เลือดหุ่นจะเพิ่มขึ้น (PERFECT / ท่าพิเศษ / สกิล เติมเยอะกว่า)\nหลอดเต็ม = มอน **มึน 2 วิ** → **รัวคลิกซ้าย** ให้ไวที่สุด! (กดค้างไว้ก็ได้)" });
+  S.push({ id:"final", title:"🏁 ด่านสุดท้าย: ปราบหุ่นฝึก!", final:true, attacks:true,
+    text:"ใช้ทุกอย่างที่เรียนมา: **PERFECT · ท่าพิเศษ · สกิล · หลบ · สวนกลับ · สตั้น**\nปราบหุ่นฝึกให้ได้! (ในลานฝึกไม่มีวันตาย ไม่ต้องกลัว)" });
+  return S;
+}
+
+/* ---- start / modal ---- */
+function tutBegin(opts){
+  opts = opts || {};
+  if(!game) return;
+  if(TUT.active) return;
+  if(game.inBattle || game.dungeon || game.player.isMeditating){ showToast("🎯 ฝึกได้ตอนอยู่นอกฉากต่อสู้ (และไม่ได้อยู่ในดันเจี้ยน/ทำสมาธิ)"); return; }
+  if(!opts.newChar && sanityTier() >= 1){ showToast("🧘 สติต่ำกว่า 50% — ทำสมาธิให้สติกลับมาก่อนค่อยมาฝึก"); return; }
+  if(talk.open) closeTalk();
+  closeAllPanels();
+  TUT.newChar = !!opts.newChar;
+  TUT.withWalk = !!opts.newChar;
+  tutModal("intro");
+}
+function tutModal(kind){
+  const el = document.getElementById("coachModal");
+  TUT.modal = kind;
+  const set = (id, v, html) => { const e = document.getElementById(id); if(html) e.innerHTML = v; else e.textContent = v; };
+  const skipBtn = document.getElementById("cmSkipBtn");
+  if(kind === "intro"){
+    set("cmIcon", "🎯");
+    set("cmTitle", TUT.newChar ? "ลานฝึกหน่วยกวาดล้าง" : "ลานฝึก — ทบทวนการต่อสู้");
+    set("cmText", tutMd((TUT.newChar ? "ก่อนออกผจญภัยจริง มาฝึกสู้กับ **🎯 หุ่นฝึก** แบบจับมือทำกันก่อน (ประมาณ 3 นาที)\n\n" : "ฝึกสู้กับ **🎯 หุ่นฝึก** แบบจับมือทำอีกรอบ (ประมาณ 3 นาที)\n\n")
+      + "• ทำตามคำแนะนำ **ทีละขั้น** — ทำได้แล้วถึงจะไปขั้นต่อไป\n"
+      + "• หุ่นฝึก **ไม่ทำให้ตาย** และไม่เสียอะไรเลย (แต่ก็ไม่ได้ของ/EXP นะ)\n"
+      + "• ติดตรงไหน กด **⏭ ข้ามขั้นนี้** ได้ · ออกได้ทุกเมื่อ"), true);
+    skipBtn.hidden = false; skipBtn.textContent = TUT.newChar ? "ข้ามการฝึก (เล่นเป็นแล้ว)" : "ยกเลิก";
+    set("cmGoBtn", "🎯 เริ่มฝึก!");
+  } else {
+    const w = getEquippedWeaponMasteryType(), wi = w && TUT_INPUT[w];
+    set("cmIcon", "🎉");
+    set("cmTitle", "ผ่านการฝึกแล้ว!");
+    set("cmText", tutMd("เก่งมาก! สรุปสั้นๆ ก่อนออกไปจริง:\n"
+      + "⏳ รอเกจ → **คลิกตอนแถบเขียว = PERFECT**\n"
+      + (wi ? `${wi.title.split(":")[0]}: ${wi.title.split(":")[1].trim()} = PERFECT + ท่าพิเศษของอาวุธ\n` : "")
+      + `🛡️ **${tutDodgeHint()}** · รอให้ใกล้ค่อยหลบ = สวนกลับ\n`
+      + "💫 หลอดส้มเต็ม = มอนมึน → **รัวคลิก**\n\n"
+      + "⚠️ ในสนามจริง **โซนเขียวแคบกว่า** ในลานฝึก — อัปสเตตัส **สมาธิ** ช่วยให้กว้างขึ้น\n"
+      + "🧘 ฆ่ามอน/โดนตีแล้ว **สติ** จะลด — อย่าลืม **ทำสมาธิ**\n"
+      + "❓ ปุ่ม **วิธีเล่น** มีคู่มือละเอียด + กลับมาฝึกซ้ำได้"), true);
+    skipBtn.hidden = true;
+    set("cmGoBtn", "⚔️ ออกผจญภัย!");
+  }
+  el.hidden = false;
+  setTimeout(()=> document.getElementById("cmGoBtn").focus(), 50);
+}
+function tutMd(t){ // tiny markup for the coach's own static texts: **bold**, <kbd> kept, everything else escaped
+  return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/&lt;(\/?)kbd&gt;/g, "<$1kbd>").replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+}
+document.getElementById("cmGoBtn").addEventListener("click", ()=>{
+  sfx.click();
+  document.getElementById("coachModal").hidden = true;
+  if(TUT.modal === "intro") tutStart();
+  TUT.modal = null;
+});
+document.getElementById("cmSkipBtn").addEventListener("click", ()=>{
+  sfx.click();
+  document.getElementById("coachModal").hidden = true;
+  TUT.modal = null;
+  if(TUT.newChar){ game.player.tutorialDone = true; markTutorialSeen(); saveGameNow(); showToast("ข้ามการฝึกแล้ว — กลับมาฝึกได้ทุกเมื่อที่ ❓ วิธีเล่น → 🎯 ฝึกต่อสู้"); }
+});
+document.getElementById("coachSkipBtn").addEventListener("click", ()=>{ sfx.click(); if(TUT.active && !TUT.passing) tutSkipStep(); });
+document.getElementById("coachQuitBtn").addEventListener("click", ()=>{
+  sfx.click();
+  tutFinish(false);
+  showToast("ออกจากลานฝึกแล้ว — ฝึกใหม่ได้ที่ ❓ วิธีเล่น → 🎯 ฝึกต่อสู้");
+});
+window.addEventListener("keydown", e => {
+  if(e.key === "Enter" && !document.getElementById("coachModal").hidden){ e.preventDefault(); document.getElementById("cmGoBtn").click(); }
+});
+
+function tutStart(){
+  TUT.steps = tutBuildSteps(TUT.withWalk);
+  TUT.active = true; TUT.i = -1; TUT.passing = 0;
+  tutNext();
+}
+function tutNext(){
+  TUT.i++; TUT.count = 0; TUT.fails = 0; TUT.passing = 0; TUT.tipUntil = 0;
+  document.getElementById("coach").classList.remove("stuck", "pass");
+  document.getElementById("coachTip").hidden = true; // last lesson's tip doesn't carry over
+  const st = tutStep();
+  if(!st){ tutFinish(true); return; }
+  if(st.id === "walk") tutPlaceWorld();
+  if(!st.world && !inTraining()) tutStartBattle(); // a replay (or a skipped walk) goes straight to the dummy
+  if(st.id === "skill") tutPrepSkill();
+  if(st.id === "final") tutPrepFinal();
+  if(st.id === "counter" && game.battle) game.battle.lastDodge = -9999;
+  tutRender();
+}
+function tutSkipStep(){
+  const st = tutStep(); if(!st) return;
+  if(st.id === "engage" || st.id === "walk"){ // skipping the walk still has to get us into the fight
+    TUT.i = TUT.steps.findIndex(x => x.id === "engage");
+  }
+  if(TUT.i >= TUT.steps.length - 1){ tutFinish(true); return; }
+  tutNext();
+}
+function tutCount(msg){
+  const st = tutStep(); if(!st) return;
+  TUT.count++;
+  if(msg) tutTip(msg, "good");
+  if(!st.need || TUT.count >= st.need) tutPass(); else tutRender();
+}
+function tutPass(fast){
+  if(TUT.passing) return;
+  TUT.passing = 1;
+  sfx.questDone();
+  tutRender();
+  setTimeout(()=>{
+    if(!TUT.active) return;
+    TUT.passing = 0;
+    if(TUT.i >= TUT.steps.length - 1) tutFinish(true); else tutNext();
+  }, fast ? 250 : 1300);
+}
+function tutFinish(completed){
+  const wasActive = TUT.active;
+  TUT.active = false; TUT.passing = 0;
+  document.getElementById("coach").hidden = true;
+  tutClearPointer();
+  TUT.marker = null; TUT.dummy = null;
+  if(game){
+    game.player.tutorialDone = true;
+    markTutorialSeen();
+    if(inTraining()) tutEndBattle(); else saveGameNow();
+  }
+  if(completed && wasActive) tutModal("done");
+}
+
+/* ---- the overworld part (new characters only): walk to the marker, then bump into the dummy ---- */
+function tutFreeSpotNear(x, y, d){
+  for(let k = 0; k < 30; k++){
+    const a = k * 2.399 + 0.35, r = d + (k % 3) * 25;
+    const px = clamp(x + Math.cos(a) * r, 60, WORLD_W - 60), py = clamp(y + Math.sin(a) * r, 60, WORLD_H - 60);
+    if(Math.hypot(px - x, py - y) < d * 0.7) continue; // squeezed against the map edge — too close
+    const c = worldToCell(px, py);
+    if(!isBlockedCell(c.gx, c.gy)) return { x: px, y: py };
+  }
+  return { x: clamp(x + d, 60, WORLD_W - 60), y };
+}
+function tutPlaceWorld(){
+  const p = game.player;
+  TUT.marker = tutFreeSpotNear(p.x, p.y, 170);
+  let d = tutFreeSpotNear(TUT.marker.x, TUT.marker.y, 150);
+  if(Math.hypot(d.x - p.x, d.y - p.y) < 120) d = tutFreeSpotNear(TUT.marker.x, TUT.marker.y, 190);
+  TUT.dummy = d;
+}
+function tutWorldTick(){
+  const st = tutStep(); if(!st || !st.world || TUT.passing) return;
+  const p = game.player;
+  if(st.id === "walk" && TUT.marker && dist(p.x, p.y, TUT.marker.x, TUT.marker.y) < 30) tutPass();
+  else if(st.id === "engage" && TUT.dummy && dist(p.x, p.y, TUT.dummy.x, TUT.dummy.y) < BATTLE_TRIGGER_DIST + 8){
+    p.targetX = null; p.targetY = null; p.path = null; p.destinationMarker = null;
+    tutStartBattle();
+    tutPass(true);
+  }
+}
+function tutWorldClick(wx, wy){
+  if(!tutIn("engage") || !TUT.dummy || dist(wx, wy, TUT.dummy.x, TUT.dummy.y) > 40) return false;
+  const p = game.player;
+  p.targetMonsterId = null; p.pendingNpcId = null; p.pendingLocationId = null;
+  setPlayerDestination(TUT.dummy.x, TUT.dummy.y);
+  return true;
+}
+function tutWorldDrawables(list){
+  const st = tutStep(); if(!st || !st.world) return;
+  const now = performance.now();
+  if(st.id === "walk" && TUT.marker){
+    const mk = TUT.marker;
+    list.push({ y: -5e8, draw: () => tutDrawMarker(ctx, mk.x, mk.y, now) });
+    list.push({ y: 2e9, draw: () => tutDrawWorldArrow(ctx, mk.x, mk.y - 18, "คลิกตรงนี้", now) });
+  }
+  if(TUT.dummy){
+    const d = TUT.dummy;
+    list.push({ y: d.y, draw: () => drawTrainingDummy(ctx, d.x, d.y, 66, 0) });
+    if(st.id === "engage") list.push({ y: 2e9, draw: () => tutDrawWorldArrow(ctx, d.x, d.y - 70, "🎯 คลิกหุ่นฝึก", now) });
+  }
+}
+function tutDrawMarker(c, x, y, now){
+  const t = (now % 1400) / 1400;
+  c.save();
+  c.fillStyle = "rgba(255,209,102,.22)";
+  c.beginPath(); c.ellipse(x, y, 26, 12, 0, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = "rgba(255,209,102,.95)"; c.lineWidth = 3;
+  c.beginPath(); c.ellipse(x, y, 26, 12, 0, 0, Math.PI * 2); c.stroke();
+  c.strokeStyle = `rgba(255,230,160,${1 - t})`; c.lineWidth = 2;
+  c.beginPath(); c.ellipse(x, y, 26 + t * 26, 12 + t * 12, 0, 0, Math.PI * 2); c.stroke();
+  for(let i = 0; i < 4; i++){ // rising sparkles
+    const k = ((now / 900) + i / 4) % 1, a = i * 1.7;
+    c.fillStyle = `rgba(255,240,190,${1 - k})`;
+    c.beginPath(); c.arc(x + Math.cos(a) * 16, y - k * 34, 2.2, 0, Math.PI * 2); c.fill();
+  }
+  c.restore();
+}
+function tutDrawWorldArrow(c, x, y, label, now){
+  const bob = Math.sin(now / 160) * 5;
+  c.save();
+  c.font = "bold 13px 'Trebuchet MS', sans-serif"; c.textAlign = "center";
+  const tw = c.measureText(label).width + 16, ty = y - 30 + bob;
+  c.fillStyle = "#ffd166"; c.strokeStyle = "rgba(0,0,0,.35)"; c.lineWidth = 2;
+  c.beginPath(); c.roundRect ? c.roundRect(x - tw / 2, ty - 16, tw, 22, 10) : c.rect(x - tw / 2, ty - 16, tw, 22); c.fill(); c.stroke();
+  c.fillStyle = "#3a2e00"; c.fillText(label, x, ty);
+  c.fillStyle = "#ffd166"; c.strokeStyle = "rgba(0,0,0,.45)";
+  c.beginPath(); c.moveTo(x - 9, y - 10 + bob); c.lineTo(x + 9, y - 10 + bob); c.lineTo(x, y + 2 + bob); c.closePath(); c.fill(); c.stroke();
+  c.restore();
+}
+// straw training dummy standing with its base on (fx, fy); hgt = full height in px. Proportions line up with
+// the bow's zone circles (monArtExt rx = 0.2·h, ry = 0.42·h around the middle): head / body target / arms / post.
+function drawTrainingDummy(c, fx, fy, hgt, flash){
+  const H = hgt, x = fx, cy = fy - H * 0.5; // cy = middle of the figure (the bow's "body" zone)
+  c.save();
+  if(flash > 0) c.filter = `brightness(${1 + flash * 1.2})`;
+  c.fillStyle = "rgba(0,0,0,.28)";
+  c.beginPath(); c.ellipse(x, fy, H * 0.2, H * 0.05, 0, 0, Math.PI * 2); c.fill();
+  // base plank + post
+  c.fillStyle = "#6b4526"; c.fillRect(x - H * 0.13, fy - H * 0.035, H * 0.26, H * 0.035);
+  c.fillStyle = "#8a5a32"; c.fillRect(x - H * 0.03, cy - H * 0.3, H * 0.06, H * 0.8);
+  c.fillStyle = "rgba(0,0,0,.18)"; c.fillRect(x + H * 0.005, cy - H * 0.3, H * 0.025, H * 0.8);
+  // cross beam (arms) with straw tufts
+  c.fillStyle = "#8a5a32"; c.fillRect(x - H * 0.24, cy - H * 0.05, H * 0.48, H * 0.05);
+  c.fillStyle = "#e3c26a";
+  for(const sd of [-1, 1]){
+    c.beginPath();
+    c.moveTo(x + sd * H * 0.22, cy - H * 0.06); c.lineTo(x + sd * H * 0.3, cy - H * 0.08);
+    c.lineTo(x + sd * H * 0.29, cy - H * 0.025); c.lineTo(x + sd * H * 0.31, cy + H * 0.01); c.lineTo(x + sd * H * 0.22, cy + H * 0.005);
+    c.closePath(); c.fill();
+  }
+  // straw body
+  const bodyG = c.createLinearGradient(x - H * 0.14, 0, x + H * 0.14, 0);
+  bodyG.addColorStop(0, "#c99a3e"); bodyG.addColorStop(0.5, "#ecca72"); bodyG.addColorStop(1, "#b98a34");
+  c.fillStyle = bodyG;
+  c.beginPath(); c.ellipse(x, cy + H * 0.02, H * 0.14, H * 0.2, 0, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = "rgba(120,80,30,.55)"; c.lineWidth = Math.max(1, H * 0.006);
+  for(let i = -3; i <= 3; i++){ c.beginPath(); c.moveTo(x + i * H * 0.03, cy - H * 0.15); c.lineTo(x + i * H * 0.034, cy + H * 0.2); c.stroke(); }
+  c.fillStyle = "#7a4a2a"; // rope bands
+  c.fillRect(x - H * 0.135, cy - H * 0.12, H * 0.27, H * 0.022);
+  c.fillRect(x - H * 0.125, cy + H * 0.15, H * 0.25, H * 0.022);
+  // target on the chest
+  const tr = H * 0.075;
+  [["#d8423a", 1], ["#fff3e0", 0.68], ["#d8423a", 0.38]].forEach(([col, k]) => { c.fillStyle = col; c.beginPath(); c.arc(x, cy + H * 0.02, tr * k, 0, Math.PI * 2); c.fill(); });
+  // sack head with a stitched face and a red headband
+  const hy = cy - H * 0.37, hr = H * 0.12;
+  c.fillStyle = "#e9d4a0"; c.beginPath(); c.arc(x, hy, hr, 0, Math.PI * 2); c.fill();
+  c.fillStyle = "rgba(160,120,60,.25)"; c.beginPath(); c.arc(x + hr * 0.25, hy + hr * 0.15, hr * 0.8, 0, Math.PI * 2); c.fill();
+  c.fillStyle = "#c0392b"; c.fillRect(x - hr, hy - hr * 0.55, hr * 2, hr * 0.28);
+  c.beginPath(); c.moveTo(x + hr * 0.9, hy - hr * 0.5); c.lineTo(x + hr * 1.5, hy - hr * 0.2); c.lineTo(x + hr * 1.3, hy - hr * 0.62); c.closePath(); c.fill();
+  c.strokeStyle = "#4a2f1a"; c.lineWidth = Math.max(1.2, H * 0.01); c.lineCap = "round";
+  for(const ex of [-0.38, 0.38]){ // X eyes
+    const ox = x + ex * hr, oy = hy + hr * 0.05, e = hr * 0.16;
+    c.beginPath(); c.moveTo(ox - e, oy - e); c.lineTo(ox + e, oy + e); c.moveTo(ox + e, oy - e); c.lineTo(ox - e, oy + e); c.stroke();
+  }
+  c.beginPath(); c.moveTo(x - hr * 0.35, hy + hr * 0.45); // stitched grin
+  c.quadraticCurveTo(x, hy + hr * 0.7, x + hr * 0.35, hy + hr * 0.45); c.stroke();
+  for(let i = -2; i <= 2; i++){ c.beginPath(); c.moveTo(x + i * hr * 0.14, hy + hr * 0.46); c.lineTo(x + i * hr * 0.14, hy + hr * 0.62); c.stroke(); }
+  c.restore();
+}
+
+/* ---- the fight ---- */
+function tutStartBattle(){
+  if(game.inBattle) return;
+  const p = game.player;
+  TUT.savedHp = p.hp;
+  p.hp = getEffectiveMaxHp();
+  const def = { type:0, name:"🎯 หุ่นฝึก", level:p.level, maxHp:9999, exp:0, gold:0, dmg:[2,4], interval:[2300,3000],
+    color:"#f0a63c", isBoss:false, respawnMs:0, isTrainingDef:true };
+  const m = { id:"training", type:0, isTraining:true, trainingDef:def, x:p.x, y:p.y, maxHp:9999, hp:9999, alive:true,
+    isElite:false, expReward:0, goldReward:0, hitFlash:0, shake:0 };
+  enterBattle(m);
+  const b = game.battle;
+  b.training = true;
+  b.nextAttackAt = performance.now() + 1500;
+  b.telegraphDuration = 1500;
+  b.baseHintText = "🎯 ลานฝึก — ทำตามคำแนะนำในกล่องมุมขวาบน · กด ✖ ออกจากการฝึก ได้ทุกเมื่อ";
+  document.getElementById("hint").textContent = b.baseHintText;
+  updateHud();
+}
+function tutPrepSkill(){
+  const p = game.player;
+  let slot = p.skillBarSlots.findIndex(id => id && SKILL_DEFS[id] && !SKILL_DEFS[id].weaponType);
+  if(slot < 0) slot = p.skillBarSlots.findIndex(id => id && SKILL_DEFS[id] && (!SKILL_DEFS[id].weaponType || isWeaponSkillUnlocked(SKILL_DEFS[id].weaponType, id)));
+  TUT.skillSlot = slot;
+  if(slot < 0){ tutPass(true); return; } // nothing castable on the bar — nothing to teach here
+  p.skillCooldowns[p.skillBarSlots[slot]] = 0;
+}
+function tutPrepFinal(){
+  const b = game.battle; if(!b) return;
+  const st = computePlayerBattleStats(game.player.level);
+  const hp = Math.max(40, Math.round((st.minDmg + st.maxDmg) / 2 * 12));
+  b.monster.maxHp = hp; b.monster.hp = hp;
+  const mh = getEffectiveMaxHp();
+  TUT.finalDmg = [Math.max(1, Math.round(mh * 0.06)), Math.max(2, Math.round(mh * 0.1))];
+  b.stunGauge = 0;
+  b.nextAttackAt = performance.now() + 1800;
+}
+function tutBattleTick(b, now){
+  const st = tutStep(), p = game.player, m = b.monster;
+  if(!st) return;
+  if(!st.attacks || TUT.passing){
+    if(!st.attacks && b.telegraphSide !== null){ b.telegraphSide = null; b.telegraphFeintAt = 0; b.dodgeSide = "center"; }
+    b.nextAttackAt = Math.max(b.nextAttackAt, now + 900); // the dummy holds still in this lesson
+  }
+  b.telegraphDuration = st.final ? 1150 : 1500;
+  b.attackIntervalRange = st.final ? [2600, 3400] : [2100, 2800];
+  b.damageRange = st.final ? TUT.finalDmg : [2, 4];
+  if(!st.final && m.hp < m.maxHp * 0.5) m.hp = m.maxHp;
+  if(!st.final && p.hp < getEffectiveMaxHp() * 0.5){ p.hp = getEffectiveMaxHp(); updateHud(); }
+}
+function tutBattleExit(result){
+  const b = game.battle, p = game.player, m = b.monster;
+  if(result === "lose"){ // nobody dies in the training yard
+    p.hp = getEffectiveMaxHp(); updateHud();
+    spawnBattleMsg("❤️ เติมเลือดเต็ม!", "#7CE0A8", "heal");
+    tutTip("เกือบไปแล้ว! เติมเลือดให้เต็ม — " + tutDodgeHint(), "warn");
+    return;
+  }
+  if(TUT.passing) return;
+  if(!tutIn("final")){ m.hp = m.maxHp; return; } // not yet — the dummy stands right back up
+  m.hp = 0;
+  b.telegraphSide = null; b.nextAttackAt = performance.now() + 9e9;
+  sfx.die();
+  spawnCallout("🎉 ปราบหุ่นฝึกแล้ว!", "#ffd166");
+  playJingle("jgl_victory");
+  tutPass();
+}
+function tutEndBattle(){
+  if(!inTraining()) return;
+  game.inBattle = false; game.battle = null;
+  game.battleCooldownUntil = performance.now() + 1500;
+  battleMouseHeld = false; battleIsCharging = false;
+  document.getElementById("attackGauge").classList.remove("charging");
+  stopChargeTone();
+  const p = game.player;
+  if(TUT.savedHp != null){ p.hp = clamp(TUT.newChar ? getEffectiveMaxHp() : TUT.savedHp, 1, getEffectiveMaxHp()); TUT.savedHp = null; }
+  returnToOverworldView(); // also saves
+}
+
+/* ---- what the player did (called from the real battle code) ---- */
+function tutEvent(kind, e){
+  const st = tutStep(); if(!st || TUT.passing) return;
+  e = e || {};
+  switch(st.id){
+    case "gauge":
+      if(kind === "hit") tutCount(e.perfect ? "PERFECT! ✨ (ขั้นต่อไปจะสอนเรื่องนี้)" : "ฟันโดน!");
+      else if(kind === "early") tutTip("เร็วไป! รอให้เกจวิ่ง เกือบสุด ก่อนค่อยคลิก", "warn");
+      break;
+    case "perfect":
+      if(kind === "hit"){ if(e.perfect) tutCount("PERFECT! ✨"); else tutTip(e.late ? "ช้าไปนิด! คลิกตอนแถบยังเป็นสีเขียวอยู่" : "ยังไม่ใช่ PERFECT — รอให้แถบเป็นสีเขียวก่อน", "warn"); }
+      else if(kind === "early") tutTip("เร็วไป! รอให้แถบเป็นสีเขียวก่อน", "warn");
+      break;
+    case "input":
+      if(kind === "hit"){
+        if(e.input) tutCount("สุดยอด! ท่าพิเศษเข้า!");
+        else { TUT.fails++; tutTip(e.perfect ? TUT_INPUT[st.weapon].tip(e) : "ท่าพิเศษต้องทำตอนเกจ สีเขียว (PERFECT) ด้วยนะ", "warn"); }
+      } else if(kind === "early"){ TUT.fails++; tutTip("ยังไม่ถึงโซนเขียว — ค้าง/เล็งไว้ก่อน แล้วค่อยปล่อยตอนเขียว", "warn"); }
+      if(TUT.fails >= 6){ document.getElementById("coach").classList.add("stuck"); if(TUT.fails === 6) tutTip("ยากไปไหม? กด ⏭ ข้ามขั้นนี้ได้ — ค่อยฝึกในสนามจริงก็ได้", "warn"); }
+      break;
+    case "skill":
+      if(kind === "skill") tutCount("ใช้สกิลแล้ว! 💥");
+      break;
+    case "dodge":
+      if(kind === "dodge") tutCount(e.perfect ? "PERFECT DODGE! เก่งมาก" : "หลบได้!");
+      else if(kind === "hurt") tutTip("โดนแล้ว! " + tutDodgeHint(), "warn");
+      break;
+    case "counter":
+      if(kind === "counter") tutCount("COUNTER! สวนกลับสำเร็จ ⚡");
+      else if(kind === "dodge") tutTip(e.perfect ? "PERFECT DODGE! คลิกซ้ายเลย เร็ว!" : "หลบได้ แต่ เร็วไป — รอจนขึ้นว่า \"ตอนนี้!\" ค่อยกด", e.perfect ? "good" : "warn");
+      else if(kind === "hurt"){ TUT.fails++; tutTip("ช้าไป! กดตอนขึ้นว่า \"ตอนนี้!\" · " + tutDodgeHint(), "warn"); }
+      if(TUT.fails >= 5) document.getElementById("coach").classList.add("stuck");
+      break;
+    case "stun":
+      if(kind === "stun") tutTip("มึนแล้ว! รัวคลิกซ้ายเร็วๆ!", "good");
+      else if(kind === "flurry") tutCount();
+      break;
+  }
+}
+
+/* ---- the coach card, tips and the pointer ---- */
+function tutTip(text, kind){
+  const el = document.getElementById("coachTip");
+  el.textContent = text; el.className = "coach-tip " + (kind || "warn"); el.hidden = false;
+  TUT.tipUntil = performance.now() + 2600;
+}
+function tutRender(){
+  const el = document.getElementById("coach"), st = tutStep();
+  if(!st){ el.hidden = true; return; }
+  el.hidden = false;
+  el.classList.toggle("in-battle", !!game.inBattle);
+  el.classList.toggle("pass", !!TUT.passing);
+  const n = TUT.steps.length;
+  document.getElementById("coachStep").textContent = `ขั้นที่ ${TUT.i + 1} / ${n}`;
+  document.getElementById("coachBar").style.width = ((TUT.i + (TUT.passing ? 1 : 0)) / n * 100) + "%";
+  document.getElementById("coachTitle").textContent = st.title;
+  const skillId = game.player.skillBarSlots[TUT.skillSlot], info = skillId && getActionBarSkillInfo(skillId);
+  const text = st.text.replace("{KEY}", String(TUT.skillSlot + 1)).replace("{SKILL}", info ? info.icon + " " + info.name : "")
+    .replace("{RIGHT}", tutDodgeKey("right")).replace("{LEFT}", tutDodgeKey("left"));
+  const html = tutMd(text);
+  const tx = document.getElementById("coachText");
+  if(tx.dataset.html !== html){ tx.innerHTML = html; tx.dataset.html = html; }
+  const c = Math.min(TUT.count, st.need || 0);
+  document.getElementById("coachProg").textContent = st.need ? `${"●".repeat(c)}${"○".repeat(st.need - c)}  ${c}/${st.need} ${st.unit || ""}` : "";
+  document.getElementById("coachSkipBtn").textContent = TUT.i >= n - 1 ? "⏭ ข้าม (จบการฝึก)" : "⏭ ข้ามขั้นนี้";
+}
+function tutPointerTarget(st){
+  if(!st || TUT.passing) return null;
+  if(st.point === "gauge") return { el: document.getElementById("attackGauge"), label: st.id === "gauge" ? "เกจโจมตี" : "โซนสีเขียว = PERFECT" };
+  if(st.point === "skill" && TUT.skillSlot >= 0) return { el: document.querySelector(`#skillBar .skill-btn[data-slot="${TUT.skillSlot}"]`), label: `กด ${TUT.skillSlot + 1}` };
+  return null;
+}
+function tutClearPointer(){
+  document.querySelectorAll(".coach-pointer").forEach(e => e.remove());
+  document.querySelectorAll(".coach-ring").forEach(e => e.classList.remove("coach-ring"));
+  TUT.pointerFor = null;
+}
+function tutFrame(now){
+  const st = tutStep();
+  const coach = document.getElementById("coach");
+  if(coach.classList.contains("in-battle") !== !!game.inBattle) coach.classList.toggle("in-battle", !!game.inBattle);
+  if(TUT.tipUntil && now > TUT.tipUntil){ TUT.tipUntil = 0; document.getElementById("coachTip").hidden = true; }
+  // pointer: lives inside the target's offsetParent so the page zoom (⚙️ ขนาดเมนู) never throws it off
+  const tg = tutPointerTarget(st);
+  const el = tg && tg.el && !tg.el.hidden && tg.el.offsetParent ? tg.el : null;
+  if(!el){ if(TUT.pointerFor) tutClearPointer(); return; }
+  let ptr = document.querySelector(".coach-pointer");
+  if(TUT.pointerFor !== el || !ptr){
+    tutClearPointer();
+    ptr = document.createElement("div");
+    ptr.className = "coach-pointer";
+    ptr.innerHTML = `<span class="cp-label"></span><span class="cp-arrow">👇</span>`;
+    el.offsetParent.appendChild(ptr);
+    el.classList.add("coach-ring");
+    TUT.pointerFor = el;
+  }
+  const lab = ptr.querySelector(".cp-label");
+  if(lab.textContent !== tg.label) lab.textContent = tg.label;
+  const left = el.offsetLeft + el.offsetWidth / 2 + "px", top = el.offsetTop - 6 + "px";
+  if(ptr.style.left !== left) ptr.style.left = left;
+  if(ptr.style.top !== top) ptr.style.top = top;
+}
+// on-canvas helpers during the fight: which key to press, "ตอนนี้!" timing, and where the stun bar is
+function tutDrawBattle(b, w, h, mx, my, barX, barY, barW, now){
+  const st = tutStep(); if(!st) return;
+  bctx.save();
+  bctx.textAlign = "center";
+  const outline = (t, x, y, font, col) => { bctx.font = font; bctx.strokeStyle = "rgba(0,0,0,.7)"; bctx.lineWidth = 5; bctx.strokeText(t, x, y); bctx.fillStyle = col; bctx.fillText(t, x, y); };
+  if((st.id === "dodge" || st.id === "counter") && b.telegraphSide !== null){
+    const go = oppositeSide(b.telegraphSide), key = tutDodgeKey(go);
+    const bx = w * PLAYER_BATTLE_X + (go === "right" ? 190 : -190), by = h * 0.5;
+    const pulse = 1 + Math.sin(now / 90) * 0.06;
+    bctx.save(); bctx.translate(bx, by); bctx.scale(pulse, pulse);
+    bctx.fillStyle = "rgba(20,14,40,.82)"; bctx.strokeStyle = "#ffd166"; bctx.lineWidth = 3;
+    bctx.beginPath(); bctx.roundRect ? bctx.roundRect(-62, -34, 124, 68, 14) : bctx.rect(-62, -34, 124, 68); bctx.fill(); bctx.stroke();
+    outline(go === "right" ? `กด ${key} ➡` : `⬅ กด ${key}`, 0, 10, "bold 28px 'Trebuchet MS', sans-serif", "#ffd166");
+    bctx.restore();
+    if(st.id === "counter"){
+      const left = b.telegraphStart + b.telegraphTotalMs - now;
+      if(left <= PERFECT_DODGE_WINDOW_MS) outline("ตอนนี้!", w * 0.5, h * 0.36, `bold ${38 + Math.sin(now / 60) * 3}px 'Trebuchet MS', sans-serif`, "#7CFFB2");
+      else outline("รอ…", w * 0.5, h * 0.36, "bold 30px 'Trebuchet MS', sans-serif", "#d8d0ee");
+    }
+  }
+  if(now < b.counterWindowUntil) outline("คลิกเลย! ⚔️", mx, my + 40, `bold ${34 + Math.sin(now / 60) * 3}px 'Trebuchet MS', sans-serif`, "#ffb84d");
+  if(st.id === "stun" && now >= b.stunnedUntil){
+    const ax = barX - 40 - Math.sin(now / 160) * 4, ay = barY + 19; // left of the bar — the coach card sits on the right
+    bctx.textAlign = "right";
+    outline("หลอดสตั้น — ตีให้เต็ม! ▶", ax, ay + 4, "bold 14px 'Trebuchet MS', sans-serif", "#ff9d3f");
+  }
+  bctx.restore();
+}
+
 
 /* ============================================================
    TOWN — NPCs, quest dialog, shop, refine, and the travel gate
@@ -10941,9 +11635,20 @@ const TOWN_LORD_LORE = [
 const STORY_CHAPTERS = {
   1: { name:"ผู้รอดจากเกวียน" },
   2: { name:"เสียงกระซิบในป่า" },
-  3: { name:"จารึกพันปี" }
+  3: { name:"จารึกพันปี" },
+  4: { name:"คำสารภาพบนยอดเขา" },
+  5: { name:"เหมืองแห่งเสียงกระซิบ" },
+  6: { name:"น้ำที่จดจำ" },
+  7: { name:"กระจกเจตจำนง" },
+  8: { name:"วิหารแห่งความเมตตา" },
+  9: { name:"เงาของใจ" },
+  10: { name:"ผู้เมตตา" }
 };
-const STORY_LAST_CHAPTER = 3; // chapters written so far — the chain ends with a "to be continued" note
+const STORY_LAST_CHAPTER = 10; // chapters written so far — the chain ends with a "to be continued" note
+// v52: chapters the SERVER already knows (its econ_data lists every quest id a save may contain — an unknown id gets the
+// save rejected). Online, story_chapters() is asked once at login; until the owner runs the v52 SQL it doesn't exist and
+// the story simply stops after chapter 3 as before. The offline dev build has everything.
+function storyServerChapters(){ return NET_ONLINE ? (net.storyMax || 3) : STORY_LAST_CHAPTER; }
 const STORY_NPC_NAME = { town_lord:"เจ้าเมือง", merchant:"พ่อค้า", blacksmith:"ช่างตีเหล็ก", temple:"นักบวชแห่งบาเรีย", researcher:"นักวิจัย", doctor:"หมอ", monk:"พระ" };
 const STORY_QUESTS = [
   // ---------- บทที่ 1 · ทุ่งหญ้าเริ่มต้น ----------
@@ -11054,7 +11759,211 @@ const STORY_QUESTS = [
     desc:"ปราบ 👑 จอมเพลิงทะเลทราย (บอสแมพ 3) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
     give:"",
     fight:"ความร้อนแผดเผาจนอากาศบิดเบี้ยว ในเปลวไฟมี **ศิลาหลักบาเรีย** ลอยวนอยู่",
-    done:"(ศิลาก้อนที่สามยังร้อนระอุ พอสลักช่องระบายถูกตอกลงไป เสาทั้งสามต้นก็ส่งเสียงกังวานพร้อมกัน)\n**เสาบาเรียต้นที่ 3 ถูกจุดขึ้นแล้ว — ต้นแรกที่มีช่องระบาย**\n\"แสงอาทิตย์หลอมรวมกับทราย… นั่นไม่ใช่มานาแปรปรวนตามธรรมชาติ\" นักบวชพูดเสียงเบา \"นั่นคือ **กฎแห่งการหลอมรวม** และข้ารู้จักคนเพียงคนเดียวที่ครอบครองมัน\"\n(บทที่ 4 จะมาในอัปเดตถัดไป)" }
+    done:"(ศิลาก้อนที่สามยังร้อนระอุ พอสลักช่องระบายถูกตอกลงไป เสาทั้งสามต้นก็ส่งเสียงกังวานพร้อมกัน)\n**เสาบาเรียต้นที่ 3 ถูกจุดขึ้นแล้ว — ต้นแรกที่มีช่องระบาย**\n\"แสงอาทิตย์หลอมรวมกับทราย… นั่นไม่ใช่มานาแปรปรวนตามธรรมชาติ\" นักบวชพูดเสียงเบา \"นั่นคือ **กฎแห่งการหลอมรวม** และข้ารู้จักคนเพียงคนเดียวที่ครอบครองมัน\"" },
+
+  // ---------- บทที่ 4 · ยอดเขาหิมะ ----------
+  { id:"c4_hut", ch:4, name:"กระท่อมบนยอดเขา", from:"temple", npc:"temple", rw:[810, 1365], art:"map4", artPos:"center 45%",
+    goal:{ type:"spot", tier:4, spots:[
+      { icon:"🛖", name:"กระท่อมร้าง", text:"กระท่อมหินเล็กๆ ถูกหิมะกลบไปครึ่งหลัง ข้างในเย็นเฉียบแต่เป็นระเบียบ… บนผนังสลักคำเดียวซ้ำไปซ้ำมาจนเต็มห้อง **\"ถ้าไม่มีข้า ก็ไม่มีใครต้องเจ็บ\"**" },
+      { icon:"✉️", name:"จดหมายแช่แข็ง", text:"จดหมายที่ถูกน้ำแข็งเคลือบไว้ ลายมือสั่นเทา\n\"ถึง **ลูกพ่อ** พ่อขอโทษที่มาไม่ทัน… แต่พ่อจะหาทางให้เราได้อยู่ด้วยกันอีกครั้ง **ไม่มีวันแยกจากกันอีก**\" — ลงชื่อ **ปรมัตถ์**" } ] },
+    desc:"ตามหากระท่อมของปรมัตถ์บนยอดเขาหิมะ แมพ 4 (ตามลูกศร 📜)",
+    give:"(นักบวชนิ่งไปนานก่อนจะเอ่ยปาก)\nข้าสัญญากับตัวเองว่าจะไม่พูดชื่อนั้นอีก แต่เจ้าสมควรได้รู้… **ปรมัตถ์** เคยเป็นนักบวชใหญ่ของโบสถ์นี้ และเป็น **อาจารย์ของข้า**\nหลังเกิดเรื่องครั้งนั้น ท่านหนีขึ้นไปจำศีลบน **ยอดเขาหิมะ** (แมพ 4) ไปดูให้ข้าทีว่าท่านทิ้งอะไรไว้",
+    done:"(นักบวชกำจดหมายไว้แน่น)\nสามสิบปีก่อน บาเรียรั่วเพียงรูเล็กๆ รูเดียว แต่คลื่นมานาที่ลอดเข้ามาก็พอจะ **พรากภรรยาและลูกสาว** ของท่านไป ร่างของทั้งสองหลอมเข้ากับต้นไม้หน้าบ้าน…\nท่านใช้ **กฎแห่งการหลอมรวม** พยายามดึงพวกเขาคืนมา แต่ยิ่งพยายาม ท่านก็ยิ่งเชื่อว่าความเจ็บปวดทั้งหมดมาจากการที่เรา **แยกจากกัน**" },
+  { id:"c4_frozen", ch:4, name:"ผู้ที่หนาวจนลืม", from:null, npc:null, goal:{ type:"kill", tier:4, n:8 }, rw:[810, 1365],
+    desc:"ปลดทุกข์มอนสเตอร์ในแมพ 4 ให้ได้ 8 ตัว",
+    give:"ระหว่างทางลงจากกระท่อม เจ้าเห็น **นักปีนเขาแช่แข็ง** เดินวนเป็นวงกลมรอบกองไฟที่มอดไปนานแล้ว… พวกเขาหนาวจนลืมไปว่ากำลังหาทางกลับบ้าน ปลดทุกข์ให้พวกเขาเถอะ",
+    done:"ในอกเสื้อของนักปีนเขาคนสุดท้ายมี **ถุงมือเด็ก** ข้างหนึ่ง ปักชื่อ **มิว** ไว้… ขบวนชุดขาวผ่านทางนี้ไปไม่นาน รอยเท้ามุ่งลงไปทาง **ถ้ำใต้ดิน**" },
+  { id:"c4_ice", ch:4, name:"น้ำแข็งที่ไม่ละลาย", from:"doctor", npc:"doctor", goal:{ type:"give", item:"sample_t4", n:3 }, rw:[810, 1365],
+    desc:"นำ 🧊 น้ำแข็งไม่ละลาย 3 ก้อน ไปให้หมอ (ดรอปจากมอนแมพ 4)",
+    give:"ถุงมือของมิวเปียกแต่ **ไม่แข็งตัว** ทั้งที่อยู่กลางหิมะ… แปลกนัก ข้าอยากรู้ว่าน้ำแข็งบนเขานั่นทำจากอะไร เอา **น้ำแข็งไม่ละลาย 3 ก้อน** มาให้ข้าดูที",
+    done:"(หมอวางน้ำแข็งลงบนถ่านร้อน มันไม่ละลายเลยสักหยด)\nนี่ไม่ใช่น้ำ… มันคือ **เจตจำนงที่หยุดนิ่ง** คนบนเขาไม่ได้ตายเพราะหนาว พวกเขาแค่ **ยอมหยุดดิ้นรน**\nแต่ถุงมือของมิวยังอุ่นอยู่ แปลว่าแกยัง **ไม่ยอมแพ้**" },
+  { id:"c4_still", ch:4, name:"นิ่งแต่ไม่หยุด", from:"monk", npc:"monk", goal:{ type:"meditate", tier:4 }, rw:[810, 1365],
+    desc:"ทำสมาธิจนสติเต็ม **กลางแมพ 4** แล้วกลับมาหาพระ",
+    give:"ความนิ่งมีสองแบบ แบบหนึ่งคือ **ยอมแพ้** อีกแบบคือ **ตั้งมั่น** ไปนั่งสมาธิกลาง **ยอดเขาหิมะ** แล้วดูว่าใจเจ้าเป็นแบบไหน",
+    done:"ลมหนาวพัดผ่าน แต่ใจเจ้ายังอุ่น นั่นคือความนิ่งที่ **ยังมีชีวิต**\nปรมัตถ์เลือกความนิ่งแบบแรก เขาอยากให้ทุกอย่างหยุดเจ็บ… ด้วยการหยุดเป็นตัวเอง" },
+  { id:"c4_boss", ch:4, name:"ราชาใต้ธารน้ำแข็ง", from:null, npc:"temple", goal:{ type:"boss", tier:4 }, rw:[2150, 3600, 1], finale:true, art:"s3", artPos:"center 35%",
+    desc:"ปราบ 👑 ราชาน้ำแข็ง (บอสแมพ 4) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"ลมหิมะหมุนเป็นเกลียว **ราชาน้ำแข็ง** ยืนขวางทาง ในอกของมัน **ศิลาหลักบาเรีย** ส่องแสงผ่านชั้นน้ำแข็งหนา…",
+    done:"(ศิลาก้อนที่สี่เย็นเฉียบจนมือชา แต่พอวางลงบนแท่น มันก็อุ่นขึ้นช้าๆ)\n**เสาบาเรียต้นที่ 4 ถูกจุดขึ้นแล้ว**\nบนร่างราชาน้ำแข็งมีรอยมีดของใครบางคนพยายามแงะศิลาออก แต่ไม่สำเร็จ… \"คณะหนึ่งเดียวกำลัง **แข่งกับเรา** เก็บศิลา\" นักบวชว่า \"ถ้าพวกมันได้ครบก่อน บาเรียจะไม่ใช่เกราะอีกต่อไป แต่จะกลายเป็น **เบ้าหลอม** ครอบทั้งโลก\"" },
+
+  // ---------- บทที่ 5 · ถ้ำใต้ดิน ----------
+  { id:"c5_brother", ch:5, name:"เพลงกล่อมในอุโมงค์", from:"blacksmith", npc:"blacksmith", rw:[1040, 1750], art:"map5", artPos:"center 45%",
+    goal:{ type:"spot", tier:5, spots:[
+      { icon:"⛏️", name:"ป้ายเหมืองค้อนไขว้", text:"ป้ายไม้รูปค้อนไขว้ห้อยอยู่หน้าปากอุโมงค์ ข้างในมีเสียงฮัมเพลงแผ่วๆ ก้องผนังถ้ำ… **เพลงกล่อมเด็ก** ที่คนในเมืองชอบร้อง" },
+      { icon:"💎", name:"คนขุดแร่ที่ยังฮัมเพลง", text:"คนขุดแร่ที่ครึ่งตัวกลายเป็นผลึกนั่งพิงผนัง ปากยังฮัมเพลงไม่หยุด ข้อมือมีสายรัดหนังสลัก **รูปค้อนไขว้**",
+        choice:{ key:"c5b", options:[
+          { val:"sing", icon:"🎵", label:"ร้องเพลงไปกับเขา", text:"เจ้าร้องท่อนต่อไป… เขาเงยหน้าขึ้น ตาเป็นประกาย \"พี่… บอกพี่ด้วยว่าข้าไม่เป็นไร\" ก่อนแสงในตาจะค่อยๆ ดับลงอย่างสงบ เจ้าเก็บ **สายรัดข้อมือ** ไว้ให้พี่ชายเขา" },
+          { val:"carry", icon:"🤝", label:"พยุงเขาออกจากถ้ำ", text:"ผลึกบนตัวเขาหนักเกินจะพาไปไกล แต่พอพ้นความมืดของอุโมงค์ เสียงฮัมก็หยุดลง เขาหลับตาราวกับได้กลับบ้าน เจ้าเก็บ **สายรัดข้อมือ** ไว้ให้พี่ชายเขา" } ] } } ] },
+    desc:"ตามหาน้องชายของช่างตีเหล็กในถ้ำใต้ดิน แมพ 5 (ตามลูกศร 📜)",
+    give:"(ช่างตีเหล็กวางค้อนลง) ข้ามีน้องชายคนหนึ่งเป็น **คนขุดแร่** ในถ้ำใต้ดิน (แมพ 5) ไม่ได้ข่าวมาตั้งแต่บาเรียแตก… ถ้าเจ้าลงไปแถวนั้น ช่วยดูให้ข้าที ป้ายเหมืองของมันมีรูป **ค้อนไขว้**",
+    done:"(ช่างตีเหล็กลูบสายรัดข้อมืออยู่นาน)\nเพลงนั้นข้าร้องให้มันฟังทุกคืนตอนเด็กๆ… ขอบใจที่พามันกลับบ้าน **ในแบบที่มันเลือก**\nไปเถอะ แล้วระวังแร่ในถ้ำนั่นด้วย ข้าได้ยินว่ามัน **กระซิบได้**" },
+  { id:"c5_ore", ch:5, name:"แร่ที่จดจำ", from:"researcher", npc:"researcher", goal:{ type:"give", item:"sample_t5", n:3 }, rw:[1040, 1750],
+    desc:"นำ 🪙 แร่กระซิบ 3 ก้อน ไปให้นักวิจัย (ดรอปจากมอนแมพ 5)",
+    give:"ช่างตีเหล็กบอกว่าแร่ในถ้ำ **กระซิบได้**? เอา **แร่กระซิบ 3 ก้อน** มาให้ข้าวิเคราะห์ที",
+    done:"(นักวิจัยแนบหูกับก้อนแร่ แล้วหน้าซีด)\nแร่นี่ **จดจำเจตจำนง** ของคนที่อยู่ใกล้มันไว้ได้… นี่คือเสียงของคนงานเหมืองทั้งร้อยชีวิต\nถ้าคณะหนึ่งเดียวขุดแร่นี่ไปใช้ พวกมันจะ **เก็บเจตจำนงของคนไว้ในหิน** แล้วเอาไปหลอมรวมทีหลังได้ — นี่แหละสิ่งที่มันจะทำกับเด็กๆ ที่ลักพาตัวไป!" },
+  { id:"c5_camp", ch:5, name:"ค่ายที่ยังอุ่น", from:null, npc:"merchant", rw:[1040, 1750],
+    goal:{ type:"spot", tier:5, spots:[
+      { icon:"🖍️", name:"ภาพวาดบนผนัง", text:"บนผนังถ้ำมีรูปวาดด้วยถ่าน… คนตัวโตหนึ่งคน คนตัวเล็กหนึ่งคน จับมือกันหน้าร้านที่มีป้าย **\"ร้านพ่อ\"** ใต้ภาพเขียนตัวโย้เย้ว่า **\"พ่อ รอหนูนะ\"**" },
+      { icon:"🔥", name:"กองไฟของค่ายชั่วคราว", text:"กองไฟยังอุ่นอยู่ ผ้าคลุมสีขาวหลายผืนพับไว้เรียบร้อย รอยเท้าเด็กหนึ่งคู่เดินปนอยู่ในรอยเท้าผู้ใหญ่ มุ่งหน้าไปทาง **หนองน้ำพิษ**" } ] },
+    desc:"สำรวจค่ายร้างในแมพ 5 (ตามลูกศร 📜) แล้วกลับไปเล่าให้พ่อค้าฟัง",
+    give:"ขณะเดินลึกเข้าไปในถ้ำ เจ้าได้ยิน **เสียงเด็กร้องเพลง** เบาๆ ดังมาจากที่ไหนสักแห่ง…",
+    done:"(พ่อค้าร้องไห้โดยไม่มีเสียง)\n\"ร้านพ่อ\"… แกยังจำร้านได้ แกยังจำ **ข้า** ได้\nข้าจะรอ ข้าจะเปิดร้านทุกวันจนกว่าแกจะกลับมา" },
+  { id:"c5_dark", ch:5, name:"มองด้วยใจ", from:"monk", npc:null, goal:{ type:"stat", key:"perfectDodges", n:8 }, rw:[1040, 1750],
+    desc:"หลบเฉียบขาด (PERFECT DODGE) ให้ได้ 8 ครั้ง",
+    give:"ในถ้ำมืดตาไม่ช่วยอะไร ต้องใช้ใจฟังจังหวะของศัตรู — รอให้การโจมตีใกล้ที่สุดแล้วค่อยหลบ ทำ **หลบเฉียบขาด 8 ครั้ง** ให้ข้าเห็น",
+    done:"เจ้าหลบได้ทั้งที่แทบไม่ต้องมอง… ทันใดนั้นผลึกทั่วถ้ำก็ส่งเสียงกระซิบพร้อมกันเป็นร้อยเสียง บางอย่างขนาดใหญ่ **ตื่นขึ้นแล้ว**" },
+  { id:"c5_boss", ch:5, name:"เสียงกระซิบนับร้อย", from:null, npc:"temple", goal:{ type:"boss", tier:5 }, rw:[2760, 4600, 1], finale:true, art:"s3", artPos:"center 35%",
+    desc:"ปราบ 👑 เจ้าถ้ำลึก (บอสแมพ 5) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"ผลึกทั่วทั้งถ้ำกระซิบเป็นเสียงเดียวกัน **เจ้าถ้ำลึก** ลืมตาขึ้น ศิลาหลักในอกของมันสั่นสะท้านตามเสียงนั้น…",
+    done:"(เสียงกระซิบในถ้ำเงียบลงทันทีที่ศิลาหลุดออกจากร่างมัน)\n**เสาบาเรียต้นที่ 5 ถูกจุดขึ้นแล้ว — มาได้ครึ่งทางแล้ว**\n\"เสียงเหล่านั้นเงียบไป ไม่ใช่เพราะพวกเขาหายไป\" นักบวชว่า \"แต่เพราะศิลาหลักคืนความสงบให้ ศิลาไม่ได้กักขังใคร มันแค่ **ปกป้องเส้นแบ่ง** ระหว่างเรากับทุกสิ่ง\"" },
+
+  // ---------- บทที่ 6 · หนองน้ำพิษ ----------
+  { id:"c6_cure", ch:6, name:"พิษแห่งความทุกข์", from:"doctor", npc:"doctor", goal:{ type:"give", item:"sample_t6", n:3 }, rw:[1270, 2135], art:"map6", artPos:"center 45%",
+    desc:"นำ 🦠 เมือกพิษเรืองแสง 3 ก้อน ไปให้หมอ (ดรอปจากมอนแมพ 6)",
+    give:"คนจากหมู่บ้านริม **หนองน้ำพิษ** (แมพ 6) เริ่มป่วยด้วยพิษเรืองแสง ข้าต้องการ **เมือกพิษเรืองแสง 3 ก้อน** มาทำยาถอนพิษ",
+    done:"(หมอผสมยาอยู่จนดึก)\nพิษนี่ไม่ได้มาจากธรรมชาติ… มันคือ **ความทุกข์** ของคนที่ถูกหลอมรวม ที่ถูกเทหมกไว้ในหนองน้ำ\nคณะหนึ่งเดียวบอกว่าการหลอมรวมทำให้ความทุกข์หายไป แต่ความจริงมัน **แค่ถูกทิ้งไว้ที่นี่**" },
+  { id:"c6_drowned", ch:6, name:"คนที่จมอยู่กับความทุกข์", from:null, npc:null, goal:{ type:"kill", tier:6, n:10 }, rw:[1270, 2135],
+    desc:"ปลดทุกข์มอนสเตอร์ในแมพ 6 ให้ได้ 10 ตัว",
+    give:"ยาถอนพิษใช้ได้กับคนที่ยังพอมีสติ แต่ **คนจมน้ำเน่า** ในหนองไปไกลเกินกว่านั้นแล้ว… ปลดทุกข์ให้พวกเขา 10 คน ความทุกข์ในน้ำจะเบาบางลง",
+    done:"น้ำในหนองใสขึ้นเล็กน้อย… ไกลออกไปมีแสงตะเกียงจาก **เรือลำเล็ก** ลอยอยู่กลางหนอง" },
+  { id:"c6_ferry", ch:6, name:"คนแจวเรือกลางหนอง", from:null, npc:null, rw:[1270, 2135],
+    goal:{ type:"spot", tier:6, spots:[
+      { icon:"🛶", name:"คนแจวเรือชรา", text:"ชายแก่คนหนึ่งยังแจวเรือไปมากลางหนองพิษ ร่างกายไม่ถูกแทรกแซงเลยสักนิด\n\"ข้าพาคนข้ามหนองมาห้าสิบปีแล้ว บาเรียแตกก็ยังต้องมีคนข้าม… เจ็ดวันก่อนข้าพาขบวนชุดขาวข้ามไป มีเด็กผู้หญิงถือตะเกียงไปด้วย แกถามข้าว่า **'ลุงกลัวไหม'** ข้าตอบว่ากลัว แกบอกว่า **'หนูก็กลัว แต่หนูจะกลับบ้าน'**\"",
+        choice:{ key:"c6f", options:[
+          { val:"town", icon:"🏘️", label:"ชวนเขาไปอยู่ในเมือง", text:"\"ถ้าข้าไป ใครจะพาคนข้ามล่ะ\" เขาหัวเราะ แต่ก็รับ **ยาถอนพิษ** ของหมอไว้ แล้วชี้ทางไป **ดินแดนคริสตัล** ที่ขบวนนั้นมุ่งหน้าไป" },
+          { val:"ride", icon:"🛶", label:"ให้เขาพาเจ้าข้ามหนอง", text:"เรือโคลงเคลงช้าๆ ไปบนน้ำเขียวเรืองแสง คนแจวเรือฮัมเพลงไปตลอดทาง พอถึงฝั่ง เขาชี้ไปที่แสงคริสตัลบนขอบฟ้า \"ขบวนนั่นไปทางนั้น ไปรับแกกลับบ้านเถอะ\"" } ] } } ] },
+    desc:"ตามแสงตะเกียงกลางหนองในแมพ 6 (ตามลูกศร 📜)",
+    give:"แสงตะเกียงดวงนั้นลอยวนอยู่กลางหนองน้ำพิษ ราวกับกำลังรอใครบางคน…",
+    done:"ขบวนชุดขาวมุ่งหน้าไป **ดินแดนคริสตัล**… และมิวยังไม่ยอมแพ้" },
+  { id:"c6_calm", ch:6, name:"ใจที่ไม่จมตาม", from:"monk", npc:null, goal:{ type:"stat", key:"counters", n:6 }, rw:[1270, 2135],
+    desc:"โจมตีสวนกลับให้ได้ 6 ครั้ง",
+    give:"ความทุกข์ในหนองนั่นจะดึงใจเจ้าให้จมตาม ถ้าใจสั่นก็เห็นจังหวะศัตรูไม่ชัด — พิสูจน์ว่าใจเจ้ายังนิ่ง ด้วยการ **สวนกลับ 6 ครั้ง**",
+    done:"ทุกการสวนกลับของเจ้าแม่นยำราวกับเห็นล่วงหน้า… แล้วหนองน้ำทั้งหนองก็ **เดือดพล่าน** ขึ้นมา" },
+  { id:"c6_boss", ch:6, name:"สิ่งที่ถูกทิ้งไว้", from:null, npc:"temple", goal:{ type:"boss", tier:6 }, rw:[3370, 5600, 1], finale:true, art:"s3", artPos:"center 35%",
+    desc:"ปราบ 👑 เจ้าหนองน้ำพิษ (บอสแมพ 6) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"**เจ้าหนองน้ำพิษ** ลุกขึ้นจากโคลน ร่างของมันประกอบจากความทุกข์ที่ถูกทิ้งไว้นับพันคน กลางลำตัวมีศิลาหลักบาเรียเต้นเป็นจังหวะ…",
+    done:"**เสาบาเรียต้นที่ 6 ถูกจุดขึ้นแล้ว**\nน้ำในหนองค่อยๆ ใสขึ้น ความทุกข์ที่ถูกทิ้งไว้ไม่ได้หายไปไหน แต่ **ไหลผ่านช่องระบาย** ของบาเรียออกไปอย่างช้าๆ\n\"ความทุกข์ต้องมีทางไป ไม่ใช่ถูกกดทับหรือถูกหลอมรวม\" นักบวชว่า \"นั่นคือสิ่งที่อาจารย์ข้าไม่เคยเข้าใจ\"" },
+
+  // ---------- บทที่ 7 · ดินแดนคริสตัล ----------
+  { id:"c7_mirror", ch:7, name:"กระจกแห่งความทรงจำ", from:"researcher", npc:"researcher", rw:[1500, 2520], art:"map7", artPos:"center 45%",
+    goal:{ type:"spot", tier:7, spots:[
+      { icon:"🔮", name:"คริสตัลบานแรก", text:"ในคริสตัลมีภาพเกวียนขนของวิ่งบนถนนตอนกลางคืน… คนที่ขี่ม้าคุ้มกันข้างเกวียนคือ **เจ้าเอง** ในชุดทหารคุ้มกัน" },
+      { icon:"🔮", name:"คริสตัลบานที่สอง", text:"ภาพเจ้ายืนต่อหน้านักบวช มือแตะหีบใส่เศษศิลาบาเรีย **\"ข้าสาบานว่าจะส่งมันถึงมือท่านให้ได้ ไม่ว่าจะเกิดอะไรขึ้น\"**" },
+      { icon:"🔮", name:"คริสตัลบานสุดท้าย", text:"แสงระเบิดของมานา เกวียนพลิกคว่ำ… แล้วภาพก็ดับไป เหลือแต่คำสาบานที่ก้องอยู่ในหัว นี่คือ **เจตจำนงแรงกล้า** ที่ทำให้เจ้ารอดมาได้" } ] },
+    desc:"มองเข้าไปในคริสตัล 3 บานในแมพ 7 (ตามลูกศร 📜)",
+    give:"คริสตัลใน **ดินแดนคริสตัล** (แมพ 7) **สะท้อนเจตจำนง** ของคนที่มองมัน… บางทีมันอาจสะท้อนความทรงจำที่เจ้าลืมไปด้วย ลองไปดูสิ",
+    done:"(นักวิจัยฟังจนจบ แล้วยิ้มออกมาเป็นครั้งแรก)\nงั้นเจ้าก็ **ทำตามคำสาบานมาตลอด** โดยไม่รู้ตัว เศษศิลาในเกวียนถูกปล้นไป แต่เจ้าเก็บศิลาหลักคืนมาแล้วถึงหกก้อน\nยินดีต้อนรับกลับมา **ทหารคุ้มกันเกวียนบาเรีย**" },
+  { id:"c7_cage", ch:7, name:"ตะเกียงในกรงผลึก", from:null, npc:null, rw:[1500, 2520], art:"s4", artPos:"center 45%",
+    goal:{ type:"spot", tier:7, spots:[
+      { icon:"🏮", name:"กรงผลึก", text:"เด็กผู้หญิงถือตะเกียงนั่งกอดเข่าอยู่ในกรงผลึกโปร่งแสง ตรงอกเสื้อปักชื่อ **มิว**\n\"พี่เป็นใครคะ… ท่านปรมัตถ์บอกว่าอีกไม่นานหนูจะไม่ต้องคิดถึงพ่ออีกแล้ว เพราะหนูกับพ่อจะเป็นคนเดียวกัน… แต่หนู **ไม่อยากเป็นพ่อ** หนู **อยากกอดพ่อ**\"",
+        choice:{ key:"c7m", options:[
+          { val:"break", icon:"🔨", label:"ทุบกรงทันที", text:"ผลึกแตกเป็นเสี่ยงๆ มิวกระโดดกอดเจ้าแน่น เจ้าพาแกฝ่าแสงคริสตัลออกมาจนถึงประตูเดินทาง แกกระซิบว่า \"พี่ใจดีจัง\"" },
+          { val:"ask", icon:"💬", label:"ถามว่าแกอยากทำอะไร", text:"\"หนูอยากกลับบ้าน\" มิวตอบทันที แล้วชูตะเกียงส่องกลางกรง ผลึกแตกออกตามแสงนั้นเอง — **เจตจำนงของแกเองเป็นคนเปิดกรง** เจ้าจูงมือแกไปที่ประตูเดินทาง" } ] } } ] },
+    desc:"ตามแสงตะเกียงในแมพ 7 (ตามลูกศร 📜)",
+    give:"ท่ามกลางคริสตัลสีม่วง มีแสงตะเกียงดวงเล็กๆ ส่องอยู่ในกรงผลึก…",
+    done:"มิวปลอดภัยแล้ว! พาแกกลับไปที่ **ร้านพ่อค้า** ในเมืองกันเถอะ" },
+  { id:"c7_home", ch:7, name:"กลับบ้าน", from:null, npc:"merchant", goal:{ type:"talk", npc:"merchant" }, rw:[1500, 2520],
+    desc:"พามิวกลับไปหาพ่อค้าในเมือง",
+    give:"",
+    done:"(พ่อค้าวิ่งออกมาจากร้าน ชนตะกร้าผลไม้กระจายเต็มพื้น)\n**มิว!**\n(สองพ่อลูกกอดกันอยู่นาน จนตะเกียงในมือมิวดับไปเอง)\n\"นักกวาดล้าง… ข้าไม่มีอะไรตอบแทนได้เท่ากับที่เจ้าให้ข้ากลับมา\"\nมิวยิ้มให้เจ้า \"พี่คะ พ่ออุ่นแบบนี้แหละ ท่านปรมัตถ์ไม่รู้หรอก\"" },
+  { id:"c7_sight", ch:7, name:"แสงที่หลอกตา", from:"monk", npc:null, goal:{ type:"stat", key:"perfectDodges", n:10 }, rw:[1500, 2520],
+    desc:"หลบเฉียบขาด (PERFECT DODGE) ให้ได้ 10 ครั้ง",
+    give:"คริสตัลหักเหแสงจนตาพร่า ศัตรูที่นั่นดูเหมือนมาทุกทิศ อย่าเชื่อตา เชื่อจังหวะ — **หลบเฉียบขาด 10 ครั้ง**",
+    done:"แสงคริสตัลทั้งดินแดนหักเหรวมกันเป็นจุดเดียว… บางสิ่งกำลังก่อร่างขึ้นจากแสงนั้น" },
+  { id:"c7_boss", ch:7, name:"ภาพสะท้อนนับพัน", from:null, npc:"temple", goal:{ type:"boss", tier:7 }, rw:[3980, 6600, 1], finale:true, art:"s3", artPos:"center 35%",
+    desc:"ปราบ 👑 เจ้าคริสตัล (บอสแมพ 7) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"**เจ้าคริสตัล** สะท้อนภาพของเจ้านับร้อยนับพันบาน ทุกบานถือดาบ ทุกบานจ้องมองกลับมา — มีเพียงบานเดียวที่มีศิลาหลักเต้นอยู่ในอก…",
+    done:"**เสาบาเรียต้นที่ 7 ถูกจุดขึ้นแล้ว**\nมิวมาที่โบสถ์พร้อมพ่อ แกยื่นตะเกียงให้นักบวช \"ท่านปรมัตถ์ให้หนูถือไว้ บอกว่ามันจะนำทางไป **วิหารแห่งความเมตตา**\"\n(นักบวชหน้าซีด) \"วิหารกลางทะเลทรายศักดิ์สิทธิ์… ที่อาจารย์เคยสอนข้า\"" },
+
+  // ---------- บทที่ 8 · ทะเลทรายศักดิ์สิทธิ์ ----------
+  { id:"c8_mural", ch:8, name:"ภาพสลักในวิหาร", from:"temple", npc:"temple", rw:[1730, 2905], art:"map8", artPos:"center 45%",
+    goal:{ type:"spot", tier:8, spots:[
+      { icon:"🖼️", name:"ภาพสลักที่ 1", text:"ชายหนุ่มในชุดนักบวชยืนยิ้มกับหญิงสาวและเด็กน้อย ใต้ภาพสลักว่า **\"ความรักคือเส้นด้ายที่ผูกเราไว้ด้วยกัน\"**" },
+      { icon:"🖼️", name:"ภาพสลักที่ 2", text:"คลื่นมานาลอดผ่านรูบาเรีย ต้นไม้ต้นหนึ่งกลืนหญิงสาวกับเด็กน้อยเข้าไป ชายหนุ่มคุกเข่าร้องไห้อยู่ใต้ต้นไม้นั้น" },
+      { icon:"🖼️", name:"ภาพสลักสุดท้าย", text:"ชายชราชุดขาวนั่งบนบัลลังก์แสง ยื่นมือไปหาผู้คนนับพันที่ละลายเป็นแสงทอง คำใต้ภาพเดิมถูกสกัดออก แล้วสลักทับใหม่ว่า **\"เส้นด้ายคือสิ่งที่ทำให้เราเจ็บ จงตัดมันเสีย\"**" } ] },
+    desc:"ดูภาพสลักในวิหารกลางแมพ 8 (ตามลูกศร 📜)",
+    give:"ตะเกียงของมิวส่องแสงแรงขึ้นทุกครั้งที่หันไปทาง **ทะเลทรายศักดิ์สิทธิ์** (แมพ 8) วิหารที่อาจารย์เคยสอนข้าอยู่ที่นั่น ไปดูภาพสลักบนผนังวิหารให้ข้าที",
+    done:"(นักบวชหลับตา)\nอาจารย์ไม่ได้เกลียดความรัก… ท่านรักมากเกินไปจนทนเสียมันไปไม่ได้ จึงเลือกทำลายสิ่งที่ทำให้ต้องเสีย — ซึ่งก็คือ **ความเป็นตัวของตัวเอง**\nท่านรออยู่ที่ **บัลลังก์สวรรค์** (แมพ 10) รอให้ศิลาครบสิบก้อน เพื่อพลิกบาเรียให้กลายเป็น **เบ้าหลอมโลก**" },
+  { id:"c8_pilgrims", ch:8, name:"บทสวดที่ไม่มีวันจบ", from:null, npc:null, goal:{ type:"kill", tier:8, n:10 }, rw:[1730, 2905],
+    desc:"ปลดปล่อยมอนสเตอร์ในแมพ 8 ให้ได้ 10 ตัว",
+    give:"บนทางเดินสู่วิหาร **นักบวชหลงศรัทธา** เดินแถวสวดภาวนาไม่หยุด พวกเขาถวายเจตจำนงให้ปรมัตถ์จนไม่เหลืออะไรเป็นของตัวเอง… ปลดปล่อยพวกเขา 10 คน",
+    done:"บทสวดเงียบลง ในความเงียบนั้นมีใครคนหนึ่งร้องเรียกเจ้าจากหลังเสาหินแผ่วๆ…" },
+  { id:"c8_doubt", ch:8, name:"ศิษย์ที่ลังเล", from:null, npc:null, rw:[1730, 2905],
+    goal:{ type:"spot", tier:8, spots:[
+      { icon:"🙏", name:"ศิษย์ชุดขาว", text:"ชายหนุ่มชุดขาวมือสั่นเทา \"ข้าเคยเชื่อท่านปรมัตถ์… แต่วันก่อนข้าเห็นแม่หลอมไปกับแสง แล้วข้า **ยังเจ็บอยู่** ท่านบอกว่าความเจ็บจะหายไป แต่มันไม่หายเลย ข้าควรทำอย่างไรดี\"",
+        choice:{ key:"c8d", options:[
+          { val:"keep", icon:"❤️‍🩹", label:"บอกให้เก็บความเจ็บไว้", text:"\"ความเจ็บนั้นแปลว่าเจ้ายังรักแม่อยู่ เก็บมันไว้เถอะ\" เขาร้องไห้ออกมาได้เป็นครั้งแรก แล้วกระซิบว่า **พิธีหลอมรวมใหญ่** จะเริ่มทันทีที่ปรมัตถ์ได้ศิลาก้อนที่สิบ" },
+          { val:"choose", icon:"🧭", label:"ให้เขาเลือกทางเอง", text:"\"ข้าไม่รู้ว่าทางไหนถูก แต่มันควรเป็นทางที่เจ้าเลือกเอง\" เขานิ่งไปนาน แล้วถอดผ้าคลุมสีขาววางไว้บนผืนทราย ก่อนกระซิบว่า **พิธีหลอมรวมใหญ่** จะเริ่มทันทีที่ปรมัตถ์ได้ศิลาก้อนที่สิบ" } ] } } ] },
+    desc:"ตามเสียงเรียกหลังเสาหินในแมพ 8 (ตามลูกศร 📜)",
+    give:"",
+    done:"ศิลาก้อนที่สิบ… อยู่ในอกของ **ราชาสวรรค์สูงสุด** ผู้เฝ้าบัลลังก์ของปรมัตถ์เอง" },
+  { id:"c8_sun", ch:8, name:"ช่องระบายสุดท้าย", from:"researcher", npc:"researcher", goal:{ type:"give", item:"sample_t8", n:3 }, rw:[1730, 2905],
+    desc:"นำ ✨ ทรายทองศักดิ์สิทธิ์ 3 กำ ไปให้นักวิจัย (ดรอปจากมอนแมพ 8)",
+    give:"ถ้าปรมัตถ์จะพลิกบาเรียเป็นเบ้าหลอม ข้าต้องคำนวณช่องระบายให้ครบทุกเสาก่อนเขา เอา **ทรายทองศักดิ์สิทธิ์ 3 กำ** มาให้ข้า — มันคือแสงอาทิตย์ที่ถูกหลอม ข้าจะวัดแรงของกฎแห่งการหลอมรวมจากมัน",
+    done:"สำเร็จ! ข้าคำนวณ **ช่องระบายสุดท้าย** ได้แล้ว ถ้าเสาทั้งสิบมีช่องระบาย บาเรียจะพลิกเป็นเบ้าหลอมไม่ได้ **แม้ปรมัตถ์จะได้ศิลาครบก็ตาม**\nเหลือแค่ต้องนำศิลาทั้งหมดมาถึงมือเราก่อน" },
+  { id:"c8_boss", ch:8, name:"เทพเจ้าที่สวดไม่หยุด", from:null, npc:"temple", goal:{ type:"boss", tier:8 }, rw:[4590, 7600, 1], finale:true, art:"s3", artPos:"center 35%",
+    desc:"ปราบ 👑 เทพเจ้าทะเลทราย (บอสแมพ 8) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"แสงอาทิตย์ทั้งทะเลทรายรวมเป็นร่างมหึมา **เทพเจ้าทะเลทราย** เปล่งเสียงสวดบทเดียวกับที่สลักบนผนังวิหาร…",
+    done:"**เสาบาเรียต้นที่ 8 ถูกจุดขึ้นแล้ว**\nตะเกียงของมิวที่วางไว้บนแท่นบูชาดับลง แล้วจุดติดขึ้นใหม่เป็น **แสงสีฟ้าของบาเรีย**\n\"ทางไปบัลลังก์สวรรค์ต้องผ่าน **ห้วงเงามืด** ก่อน\" นักบวชว่า \"ที่นั่นไม่มีมอนสเตอร์ตัวไหนน่ากลัวเท่า **เงาของใจเจ้าเอง**\"" },
+
+  // ---------- บทที่ 9 · ห้วงเงามืด ----------
+  { id:"c9_edge", ch:9, name:"ขอบห้วงลึก", from:"monk", npc:"monk", goal:{ type:"meditate", tier:9 }, rw:[1960, 3290], art:"map9", artPos:"center 45%",
+    desc:"ทำสมาธิจนสติเต็ม **กลางแมพ 9** แล้วกลับมาหาพระ",
+    give:"ก่อนลงไปใน **ห้วงเงามืด** (แมพ 9) เจ้าต้องมีใจที่นิ่งที่สุดเท่าที่เคยมี ไปนั่งสมาธิที่ขอบห้วงนั้นจนสติเต็ม แล้วกลับมาหาข้า",
+    done:"เงามืดรอบตัวเจ้าถอยห่างออกไปทุกครั้งที่เจ้าหายใจออก… เจ้าพร้อมแล้ว\nแต่จำไว้ ในห้วงนั้น **ศัตรูที่แท้จริงจะพูดด้วยเสียงของเจ้าเอง**" },
+  { id:"c9_echo", ch:9, name:"เงาของใจ", from:null, npc:null, rw:[1960, 3290],
+    goal:{ type:"spot", tier:9, spots:[
+      { icon:"👤", name:"เงาที่คุ้นหน้า", text:"เงาในรูปร่างพ่อค้ายิ้มอย่างเย็นชา \"ถ้าเจ้าไม่ไปช่วยเร็วกว่านั้น มิวก็คงไม่ต้องเห็นอะไรน่ากลัวขนาดนั้น\" — เจ้ารู้ว่านั่นไม่ใช่เสียงของเขา มันคือ **ความกลัวของเจ้าเอง**" },
+      { icon:"👤", name:"เงาทหารคุ้มกัน", text:"เงาในชุดทหารคุ้มกันเกวียน — ตัวเจ้าในอดีต \"เจ้าทำเกวียนพัง เจ้าทำศิลาหาย **เจ้าไม่มีค่าพอจะเป็นตัวเจ้าหรอก**\"" },
+      { icon:"🌑", name:"เงาของใจ", text:"เงาสุดท้ายมีหน้าตาเหมือนเจ้าทุกกระเบียดนิ้ว มันถามเสียงเบา\n**\"ทำไมต้องทนเป็นตัวเองอยู่อีกล่ะ เจ็บก็เจ็บ เหนื่อยก็เหนื่อย\"**",
+        choice:{ key:"c9", options:[
+          { val:"vow", icon:"⚔️", label:"เพราะข้าสัญญาไว้", text:"\"เพราะข้าสาบานไว้ว่าจะส่งศิลาให้ถึง และข้ายังส่งไม่ครบ\" — เงาสั่นสะท้าน แล้วแตกออกเป็นแสงสีฟ้าเล็กๆ ลอยกลับเข้าหาอกของเจ้า" },
+          { val:"pain", icon:"❤️‍🩹", label:"เพราะความเจ็บคือหลักฐานว่ารัก", text:"\"ถ้าข้าไม่เจ็บเลย แปลว่าข้าไม่เคยรักอะไร ข้าเลือกที่จะเจ็บ\" — เงาหยุดนิ่งไปนาน แล้วยิ้มออกมาเป็นครั้งแรก ก่อนจะจางหายไปในความมืด" } ] } } ] },
+    desc:"เผชิญหน้ากับเงาในแมพ 9 (ตามลูกศร 📜)",
+    give:"ลึกลงไปในห้วงเงามืด มีเสียงที่คุ้นเคยเรียกชื่อเจ้า…",
+    done:"ห้วงเงามืดเงียบสงัด… แต่ครั้งนี้มัน **ไม่น่ากลัวอีกแล้ว**" },
+  { id:"c9_warriors", ch:9, name:"ผู้ที่แพ้เงาตัวเอง", from:null, npc:null, goal:{ type:"kill", tier:9, n:12 }, rw:[1960, 3290],
+    desc:"ปลดปล่อยมอนสเตอร์ในแมพ 9 ให้ได้ 12 ตัว",
+    give:"**นักรบผู้ถูกกลืนกิน** คือคนที่แพ้เงาของตัวเอง… ปลดปล่อยพวกเขา 12 คน ก่อนความมืดจะลามไปถึงเมือง",
+    done:"นักรบคนสุดท้ายยื่นดาบหักให้เจ้าก่อนสลายไป บนใบดาบสลักไว้สั้นๆ ว่า **\"ฝากด้วย\"**" },
+  { id:"c9_untouched", ch:9, name:"ไม่ให้ความมืดแตะตัว", from:"blacksmith", npc:null, goal:{ type:"win", tier:9, flawless:true }, rw:[1960, 3290],
+    desc:"ชนะมอนสเตอร์ในแมพ 9 โดยไม่เสียเลือดเลย 1 ครั้ง",
+    give:"(ช่างตีเหล็กยื่นดาบหักคืนให้ หลังตีซ่อมจนคม) เกราะอะไรก็ต้านความมืดนั่นไม่ได้ ทางเดียวคือ **อย่าให้มันแตะตัว** ชนะสักไฟต์ในแมพ 9 โดยไม่โดนตีเลยให้ข้าเห็นหน่อย",
+    done:"ไม่มีเงาไหนแตะต้องเจ้าได้… แล้วความมืดทั้งห้วงก็เริ่มรวมตัวเป็นร่างเดียว" },
+  { id:"c9_boss", ch:9, name:"เสียงของทุกคน", from:null, npc:"temple", goal:{ type:"boss", tier:9 }, rw:[5200, 8600, 1], finale:true, art:"s3", artPos:"center 35%",
+    desc:"ปราบ 👑 จอมมารเงามืด (บอสแมพ 9) แล้วนำศิลาไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"**จอมมารเงามืด** พูดด้วยเสียงของทุกคนที่เจ้าเคยพบ ทั้งหมอ พระ พ่อค้า มิว… และเสียงของเจ้าเอง",
+    done:"**เสาบาเรียต้นที่ 9 ถูกจุดขึ้นแล้ว**\nท้องฟ้าเหนือเมืองสว่างเป็นวงแหวนแสงเก้าวง เหลืออีกเพียง **วงเดียว**\nแล้วเสียงอ่อนโยนก็ดังขึ้นในหัวเจ้าอีกครั้ง \"เจ้าเดินมาไกลเหลือเกิน… มาเถิด ข้ารออยู่บน **บัลลังก์สวรรค์**\"" },
+
+  // ---------- บทที่ 10 · บัลลังก์สวรรค์ ----------
+  { id:"c10_saints", ch:10, name:"บันไดแห่งชื่อที่ถูกลืม", from:"temple", npc:null, goal:{ type:"kill", tier:10, n:12 }, rw:[2190, 3675], art:"map10", artPos:"center 45%",
+    desc:"ปลดปล่อยมอนสเตอร์ในแมพ 10 ให้ได้ 12 ตัว",
+    give:"(นักบวชยื่นลูกประคำเก่าๆ ให้เจ้า) นี่เป็นของอาจารย์ ข้าเก็บไว้ตั้งแต่วันที่ท่านจากไป ถ้าได้พบท่าน… บอกท่านว่าข้ายังเป็นศิษย์ท่านอยู่ แม้จะไม่เห็นด้วยกับท่านก็ตาม\nบันไดสู่ **บัลลังก์สวรรค์** (แมพ 10) เต็มไปด้วย **นักบุญที่สูญเสียตัวตน** ปลดปล่อยพวกเขา 12 คน แล้วขึ้นไปหาท่าน",
+    done:"บันไดหินอ่อนลอยอยู่กลางเมฆ ทุกขั้นสลักชื่อคนไว้นับพันชื่อ… ชื่อของคนที่หลอมรวมไปแล้ว นักบุญคนหนึ่งแตะมือเจ้าก่อนสลาย \"ชื่อข้าคือ **มะลิ** ช่วยจำไว้ให้ข้าที\"" },
+  { id:"c10_mind", ch:10, name:"ลมหายใจสุดท้ายก่อนพายุ", from:"monk", npc:"monk", goal:{ type:"meditate", tier:10 }, rw:[2190, 3675],
+    desc:"ทำสมาธิจนสติเต็ม **กลางแมพ 10** แล้วกลับมาหาพระ",
+    give:"ข้าไม่มีอะไรจะสอนเจ้าอีกแล้ว มีเพียงคำขอเดียว — ไปนั่งสมาธิบน **บัลลังก์สวรรค์** ให้ใจนิ่งที่สุด ก่อนเผชิญหน้าคนที่เชื่อว่าความนิ่งคือการหยุดมีชีวิต",
+    done:"ใจเจ้านิ่งเหมือนผิวน้ำ แต่ยังเต้นเป็นจังหวะของตัวเอง… นั่นแหละคำตอบที่เจ้าจะนำไปให้เขา" },
+  { id:"c10_throne", ch:10, name:"ผู้เมตตา", from:null, npc:null, rw:[2190, 3675], art:"paramat", artPos:"center 25%",
+    goal:{ type:"spot", tier:10, spots:[
+      { icon:"👑", name:"ปรมัตถ์ ผู้เมตตา", text:"ชายชราชุดขาวนั่งหลับตาบนบัลลังก์แสง เสียงของเขาอ่อนโยนจนแทบร้องไห้\n\"เจ้าคือคนที่นำศิลาคืนมาทั้งเก้าก้อน… ขอบใจเจ้านะ ศิลาก้อนสุดท้ายอยู่ในอกของราชาสวรรค์ พอเจ้านำมันมา **ทุกคนจะไม่ต้องเจ็บอีกต่อไป**\"",
+        choice:{ key:"c10", options:[
+          { val:"beads", icon:"📿", label:"ยื่นลูกประคำของนักบวช", text:"ปรมัตถ์ลืมตาขึ้นเป็นครั้งแรก มือที่รับลูกประคำสั่นเทา \"…เด็กคนนั้นยังเก็บมันไว้หรือ\" รอยยิ้มอ่อนโยนแตกร้าว ก่อนเขาจะหลับตาลงอีกครั้ง \"ไปเถิด ให้ราชาสวรรค์ตัดสินว่าใครถูก\"" },
+          { val:"refuse", icon:"✋", label:"ปฏิเสธเขาตรงๆ", text:"\"ข้าไม่ได้นำศิลามาเพื่อให้ท่านหลอมรวมโลก ข้านำมาเพื่อสร้างบาเรียที่ **มีช่องให้หายใจ**\" ปรมัตถ์ยิ้มเศร้า \"เจ้าเหมือนศิษย์ของข้าเหลือเกิน… งั้นก็ไปพิสูจน์ต่อหน้าราชาสวรรค์เถิด\"" } ] } } ] },
+    desc:"ขึ้นไปพบปรมัตถ์บนบัลลังก์สวรรค์ แมพ 10 (ตามลูกศร 📜)",
+    give:"",
+    done:"เบื้องหลังบัลลังก์ **ราชาสวรรค์สูงสุด** กางปีกแสงออกบังท้องฟ้า…" },
+  { id:"c10_boss", ch:10, name:"บาเรียที่หายใจได้", from:null, npc:"temple", goal:{ type:"boss", tier:10 }, rw:[5810, 9600, 1], finale:true, art:"s3", artPos:"center 35%",
+    desc:"ปราบ 👑 ราชาสวรรค์สูงสุด (บอสแมพ 10) แล้วนำศิลาก้อนสุดท้ายไปที่โบสถ์แห่งบาเรีย",
+    give:"",
+    fight:"**ราชาสวรรค์สูงสุด** กางปีกแสงบังท้องฟ้า ในอกของมันศิลาก้อนสุดท้ายเต้นเป็นจังหวะเดียวกับหัวใจของเจ้า…",
+    done:"(ศิลาก้อนที่สิบถูกวางลงบนแท่นสุดท้าย เสาทั้งสิบต้นส่งเสียงกังวานพร้อมกัน)\n**บาเรียถูกจุดขึ้นใหม่ครบสิบต้น — บาเรียที่มีช่องระบาย**\nเหนือเมือง โดมแสงสีฟ้าค่อยๆ ก่อตัวขึ้น ลมพัดผ่านช่องระบายเป็นเสียงหวีดแผ่วเบา ราวกับโลกทั้งใบเพิ่งได้ **หายใจ**\nบนบัลลังก์สวรรค์ ปรมัตถ์มองโดมนั้นอยู่นาน \"ช่องว่าง… ให้ทุกสิ่งไหลผ่านโดยไม่ต้องหลอมรวม\" เขาลุกขึ้น แล้วเดินหายเข้าไปใน **รอยแยกของมิติ** เบื้องหลังบัลลังก์ \"ข้ายังต้องคิดอีกมาก… ถ้าเจ้าอยากรู้คำตอบของข้า ก็ตามมาเถิด\"\n(🛕 ทำพิธีที่โบสถ์เพื่อขึ้น **มิติถัดไป** — เรื่องราวของปรมัตถ์ยังไม่จบ)" }
 ];
 const STORY_BY_ID = Object.fromEntries(STORY_QUESTS.map(q => [q.id, q]));
 const STORY_SPOT_R = 36;
@@ -11065,9 +11974,15 @@ function storyState(){
   const s = p.story;
   if(!Array.isArray(s.done)) s.done = [];
   if(!s.ch || typeof s.ch !== "object") s.ch = {};
+  // v52: a save that finished chapter 3 (the old last quest) sits on c4_hut as "active" — make it a proper offer from the priest
+  if(!s.m52){ // once per save
+    s.m52 = 1;
+    const q4 = STORY_QUESTS[s.i];
+    if(q4 && q4.id === "c4_hut" && s.st === "active" && !s.n && !(s.spots || []).some(x => x[2])) s.st = "offer";
+  }
   return s;
 }
-function storyQuest(){ const s = storyState(); return STORY_QUESTS[s.i] || null; }
+function storyQuest(){ const s = storyState(), q = STORY_QUESTS[s.i] || null; return q && q.ch <= storyServerChapters() ? q : null; }
 function storyTier(q){ return q.goal.tier || (q.ch || 1); }
 function storyItemCount(id){
   let n = 0;
@@ -11203,7 +12118,7 @@ function storyAfterStart(npc){
 function storyAfterComplete(npc, r){
   const next = r && r.next, s = storyState();
   const anchor = { x:npc.x, y:npc.y, r:npcTalkRange(npc) + 90 };
-  if(!next){ openTalk({ npcKind:npc.kind, text:"เรื่องราวยังไม่จบเพียงเท่านี้… (บทต่อไปจะมาในอัปเดตถัดไป)", anchor, choices:[{ icon:"👍", label:"ตกลง", leave:true }] }); return; }
+  if(!next){ openTalk({ npcKind:npc.kind, text: storyPillarsLit() >= 10 ? "บาเรียทั้งสิบต้นกลับมาหายใจได้แล้ว… ถ้าเจ้าอยากตามปรมัตถ์ไป ทำพิธีที่ 🛕 โบสถ์เพื่อขึ้นมิติถัดไปได้เลย" : "เรื่องราวยังไม่จบเพียงเท่านี้… (บทต่อไปจะมาในอัปเดตถัดไป)", anchor, choices:[{ icon:"👍", label:"ตกลง", leave:true }] }); return; }
   if(s.st === "offer" && next.from === npc.kind){ storyTalk(npc); return; }
   const line = s.st === "active" ? (next.give || "ไปต่อกันเถอะ") : `มีคนรอเจ้าอยู่ — ไปคุยกับ **${storyWho(next.from)}** ต่อได้เลย`;
   openTalk({ npcKind:npc.kind, text:line, extra: s.st === "active" ? storyCard(next, '<span class="tk-tag">กำลังทำ</span>') : "",
@@ -11221,7 +12136,7 @@ function storyFieldComplete(){
   storyPendingScene = { text, extra: next && s.st === "active" ? storyCard(next, '<span class="tk-tag">กำลังทำ</span>') : "" };
 }
 function storyShowPendingScene(){
-  if(!storyPendingScene || game.inBattle || talk.open || document.getElementById("tutorialOverlay").classList.contains("show")) return;
+  if(!storyPendingScene || game.inBattle || talk.open || document.getElementById("tutorialOverlay").classList.contains("show") || tutBusy()) return;
   if(!document.getElementById("victoryPanel").hidden || !document.getElementById("defeatPanel").hidden) return;
   const sc = storyPendingScene; storyPendingScene = null;
   openTalk({ emoji:"📜", name:"ภารกิจหลัก", role:"🛕 ฟื้นเสาบาเรีย", bg:["#d9a441", "#2a1a06"], text:sc.text, extra:sc.extra, art:sc.art, artPos:sc.artPos,
@@ -11354,7 +12269,7 @@ function storyRefresh(){
   if(!el || !game || !game.player) return;
   const s = storyState(), q = storyQuest();
   if(!q){
-    el.innerHTML = `<div class="st-ch">📜 ภารกิจหลัก</div><div class="st-q">เสาบาเรีย ${storyPillarsLit()}/10 ต้น</div><div class="st-goal">บทต่อไปจะมาในอัปเดตถัดไป</div>`;
+    el.innerHTML = `<div class="st-ch">📜 ภารกิจหลัก</div><div class="st-q">เสาบาเรีย ${storyPillarsLit()}/10 ต้น</div><div class="st-goal">${storyPillarsLit() >= 10 ? "🛕 บาเรียครบสิบต้นแล้ว — ตามปรมัตถ์ไปมิติถัดไปได้ที่โบสถ์" : "บทต่อไปจะมาในอัปเดตถัดไป"}</div>`;
     return;
   }
   let goal, cls = "";
@@ -11378,7 +12293,7 @@ function openStoryLog(){
   }
   const extra = (q ? storyCard(q, s.st === "offer" ? '<span class="tk-tag new">รอรับ</span>' : '<span class="tk-tag">กำลังทำ</span>') : "")
     + `<div class="tk-card"><h5><span>🛕 เสาบาเรีย ${storyPillarsLit()}/10 ต้น</span></h5><div class="tk-chips">${rows.join("")}</div></div>`;
-  const text = !q ? "เจ้าจุดเสาบาเรียครบทุกต้นที่เปิดให้ไปถึงตอนนี้แล้ว… เรื่องราวจะดำเนินต่อในอัปเดตถัดไป"
+  const text = !q ? (storyPillarsLit() >= 10 ? "บาเรียทั้งสิบต้นกลับมาหายใจได้แล้ว — ปรมัตถ์หายเข้าไปในรอยแยกของมิติ ตามเขาไปได้ด้วยพิธีที่ 🛕 โบสถ์" : "เจ้าจุดเสาบาเรียครบทุกต้นที่เปิดให้ไปถึงตอนนี้แล้ว… เรื่องราวจะดำเนินต่อในอัปเดตถัดไป")
     : s.st === "offer" ? `**${storyWho(q.from)}** มีเรื่องจะคุยกับเจ้า — ไปหาที่เมืองแดนมานาอรุณ`
     : (q.give || q.desc);
   openTalk({ emoji:"📜", name:"บันทึกภารกิจหลัก", role:"ฟื้นเสาบาเรีย 10 ต้น", bg:["#d9a441", "#2a1a06"], text, extra,
@@ -11617,7 +12532,7 @@ function letterGrant(later){
   return { L, where };
 }
 function letterShowPending(){
-  if(!letterPendingShow || game.inBattle || document.getElementById("tutorialOverlay").classList.contains("show")) return;
+  if(!letterPendingShow || game.inBattle || document.getElementById("tutorialOverlay").classList.contains("show") || tutBusy()) return;
   if(!document.getElementById("victoryPanel").hidden || !document.getElementById("defeatPanel").hidden) return;
   const id = letterPendingShow; letterPendingShow = null;
   letterOpen(id);
@@ -14857,6 +15772,7 @@ function loop(now){
     }
     updateSanityVignette();
     renderSkillBar(); // always keep the cooldown numbers live, even during the post-battle panel / overworld
+    if(TUT.active) tutFrame(now);
   }catch(err){ console.error("Game loop error:", err); }
 
   requestAnimationFrame(loop);
@@ -14965,7 +15881,7 @@ alter table public.saves_archive enable row level security;
 revoke all on public.econ_flags, public.saves_archive from anon, authenticated;
 
 -- ECON_DATA_BEGIN
-create or replace function public.econ_data() returns jsonb language sql immutable as $$ select '{"tiers":{"1":{"g":[9,16,28,46,70,263],"x":[21,35,56,84,123,385]},"2":{"g":[86,102,116,131,147,431],"x":[149,173,200,224,250,735]},"3":{"g":[163,177,193,208,224,648],"x":[275,301,326,352,376,1089]},"4":{"g":[238,254,270,285,299,863],"x":[403,427,453,478,504,1446]},"5":{"g":[315,331,347,361,376,1073],"x":[529,555,579,606,630,1799]},"6":{"g":[392,408,422,438,453,1288],"x":[656,681,707,732,758,2156]},"7":{"g":[469,483,499,515,530,1505],"x":[782,809,833,859,884,2510]},"8":{"g":[544,560,576,592,606,1720],"x":[910,935,961,985,1012,2867]},"9":{"g":[621,637,653,667,683,1930],"x":[1036,1062,1087,1113,1138,3220]},"10":{"g":[698,714,728,744,760,2146],"x":[1164,1188,1215,1239,1265,3577]}},"dimStep":0.3,"items":{"kings_armor":["epic",0],"collector_medal":["legendary",1],"sword_1":["common",0],"sword_2":["common",0],"sword_3":["uncommon",0],"sword_4":["uncommon",0],"sword_5":["rare",0],"sword_6":["rare",0],"sword_7":["epic",0],"sword_8":["epic",0],"sword_9":["legendary",0],"sword_10":["legendary",0],"heavy_1":["common",0],"heavy_2":["common",0],"heavy_3":["uncommon",0],"heavy_4":["uncommon",0],"heavy_5":["rare",0],"heavy_6":["rare",0],"heavy_7":["epic",0],"heavy_8":["epic",0],"heavy_9":["legendary",0],"heavy_10":["legendary",0],"bow_1":["common",0],"bow_2":["common",0],"bow_3":["uncommon",0],"bow_4":["uncommon",0],"bow_5":["rare",0],"bow_6":["rare",0],"bow_7":["epic",0],"bow_8":["epic",0],"bow_9":["legendary",0],"bow_10":["legendary",0],"orb_1":["common",0],"orb_2":["common",0],"orb_3":["uncommon",0],"orb_4":["uncommon",0],"orb_5":["rare",0],"orb_6":["rare",0],"orb_7":["epic",0],"orb_8":["epic",0],"orb_9":["legendary",0],"orb_10":["legendary",0],"armor_1":["common",0],"armor_2":["uncommon",0],"armor_3":["rare",0],"armor_4":["epic",0],"armor_5":["legendary",0],"headgear_1":["common",0],"headgear_2":["uncommon",0],"headgear_3":["rare",0],"headgear_4":["epic",0],"headgear_5":["legendary",0],"accessory_1":["common",0],"accessory_2":["uncommon",0],"accessory_3":["rare",0],"accessory_4":["epic",0],"accessory_5":["legendary",0]},"pts":{"common":1.2,"uncommon":1.7,"rare":2.4,"epic":3.4,"legendary":4.4},"eliteMult":2,"price":{"herb":3,"potion":5,"slime_jelly":4,"wolf_fang":6,"stone_fragment":8,"secret_key":20,"junk_scrap":2,"mana_stone":12,"sample_t1":7,"sample_t2":23,"sample_t3":39,"sample_t4":54,"sample_t5":69,"sample_t6":85,"sample_t7":100,"sample_t8":115,"sample_t9":130,"sample_t10":146,"green_slime_card":11,"pink_slime_card":11,"goblin_card":25,"wolf_card":25,"skeleton_card":56,"stone_king_card":280,"kings_oath_secret":280},"eqPrice":{"common":15,"uncommon":35,"rare":80,"epic":180,"legendary":400},"starter":["sword_1","heavy_1","bow_1","orb_1"],"shopOnly":["herb","potion"],"stack":["herb","potion","slime_jelly","wolf_fang","stone_fragment","secret_key","old_letter","junk_scrap","mana_stone","sample_t1","sample_t2","sample_t3","sample_t4","sample_t5","sample_t6","sample_t7","sample_t8","sample_t9","sample_t10","bark_tag","barrier_lantern","inscribed_wrap","green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"cards":["green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"rankExp":[0,500,1500,3500,7000,13000,23000,40000,70000,120000],"skill":{"sword":[[1,2],[3,2],[5,2],[7,2],[9,2]],"heavy":[[1,2],[3,2],[5,2],[7,2],[9,2]],"bow":[[1,2],[3,2],[5,2],[7,2],[9,2]],"orb":[[1,2],[3,2],[5,2],[7,2],[9,2]]},"titles":{"first_blood":["kills",100],"reaper":["kills",1000],"death_walker":["kills",5000],"calamity":["kills",20000],"slime_hunter":["slimeKills",100],"one_beat":["perfectHits",300],"flawless_blade":["perfectHits",3000],"rhythm_sage":["perfectHits",15000],"perfect_warrior":["bestPerfectStreak",50],"swaying_shadow":["perfectDodges",50],"formless_wind":["perfectDodges",500],"shadowless":["perfectDodges",2500],"counter_art":["counters",50],"mirror_blade":["counters",500],"keen_eye":["crits",500],"fortune_chosen":["crits",5000],"star_assassin":["crits",25000],"unscathed":["flawless",50],"invisible_armor":["flawless",500],"survivor":["survivor",1],"never_give_up":["deaths",25],"elite_hunter":["eliteKills",10],"star_breaker":["eliteKills",100],"elite_bane":["eliteKills",500],"boss_slayer":["bossKills",10],"throne_hunter":["bossKills",50],"king_of_kings":["bossKills",200],"untouchable":["untouchable",1],"five_realms":["bossTiers",5],"ten_kings":["bossTiers",10],"wanderer":["reach",3],"pathfinder":["reach",6],"worlds_edge":["reach",10],"story_c1":["chapters",1],"story_c2":["chapters",2],"story_c3":["chapters",3],"whisper_listener":["listened",1],"secret_seeker":["secrets",5],"secret_keeper":["secrets",30],"dungeon_diver":["dungeons",1],"labyrinth_lord":["dungeons",10],"underworld_ruler":["dungeons",30],"treasure_hunter":["chests",10],"rising_hero":["level",25],"menalars_hero":["level",50],"peak":["level",100],"barrier_breaker":["maxDim",2],"dimension_walker":["maxDim",3],"void_voyager":["maxDim",5],"novice_collector":["colPct",10],"monster_hunter":["monstersHalf",1],"monster_master":["monstersAll",1],"card_collector":["cards",3],"full_deck":["allCards",1],"half_collector":["colPct",50],"curator":["colPct",75],"full_collector":["colPct",100],"treasure_bearer":["epics",5],"legend_chosen":["legends",1],"legend_vault":["legends",10],"apprentice_smith":["refines",10],"artisan":["bestRefine",5],"forge_master":["bestRefine",10],"new_rich":["goldEarned",10000],"tycoon":["goldEarned",100000],"gold_king":["goldEarned",1000000],"mind_trainee":["meditations",10],"still_water":["meditations",100],"town_friend":["junkQuest",1],"letter_reader":["lettersRead",15],"letter_keeper":["lettersRead",40],"letter_all":["lettersRead",60],"shadow_unmasker":["spyUnmasked",1],"courier":["letters",3],"skill_student":["skills",5],"weapon_scholar":["skills",15],"weapon_master":["bestRank",5],"four_arms":["rankedWeapons",4],"transcender":["bestRank",9]},"quests":{"c1_wake":[40,60,0,1,0],"c1_town":[50,95,0,1,0],"c1_squad":[50,95,0,1,0],"c1_test":[100,190,0,1,0],"c1_wreck":[100,190,0,1,0],"c1_bark":[100,190,0,1,0],"c1_mind":[100,190,0,1,0],"c1_counter":[100,190,0,1,0],"c1_boss":[270,510,1,1,1],"c2_child":[350,600,0,2,0],"c2_lantern":[350,600,0,2,0],"c2_incense":[350,600,0,2,0],"c2_preacher":[350,600,0,2,0],"c2_lost":[350,600,0,2,0],"c2_boss":[930,1600,1,2,1],"c3_tablets":[580,980,0,3,0],"c3_wrap":[580,980,0,3,0],"c3_vent":[580,980,0,3,0],"c3_heat":[580,980,0,3,0],"c3_boss":[1540,2600,1,3,1]},"letters":["L01","L02","L03","L04","L05","L06","L07","L08","L09","L10","L11","L12","L13","L14","L15","L16","L17","L18","L19","L20","L21","L22","L23","L24","L25","L26","L27","L28","L29","L30","L31","L32","L33","L34","L35","L36","L37","L38","L39","L40","L41","L42","L43","L44","L45","L46","L47","L48","L49","L50","L51","L52","L53","L54","L55","L56","L57","L58","L59","L60"],"totals":{"mon":6,"card":7,"eq":561},"base":{"atk":6,"hp":50,"atkLv":2,"hpLv":10,"spLv":3,"spDim":3,"masteryMax":100,"refineMax":10,"sanityMax":100,"tierMax":10,"bag":48,"storage":100}}'::jsonb $$;
+create or replace function public.econ_data() returns jsonb language sql immutable as $$ select '{"tiers":{"1":{"g":[9,16,28,46,70,263],"x":[21,35,56,84,123,385]},"2":{"g":[86,102,116,131,147,431],"x":[149,173,200,224,250,735]},"3":{"g":[163,177,193,208,224,648],"x":[275,301,326,352,376,1089]},"4":{"g":[238,254,270,285,299,863],"x":[403,427,453,478,504,1446]},"5":{"g":[315,331,347,361,376,1073],"x":[529,555,579,606,630,1799]},"6":{"g":[392,408,422,438,453,1288],"x":[656,681,707,732,758,2156]},"7":{"g":[469,483,499,515,530,1505],"x":[782,809,833,859,884,2510]},"8":{"g":[544,560,576,592,606,1720],"x":[910,935,961,985,1012,2867]},"9":{"g":[621,637,653,667,683,1930],"x":[1036,1062,1087,1113,1138,3220]},"10":{"g":[698,714,728,744,760,2146],"x":[1164,1188,1215,1239,1265,3577]}},"dimStep":0.3,"items":{"kings_armor":["epic",0],"collector_medal":["legendary",1],"sword_1":["common",0],"sword_2":["common",0],"sword_3":["uncommon",0],"sword_4":["uncommon",0],"sword_5":["rare",0],"sword_6":["rare",0],"sword_7":["epic",0],"sword_8":["epic",0],"sword_9":["legendary",0],"sword_10":["legendary",0],"heavy_1":["common",0],"heavy_2":["common",0],"heavy_3":["uncommon",0],"heavy_4":["uncommon",0],"heavy_5":["rare",0],"heavy_6":["rare",0],"heavy_7":["epic",0],"heavy_8":["epic",0],"heavy_9":["legendary",0],"heavy_10":["legendary",0],"bow_1":["common",0],"bow_2":["common",0],"bow_3":["uncommon",0],"bow_4":["uncommon",0],"bow_5":["rare",0],"bow_6":["rare",0],"bow_7":["epic",0],"bow_8":["epic",0],"bow_9":["legendary",0],"bow_10":["legendary",0],"orb_1":["common",0],"orb_2":["common",0],"orb_3":["uncommon",0],"orb_4":["uncommon",0],"orb_5":["rare",0],"orb_6":["rare",0],"orb_7":["epic",0],"orb_8":["epic",0],"orb_9":["legendary",0],"orb_10":["legendary",0],"armor_1":["common",0],"armor_2":["uncommon",0],"armor_3":["rare",0],"armor_4":["epic",0],"armor_5":["legendary",0],"headgear_1":["common",0],"headgear_2":["uncommon",0],"headgear_3":["rare",0],"headgear_4":["epic",0],"headgear_5":["legendary",0],"accessory_1":["common",0],"accessory_2":["uncommon",0],"accessory_3":["rare",0],"accessory_4":["epic",0],"accessory_5":["legendary",0]},"pts":{"common":1.2,"uncommon":1.7,"rare":2.4,"epic":3.4,"legendary":4.4},"eliteMult":2,"price":{"herb":3,"potion":5,"slime_jelly":4,"wolf_fang":6,"stone_fragment":8,"secret_key":20,"junk_scrap":2,"mana_stone":12,"sample_t1":7,"sample_t2":23,"sample_t3":39,"sample_t4":54,"sample_t5":69,"sample_t6":85,"sample_t7":100,"sample_t8":115,"sample_t9":130,"sample_t10":146,"green_slime_card":11,"pink_slime_card":11,"goblin_card":25,"wolf_card":25,"skeleton_card":56,"stone_king_card":280,"kings_oath_secret":280},"eqPrice":{"common":15,"uncommon":35,"rare":80,"epic":180,"legendary":400},"starter":["sword_1","heavy_1","bow_1","orb_1"],"shopOnly":["herb","potion"],"stack":["herb","potion","slime_jelly","wolf_fang","stone_fragment","secret_key","old_letter","junk_scrap","mana_stone","sample_t1","sample_t2","sample_t3","sample_t4","sample_t5","sample_t6","sample_t7","sample_t8","sample_t9","sample_t10","bark_tag","barrier_lantern","inscribed_wrap","green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"cards":["green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"rankExp":[0,500,1500,3500,7000,13000,23000,40000,70000,120000],"skill":{"sword":[[1,2],[3,2],[5,2],[7,2],[9,2]],"heavy":[[1,2],[3,2],[5,2],[7,2],[9,2]],"bow":[[1,2],[3,2],[5,2],[7,2],[9,2]],"orb":[[1,2],[3,2],[5,2],[7,2],[9,2]]},"titles":{"first_blood":["kills",100],"reaper":["kills",1000],"death_walker":["kills",5000],"calamity":["kills",20000],"slime_hunter":["slimeKills",100],"one_beat":["perfectHits",300],"flawless_blade":["perfectHits",3000],"rhythm_sage":["perfectHits",15000],"perfect_warrior":["bestPerfectStreak",50],"swaying_shadow":["perfectDodges",50],"formless_wind":["perfectDodges",500],"shadowless":["perfectDodges",2500],"counter_art":["counters",50],"mirror_blade":["counters",500],"keen_eye":["crits",500],"fortune_chosen":["crits",5000],"star_assassin":["crits",25000],"unscathed":["flawless",50],"invisible_armor":["flawless",500],"survivor":["survivor",1],"never_give_up":["deaths",25],"elite_hunter":["eliteKills",10],"star_breaker":["eliteKills",100],"elite_bane":["eliteKills",500],"boss_slayer":["bossKills",10],"throne_hunter":["bossKills",50],"king_of_kings":["bossKills",200],"untouchable":["untouchable",1],"five_realms":["bossTiers",5],"ten_kings":["bossTiers",10],"wanderer":["reach",3],"pathfinder":["reach",6],"worlds_edge":["reach",10],"story_c1":["chapters",1],"story_c2":["chapters",2],"story_c3":["chapters",3],"story_c5":["chapters",5],"story_c7":["chapters",7],"story_c10":["chapters",10],"whisper_listener":["listened",1],"secret_seeker":["secrets",5],"secret_keeper":["secrets",30],"dungeon_diver":["dungeons",1],"labyrinth_lord":["dungeons",10],"underworld_ruler":["dungeons",30],"treasure_hunter":["chests",10],"rising_hero":["level",25],"menalars_hero":["level",50],"peak":["level",100],"barrier_breaker":["maxDim",2],"dimension_walker":["maxDim",3],"void_voyager":["maxDim",5],"novice_collector":["colPct",10],"monster_hunter":["monstersHalf",1],"monster_master":["monstersAll",1],"card_collector":["cards",3],"full_deck":["allCards",1],"half_collector":["colPct",50],"curator":["colPct",75],"full_collector":["colPct",100],"treasure_bearer":["epics",5],"legend_chosen":["legends",1],"legend_vault":["legends",10],"apprentice_smith":["refines",10],"artisan":["bestRefine",5],"forge_master":["bestRefine",10],"new_rich":["goldEarned",10000],"tycoon":["goldEarned",100000],"gold_king":["goldEarned",1000000],"mind_trainee":["meditations",10],"still_water":["meditations",100],"town_friend":["junkQuest",1],"letter_reader":["lettersRead",15],"letter_keeper":["lettersRead",40],"letter_all":["lettersRead",60],"shadow_unmasker":["spyUnmasked",1],"courier":["letters",3],"skill_student":["skills",5],"weapon_scholar":["skills",15],"weapon_master":["bestRank",5],"four_arms":["rankedWeapons",4],"transcender":["bestRank",9]},"quests":{"c1_wake":[40,60,0,1,0],"c1_town":[50,95,0,1,0],"c1_squad":[50,95,0,1,0],"c1_test":[100,190,0,1,0],"c1_wreck":[100,190,0,1,0],"c1_bark":[100,190,0,1,0],"c1_mind":[100,190,0,1,0],"c1_counter":[100,190,0,1,0],"c1_boss":[270,510,1,1,1],"c2_child":[350,600,0,2,0],"c2_lantern":[350,600,0,2,0],"c2_incense":[350,600,0,2,0],"c2_preacher":[350,600,0,2,0],"c2_lost":[350,600,0,2,0],"c2_boss":[930,1600,1,2,1],"c3_tablets":[580,980,0,3,0],"c3_wrap":[580,980,0,3,0],"c3_vent":[580,980,0,3,0],"c3_heat":[580,980,0,3,0],"c3_boss":[1540,2600,1,3,1],"c4_hut":[810,1365,0,4,0],"c4_frozen":[810,1365,0,4,0],"c4_ice":[810,1365,0,4,0],"c4_still":[810,1365,0,4,0],"c4_boss":[2150,3600,1,4,1],"c5_brother":[1040,1750,0,5,0],"c5_ore":[1040,1750,0,5,0],"c5_camp":[1040,1750,0,5,0],"c5_dark":[1040,1750,0,5,0],"c5_boss":[2760,4600,1,5,1],"c6_cure":[1270,2135,0,6,0],"c6_drowned":[1270,2135,0,6,0],"c6_ferry":[1270,2135,0,6,0],"c6_calm":[1270,2135,0,6,0],"c6_boss":[3370,5600,1,6,1],"c7_mirror":[1500,2520,0,7,0],"c7_cage":[1500,2520,0,7,0],"c7_home":[1500,2520,0,7,0],"c7_sight":[1500,2520,0,7,0],"c7_boss":[3980,6600,1,7,1],"c8_mural":[1730,2905,0,8,0],"c8_pilgrims":[1730,2905,0,8,0],"c8_doubt":[1730,2905,0,8,0],"c8_sun":[1730,2905,0,8,0],"c8_boss":[4590,7600,1,8,1],"c9_edge":[1960,3290,0,9,0],"c9_echo":[1960,3290,0,9,0],"c9_warriors":[1960,3290,0,9,0],"c9_untouched":[1960,3290,0,9,0],"c9_boss":[5200,8600,1,9,1],"c10_saints":[2190,3675,0,10,0],"c10_mind":[2190,3675,0,10,0],"c10_throne":[2190,3675,0,10,0],"c10_boss":[5810,9600,1,10,1]},"letters":["L01","L02","L03","L04","L05","L06","L07","L08","L09","L10","L11","L12","L13","L14","L15","L16","L17","L18","L19","L20","L21","L22","L23","L24","L25","L26","L27","L28","L29","L30","L31","L32","L33","L34","L35","L36","L37","L38","L39","L40","L41","L42","L43","L44","L45","L46","L47","L48","L49","L50","L51","L52","L53","L54","L55","L56","L57","L58","L59","L60"],"totals":{"mon":6,"card":7,"eq":561},"base":{"atk":6,"hp":50,"atkLv":2,"hpLv":10,"spLv":3,"spDim":3,"masteryMax":100,"refineMax":10,"sanityMax":100,"tierMax":10,"bag":48,"storage":100}}'::jsonb $$;
 -- ECON_DATA_END
 
 create or replace function public.econ_n(v jsonb) returns numeric language sql immutable as $$
@@ -15334,6 +16250,11 @@ begin
 end $$;
 revoke execute on function public.econ_data(), public.econ_n(jsonb), public.econ_obj(jsonb), public.econ_arr(jsonb), public.econ_items(jsonb), public.econ_items_all(jsonb),
   public.econ_rank(numeric), public.econ_title_stats(jsonb), public.econ_check(uuid, jsonb, jsonb, jsonb, numeric) from public, anon, authenticated;
+
+-- v52: how many story chapters this server's econ_data() already knows. The game only offers chapters up to this number,
+-- so a newer index.html uploaded before this SQL can never make a save carry a quest id the server would reject.
+create or replace function public.story_chapters() returns int language sql immutable as $$ select 10 $$;
+grant execute on function public.story_chapters() to anon, authenticated;
 
 -- one flag row per kind per minute at most (a cheat client retrying can't flood the table)
 create or replace function public.econ_flag(p_user uuid, p_kind text, p_detail jsonb, p_rejected boolean)
