@@ -537,6 +537,32 @@
   .fb-tip{ display:none; position:absolute; left:50%; bottom:calc(100% + 6px); transform:translateX(-50%); width:220px; padding:10px 12px; border-radius:10px;
     background:#08131d; border:1px solid var(--rc); font-size:12px; line-height:1.5; text-align:left; box-shadow:0 8px 20px rgba(0,0,0,.6); }
   .fb-card:hover .fb-tip{ display:block; }
+  /* v67 👥 party */
+  #partyBox{ position:absolute; left:12px; width:250px; z-index:10; color:#fff; font-size:13px; padding:8px 10px 9px; border-radius:14px;
+    border:1px solid rgba(124,224,168,.55); background:linear-gradient(160deg, rgba(24,58,52,.9), rgba(10,20,26,.9)); box-shadow:0 8px 22px rgba(0,0,0,.45); }
+  #partyBox[hidden]{ display:none; }
+  #partyBox .pb-head{ display:flex; justify-content:space-between; align-items:center; font-weight:bold; margin-bottom:6px; }
+  #partyBox .pb-head small{ color:#a9d8c2; font-weight:normal; }
+  #partyBox .pb-bonus{ font-size:11px; padding:2px 8px; border-radius:10px; background:rgba(255,255,255,.08); color:#9fb8ad; }
+  #partyBox .pb-bonus.on{ background:linear-gradient(90deg, #ffd166, #7CFFB2); color:#1b2a1a; box-shadow:0 0 10px rgba(124,255,178,.5); }
+  #partyBox .pb-row{ display:flex; align-items:center; gap:8px; padding:5px 6px; border-radius:10px; margin-bottom:3px; background:rgba(255,255,255,.04); transition:background .15s; }
+  #partyBox .pb-row:hover{ background:rgba(124,224,168,.14); }
+  #partyBox .pb-row.self{ outline:1px solid rgba(255,209,102,.35); }
+  #partyBox .pb-ic{ font-size:20px; width:24px; text-align:center; }
+  #partyBox .pb-name{ flex:1; min-width:0; font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #partyBox .pb-name small{ display:block; font-weight:normal; font-size:11px; color:#c9d6d0; }
+  #partyBox i{ font-style:normal; } #partyBox i.here{ color:#7CFFB2; } #partyBox i.away{ color:#ffd166; } #partyBox i.off{ color:#8a8f99; }
+  #partyBox .pb-kick{ opacity:0; border:1px solid rgba(255,120,120,.6); background:rgba(80,16,20,.7); color:#ffb3b3; border-radius:8px; padding:2px 7px; font-size:11px; cursor:pointer; transition:opacity .15s; }
+  #partyBox .pb-row:hover .pb-kick, #partyBox .pb-kick.armed{ opacity:1; }
+  #partyBox .pb-leave{ width:100%; margin-top:5px; border:1px solid rgba(255,255,255,.2); background:rgba(0,0,0,.25); color:#e9e3f7; border-radius:10px; padding:5px; font-size:12px; cursor:pointer; }
+  #partyBox .pb-leave:hover, #partyBox .pb-leave.armed{ background:rgba(120,30,40,.7); border-color:#ff8080; }
+  #partyBox .pb-tip{ margin-top:5px; font-size:11px; color:#9fb8ad; text-align:center; }
+  #partyInvite{ position:fixed; left:50%; top:88px; transform:translateX(-50%); z-index:45; display:flex; align-items:center; gap:14px; padding:12px 16px; border-radius:16px;
+    color:#fff; background:linear-gradient(160deg, rgba(24,58,52,.97), rgba(10,20,26,.97)); border:2px solid #7CE0A8; box-shadow:0 0 26px rgba(124,224,168,.45), 0 12px 30px rgba(0,0,0,.55);
+    animation:mgIn .45s cubic-bezier(.2,1.4,.4,1); }
+  #partyInvite[hidden]{ display:none; }
+  #partyInvite .pi-ic{ font-size:36px; } #partyInvite small{ color:#a9d8c2; }
+  #partyInvite .pi-btns{ display:flex; gap:8px; }
   #mgResult .mg-eyebrow{ font-size:12px; letter-spacing:.12em; font-weight:bold; color:#ffb3d6; }
   #mgResult h3{ margin:4px 0 12px; font-size:26px; color:#fff; text-shadow:0 0 14px rgba(255,160,210,.6); }
   #mgResult .mg-stats{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px; }
@@ -1552,6 +1578,9 @@
     <div id="hudBuff" hidden title="พรแห่งสมาธิ: สติไม่ลด · โอกาสดรอปของ Rare ขึ้นไป +50%"></div>
     <div id="hudNet" hidden>⚠ ขาดการเชื่อมต่อ — จะบันทึกเมื่อกลับมาออนไลน์</div>
   </div>
+  <div id="partyBox" hidden></div>
+  <div id="partyInvite" hidden><span class="pi-ic">🤝</span><span id="piText"></span>
+    <span class="pi-btns"><button type="button" class="btn-primary" id="piYes">✅ เข้าร่วม</button><button type="button" class="btn-secondary" id="piNo">ปฏิเสธ</button></span></div>
 
   <div id="chatBox" hidden>
     <div id="chatLog" aria-live="polite"></div>
@@ -3135,8 +3164,9 @@ function drawOtherPlayer(ctx, o){
   ctx.save();
   ctx.font = "bold 13px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center";
   const gm = !!o.netId && net.staff.has(o.netId); // GM list comes from the server (public.admins), never from the player's own message
-  ctx.lineWidth = 3.5; ctx.strokeStyle = "rgba(0,0,0,.75)"; ctx.fillStyle = gm ? "#ffd166" : "#e9e6f5";
-  const label = (gm ? "[GM] " : "") + o.name + (o.inBattle ? " ⚔️" : "");
+  const mate = o.netId && partyHas(o.netId); // v67 👥 party mates read green
+  ctx.lineWidth = 3.5; ctx.strokeStyle = "rgba(0,0,0,.75)"; ctx.fillStyle = gm ? "#ffd166" : mate ? "#7CFFB2" : "#e9e6f5";
+  const label = (mate ? "👥 " : "") + (gm ? "[GM] " : "") + o.name + (o.inBattle ? " ⚔️" : "");
   ctx.strokeText(label, o.x, labelY); ctx.fillText(label, o.x, labelY);
   ctx.font = "bold 11px 'Trebuchet MS', sans-serif"; ctx.fillStyle = "#ffe9a8";
   const info = nameplateInfo(o.level || 1, o.maxDim || 1, o.maxMap || 1);
@@ -5069,7 +5099,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 66;
+const GAME_VERSION = 67;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -5666,6 +5696,7 @@ async function socPoll(){
     const r = await netRpc("net_poll", JSON.stringify({ p_dim: game.dimension || 1, p_map: game.mapTier, p_x: Math.round(p.x), p_y: Math.round(p.y) }));
     if(GAME_VERSION < (+r.mv || 0)) netBlock("version");
     vb.pending = Math.max(0, Math.floor(+r.pv) || 0);
+    if(r.pt !== undefined && partyAvailable()) partyApply(r.pt); // v67 👥
     modPollResult(r);
     (r.w || []).forEach(w => {
       if(soc.blocked.has(w.from)) return;
@@ -5701,6 +5732,116 @@ function socRemember(id, text){ // the last few lines per player, attachable to 
   list.push(text); if(list.length > 10) list.shift();
   soc.recent.set(id, list);
 }
+
+/* ============================================================
+   👥 PARTY (v67) — up to 4 players. No "create party" button: inviting someone and them accepting forms it;
+   when only one member is left it simply dissolves (back to solo play). Leader (👑) invites / kicks, anyone
+   can leave (a leaving leader hands the crown to the longest-standing member). Bonus: +10% kill EXP per party
+   mate standing on the same map (same realtime map channel = same map & dimension), max +30%.
+   State comes from net_poll every NET_POLL_MS (r.pt) — see party_info() in the SQL.
+   ============================================================ */
+const PARTY_MAX = 4, PARTY_EXP_PER_MATE = 0.1, PARTY_EXP_MAX_MATES = 3;
+const party = { data:null, inv:[], confirmLeave:false, confirmKick:"", dismissed:new Set(), lastIds:"" };
+function partyAvailable(){ return NET_ONLINE && serverHas("party") && !!net.user; }
+function partyHas(id){ return !!(party.data && party.data.members.some(m => m.id === id)); }
+function partyIsLeader(){ return !!(party.data && net.user && party.data.leader === net.user.id); }
+function partyMatesHere(){
+  if(!party.data || !net.user || game.mapTier === TOWN_TIER) return [];
+  return party.data.members.filter(m => m.id !== net.user.id && rt.peers.has(m.id)); // on my map channel right now
+}
+function partyExpMult(){ return 1 + PARTY_EXP_PER_MATE * Math.min(PARTY_EXP_MAX_MATES, partyMatesHere().length); }
+// net_poll → party state; chat lines for what changed
+function partyApply(pt){
+  if(!pt || typeof pt !== "object") return;
+  const before = party.data, me = net.user && net.user.id;
+  const now = pt.party && Array.isArray(pt.party.members) ? { id: pt.party.id, leader: pt.party.leader,
+    members: pt.party.members.filter(m => m && typeof m.id === "string").slice(0, PARTY_MAX).map(m => ({
+      id: m.id, name: String(m.name || "?").slice(0, 20), level: Math.max(1, Math.floor(+m.level) || 1), online: !!m.online,
+      map: Math.floor(+m.map) || 0, dim: Math.max(1, Math.floor(+m.dim) || 1) })) } : null;
+  if(before && !now) chatAddLine("sys", "", "👥 ปาร์ตี้สลายแล้ว — กลับมาเล่นเดี่ยว");
+  else if(!before && now) chatAddLine("sys", "", "👥 เข้าร่วมปาร์ตี้แล้ว! เก็บเลเวลในแมพเดียวกันได้โบนัส EXP");
+  else if(before && now){
+    const was = new Set(before.members.map(m => m.id)), is = new Set(now.members.map(m => m.id));
+    now.members.filter(m => !was.has(m.id)).forEach(m => chatAddLine("sys", "", `👥 ${m.name} เข้าร่วมปาร์ตี้`));
+    before.members.filter(m => !is.has(m.id) && m.id !== me).forEach(m => chatAddLine("sys", "", `👥 ${m.name} ออกจากปาร์ตี้`));
+    if(before.leader !== now.leader && now.leader === me) chatAddLine("sys", "", "👑 คุณเป็นหัวหน้าปาร์ตี้แล้ว");
+  }
+  party.data = now;
+  party.inv = (Array.isArray(pt.inv) ? pt.inv : []).filter(i => i && typeof i.from === "string" && !party.dismissed.has(i.from))
+    .map(i => ({ from: i.from, name: String(i.name || "?").slice(0, 20), level: Math.max(1, Math.floor(+i.level) || 1) }));
+  renderPartyBox(); renderPartyInvite();
+}
+function partyLocation(m){
+  if(!m.online) return { t: "ออฟไลน์", c: "off" };
+  if(m.id === (net.user && net.user.id) || rt.peers.has(m.id)) return { t: game.mapTier === TOWN_TIER ? "อยู่ด้วยกันในเมือง" : "แมพเดียวกัน ✓", c: "here" };
+  return { t: m.map === TOWN_TIER ? "อยู่ในเมือง" : `มิติ ${m.dim} · แมพ ${m.map}`, c: "away" };
+}
+function renderPartyBox(){
+  const box = document.getElementById("partyBox");
+  if(!box) return;
+  if(!party.data || !partyAvailable() || !game || !game.player){ box.hidden = true; return; }
+  const me = net.user.id, lead = partyIsLeader(), here = partyMatesHere().length;
+  const bonus = Math.round((partyExpMult() - 1) * 100);
+  box.innerHTML = `<div class="pb-head"><span>👥 ปาร์ตี้ <small>${party.data.members.length}/${PARTY_MAX}</small></span>` +
+    `<span class="pb-bonus${bonus ? " on" : ""}" title="+10% EXP ต่อเพื่อนร่วมปาร์ตี้ที่อยู่แมพเดียวกัน (สูงสุด +30%)">✨ EXP +${bonus}%</span></div>` +
+    party.data.members.map(m => {
+      const loc = partyLocation(m), isLead = m.id === party.data.leader, self = m.id === me;
+      const kick = lead && !self ? `<button type="button" class="pb-kick${party.confirmKick === m.id ? " armed" : ""}" data-kick="${m.id}" title="เตะออกจากปาร์ตี้">${party.confirmKick === m.id ? "ยืนยัน?" : "✖"}</button>` : "";
+      return `<div class="pb-row${self ? " self" : ""}"><span class="pb-ic">${isLead ? "👑" : "🛡️"}</span>` +
+        `<span class="pb-name">${netEsc(m.name)}${self ? " (คุณ)" : ""}<small>Lv.${m.level} · <i class="${loc.c}">${loc.t}</i></small></span>${kick}</div>`;
+    }).join("") +
+    `<button type="button" class="pb-leave${party.confirmLeave ? " armed" : ""}" id="partyLeaveBtn">${party.confirmLeave ? "กดอีกครั้งเพื่อยืนยัน" : "🚪 ออกจากปาร์ตี้"}</button>` +
+    (here ? "" : `<div class="pb-tip">ชวนเพื่อน: คลิกที่ตัวผู้เล่น → 🤝 ชวนเข้าปาร์ตี้</div>`);
+  const hud = document.getElementById("hud");
+  box.style.top = (hud.offsetTop + hud.offsetHeight + 8) + "px";
+  box.hidden = false;
+}
+function renderPartyInvite(){
+  const el = document.getElementById("partyInvite");
+  if(!el) return;
+  const inv = partyAvailable() && !party.data ? party.inv[0] : null;
+  if(!inv){ el.hidden = true; return; }
+  el.dataset.from = inv.from;
+  document.getElementById("piText").innerHTML = `<b>${netEsc(inv.name)}</b> <small>Lv.${inv.level}</small><br>ชวนเจ้าร่วมเดินทางเป็นปาร์ตี้`;
+  if(el.hidden) sfx.notice();
+  el.hidden = false;
+}
+async function partyRpc(fn, body, okMsg){
+  try{
+    const r = await netRpc(fn, JSON.stringify(body || {}));
+    if(r && r.ok){ if(okMsg) showToast(okMsg); }
+    else showToast({ notleader:"เฉพาะหัวหน้าปาร์ตี้เท่านั้นที่ทำได้", pfull:`ปาร์ตี้เต็มแล้ว (${PARTY_MAX} คน)`, inparty:"ผู้เล่นนี้อยู่ในปาร์ตี้อื่นแล้ว",
+                     expired:"คำชวนหมดเวลาแล้ว", offline:"ผู้เล่นนี้ออฟไลน์อยู่" }[r && r.reason] || socRpcMsg(r));
+    soc.pollAt = 0; // refresh the party right away
+    return r;
+  }catch(err){ showToast(err.message); return null; }
+}
+function partyInvite(id, name){ return partyRpc("party_invite", { p_to: id }, `🤝 ส่งคำชวนเข้าปาร์ตี้ถึง ${name} แล้ว`); }
+function partyAnswer(accept){
+  const el = document.getElementById("partyInvite"), from = el.dataset.from;
+  if(!from) return;
+  party.dismissed.add(from); party.inv = party.inv.filter(i => i.from !== from);
+  el.hidden = true; sfx.click();
+  partyRpc("party_answer", { p_from: from, p_accept: !!accept }, accept ? null : "ปฏิเสธคำชวนแล้ว").then(() => setTimeout(() => party.dismissed.delete(from), 5000));
+  renderPartyInvite();
+}
+document.getElementById("partyBox").addEventListener("click", e => {
+  const kick = e.target.closest && e.target.closest("[data-kick]");
+  if(kick){
+    const id = kick.dataset.kick;
+    if(party.confirmKick !== id){ party.confirmKick = id; renderPartyBox(); return; }
+    party.confirmKick = ""; const m = party.data && party.data.members.find(x => x.id === id);
+    partyRpc("party_kick", { p_who: id }, `👢 เชิญ ${m ? m.name : "ผู้เล่น"} ออกจากปาร์ตี้แล้ว`); sfx.click(); return;
+  }
+  if(e.target.id === "partyLeaveBtn"){
+    if(!party.confirmLeave){ party.confirmLeave = true; renderPartyBox(); setTimeout(() => { party.confirmLeave = false; renderPartyBox(); }, 4000); return; }
+    party.confirmLeave = false; sfx.click();
+    saveGameNow(); // bank the bonus EXP earned so far while the server still counts us as a member
+    partyRpc("party_leave", {}, "🚪 ออกจากปาร์ตี้แล้ว");
+  }
+});
+document.getElementById("piYes").addEventListener("click", () => partyAnswer(true));
+document.getElementById("piNo").addEventListener("click", () => partyAnswer(false));
 
 /* context menu */
 function socPeerAt(clientX, clientY){
@@ -5742,6 +5883,8 @@ function renderPlayerMenu(){
     ${st === "blocked" ? "" : item("whisper", "💬", "กระซิบ")}
     ${friendItem}
     ${canGo ? item("goto", "🧭", "ไปหาเพื่อน") : ""}
+    ${partyAvailable() && st !== "blocked" && !partyHas(m.id) && (!party.data || (partyIsLeader() && party.data.members.length < PARTY_MAX)) ? item("pinvite", "🤝", "ชวนเข้าปาร์ตี้") : ""}
+    ${partyAvailable() && partyHas(m.id) && partyIsLeader() ? item("pkick", "👢", "เชิญออกจากปาร์ตี้", ' class="warn"') : ""}
     ${st === "blocked" ? item("unblock", "✔️", "เลิกบล็อก") : item("block", "🚫", soc.menuConfirm === "block" ? "ยืนยันบล็อก" : "บล็อก", ' class="warn"')}
     ${item("report", "🚩", "รายงานผู้เล่น", ' class="warn"')}
     ${net.admin && !gm ? item("gm", "🛡️", "จัดการผู้เล่น (GM)") : ""}`;
@@ -5757,6 +5900,8 @@ async function socMenuAction(act, id, name){
   if(act === "report") return openReport(id, name);
   if(act === "goto") return socGoTo(soc.friends.get(id));
   if(act === "gm") return openGmPlayer(id);
+  if(act === "pinvite") return partyInvite(id, name);                                        // v67 👥
+  if(act === "pkick") return partyRpc("party_kick", { p_who: id }, `👢 เชิญ ${name} ออกจากปาร์ตี้แล้ว`);
   try{
     let r;
     if(act === "addfriend"){
@@ -9735,7 +9880,9 @@ function exitBattle(result){
     m.respawnAt = performance.now() + MONSTER_DEFS[m.type].respawnMs;
     sfx.die();
     drainSanity(b.isBoss ? SANITY_BOSS_KILL_DRAIN : (m.isElite ? SANITY_ELITE_KILL_DRAIN : SANITY_KILL_DRAIN));
-    const expGained = m.expReward;
+    const partyMult = partyAvailable() ? partyExpMult() : 1; // v67 👥 +10% per party mate on this map
+    const expGained = Math.round(m.expReward * partyMult);
+    summary.partyBonus = Math.round((partyMult - 1) * 100);
     const goldGained = m.goldReward;
     gainExp(expGained);
     p.gold += goldGained;
@@ -9966,7 +10113,7 @@ function showVictoryReward(expGained, goldGained, drops, isElite, summary){
   const panel = document.getElementById("victoryPanel");
   panel.querySelector("h2").textContent = isElite ? "⭐ ชนะ ELITE MONSTER!" : "🎉 ชนะการต่อสู้!";
   panel.style.border = isElite ? "3px solid #ffd166" : "";
-  document.getElementById("victoryExp").textContent = "+" + expGained + " EXP";
+  document.getElementById("victoryExp").textContent = "+" + expGained + " EXP" + (summary && summary.partyBonus ? ` (👥 +${summary.partyBonus}%)` : "");
   document.getElementById("victoryGold").textContent = "+" + goldGained + " 💰";
   document.getElementById("victoryDrops").innerHTML = drops.map(renderDropRow).join("");
   document.getElementById("victoryCombatLog").innerHTML = renderCombatLogHtml(summary);
@@ -16772,6 +16919,7 @@ declare
   qg numeric := 0; qx numeric := 0; qgear numeric := 0; lgone numeric := 0;
   rebuy numeric := 0; rq numeric := 0;
   fishd numeric := 0;   -- v66 🎣 fish caught since the last save (they arrive without kills)
+  pmates int := 0;       -- v67 👥 party mates whose +10% kill EXP this save may carry
 begin
   np := public.econ_obj(d -> 'player');
   if jsonb_typeof(o) is distinct from 'object' or jsonb_typeof(o -> 'player') is distinct from 'object' then o := '{}'::jsonb; end if;
@@ -17006,7 +17154,8 @@ begin
   lim_g := ceil(lim_g * dm + delite * (C -> 'tiers' -> tr::text -> 'g' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm)
          + sale + 50 * greatest(public.econ_n(st -> 'chestsOpened') - public.econ_n(ost -> 'chestsOpened'), 0)
          + 60 * greatest(public.econ_n(st -> 'letters') - public.econ_n(ost -> 'letters'), 0) + 120 + qg;
-  lim_x := ceil(lim_x * dm + delite * (C -> 'tiers' -> tr::text -> 'x' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm) + 80 + qx;
+  pmates := public.party_mates_allowed(me);
+  lim_x := ceil((lim_x * dm + delite * (C -> 'tiers' -> tr::text -> 'x' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm) * (1 + 0.1 * pmates)) + 80 + qx;
   -- shop goods cost money: a starter weapon 20, a herb/potion at least 8 (beyond what kills could have dropped) —
   -- so free copies from the console can't be sold back for gold
   lim_g := lim_g - 20 * nstarter - 8 * greatest(nshop - 2 * dk, 0) - rebuy;   -- v45: buying back costs what the sale paid
@@ -17060,7 +17209,7 @@ revoke execute on function public.econ_data(), public.econ_n(jsonb), public.econ
 create or replace function public.story_chapters() returns int language sql immutable as $$ select 10 $$;
 grant execute on function public.story_chapters() to anon, authenticated;
 -- v66: systems the client may switch on (it asks once at login; missing function = all off)
-create or replace function public.game_features() returns jsonb language sql immutable as $$ select '{"fish":1}'::jsonb $$;
+create or replace function public.game_features() returns jsonb language sql immutable as $$ select '{"fish":1,"party":1}'::jsonb $$;
 grant execute on function public.game_features() to anon, authenticated;
 
 -- one flag row per kind per minute at most (a cheat client retrying can't flood the table)
@@ -17229,6 +17378,139 @@ create or replace function public.soc_blocked(a uuid, b uuid) returns boolean la
   select exists (select 1 from public.blocks where (user_id = a and blocked_id = b) or (user_id = b and blocked_id = a)) $$;
 revoke execute on function public.soc_name(uuid), public.soc_online(uuid), public.soc_blocked(uuid, uuid) from public, anon, authenticated;
 
+
+-- ---------- v67 👥 parties (max 4) — no "create party" button: accepting an invite forms one, and a party
+-- that drops to a single member dissolves. The bonus: +10% kill EXP per party mate on the same map (the client
+-- counts mates it can see on its map channel); econ_check allows up to that many mates (party_bonus).
+create table if not exists public.parties (
+  id         bigserial primary key,
+  leader     uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+create table if not exists public.party_members (
+  user_id   uuid primary key references auth.users(id) on delete cascade,
+  party_id  bigint not null references public.parties(id) on delete cascade,
+  joined_at timestamptz not null default now()
+);
+create table if not exists public.party_invites (        -- valid 2 minutes
+  from_id    uuid not null references auth.users(id) on delete cascade,
+  to_id      uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (from_id, to_id)
+);
+create table if not exists public.party_bonus (          -- how many mates' EXP bonus a save may carry (kept 10 min after changes)
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  mates   int not null default 0,
+  until   timestamptz not null default now()
+);
+create index if not exists party_members_party_idx on public.party_members (party_id);
+create index if not exists party_invites_to_idx on public.party_invites (to_id);
+alter table public.parties enable row level security;
+alter table public.party_members enable row level security;
+alter table public.party_invites enable row level security;
+alter table public.party_bonus enable row level security;
+revoke all on public.parties, public.party_members, public.party_invites, public.party_bonus from anon, authenticated;
+
+-- helpers (not callable from the game)
+create or replace function public.party_touch(pid bigint) returns void language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  select count(*) into n from public.party_members where party_id = pid;
+  if n <= 1 then delete from public.parties where id = pid; return; end if;   -- one left = no party (cascade drops the member row)
+  insert into public.party_bonus (user_id, mates, until)
+    select user_id, least(n - 1, 3), now() + interval '10 minutes' from public.party_members where party_id = pid
+    on conflict (user_id) do update set mates = greatest(excluded.mates, case when party_bonus.until > now() then party_bonus.mates else 0 end),
+                                         until = excluded.until;
+end $$;
+create or replace function public.party_of(u uuid) returns bigint language sql stable security definer set search_path = public as $$
+  select party_id from public.party_members where user_id = u $$;
+create or replace function public.party_mates_allowed(u uuid) returns int language sql stable security definer set search_path = public as $$
+  select least(3, greatest(
+    coalesce((select count(*) - 1 from public.party_members where party_id = public.party_of(u)), 0),
+    coalesce((select mates from public.party_bonus where user_id = u and until > now()), 0)))::int $$;
+create or replace function public.party_info(me uuid) returns jsonb language sql stable security definer set search_path = public as $$
+  select jsonb_build_object(
+    'party', (select jsonb_build_object('id', p.id, 'leader', p.leader, 'members',
+               (select coalesce(jsonb_agg(jsonb_build_object('id', m.user_id, 'name', public.soc_name(m.user_id),
+                   'level', (select (data -> 'player' ->> 'level')::int from public.saves where user_id = m.user_id),
+                   'online', public.soc_online(m.user_id), 'map', s.map, 'dim', s.dim) order by m.user_id = p.leader desc, m.joined_at), '[]')
+                  from public.party_members m left join public.player_status s on s.user_id = m.user_id where m.party_id = p.id))
+              from public.parties p where p.id = public.party_of(me)),
+    'inv', (select coalesce(jsonb_agg(jsonb_build_object('from', i.from_id, 'name', public.soc_name(i.from_id),
+               'level', (select (data -> 'player' ->> 'level')::int from public.saves where user_id = i.from_id)) order by i.created_at), '[]')
+             from public.party_invites i where i.to_id = me and i.created_at > now() - interval '2 minutes')) $$;
+revoke execute on function public.party_touch(bigint), public.party_of(uuid), public.party_mates_allowed(uuid), public.party_info(uuid) from public, anon, authenticated;
+
+-- invite: only the leader (or anyone not yet in a party — accepting then makes them the leader)
+create or replace function public.party_invite(p_to uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); pid bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if p_to = me or not exists (select 1 from public.saves where user_id = p_to) then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if public.soc_blocked(me, p_to) then return jsonb_build_object('ok', false, 'reason', 'blocked'); end if;
+  if not public.soc_online(p_to) then return jsonb_build_object('ok', false, 'reason', 'offline'); end if;
+  pid := public.party_of(me);
+  if pid is not null and (select leader from public.parties where id = pid) <> me then return jsonb_build_object('ok', false, 'reason', 'notleader'); end if;
+  if pid is not null and (select count(*) from public.party_members where party_id = pid) >= 4 then return jsonb_build_object('ok', false, 'reason', 'pfull'); end if;
+  if public.party_of(p_to) is not null then return jsonb_build_object('ok', false, 'reason', 'inparty'); end if;
+  if (select count(*) from public.party_invites where from_id = me and created_at > now() - interval '10 seconds') >= 3 then return jsonb_build_object('ok', false, 'reason', 'fast'); end if;
+  insert into public.party_invites (from_id, to_id) values (me, p_to) on conflict (from_id, to_id) do update set created_at = now();
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.party_answer(p_from uuid, p_accept boolean)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); pid bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if not exists (select 1 from public.party_invites where from_id = p_from and to_id = me and created_at > now() - interval '2 minutes') then
+    delete from public.party_invites where from_id = p_from and to_id = me;
+    return jsonb_build_object('ok', false, 'reason', 'expired');
+  end if;
+  delete from public.party_invites where from_id = p_from and to_id = me;
+  if not p_accept then return jsonb_build_object('ok', true, 'state', 'declined'); end if;
+  if public.party_of(me) is not null then return jsonb_build_object('ok', false, 'reason', 'inparty'); end if;
+  pid := public.party_of(p_from);
+  if pid is null then
+    insert into public.parties (leader) values (p_from) returning id into pid;
+    insert into public.party_members (user_id, party_id, joined_at) values (p_from, pid, now() - interval '1 second'); -- the leader joined first
+  end if;
+  if (select count(*) from public.party_members where party_id = pid) >= 4 then return jsonb_build_object('ok', false, 'reason', 'pfull'); end if;
+  insert into public.party_members (user_id, party_id) values (me, pid);
+  delete from public.party_invites where to_id = me;          -- other pending invites no longer apply
+  perform public.party_touch(pid);
+  return jsonb_build_object('ok', true, 'state', 'joined');
+end $$;
+
+create or replace function public.party_leave()
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); pid bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  pid := public.party_of(me);
+  if pid is null then return jsonb_build_object('ok', true); end if;
+  delete from public.party_members where user_id = me;
+  update public.parties set leader = (select user_id from public.party_members where party_id = pid order by joined_at limit 1)
+   where id = pid and leader = me and exists (select 1 from public.party_members where party_id = pid);
+  perform public.party_touch(pid);
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.party_kick(p_who uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); pid bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  pid := public.party_of(me);
+  if pid is null or p_who = me or public.party_of(p_who) is distinct from pid then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if (select leader from public.parties where id = pid) <> me then return jsonb_build_object('ok', false, 'reason', 'notleader'); end if;
+  delete from public.party_members where user_id = p_who;
+  perform public.party_touch(pid);
+  return jsonb_build_object('ok', true);
+end $$;
+grant execute on function public.party_invite(uuid), public.party_answer(uuid, boolean), public.party_leave(), public.party_kick(uuid) to authenticated;
+
 -- Heartbeat + mailbox: marks me online at this map, hands over (and deletes) whispers sent to me,
 -- and returns the counters the game uses to notice new friend requests / accepted friends.
 create or replace function public.net_poll(p_dim int, p_map int, p_x int, p_y int)
@@ -17254,6 +17536,7 @@ begin
               from public.friends f where f.friend_id = me and not f.accepted),
     'fc', (select count(*) from public.friends where user_id = me and accepted),
     'mv', public.min_game_version(),
+    'pt', public.party_info(me),   -- v67 👥 { party: {id, leader, members[]} | null, inv: [{from, name, level}] }
     'pv', (select count(*) from public.polls p where p.status = 'open' and p.closes_at > now()
              and not exists (select 1 from public.poll_votes v where v.poll_id = p.id and v.user_id = me))); -- open votes I haven't cast (town board "!")
 end $$;

@@ -191,6 +191,7 @@ declare
   qg numeric := 0; qx numeric := 0; qgear numeric := 0; lgone numeric := 0;
   rebuy numeric := 0; rq numeric := 0;
   fishd numeric := 0;   -- v66 🎣 fish caught since the last save (they arrive without kills)
+  pmates int := 0;       -- v67 👥 party mates whose +10% kill EXP this save may carry
 begin
   np := public.econ_obj(d -> 'player');
   if jsonb_typeof(o) is distinct from 'object' or jsonb_typeof(o -> 'player') is distinct from 'object' then o := '{}'::jsonb; end if;
@@ -425,7 +426,8 @@ begin
   lim_g := ceil(lim_g * dm + delite * (C -> 'tiers' -> tr::text -> 'g' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm)
          + sale + 50 * greatest(public.econ_n(st -> 'chestsOpened') - public.econ_n(ost -> 'chestsOpened'), 0)
          + 60 * greatest(public.econ_n(st -> 'letters') - public.econ_n(ost -> 'letters'), 0) + 120 + qg;
-  lim_x := ceil(lim_x * dm + delite * (C -> 'tiers' -> tr::text -> 'x' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm) + 80 + qx;
+  pmates := public.party_mates_allowed(me);
+  lim_x := ceil((lim_x * dm + delite * (C -> 'tiers' -> tr::text -> 'x' ->> 4)::numeric * dm * ((C ->> 'eliteMult')::numeric - 1) + dk * dm) * (1 + 0.1 * pmates)) + 80 + qx;
   -- shop goods cost money: a starter weapon 20, a herb/potion at least 8 (beyond what kills could have dropped) —
   -- so free copies from the console can't be sold back for gold
   lim_g := lim_g - 20 * nstarter - 8 * greatest(nshop - 2 * dk, 0) - rebuy;   -- v45: buying back costs what the sale paid
@@ -479,7 +481,7 @@ revoke execute on function public.econ_data(), public.econ_n(jsonb), public.econ
 create or replace function public.story_chapters() returns int language sql immutable as $$ select 10 $$;
 grant execute on function public.story_chapters() to anon, authenticated;
 -- v66: systems the client may switch on (it asks once at login; missing function = all off)
-create or replace function public.game_features() returns jsonb language sql immutable as $$ select '{"fish":1}'::jsonb $$;
+create or replace function public.game_features() returns jsonb language sql immutable as $$ select '{"fish":1,"party":1}'::jsonb $$;
 grant execute on function public.game_features() to anon, authenticated;
 
 -- one flag row per kind per minute at most (a cheat client retrying can't flood the table)
@@ -648,6 +650,139 @@ create or replace function public.soc_blocked(a uuid, b uuid) returns boolean la
   select exists (select 1 from public.blocks where (user_id = a and blocked_id = b) or (user_id = b and blocked_id = a)) $$;
 revoke execute on function public.soc_name(uuid), public.soc_online(uuid), public.soc_blocked(uuid, uuid) from public, anon, authenticated;
 
+
+-- ---------- v67 👥 parties (max 4) — no "create party" button: accepting an invite forms one, and a party
+-- that drops to a single member dissolves. The bonus: +10% kill EXP per party mate on the same map (the client
+-- counts mates it can see on its map channel); econ_check allows up to that many mates (party_bonus).
+create table if not exists public.parties (
+  id         bigserial primary key,
+  leader     uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+create table if not exists public.party_members (
+  user_id   uuid primary key references auth.users(id) on delete cascade,
+  party_id  bigint not null references public.parties(id) on delete cascade,
+  joined_at timestamptz not null default now()
+);
+create table if not exists public.party_invites (        -- valid 2 minutes
+  from_id    uuid not null references auth.users(id) on delete cascade,
+  to_id      uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (from_id, to_id)
+);
+create table if not exists public.party_bonus (          -- how many mates' EXP bonus a save may carry (kept 10 min after changes)
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  mates   int not null default 0,
+  until   timestamptz not null default now()
+);
+create index if not exists party_members_party_idx on public.party_members (party_id);
+create index if not exists party_invites_to_idx on public.party_invites (to_id);
+alter table public.parties enable row level security;
+alter table public.party_members enable row level security;
+alter table public.party_invites enable row level security;
+alter table public.party_bonus enable row level security;
+revoke all on public.parties, public.party_members, public.party_invites, public.party_bonus from anon, authenticated;
+
+-- helpers (not callable from the game)
+create or replace function public.party_touch(pid bigint) returns void language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  select count(*) into n from public.party_members where party_id = pid;
+  if n <= 1 then delete from public.parties where id = pid; return; end if;   -- one left = no party (cascade drops the member row)
+  insert into public.party_bonus (user_id, mates, until)
+    select user_id, least(n - 1, 3), now() + interval '10 minutes' from public.party_members where party_id = pid
+    on conflict (user_id) do update set mates = greatest(excluded.mates, case when party_bonus.until > now() then party_bonus.mates else 0 end),
+                                         until = excluded.until;
+end $$;
+create or replace function public.party_of(u uuid) returns bigint language sql stable security definer set search_path = public as $$
+  select party_id from public.party_members where user_id = u $$;
+create or replace function public.party_mates_allowed(u uuid) returns int language sql stable security definer set search_path = public as $$
+  select least(3, greatest(
+    coalesce((select count(*) - 1 from public.party_members where party_id = public.party_of(u)), 0),
+    coalesce((select mates from public.party_bonus where user_id = u and until > now()), 0)))::int $$;
+create or replace function public.party_info(me uuid) returns jsonb language sql stable security definer set search_path = public as $$
+  select jsonb_build_object(
+    'party', (select jsonb_build_object('id', p.id, 'leader', p.leader, 'members',
+               (select coalesce(jsonb_agg(jsonb_build_object('id', m.user_id, 'name', public.soc_name(m.user_id),
+                   'level', (select (data -> 'player' ->> 'level')::int from public.saves where user_id = m.user_id),
+                   'online', public.soc_online(m.user_id), 'map', s.map, 'dim', s.dim) order by m.user_id = p.leader desc, m.joined_at), '[]')
+                  from public.party_members m left join public.player_status s on s.user_id = m.user_id where m.party_id = p.id))
+              from public.parties p where p.id = public.party_of(me)),
+    'inv', (select coalesce(jsonb_agg(jsonb_build_object('from', i.from_id, 'name', public.soc_name(i.from_id),
+               'level', (select (data -> 'player' ->> 'level')::int from public.saves where user_id = i.from_id)) order by i.created_at), '[]')
+             from public.party_invites i where i.to_id = me and i.created_at > now() - interval '2 minutes')) $$;
+revoke execute on function public.party_touch(bigint), public.party_of(uuid), public.party_mates_allowed(uuid), public.party_info(uuid) from public, anon, authenticated;
+
+-- invite: only the leader (or anyone not yet in a party — accepting then makes them the leader)
+create or replace function public.party_invite(p_to uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); pid bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if p_to = me or not exists (select 1 from public.saves where user_id = p_to) then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if public.soc_blocked(me, p_to) then return jsonb_build_object('ok', false, 'reason', 'blocked'); end if;
+  if not public.soc_online(p_to) then return jsonb_build_object('ok', false, 'reason', 'offline'); end if;
+  pid := public.party_of(me);
+  if pid is not null and (select leader from public.parties where id = pid) <> me then return jsonb_build_object('ok', false, 'reason', 'notleader'); end if;
+  if pid is not null and (select count(*) from public.party_members where party_id = pid) >= 4 then return jsonb_build_object('ok', false, 'reason', 'pfull'); end if;
+  if public.party_of(p_to) is not null then return jsonb_build_object('ok', false, 'reason', 'inparty'); end if;
+  if (select count(*) from public.party_invites where from_id = me and created_at > now() - interval '10 seconds') >= 3 then return jsonb_build_object('ok', false, 'reason', 'fast'); end if;
+  insert into public.party_invites (from_id, to_id) values (me, p_to) on conflict (from_id, to_id) do update set created_at = now();
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.party_answer(p_from uuid, p_accept boolean)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); pid bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if not exists (select 1 from public.party_invites where from_id = p_from and to_id = me and created_at > now() - interval '2 minutes') then
+    delete from public.party_invites where from_id = p_from and to_id = me;
+    return jsonb_build_object('ok', false, 'reason', 'expired');
+  end if;
+  delete from public.party_invites where from_id = p_from and to_id = me;
+  if not p_accept then return jsonb_build_object('ok', true, 'state', 'declined'); end if;
+  if public.party_of(me) is not null then return jsonb_build_object('ok', false, 'reason', 'inparty'); end if;
+  pid := public.party_of(p_from);
+  if pid is null then
+    insert into public.parties (leader) values (p_from) returning id into pid;
+    insert into public.party_members (user_id, party_id, joined_at) values (p_from, pid, now() - interval '1 second'); -- the leader joined first
+  end if;
+  if (select count(*) from public.party_members where party_id = pid) >= 4 then return jsonb_build_object('ok', false, 'reason', 'pfull'); end if;
+  insert into public.party_members (user_id, party_id) values (me, pid);
+  delete from public.party_invites where to_id = me;          -- other pending invites no longer apply
+  perform public.party_touch(pid);
+  return jsonb_build_object('ok', true, 'state', 'joined');
+end $$;
+
+create or replace function public.party_leave()
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); pid bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  pid := public.party_of(me);
+  if pid is null then return jsonb_build_object('ok', true); end if;
+  delete from public.party_members where user_id = me;
+  update public.parties set leader = (select user_id from public.party_members where party_id = pid order by joined_at limit 1)
+   where id = pid and leader = me and exists (select 1 from public.party_members where party_id = pid);
+  perform public.party_touch(pid);
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.party_kick(p_who uuid)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare me uuid := auth.uid(); pid bigint;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  pid := public.party_of(me);
+  if pid is null or p_who = me or public.party_of(p_who) is distinct from pid then return jsonb_build_object('ok', false, 'reason', 'invalid'); end if;
+  if (select leader from public.parties where id = pid) <> me then return jsonb_build_object('ok', false, 'reason', 'notleader'); end if;
+  delete from public.party_members where user_id = p_who;
+  perform public.party_touch(pid);
+  return jsonb_build_object('ok', true);
+end $$;
+grant execute on function public.party_invite(uuid), public.party_answer(uuid, boolean), public.party_leave(), public.party_kick(uuid) to authenticated;
+
 -- Heartbeat + mailbox: marks me online at this map, hands over (and deletes) whispers sent to me,
 -- and returns the counters the game uses to notice new friend requests / accepted friends.
 create or replace function public.net_poll(p_dim int, p_map int, p_x int, p_y int)
@@ -673,6 +808,7 @@ begin
               from public.friends f where f.friend_id = me and not f.accepted),
     'fc', (select count(*) from public.friends where user_id = me and accepted),
     'mv', public.min_game_version(),
+    'pt', public.party_info(me),   -- v67 👥 { party: {id, leader, members[]} | null, inv: [{from, name, level}] }
     'pv', (select count(*) from public.polls p where p.status = 'open' and p.closes_at > now()
              and not exists (select 1 from public.poll_votes v where v.poll_id = p.id and v.user_id = me))); -- open votes I haven't cast (town board "!")
 end $$;
