@@ -131,3 +131,10 @@
 - เจ้าเมืองร่างหลอม (จดหมายสายลับ, isSpyBoss) ใช้ `BOSS_MOVE_DEFAULT` ●●● เหมือนเดิม · บอสดันเจี้ยน/เควสใช้ท่าของแมพนั้น
 - ข้อความ: hint บนจอสู้บอกชื่อท่า+รูปแบบ, คู่มือหน้าหลบ, toast สกิล · ไม่ต้องรัน SQL (รางวัลเดิม)
 - ทดสอบ: t/boss_move_test.js (10 บอส: รูปแบบ, ตีได้ตอนพัก, ตีไม่ได้ระหว่างชุด, ทิศสลับ, ตีหลอก, สายลับ 3 จังหวะ) ×3 · t/v62_shots.js (ภาพเริ่มท่า/ตอนพัก, TIER=1..10) · story_test, music_test, secret_test, monk_test, tut_e2e sword
+
+## v63 (26 ก.ย. 2026) — แก้เพลงตีกันตอนจบไฟต์
+- เจ้าของบอกว่า "เพลงตีกันแปลกๆ" → สาเหตุ: (1) exitBattle ตั้ง inBattle=false ทันที → musicScene เปลี่ยนเป็นเพลงแมพ (เล่นต่อจากเดิม) ใต้ jingle ที่แค่ duck 0.12 = สองเพลงคนละคีย์พร้อมกัน (ชนะบอส 11 วิ หนักสุด) (2) die + rareDrop + levelUp + questDone + jingle ดังเฟรมเดียวกัน
+- แก้ (1): musicTick → ระหว่าง `music.jingle` และไม่ได้อยู่ในไฟต์ `want = null` (เงียบ, ตัดเพลงสู้ 0.7 วิ) → jingle จบ เพลงแมพเฟดเข้า 2.4 วิ · เข้าไฟต์ใหม่ระหว่าง jingle (>0.8 วิ) → ตัด jingle ทิ้ง
+- แก้ (2): `sfxHoldBegin()` ต้น exitBattle → เสียงรางวัล `SFX_AFTER_JINGLE` (levelUp questDone rareDrop itemGet coin notice chest refineOk equip) เข้าคิว (ไม่ซ้ำ) จน jingle จบ แล้ว `sfxHoldTick` (ใน musicTick) เล่นทีละเสียงห่าง 650ms · ไม่มี jingle (ปิดเพลง) → ปล่อยใน tick ถัดไป · sfx.die / เสียงต่อสู้ไม่เข้าคิว
+- รายการเพลงที่เจ้าของขอดู: title, เมือง city01–04 (เพลย์ลิสต์), map01–10, dungeon, meditate · สู้มอน fight01 (แมพ 1–3) / fight02 (4–7) / fight03 (8–10) · บอสทุกแมพ bgm_boss เพลงเดียว · สายลับ bgm_boss_story · jingle ชนะ 3 วิ / ชนะบอส ~11 วิ / แพ้ ~6 วิ
+- ทดสอบ: music_test (เพิ่มเช็กเงียบใต้ jingle, คิวเสียง, ตัด jingle เมื่อเข้าไฟต์ใหม่), t/v63_audio.js (Chromium จริง), story_test, boss_move_test, monk_test, secret_test, tut_e2e bow

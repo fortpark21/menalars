@@ -2,7 +2,7 @@
 
 เกม RPG บนเบราว์เซอร์ **ไฟล์เดียว** `index.html` (HTML/CSS/JS ล้วน ไม่มี framework/npm) + โฟลเดอร์ `assets/` (รูป .webp, เสียง .mp3)
 ออนไลน์ด้วย **Supabase** และโฮสต์บน **GitHub Pages** จาก repo นี้ (`fortpark21/menalars`, branch `main`) — ตอนนี้เป็น **เบต้า** (จะล้างเซิร์ฟก่อนเปิดจริง)
-เวอร์ชันล่าสุด: **`GAME_VERSION = 62`** (26 ก.ย. 2026) · ประวัติงานละเอียด v52–v62: `dev/docs/history-v52-v62.md`
+เวอร์ชันล่าสุด: **`GAME_VERSION = 63`** (26 ก.ย. 2026) · ประวัติงานละเอียด v52–v63: `dev/docs/history-v52-v63.md`
 
 ## 👤 เจ้าของ (Andy)
 - **ไม่ใช่โปรแกรมเมอร์** — อธิบายเป็น **ภาษาไทยง่ายๆ ทีละขั้น** ห้ามใช้ศัพท์เทคนิคโดยไม่อธิบาย
@@ -44,7 +44,7 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 - จุดลับ (v60): `SECRET_LOCATION_DEFS` 13 defs (จุดจดหมาย 2 แบบใช้ช่องเดียว → 12 แบบ), สุ่ม 5 จุด/แมพ `generateRandomSecretLocations`, บันทึกลงเซฟ `game.secretSaved` ผ่าน `secretSpotsFor`, ตัวจัดการ `interactWithLocation` / `secretSpotInteract`, มิมิก `m.mimic` → `mimicWon`
 - เนื้อเรื่องหลัก 10 บท `STORY_QUESTS` (54 เควส), จดหมาย 60 ฉบับ `LETTER_DEFS` (L60 = จดหมายสายลับ มีรหัสลับคำแรกของบรรทัด ห้ามแก้), ฉายา `TITLE_DEFS`
 - ลานฝึก (tutorial) `TUT`, `tutBuildSteps`, `tutFrame` (ลูกศรชี้ใช้ getBoundingClientRect หาร zoom)
-- เสียง: `AUDIO` (บรรทัดเดียว), `sfx.*`, `playJingle` (`JINGLE_MAX_S` ตัดเพลงชนะ 3 วิ), `SFX_FILE_GAIN`
+- เสียง: `AUDIO` (บรรทัดเดียว), `sfx.*`, `playJingle` (`JINGLE_MAX_S` ตัดเพลงชนะ 3 วิ), `SFX_FILE_GAIN` · v63: ระหว่าง jingle เพลงเงียบ + เสียงรางวัลเข้าคิว (`sfxHoldBegin`, `SFX_AFTER_JINGLE`)
 - ชื่อบนหัว (v61): ทุก `fillText/strokeText` ของ world ctx ระหว่าง `renderOverworld()` ถูกวาดซ้ำที่ `#labelCanvas` ความละเอียดจอจริง (`labelFlush`) — แคนวาสโลกสูง 720 แล้วยืด
 - UI zoom: `document.body.style.zoom = UI_ZOOM` (จอใหญ่เมนูโต) — ระวังเวลาคำนวณตำแหน่ง DOM
 - ชื่อคล้ายกัน: "สมาธิ" (สเตตัส MEDITATE) / "สติ" (sanity) / "ทำสมาธิ" (โหมด) / "เจตจำนง" (STR + สีออร่า) · ใช้ "แต้มสเตตัส" (ไม่ใช่ "แต้มสถานะ"), "แมพ" (ไม่ใช่ "แผนที่"), "ตั้งค่า", "ติดตัว" (passive), "แถบสกิล"

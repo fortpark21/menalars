@@ -2520,9 +2520,27 @@ function playSfxFile(name){
     return true;
   }catch(e){ return false; }
 }
+// v63: at the end of a fight the kill / level-up / loot / quest sounds all fired in the same instant, on top of
+// the victory jingle — a jumble of tunes. exitBattle() now calls sfxHoldBegin(): these melodic "reward" sounds
+// are queued (no duplicates) until the jingle has finished, then musicTick() plays them one by one.
+const SFX_AFTER_JINGLE = new Set(["levelUp", "questDone", "rareDrop", "itemGet", "coin", "notice", "chest", "refineOk", "equip"]);
+const SFX_QUEUE_GAP_MS = 650;
+const sfxHold = { on:false, at:0, queue:[], nextAt:0 };
+function sfxHoldBegin(){ sfxHold.on = true; sfxHold.at = performance.now(); }
+function sfxHoldTick(now){
+  if(sfxHold.on && (!music.jingle || now - sfxHold.at > 15000)) sfxHold.on = false; // no jingle (muted / failed) → release on the next tick
+  if(!sfxHold.on && sfxHold.queue.length && now >= sfxHold.nextAt){ sfxHold.nextAt = now + SFX_QUEUE_GAP_MS; sfxPlayNow(sfxHold.queue.shift()); }
+}
+const sfxSynth = {};
+function sfxPlayNow(name){
+  if(playSfxFile(name)) return;
+  const prev = sfxCat; sfxCat = SFX_BATTLE.has(name) ? "battle" : "ui";
+  try{ sfxSynth[name](); } finally { sfxCat = prev; }
+}
 Object.keys(sfx).forEach(name => {
-  const synth = sfx[name];
+  const synth = sfxSynth[name] = sfx[name];
   sfx[name] = () => {
+    if(SFX_AFTER_JINGLE.has(name) && (sfxHold.on || sfxHold.queue.length)){ if(!sfxHold.queue.includes(name)) sfxHold.queue.push(name); return; }
     if(playSfxFile(name)) return;
     const prev = sfxCat; sfxCat = SFX_BATTLE.has(name) ? "battle" : "ui";
     try{ synth(); } finally { sfxCat = prev; }
@@ -2603,6 +2621,8 @@ function playJingle(key){
     music.jingleAt = performance.now();
     j.volume = clamp(musicVolume() * 1.1, 0, 1);
     music.duckTarget = 0.12; // push the music under the jingle, bring it back when it ends
+    // v63: the map music used to start right away under the jingle (two songs in different keys at once) —
+    // musicTick() now keeps the music silent until the jingle ends, then fades the map track back in
     const done = () => { if(music.jingle === j){ music.jingle = null; music.duckTarget = 1; } };
     j.addEventListener("ended", done); j.addEventListener("error", () => { music.failed.add(key); done(); });
     j.play().catch(done);
@@ -2632,6 +2652,9 @@ function musicTick(){
     else want = avail[music.playlistIdx % avail.length];
   }
   const fightish = !!(game && game.inBattle);
+  if(music.jingle && fightish && now - (music.jingleAt || 0) > 800){ music.jingle.pause(); music.jingle = null; music.duckTarget = 1; } // walked straight into another fight
+  if(music.jingle && !fightish) want = null; // nothing under the victory / defeat jingle
+  sfxHoldTick(now);
   if(want !== music.key) musicPlay(want, fightish || music.wasFight ? MUSIC_FAST_FADE_S : MUSIC_FADE_S, fightish);
   music.wasFight = fightish;
   // near the end: loop (crossfade back to 0:00) or move on to the next playlist song
@@ -4992,7 +5015,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 62;
+const GAME_VERSION = 63;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -9251,6 +9274,7 @@ function exitBattle(result){
   const m = b.monster;
   const p = game.player;
   const summary = buildBattleSummary(b);
+  sfxHoldBegin(); // v63: level-up / loot / quest sounds wait for the victory jingle
 
   if(result === "win"){
     const wType = getEquippedWeaponMasteryType();
