@@ -37,7 +37,10 @@ R("enterBattle(game.monsters.find(m => m.alive && !MONSTER_DEFS[m.type].isBoss))
 eq("fight", G("music.key"), "bgm_fight01");
 eq("fight starts at 0", G("Math.round(music.els[music.cur].currentTime)"), 0);
 eq("only fight audible", playing(), ["bgm_fight01"]);
-R("exitBattle('win')"); tick(1200);
+R("exitBattle('win')");
+// v64: no fanfare after a road-side monster — the map music simply carries on
+eq("no jingle after normal win", G("!!music.jingle"), false);
+tick(1200);
 eq("back to map", G("music.key"), "bgm_map01");
 eq("map resumes near 60s", G("music.els[music.cur].currentTime >= 59"), true);
 // boss without boss track → fight01
@@ -54,8 +57,24 @@ eq("boss track", G("music.key"), "bgm_boss");
 R("exitBattle('win')"); tick(200);
 eq("victory jingle ducks", G("music.duckTarget"), 0.12);
 eq("jingle playing", G("!!music.jingle && !music.jingle.paused"), true);
-R("music.jingle._l.ended.forEach(f => f())"); tick(800);
+eq("boss win: no music under jingle", G("music.key"), null);
+eq("boss jingle capped at 7 s", G("JINGLE_MAX_S[music.jingle.src.includes('victory_boss') ? 'jgl_victory_boss' : 'jgl_victory']"), G("AUDIO.jgl_victory_boss ? 7 : 3"));
+tick(800); eq("nothing audible under jingle", G("music.els.filter(e => e && !e.paused && e.volume > 0.001).length"), 0);
+R("sfxHold.queue.length = 0; sfx.levelUp(); sfx.coin(); sfx.levelUp()");
+eq("reward sfx queued once each", G("sfxHold.queue.slice()"), ["levelUp", "coin"]);
+R("music.jingle._l.ended.forEach(f => f())"); tick(100);
+eq("queue drains one at a time", G("sfxHold.queue.slice()"), ["coin"]);
+tick(700);
+eq("queue empty", G("sfxHold.queue.length"), 0);
 eq("duck restored", G("music.duck"), 1);
+eq("map fades back in after jingle", G("music.key"), "bgm_map01");
+// a new fight right after a win cuts the leftover jingle
+R("game.monsters.filter(m => !MONSTER_DEFS[m.type].isBoss).forEach(m => m.alive = true)");
+R("enterBattle(game.monsters.find(m => m.alive && !MONSTER_DEFS[m.type].isBoss))"); tick(300);
+R("exitBattle('win')"); tick(300);
+R("enterBattle(game.monsters.find(m => m.alive && !MONSTER_DEFS[m.type].isBoss))"); tick(1500);
+eq("next fight cuts jingle", [G("!!music.jingle"), G("music.key")], [false, "bgm_fight01"]);
+R("exitBattle('win')"); tick(300); R("if(music.jingle) music.jingle._l.ended.forEach(f => f())"); tick(2000);
 R("warpToMap(4)"); tick(500);
 eq("map4 own track", G("music.key"), "bgm_map04");
 R("enterBattle(game.monsters.find(m => m.alive && !MONSTER_DEFS[m.type].isBoss))"); tick(500);

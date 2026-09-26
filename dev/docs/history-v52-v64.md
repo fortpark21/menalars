@@ -131,3 +131,18 @@
 - เจ้าเมืองร่างหลอม (จดหมายสายลับ, isSpyBoss) ใช้ `BOSS_MOVE_DEFAULT` ●●● เหมือนเดิม · บอสดันเจี้ยน/เควสใช้ท่าของแมพนั้น
 - ข้อความ: hint บนจอสู้บอกชื่อท่า+รูปแบบ, คู่มือหน้าหลบ, toast สกิล · ไม่ต้องรัน SQL (รางวัลเดิม)
 - ทดสอบ: t/boss_move_test.js (10 บอส: รูปแบบ, ตีได้ตอนพัก, ตีไม่ได้ระหว่างชุด, ทิศสลับ, ตีหลอก, สายลับ 3 จังหวะ) ×3 · t/v62_shots.js (ภาพเริ่มท่า/ตอนพัก, TIER=1..10) · story_test, music_test, secret_test, monk_test, tut_e2e sword
+
+## v63 (26 ก.ย. 2026) — แก้เพลงตีกันตอนจบไฟต์
+- เจ้าของบอกว่า "เพลงตีกันแปลกๆ" → สาเหตุ: (1) exitBattle ตั้ง inBattle=false ทันที → musicScene เปลี่ยนเป็นเพลงแมพ (เล่นต่อจากเดิม) ใต้ jingle ที่แค่ duck 0.12 = สองเพลงคนละคีย์พร้อมกัน (ชนะบอส 11 วิ หนักสุด) (2) die + rareDrop + levelUp + questDone + jingle ดังเฟรมเดียวกัน
+- แก้ (1): musicTick → ระหว่าง `music.jingle` และไม่ได้อยู่ในไฟต์ `want = null` (เงียบ, ตัดเพลงสู้ 0.7 วิ) → jingle จบ เพลงแมพเฟดเข้า 2.4 วิ · เข้าไฟต์ใหม่ระหว่าง jingle (>0.8 วิ) → ตัด jingle ทิ้ง
+- แก้ (2): `sfxHoldBegin()` ต้น exitBattle → เสียงรางวัล `SFX_AFTER_JINGLE` (levelUp questDone rareDrop itemGet coin notice chest refineOk equip) เข้าคิว (ไม่ซ้ำ) จน jingle จบ แล้ว `sfxHoldTick` (ใน musicTick) เล่นทีละเสียงห่าง 650ms · ไม่มี jingle (ปิดเพลง) → ปล่อยใน tick ถัดไป · sfx.die / เสียงต่อสู้ไม่เข้าคิว
+- รายการเพลงที่เจ้าของขอดู: title, เมือง city01–04 (เพลย์ลิสต์), map01–10, dungeon, meditate · สู้มอน fight01 (แมพ 1–3) / fight02 (4–7) / fight03 (8–10) · บอสทุกแมพ bgm_boss เพลงเดียว · สายลับ bgm_boss_story · jingle ชนะ 3 วิ / ชนะบอส ~11 วิ / แพ้ ~6 วิ
+- ทดสอบ: music_test (เพิ่มเช็กเงียบใต้ jingle, คิวเสียง, ตัด jingle เมื่อเข้าไฟต์ใหม่), t/v63_audio.js (Chromium จริง), story_test, boss_move_test, monk_test, secret_test, tut_e2e bow
+
+## v64 (26 ก.ย. 2026) — เพลงแมพ 2 + เพลงบอสใหม่ · ไม่มี jingle หลังชนะมอนธรรมดา · jingle บอส 7 วิ
+- เจ้าของเจนใน Gemini แล้วอัปขึ้น main (หน้าแรก repo): new_map02.mp3 → **bgm_map02** "Hunters of the Shadow Wood" (ป่าเงามืดแบบเร้าใจ แทนเพลงที่ฟังเหมือนเมือง) · boss_C.mp3 → **bgm_boss** "Wrath of the Ancient Demon" (แบบ C มืดมน 110 BPM แทนเพลงที่ฟังเหมือนตลาดจีน) — prompt ทั้ง 4 อันอยู่ในแชท v63 (แบบ A ออเคสตรา / B ร็อก / C มืดมน)
+- ไฟล์ Gemini ทั้งคู่ ~181 วิ มีเฟดท้าย ~5 วิ → ตัดก่อนเฟด (map02 ที่ 176 วิ, boss 175 วิ + afade 0.8) ให้วนลูปไม่วูบ แล้ว add_audio.py · ลบไฟล์ดิบออกจาก repo
+- ffmpeg ในเซสชันคลาวด์: `pip install imageio-ffmpeg` + symlink ชื่อ ffmpeg และ shim ffprobe (อ่าน Duration) ใน PATH
+- exitBattle: jingle ชนะเฉพาะบอส/สายลับ (มอนธรรมดา/Elite/มิมิก ไม่มี — เพลงแมพเล่นต่อทันที, เฟด 0.7 วิ) · `JINGLE_MAX_S.jgl_victory_boss = 7` · jgl_victory 3 วิ ยังใช้ที่ลานฝึกจบ · แพ้ยังเต็มเพลง
+- ⚠️ Playwright: `python3 -m http.server` ไม่รองรับ Range → Chrome กระโดดกลางเพลงไม่ได้ เพลงแมพเลยดูเหมือนเริ่มใหม่หลังสู้ — บน GitHub Pages เล่นต่อได้จริง (ทดสอบด้วยเซิร์ฟเวอร์ Node ที่รองรับ Range: กลับมาที่ 7.7 วิ)
+- ทดสอบ: music_test (ปรับ: ไม่มี jingle หลังมอนธรรมดา, คิวเสียงรางวัลย้ายไปเช็กตอนชนะบอส, jingle บอส 7 วิ), t/v64_audio.js (Chromium: เพลงแมพ 2/บอสใหม่โหลดได้, ชนะมอน → map02 ทันที, jingle บอสหยุด ~7 วิ), story_test, boss_move_test, monk_test, secret_test, tut_e2e heavy
