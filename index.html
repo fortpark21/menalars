@@ -498,6 +498,45 @@
     background:linear-gradient(180deg, #2a1838, #150c20); border:2px solid #e8a0c8; box-shadow:0 0 40px rgba(232,160,200,.45), 0 20px 60px rgba(0,0,0,.6);
     animation:mgIn .45s cubic-bezier(.2,1.4,.4,1); }
   @keyframes mgIn{ from{ transform:scale(.85); opacity:0; } to{ transform:none; opacity:1; } }
+  /* v66 🎣 fishing */
+  #fishSpotBtn{ position:fixed; left:calc(50% + 270px); bottom:112px; transform:translateX(-50%); z-index:40; display:flex; align-items:center; gap:10px;
+    padding:10px 22px 10px 14px; border-radius:40px; border:2px solid #7fd8ff; background:linear-gradient(180deg, #1d4f6b, #0e2a3d); color:#eaf8ff;
+    font-size:17px; font-weight:bold; cursor:pointer; box-shadow:0 0 18px rgba(127,216,255,.45), 0 8px 20px rgba(0,0,0,.5); animation:fishBob 1.6s ease-in-out infinite; }
+  #fishSpotBtn .fs-ic{ font-size:30px; line-height:1; filter:drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+  #fishSpotBtn small{ display:block; font-size:11px; font-weight:normal; color:#a9dcf0; }
+  #fishSpotBtn:hover{ transform:translateX(-50%) scale(1.07); box-shadow:0 0 28px rgba(127,216,255,.8), 0 8px 20px rgba(0,0,0,.5); }
+  #fishSpotBtn[hidden]{ display:none; }
+  @keyframes fishBob{ 0%,100%{ margin-bottom:0; } 50%{ margin-bottom:6px; } }
+  #fishGame{ position:fixed; inset:0; z-index:62; background:#0b2230; }
+  #fishGame[hidden]{ display:none; }
+  #fishCanvas{ position:absolute; inset:0; width:100%; height:100%; display:block; cursor:pointer; touch-action:none; }
+  #fishGame .fg-btns{ position:absolute; right:14px; bottom:14px; display:flex; gap:8px; }
+  #fishGame .fg-btns button{ border:1px solid rgba(255,255,255,.3); background:rgba(10,20,36,.75); color:#e9f6ff; border-radius:10px; padding:8px 14px; font-size:13px; cursor:pointer; }
+  #fishGame .fg-btns button:hover{ background:rgba(30,70,100,.9); }
+  #fishResult{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(3,10,18,.5); }
+  #fishResult[hidden]{ display:none; }
+  #fishResult .fr-card{ width:440px; max-width:calc(92vw / var(--uiz, 1)); padding:20px 24px 18px; border-radius:18px; color:#eef8ff; text-align:center;
+    background:linear-gradient(180deg, #17344a, #0b1a28); border:2px solid #7fd8ff; box-shadow:0 0 40px rgba(127,216,255,.35), 0 20px 60px rgba(0,0,0,.6); animation:mgIn .45s cubic-bezier(.2,1.4,.4,1); }
+  #fishResult h3{ margin:4px 0 2px; font-size:24px; }
+  #fishResult .fr-rar{ font-size:13px; color:#a9c6d8; margin-bottom:6px; }
+  #fishResult canvas{ width:320px; height:160px; display:block; margin:0 auto; }
+  #fishResult .fr-size{ margin:8px 0 4px; font-size:15px; }
+  #fishResult .fr-tag{ display:inline-block; margin:2px 4px; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:bold; }
+  #fishResult .fr-tag.new{ background:#ffd166; color:#3a2600; } #fishResult .fr-tag.rec{ background:#7CE0A8; color:#08331c; }
+  #fishResult .fr-actions{ display:flex; gap:10px; justify-content:center; margin-top:12px; }
+  #fishBookPanel{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(3,10,18,.6); z-index:2; }
+  #fishBookPanel[hidden]{ display:none; }
+  #fishBookPanel .fb-box{ width:1000px; max-width:calc(94vw / var(--uiz, 1)); max-height:calc(88vh / var(--uiz, 1)); overflow:auto; padding:18px 20px; border-radius:18px;
+    background:linear-gradient(180deg, #17344a, #0b1a28); border:2px solid #7fd8ff; color:#eef8ff; position:relative; }
+  #fishBookPanel h3{ margin:0 0 4px; } #fbCount{ font-size:13px; color:#a9c6d8; margin-bottom:12px; }
+  #fbGrid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px; }
+  .fb-card{ position:relative; border-radius:14px; padding:8px 6px 10px; text-align:center; background:rgba(255,255,255,.05); border:2px solid var(--rc); transition:transform .15s, box-shadow .15s; }
+  .fb-card:hover{ transform:translateY(-4px) scale(1.04); box-shadow:0 0 18px var(--rc); z-index:3; }
+  .fb-card.locked{ border-color:rgba(255,255,255,.15); } .fb-card canvas{ width:100%; height:auto; display:block; }
+  .fb-name{ font-size:13px; font-weight:bold; margin-top:2px; }
+  .fb-tip{ display:none; position:absolute; left:50%; bottom:calc(100% + 6px); transform:translateX(-50%); width:220px; padding:10px 12px; border-radius:10px;
+    background:#08131d; border:1px solid var(--rc); font-size:12px; line-height:1.5; text-align:left; box-shadow:0 8px 20px rgba(0,0,0,.6); }
+  .fb-card:hover .fb-tip{ display:block; }
   #mgResult .mg-eyebrow{ font-size:12px; letter-spacing:.12em; font-weight:bold; color:#ffb3d6; }
   #mgResult h3{ margin:4px 0 12px; font-size:26px; color:#fff; text-shadow:0 0 14px rgba(255,160,210,.6); }
   #mgResult .mg-stats{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px; }
@@ -1854,6 +1893,21 @@
     <div class="mg-stats" id="mgStats"></div>
     <div class="mg-buff" id="mgBuff"></div>
     <div class="mg-actions"><button type="button" class="btn-primary" id="mgDone">🙏 กลับเมือง</button><button type="button" class="btn-secondary" id="mgAgain" hidden>ลองใหม่</button></div>
+  </div></div>
+</div>
+<button type="button" id="fishSpotBtn" hidden><span class="fs-ic">🎣</span><span>ตกปลา<small>คลิก หรือกด F</small></span></button>
+<div id="fishGame" hidden>
+  <canvas id="fishCanvas" width="1280" height="720"></canvas>
+  <div class="fg-btns"><button type="button" id="fishBookBtn">📖 สมุดปลา</button><button type="button" id="fishQuit">เลิกตกปลา</button></div>
+  <div id="fishResult" hidden><div class="fr-card">
+    <h3 id="frTitle"></h3><div class="fr-rar" id="frRarity"></div>
+    <canvas id="frArt" width="640" height="320"></canvas>
+    <div id="frBody"></div>
+    <div class="fr-actions"><button type="button" class="btn-primary" id="frAgain">🎣 ตกต่อ</button><button type="button" class="btn-secondary" id="frDone">กลับเมือง</button></div>
+  </div></div>
+  <div id="fishBookPanel" hidden><div class="fb-box">
+    <button class="close-x" id="fbClose" type="button">✕</button>
+    <h3>📖 สมุดปลาแห่งท่าน้ำ</h3><div id="fbCount"></div><div id="fbGrid"></div>
   </div></div>
 </div>
 <div id="sanityAlert" hidden role="alertdialog" aria-modal="true" aria-labelledby="saTitle">
@@ -5015,7 +5069,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 65;
+const GAME_VERSION = 66;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -5217,6 +5271,7 @@ async function netAfterLogin(){
   }catch(err){ loginMsg(err.message, true); return; }
   try{ net.staff = new Set(await netRpc("staff_ids", "{}") || []); }catch(err){ /* no [GM] tags this session — harmless */ }
   try{ net.storyMax = Math.max(3, +(await netRpc("story_chapters", "{}")) || 3); }catch(err){ net.storyMax = 3; } // v52: before the SQL is run → stays at chapter 3
+  try{ const f = await netRpc("game_features", "{}"); net.features = f && typeof f === "object" ? f : {}; }catch(err){ net.features = {}; } // v66: systems that need new SQL stay off until it's run
   document.getElementById("loginCard").hidden = true;
   document.getElementById("creationCard").hidden = false;
   document.getElementById("creationAcct").hidden = false;
@@ -6102,6 +6157,55 @@ const ITEM_TABLE = [
   { id: "barrier_lantern", name: "ตะเกียงบาเรีย",       icon: "🏮", quest: true, desc: "ไอเทมเควส — ชิ้นส่วนเล็กๆ ของบาเรียที่ถูกขโมยไป" },
   { id: "inscribed_wrap",  name: "ผ้าพันแผลจารึก",      icon: "📜", quest: true, desc: "ไอเทมเควส — ผ้าที่ผู้รอดจากคลื่นครั้งก่อนเขียนเจตจำนงของตัวเองไว้" }
 ];
+
+/* ============================================================
+   🎣 FISHING (v66) — the harbour at the bottom of the town.
+   Walk onto a pier → "🎣 ตกปลา" appears. After a bite:
+   · hold LEFT MOUSE (or Space) to lift the tension marker, let go and it sinks — keep it inside the green zone
+     to fill the catch bar (green zone = the battle gauge's Perfect zone × FISH_ZONE_SCALE, so MEDITATE / Sanity
+     widen it the same way they do in a fight)
+   · the fish tugs left / right (same red warning as a monster's attack): HOLD THE OPPOSITE KEY (A / D) to resist →
+     bonus catch progress; miss it and the line strains — 3 strains and the fish is gone
+   Fish are stack items (ITEM_TABLE, sold to the merchant), each catch bumps game.stats.fishCaught and the
+   player's fish book (game.player.fishBook[id] = { n, best }). Server: econ_check lets new fish in by fishCaught,
+   capped by time (FISH_MIN_SECONDS each).
+   ============================================================ */
+const FISH_SPOTS = [ { x: 1200, y: 1545, r: 115 }, { x: 1700, y: 1545, r: 115 } ]; // ends of the two piers (painted town T1)
+const FISH_ZONE_SCALE = 2.5, FISH_ZONE_MIN = 0.14, FISH_ZONE_MAX = 0.6;
+const FISH_LIFT = 2.7, FISH_GRAV = 2.1, FISH_DAMP = 1.6;           // marker physics (bar heights per s²)
+const FISH_TUG_PULL_S = 0.7, FISH_TUG_OK = 0.45, FISH_TUG_BONUS = 0.07, FISH_MAX_STRAIN = 3;
+const FISH_RARITY = {
+  common:    { label:"ธรรมดา",   color:"#cfd8dc", weight:50, need:3.0, tug:[2600, 3400], warn:850, grav:1.0,  drift:0.0,  thrash:0.2 },
+  uncommon:  { label:"ไม่ธรรมดา", color:"#7CE0A8", weight:28, need:4.2, tug:[2200, 3000], warn:780, grav:1.15, drift:0.08, thrash:0.35 },
+  rare:      { label:"หายาก",    color:"#6ec6ff", weight:14, need:5.6, tug:[1900, 2600], warn:720, grav:1.3,  drift:0.15, thrash:0.5 },
+  epic:      { label:"มหากาพย์", color:"#c792ff", weight:6,  need:7.2, tug:[1600, 2200], warn:660, grav:1.45, drift:0.22, thrash:0.7 },
+  legendary: { label:"ตำนาน",    color:"#ffd166", weight:2,  need:9.5, tug:[1300, 1800], warn:600, grav:1.6,  drift:0.28, thrash:0.9 }
+};
+// shape: body | betta | puffer | eel | tuna | catfish | koi · mark: none | line | stripes | spots | patches
+const FISH_DEFS = [
+  { id:"fish_siw",     name:"ปลาซิว",               from:"ไทย",   icon:"🐟", rarity:"common",    size:[3, 7],     price:4,   c1:"#9fb7c9", c2:"#eef4f7", shape:"body",    mark:"line",    desc:"ปลาตัวจิ๋วว่ายเป็นฝูงใต้ท่าน้ำ ตกง่ายที่สุด" },
+  { id:"fish_kad",     name:"ปลากัด",               from:"ไทย",   icon:"🐠", rarity:"common",    size:[4, 7],     price:6,   c1:"#c0392b", c2:"#5b2c83", shape:"betta",   mark:"none",    desc:"นักสู้ครีบพลิ้ว ตัวเล็กแต่ใจใหญ่" },
+  { id:"fish_ayu",     name:"ปลาอายุ",              from:"ญี่ปุ่น", icon:"🐟", rarity:"common",    size:[12, 25],   price:6,   c1:"#7f8c6e", c2:"#f3e7c1", shape:"body",    mark:"spots",   desc:"ปลาน้ำใสกลิ่นหอมแตงโม ชาวญี่ปุ่นย่างเกลือกินหน้าร้อน" },
+  { id:"fish_tu",      name:"ปลาทู",                from:"ไทย",   icon:"🐟", rarity:"common",    size:[15, 25],   price:7,   c1:"#3d5a73", c2:"#dfe8ee", shape:"body",    mark:"line",    desc:"หน้างอ คองอ — ปลาคู่ครัวไทย" },
+  { id:"fish_nil",     name:"ปลานิล",               from:"ไทย",   icon:"🐟", rarity:"common",    size:[15, 35],   price:8,   c1:"#6b7b8c", c2:"#d9d2c5", shape:"body",    mark:"stripes", desc:"ปลาเลี้ยงง่าย โตไว พบได้ทุกท่าน้ำ" },
+  { id:"fish_saba",    name:"ปลาซาบะ",              from:"ญี่ปุ่น", icon:"🐟", rarity:"uncommon",  size:[25, 45],   price:14,  c1:"#2e6e6a", c2:"#e6eef0", shape:"tuna",    mark:"stripes", desc:"ลายคลื่นบนหลังสีเขียวน้ำทะเล ว่ายเร็วและดิ้นแรง" },
+  { id:"fish_takhian", name:"ปลาตะเพียนเงิน",       from:"ไทย",   icon:"🐟", rarity:"uncommon",  size:[15, 30],   price:12,  c1:"#b8c4cc", c2:"#f5f7f8", shape:"body",    mark:"none",    desc:"เกล็ดเงินวาวครีบแดง ชาวบ้านสานใบลานเป็นรูปปลาชนิดนี้แขวนเปล" },
+  { id:"fish_salid",   name:"ปลาสลิด",              from:"ไทย",   icon:"🐟", rarity:"uncommon",  size:[10, 20],   price:12,  c1:"#6e7a5a", c2:"#c9c2a0", shape:"body",    mark:"stripes", desc:"ปลาหนองน้ำลายพาดเฉียง ตากแดดแล้วทอดกรอบ" },
+  { id:"fish_duk",     name:"ปลาดุก",               from:"ไทย",   icon:"🐟", rarity:"uncommon",  size:[25, 50],   price:15,  c1:"#4a4038", c2:"#8a7d6b", shape:"catfish", mark:"none",    desc:"หนวดยาว ตัวลื่น ชอบซุกโคลนใต้เสาท่าน้ำ" },
+  { id:"fish_chon",    name:"ปลาช่อน",              from:"ไทย",   icon:"🐟", rarity:"rare",      size:[35, 80],   price:30,  c1:"#3e4a3a", c2:"#b5b08c", shape:"eel",     mark:"spots",   desc:"นักล่าหัวงู ฮุบเหยื่อไวดุจสายฟ้า" },
+  { id:"fish_koi",     name:"ปลาคาร์ปโคย",          from:"ญี่ปุ่น", icon:"🎏", rarity:"rare",      size:[30, 70],   price:34,  c1:"#f2f2ee", c2:"#e8562a", shape:"koi",     mark:"patches", desc:"ปลามงคลลายแดงขาว ว่ากันว่าว่ายทวนน้ำตกจนกลายเป็นมังกร" },
+  { id:"fish_fugu",    name:"ปลาปักเป้าเสือ",        from:"ญี่ปุ่น", icon:"🐡", rarity:"rare",      size:[20, 45],   price:36,  c1:"#8c7a4a", c2:"#f2ecd6", shape:"puffer",  mark:"spots",   desc:"พองตัวเมื่อตกใจ พิษร้ายแรงถึงตาย ต้องให้เชฟมีใบอนุญาตแล่เท่านั้น" },
+  { id:"fish_madai",   name:"ปลาไทแดง (มาได)",       from:"ญี่ปุ่น", icon:"🐠", rarity:"rare",      size:[30, 60],   price:38,  c1:"#e2665f", c2:"#f7d6cf", shape:"body",    mark:"spots",   desc:"ราชาแห่งปลามงคล ขึ้นโต๊ะงานฉลองทุกงาน" },
+  { id:"fish_unagi",   name:"ปลาไหลญี่ปุ่น (อุนางิ)", from:"ญี่ปุ่น", icon:"🐟", rarity:"epic",      size:[50, 100],  price:70,  c1:"#3a3f2c", c2:"#c9c08a", shape:"eel",     mark:"none",    desc:"ลื่นดิ้นหลุดมือเก่ง เคลือบซอสย่างถ่านคือสุดยอด" },
+  { id:"fish_kaphong", name:"ปลากะพงขาว",           from:"ไทย",   icon:"🐟", rarity:"epic",      size:[40, 90],   price:64,  c1:"#8a96a0", c2:"#eef2f4", shape:"body",    mark:"none",    desc:"นักสู้ปากแม่น้ำ กระชากสายแรงจนเบ็ดแทบหัก" },
+  { id:"fish_katsuo",  name:"ปลาโอแถบ (คัตสึโอะ)",   from:"ญี่ปุ่น", icon:"🐟", rarity:"epic",      size:[40, 80],   price:66,  c1:"#23395b", c2:"#dfe6ee", shape:"tuna",    mark:"line",    desc:"ปลาทะเลลึกลายพาดท้อง ตากแห้งไสเป็นเกล็ดคัตสึโอะบุชิ" },
+  { id:"fish_buek",    name:"ปลาบึก",               from:"ไทย",   icon:"🐟", rarity:"legendary", size:[120, 300], price:160, c1:"#6d6f73", c2:"#d8dadd", shape:"catfish", mark:"none",    desc:"เจ้าแห่งแม่น้ำโขง ปลาน้ำจืดยักษ์ที่ใหญ่ที่สุดในโลก" },
+  { id:"fish_maguro",  name:"ปลาทูน่าครีบน้ำเงิน (มากุโระ)", from:"ญี่ปุ่น", icon:"🐟", rarity:"legendary", size:[150, 300], price:180, c1:"#1c2f55", c2:"#d7dee8", shape:"tuna", mark:"none", desc:"ตอร์ปิโดแห่งมหาสมุทร ประมูลตัวเดียวราคาเท่าบ้านหนึ่งหลัง" }
+];
+const FISH_BY_ID = Object.fromEntries(FISH_DEFS.map(f => [f.id, f]));
+const FISH_MIN_SECONDS = 4; // server budget: one fish per this many seconds (bite ≥1.2 s + reeling ≥3 s)
+ITEM_TABLE.push(...FISH_DEFS.map(f => ({ id: f.id, name: f.name, icon: f.icon, fish: true,
+  desc: `${f.desc} — ปลา${FISH_RARITY[f.rarity].label} จาก${f.from} ขายให้พ่อค้าได้ ${f.price} ทอง` })));
 
 /* ============================================================
    EQUIPMENT & ITEM FOUNDATION
@@ -7051,6 +7155,9 @@ const TITLE_DEFS = [
   mkTitle("gold_king",       "life", 3, "🏦", "ราชาแห่งทองคำ",               "หาเงินจากการต่อสู้รวม 1,000,000",         1000000,"goldEarned", { LUK:10 }),
   mkTitle("mind_trainee",    "life", 1, "🧘", "ผู้ฝึกจิต",                    "ทำสมาธิจนสติเต็ม 10 ครั้ง",                10,    "meditations", { MEDITATE:3 }),
   mkTitle("still_water",     "life", 2, "💧", "จิตนิ่งดั่งผืนน้ำ",             "ทำสมาธิจนสติเต็ม 100 ครั้ง",               100,   "meditations", { MEDITATE:6 }),
+  mkTitle("fish_novice",     "life", 1, "🎣", "มือใหม่หัดตกปลา",              "ตกปลาได้ 10 ตัว",                          10,    "fish",        { LUK:2 }),
+  mkTitle("fish_master",     "life", 2, "🐟", "เจ้าแห่งท่าน้ำ",                "ตกปลาได้ 200 ตัว",                         200,   "fish",        { LUK:4, MEDITATE:2 }),
+  mkTitle("fish_sage",       "life", 3, "🐋", "ผู้รู้แจ้งแห่งสายน้ำ",           "ตกปลาได้ครบทุกชนิดในสมุดปลา",               18,    "fishSpecies", { LUK:5, MEDITATE:4 }),
   mkTitle("town_friend",     "life", 1, "🏙️", "มิตรแท้แห่งเจ้าเมือง",         "ทำภารกิจเก็บกวาดเศษซากของเจ้าเมืองสำเร็จ",        1,     "junkQuest",   { VIT:3 }),
   mkTitle("letter_reader",   "life", 1, "📨", "ผู้อ่านเสียงที่หลงทาง",        "อ่านจดหมายที่ส่งไม่ถึง 15 ฉบับ",           15,    "lettersRead", { MEDITATE:3 }),
   mkTitle("letter_keeper",   "life", 2, "📚", "ผู้เก็บถ้อยคำที่ไปไม่ถึง",      "อ่านจดหมายที่ส่งไม่ถึง 40 ฉบับ",           40,    "lettersRead", { MEDITATE:3, LUK:3 }),
@@ -7122,7 +7229,8 @@ function getTitleStats(){
     monstersHalf: book.filter(m => m.discovered).length >= Math.ceil(book.length / 2) ? 1 : 0,
     monstersAll: book.every(m => m.discovered) ? 1 : 0,
     cards: cards.filter(c => c.discovered).length, allCards: cards.every(c => c.discovered) ? 1 : 0,
-    epics: eqFound("epic"), legends: eqFound("legendary")
+    epics: eqFound("epic"), legends: eqFound("legendary"),
+    fish: st.fishCaught || 0, fishSpecies: Object.keys(p.fishBook || {}).filter(id => FISH_BY_ID[id] && p.fishBook[id].n > 0).length // v66
   };
 }
 // Unlocks everything whose goal is met. silent = no banner/toast (the caller shows its own, or it's a load-time catch-up).
@@ -7608,6 +7716,7 @@ function updateMonsterWander(m, dt){
 
 function updateOverworld(dt){
   const p = game.player;
+  fishSpotTick(); // v66: "🎣 ตกปลา" button on the piers
   storyStatTick(); storyCheckSpots(); storyShowPendingScene(); letterShowPending(); letterShowSpyScene();
 
   if(p.targetMonsterId != null){
@@ -7876,6 +7985,11 @@ function renderOverworldScene(){
     if(npc.kind === "market" && mk.ready > 0) drawVoteBadge(ctx, npc.x, labelY - 22, mk.ready);
     if(talk.open && talk.npcKind === npc.kind) drawTalkBubble(ctx, npc.x, labelY - 20);
     else { const mk = npcQuestMarker(npc); if(mk) drawQuestMarker(ctx, npc.x, labelY - 22, mk); }
+  }
+  if(game.mapTier === TOWN_TIER) for(const sp of FISH_SPOTS){ // v66: where to fish
+    const ly = sp.y - 150 + Math.sin(performance.now() / 500) * 3; // above the angler's nameplate (the pier ends at the map's bottom edge)
+    ctx.save(); ctx.font = "bold 12px 'Trebuchet MS', sans-serif"; ctx.fillStyle = "#bfefff";
+    ctx.strokeText("🎣 จุดตกปลา", sp.x, ly); ctx.fillText("🎣 จุดตกปลา", sp.x, ly); ctx.restore();
   }
 
   for(const m of game.monsters){
@@ -8270,6 +8384,344 @@ window.addEventListener("keydown", e => {
   if(e.key !== "Escape" || !monkGame.active) return;
   if(!monkGame.done) finishMonkGame(false); else closeMonkGame();
 });
+/* ---- 🎣 fishing: state, loop, drawing (data + rules at FISH_DEFS) ---- */
+const fishing = { active:false, cv:null, ctx:null, W:1280, H:720, raf:0, last:0, t:0, phase:"idle", fish:null, seed:0,
+  power:0.35, vel:0, zoneH:0.2, zoneC:0.5, progress:0, strain:0, tug:null, nextTugAt:0, biteAt:0,
+  hold:false, keyL:false, keyR:false, callouts:[], parts:[], shake:0, inZone:false, result:null };
+function fishNearSpot(){
+  const p = game && game.player;
+  if(!p || game.mapTier !== TOWN_TIER || game.inBattle || TUT.active) return null;
+  return FISH_SPOTS.find(s => dist(p.x, p.y, s.x, s.y) <= s.r) || null;
+}
+function fishSpotTick(){
+  const btn = document.getElementById("fishSpotBtn");
+  if(btn) btn.hidden = !fishNearSpot() || fishing.active || monkGame.active || talk.open || game.player.isMeditating;
+}
+function fishZoneHeight(){
+  const s = computePlayerBattleStats(game.player.level);
+  return clamp((s.perfectZoneEnd - s.perfectZoneStart) * FISH_ZONE_SCALE, FISH_ZONE_MIN, FISH_ZONE_MAX);
+}
+function fishBook(){ return game.player.fishBook || (game.player.fishBook = {}); }
+function fishPick(){
+  const rs = Object.keys(FISH_RARITY), total = rs.reduce((a, r) => a + FISH_RARITY[r].weight, 0);
+  let roll = Math.random() * total, rarity = rs[0];
+  for(const r of rs){ roll -= FISH_RARITY[r].weight; if(roll < 0){ rarity = r; break; } }
+  const pool = FISH_DEFS.filter(f => f.rarity === rarity);
+  return pool[randInt(0, pool.length - 1)];
+}
+// v66: online, a system whose server rules aren't installed yet (the owner hasn't run its SQL) stays switched off —
+// otherwise the save that follows would be refused. Offline everything is on.
+function serverHas(feature){ return !NET_ONLINE || !!(net.features && net.features[feature]); }
+function startFishing(){
+  if(!game || game.inBattle || fishing.active || !fishNearSpot()) return;
+  if(!serverHas("fish")){ showToast("🎣 ท่าน้ำยังไม่เปิดให้ตกปลา — รอผู้ดูแลอัปเดตเซิร์ฟเวอร์อีกนิด"); return; }
+  if(game.inventory.length >= BAG_CAPACITY && (game.storage || []).length >= STORAGE_CAPACITY){ showToast("🎒 กระเป๋าและกล่องเก็บของเต็ม — ขายหรือฝากของก่อนตกปลา"); return; }
+  if(talk.open) closeTalk();
+  closeAllPanels(); if(game.player.isMeditating) stopMeditating();
+  const el = document.getElementById("fishGame"), cv = document.getElementById("fishCanvas");
+  const H = 720, W = Math.max(960, Math.round(window.innerWidth * H / Math.max(1, window.innerHeight)));
+  cv.width = W; cv.height = H;
+  game.player.path = null; game.player.targetX = null; game.player.targetY = null;
+  fishCast(cv, W, H);
+  document.getElementById("fishResult").hidden = true;
+  document.getElementById("fishBookPanel").hidden = true;
+  el.hidden = false;
+  cancelAnimationFrame(fishing.raf);
+  fishing.raf = requestAnimationFrame(fishTick);
+  sfx.click();
+}
+function fishCast(cv, W, H){
+  Object.assign(fishing, { active:true, cv: cv || fishing.cv, ctx: (cv || fishing.cv).getContext("2d"), W: W || fishing.W, H: H || fishing.H,
+    last: performance.now(), t:0, phase:"wait", fish:null, seed: Math.random() * 10, power:0.35, vel:0, zoneH: fishZoneHeight(), zoneC:0.5,
+    progress:0, strain:0, tug:null, nextTugAt:0, biteAt: 1.2 + Math.random() * 2, callouts:[], parts:[], shake:0, inZone:false, result:null });
+  document.getElementById("fishResult").hidden = true;
+}
+function fishCallout(text, color, big){ fishing.callouts.push({ text, color, t: fishing.t, big: !!big }); }
+function fishTick(now){
+  const f = fishing;
+  if(!f.active) return;
+  const dt = Math.min(0.1, Math.max(0, (now - f.last) / 1000)); f.last = now;
+  fishStep(dt);
+  drawFishing(now);
+  f.raf = requestAnimationFrame(fishTick);
+}
+// one simulation step (split out so tests can drive it without animation frames)
+function fishStep(dt){
+  const f = fishing;
+  f.t += dt;
+  if(f.phase === "wait" && f.t >= f.biteAt){
+    f.phase = "reel"; f.fish = fishPick(); f.nextTugAt = f.t + 1.6; f.power = 0.35; f.vel = 0;
+    fishCallout("ปลากินเบ็ด!! คลิกค้างเพื่อดึง", "#ffe27a", true); sfx.notice();
+  } else if(f.phase === "reel"){
+    const R = FISH_RARITY[f.fish.rarity];
+    f.zoneC = clamp(0.5 + R.drift * Math.sin(f.t * 0.9 + f.seed) + R.drift * 0.5 * Math.sin(f.t * 2.3 + f.seed * 2), f.zoneH / 2 + 0.02, 1 - f.zoneH / 2 - 0.02);
+    f.vel += (f.hold ? FISH_LIFT : -FISH_GRAV * R.grav) * dt;
+    f.vel += (Math.random() - 0.5) * R.thrash * 6 * dt;
+    f.vel *= Math.max(0, 1 - FISH_DAMP * dt);
+    f.power += f.vel * dt;
+    if(f.power <= 0){ f.power = 0; f.vel = Math.max(0, f.vel); }
+    if(f.power >= 1){ f.power = 1; f.vel = Math.min(0, f.vel); }
+    f.inZone = Math.abs(f.power - f.zoneC) <= f.zoneH / 2;
+    f.progress = clamp(f.progress + (f.inZone ? 1 : -0.35) * dt / R.need, 0, 1);
+    if(!f.tug && f.t >= f.nextTugAt){
+      f.tug = { side: Math.random() < 0.5 ? "left" : "right", start: f.t, warn: R.warn / 1000, ok: 0 };
+    }
+    if(f.tug){
+      const tg = f.tug, el = f.t - tg.start;
+      if(el >= tg.warn){ // the fish is pulling now — hold the key on the OTHER side
+        const good = tg.side === "right" ? (f.keyL && !f.keyR) : (f.keyR && !f.keyL);
+        if(good) tg.ok += dt; else f.vel -= 2.2 * dt; // not resisting: the fish drags the marker down
+      }
+      if(el >= tg.warn + FISH_TUG_PULL_S){
+        if(tg.ok / FISH_TUG_PULL_S >= FISH_TUG_OK){
+          f.progress = Math.min(1, f.progress + FISH_TUG_BONUS);
+          fishCallout("ต้านไว้ได้! 💪", "#7CFFB2"); sfx.perfectDodge();
+        } else {
+          f.strain++; f.shake = 14; f.vel -= 0.9;
+          fishCallout(`สายตึง! (${f.strain}/${FISH_MAX_STRAIN})`, "#ff6b6b", true); sfx.playerHurt();
+        }
+        f.tug = null; f.nextTugAt = f.t + randInt(R.tug[0], R.tug[1]) / 1000;
+        if(f.strain >= FISH_MAX_STRAIN){ fishFinish(false); return; }
+      }
+    }
+    if(f.progress >= 1) fishFinish(true);
+  }
+  f.shake = Math.max(0, f.shake - dt * 40);
+  f.callouts = f.callouts.filter(c => f.t - c.t < 1.3);
+  for(let i = f.parts.length - 1; i >= 0; i--){ const p = f.parts[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 300 * dt; p.life -= dt; if(p.life <= 0) f.parts.splice(i, 1); }
+}
+function fishFinish(caught){
+  const f = fishing, fish = f.fish;
+  f.phase = "done"; f.tug = null; f.hold = false;
+  const R = FISH_RARITY[fish.rarity];
+  let html = "";
+  if(caught){
+    const size = Math.round((fish.size[0] + (fish.size[1] - fish.size[0]) * Math.pow(Math.random(), 1.6)) * 10) / 10;
+    const where = addToInventory(fish.id);
+    if(!where){ fishResultCard(fish, false, "กระเป๋าเต็ม ปลาดิ้นหลุดกลับลงน้ำไป…"); return; }
+    const book = fishBook(), e = book[fish.id] || (book[fish.id] = { n:0, best:0 });
+    const firstTime = e.n === 0, record = size > e.best;
+    e.n++; if(record) e.best = size;
+    game.stats.fishCaught = (game.stats.fishCaught || 0) + 1;
+    for(let i = 0; i < 26; i++){ const a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 260; f.parts.push({ x: f.W * 0.55, y: f.H * 0.58, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 200, life: 0.9 + Math.random() * 0.5, c: R.color }); }
+    (fish.rarity === "common" ? sfx.itemGet : sfx.rareDrop)();
+    html = `${firstTime ? '<span class="fr-tag new">🆕 ชนิดใหม่!</span>' : ""}${record && !firstTime ? '<span class="fr-tag rec">📏 ตัวใหญ่สุดใหม่!</span>' : ""}` +
+      `<div class="fr-size">ยาว <b>${size.toLocaleString()}</b> ซม. · ขายได้ ${fish.price} 💰</div>`;
+    fishResultCard(fish, true, html);
+    updateHud(); checkTitles(false); saveGameNow();
+  } else {
+    fishResultCard(fish, false, `ดูเหมือนจะเป็นปลาระดับ <b style="color:${R.color}">${R.label}</b>… ครั้งหน้าอย่าให้สายตึงเกินไป`);
+  }
+}
+function fishResultCard(fish, caught, html){
+  const R = FISH_RARITY[fish.rarity];
+  document.getElementById("frTitle").textContent = caught ? `${fish.name}` : "ปลาหลุดไปแล้ว…";
+  document.getElementById("frTitle").style.color = caught ? R.color : "#ff9d9d";
+  document.getElementById("frRarity").textContent = caught ? `${R.label} · ปลาจาก${fish.from}` : "สายขาดกลางน้ำ";
+  document.getElementById("frBody").innerHTML = html;
+  const cv = document.getElementById("frArt"), c = cv.getContext("2d");
+  c.clearRect(0, 0, cv.width, cv.height);
+  drawFishArt(c, fish, cv.width / 2, cv.height / 2, cv.width * 0.8, { silhouette: !caught });
+  document.getElementById("fishResult").querySelector(".fr-card").style.borderColor = caught ? R.color : "#8a6a7a";
+  document.getElementById("fishResult").hidden = false;
+}
+function closeFishing(){
+  const f = fishing;
+  f.active = false; f.hold = false; f.keyL = f.keyR = false; cancelAnimationFrame(f.raf);
+  document.getElementById("fishGame").hidden = true;
+  updateHud();
+}
+// ---- procedural fish picture (used until painted art exists: ART["fish_xxx"] replaces it automatically) ----
+function drawFishArt(c, fish, cx, cy, L, opt){
+  opt = opt || {};
+  const art = ART[fish.id] && spriteImg(fish.id);
+  c.save();
+  if(art && art.complete && art.naturalWidth && !opt.silhouette){
+    const k = L / art.naturalWidth; c.drawImage(art, cx - L / 2, cy - art.naturalHeight * k / 2, L, art.naturalHeight * k); c.restore(); return;
+  }
+  const sil = opt.silhouette, dark = "rgba(10,14,24,.85)";
+  const shape = fish.shape;
+  const h = L * ({ eel:0.16, tuna:0.3, puffer:0.62, betta:0.34, catfish:0.26, koi:0.3 }[shape] || 0.34);
+  const bodyL = shape === "betta" ? L * 0.62 : L * 0.78, x0 = cx - L / 2 + (L - bodyL) * 0.1, x1 = x0 + bodyL;
+  const back = sil ? dark : fish.c1, belly = sil ? dark : fish.c2;
+  // tail
+  c.fillStyle = sil ? dark : fish.c1;
+  c.beginPath();
+  const tw = shape === "betta" ? h * 1.6 : shape === "eel" ? h * 0.8 : h * 0.95;
+  c.moveTo(x0 + bodyL * 0.04, cy);
+  c.quadraticCurveTo(x0 - L * 0.08, cy - tw * 0.2, x0 - L * (shape === "betta" ? 0.3 : 0.16), cy - tw / 2);
+  c.quadraticCurveTo(x0 - L * 0.06, cy, x0 - L * (shape === "betta" ? 0.3 : 0.16), cy + tw / 2);
+  c.quadraticCurveTo(x0 - L * 0.08, cy + tw * 0.2, x0 + bodyL * 0.04, cy);
+  c.fill();
+  // fins (dorsal + belly)
+  c.fillStyle = sil ? dark : (shape === "betta" ? fish.c2 : fish.c1);
+  c.globalAlpha = sil ? 1 : 0.9;
+  c.beginPath(); c.moveTo(x0 + bodyL * 0.3, cy - h * 0.42); c.quadraticCurveTo(x0 + bodyL * 0.5, cy - h * (shape === "betta" ? 1.4 : 0.95), x0 + bodyL * 0.68, cy - h * 0.4); c.fill();
+  c.beginPath(); c.moveTo(x0 + bodyL * 0.4, cy + h * 0.42); c.quadraticCurveTo(x0 + bodyL * 0.52, cy + h * (shape === "betta" ? 1.3 : 0.75), x0 + bodyL * 0.64, cy + h * 0.4); c.fill();
+  c.globalAlpha = 1;
+  // body
+  const g = c.createLinearGradient(0, cy - h / 2, 0, cy + h / 2);
+  g.addColorStop(0, back); g.addColorStop(0.55, sil ? dark : fish.c1); g.addColorStop(1, belly);
+  c.fillStyle = sil ? dark : g;
+  c.beginPath();
+  c.moveTo(x0, cy);
+  c.bezierCurveTo(x0 + bodyL * 0.2, cy - h * 0.62, x1 - bodyL * 0.28, cy - h * 0.62, x1, cy - h * 0.04);
+  c.quadraticCurveTo(x1 + L * 0.02, cy, x1, cy + h * 0.06);
+  c.bezierCurveTo(x1 - bodyL * 0.28, cy + h * 0.62, x0 + bodyL * 0.2, cy + h * 0.62, x0, cy);
+  c.fill();
+  if(!sil){
+    c.save(); c.clip();
+    c.globalAlpha = 0.55; c.fillStyle = fish.mark === "patches" ? fish.c2 : "rgba(20,24,34,.8)";
+    if(fish.mark === "stripes") for(let i = 1; i <= 5; i++){ c.fillRect(x0 + bodyL * (0.12 + i * 0.13), cy - h, bodyL * 0.035, h * 2); }
+    else if(fish.mark === "line"){ c.fillRect(x0, cy - h * 0.06, bodyL, h * 0.1); }
+    else if(fish.mark === "spots") for(let i = 0; i < 14; i++){ const sx = x0 + bodyL * (0.15 + ((i * 37) % 70) / 100), sy = cy + h * (((i * 53) % 60) / 100 - 0.35); c.beginPath(); c.arc(sx, sy, h * 0.06, 0, Math.PI * 2); c.fill(); }
+    else if(fish.mark === "patches"){ c.globalAlpha = 0.95; [[0.3, -0.15, 0.2], [0.55, 0.1, 0.16], [0.75, -0.2, 0.12]].forEach(([px, py, r]) => { c.beginPath(); c.ellipse(x0 + bodyL * px, cy + h * py, bodyL * r, h * 0.32, 0.3, 0, Math.PI * 2); c.fill(); }); }
+    c.restore();
+    if(shape === "puffer"){ c.strokeStyle = fish.c1; c.lineWidth = Math.max(1, L * 0.008); for(let i = 0; i < 16; i++){ const a = i / 16 * Math.PI * 2, rx = bodyL / 2, ry = h / 2, mx = (x0 + x1) / 2; c.beginPath(); c.moveTo(mx + Math.cos(a) * rx * 0.95, cy + Math.sin(a) * ry * 0.95); c.lineTo(mx + Math.cos(a) * rx * 1.1, cy + Math.sin(a) * ry * 1.12); c.stroke(); } }
+    if(shape === "catfish"){ c.strokeStyle = fish.c1; c.lineWidth = Math.max(1, L * 0.01); [[-0.3, -0.5], [0.3, 0.5]].forEach(([a, b]) => { c.beginPath(); c.moveTo(x1 - bodyL * 0.03, cy + h * a * 0.3); c.quadraticCurveTo(x1 + L * 0.12, cy + h * a, x1 + L * 0.14, cy + h * b); c.stroke(); }); }
+    if(shape === "tuna"){ c.fillStyle = "#ffd23f"; for(let i = 0; i < 5; i++){ c.beginPath(); const fx = x0 + bodyL * (0.08 + i * 0.045); c.moveTo(fx, cy - h * 0.34); c.lineTo(fx + bodyL * 0.02, cy - h * 0.46); c.lineTo(fx + bodyL * 0.035, cy - h * 0.3); c.fill(); } }
+    // eye + gill
+    const ex = x1 - bodyL * (shape === "puffer" ? 0.22 : 0.12), ey = cy - h * 0.12, er = Math.max(2, h * (shape === "eel" ? 0.14 : 0.1));
+    c.fillStyle = "#fff"; c.beginPath(); c.arc(ex, ey, er, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#111"; c.beginPath(); c.arc(ex + er * 0.2, ey, er * 0.55, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = "rgba(0,0,0,.25)"; c.lineWidth = Math.max(1, L * 0.006);
+    c.beginPath(); c.arc(x1 - bodyL * 0.24, cy, h * 0.3, -0.9, 0.9); c.stroke();
+  }
+  c.restore();
+}
+// ---- the fishing screen ----
+function drawFishing(now){
+  const f = fishing, c = f.ctx, W = f.W, H = f.H;
+  if(!c) return;
+  c.save();
+  if(f.shake && OPT.shake) c.translate((Math.random() - 0.5) * f.shake, (Math.random() - 0.5) * f.shake);
+  // sky + sea
+  const sky = c.createLinearGradient(0, 0, 0, H * 0.36); sky.addColorStop(0, "#f7c98b"); sky.addColorStop(1, "#f3e1b6");
+  c.fillStyle = sky; c.fillRect(-20, -20, W + 40, H * 0.36 + 20);
+  c.fillStyle = "rgba(255,244,210,.9)"; c.beginPath(); c.arc(W * 0.78, H * 0.26, 46, 0, Math.PI * 2); c.fill();
+  c.fillStyle = "rgba(90,70,100,.35)"; [[0.08, 0.3, 0.5], [0.3, 0.33, 0.35], [0.9, 0.31, 0.4]].forEach(([x, y, s]) => { c.beginPath(); c.moveTo(W * x - 160 * s, H * 0.36); c.lineTo(W * x, H * y - 90 * s); c.lineTo(W * x + 180 * s, H * 0.36); c.fill(); });
+  const sea = c.createLinearGradient(0, H * 0.36, 0, H); sea.addColorStop(0, "#5aa7b8"); sea.addColorStop(1, "#1d4f6b");
+  c.fillStyle = sea; c.fillRect(-20, H * 0.36, W + 40, H * 0.66);
+  c.strokeStyle = "rgba(255,255,255,.18)"; c.lineWidth = 2;
+  for(let i = 0; i < 16; i++){ const y = H * 0.4 + i * 22 + Math.sin(now / 900 + i) * 3, x = ((i * 173) % W) + Math.sin(now / 1300 + i * 2) * 30; c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + 30, y - 5, x + 60, y); c.stroke(); }
+  // pier + angler
+  c.fillStyle = "#6b4a2e"; c.fillRect(-20, H * 0.8, W * 0.36, H * 0.24);
+  c.fillStyle = "#8a6440"; for(let i = 0; i < 9; i++) c.fillRect(i * W * 0.04 - 10, H * 0.8, W * 0.035, H * 0.2);
+  const ax = W * 0.2, ay = H * 0.98;
+  drawCharacterAt(c, ax, ay, game.player.look, 3.2, true);
+  // rod + line to the float
+  const tug = f.tug && f.phase === "reel" ? f.tug : null;
+  const pulling = tug && f.t - tug.start >= tug.warn;
+  const bx = W * 0.55 + (pulling ? (tug.side === "right" ? 70 : -70) : 0) + Math.sin(now / 500) * 4;
+  const by = H * 0.56 + (f.phase === "reel" ? 6 + Math.sin(now / 90) * (pulling ? 6 : 2) : Math.sin(now / 700) * 3);
+  const tipX = ax + 150, tipY = ay - 330 - (f.hold ? 20 : 0);
+  c.strokeStyle = "#3b2a1a"; c.lineWidth = 6; c.beginPath(); c.moveTo(ax + 40, ay - 150); c.lineTo(tipX, tipY); c.stroke();
+  c.strokeStyle = "rgba(255,255,255,.75)"; c.lineWidth = 1.5; c.beginPath(); c.moveTo(tipX, tipY); c.quadraticCurveTo((tipX + bx) / 2, Math.min(tipY, by) - (f.phase === "reel" ? 10 : 60), bx, by); c.stroke();
+  if(f.phase === "reel"){ // the fish's shadow under the float
+    const R = FISH_RARITY[f.fish.rarity], sl = 70 + ({ common:0, uncommon:20, rare:45, epic:80, legendary:130 }[f.fish.rarity]);
+    c.globalAlpha = 0.35; c.fillStyle = "#06222f"; c.beginPath(); c.ellipse(bx + Math.sin(now / 300) * 12, by + 34, sl / 2, sl / 6, Math.sin(now / 400) * 0.2, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+    if(R.weight <= 6){ c.fillStyle = R.color; c.font = "bold 16px 'Trebuchet MS', sans-serif"; c.textAlign = "center"; c.fillText("…ตัวใหญ่มาก!", bx, by + 80); }
+  }
+  c.fillStyle = "#e84a3c"; c.beginPath(); c.arc(bx, by, 9, Math.PI, 0); c.fill(); c.fillStyle = "#fff"; c.beginPath(); c.arc(bx, by, 9, 0, Math.PI); c.fill();
+  c.strokeStyle = "rgba(255,255,255,.5)"; c.beginPath(); c.ellipse(bx, by + 8, 18 + Math.sin(now / 200) * 4, 5, 0, 0, Math.PI * 2); c.stroke();
+  // tug warning — same red flash as a monster's attack
+  if(tug){
+    const warnP = clamp((f.t - tug.start) / tug.warn, 0, 1), a = pulling ? 0.55 : 0.2 + 0.3 * warnP * (0.5 + 0.5 * Math.sin(now / 60));
+    const gx = tug.side === "left" ? c.createLinearGradient(0, 0, W * 0.3, 0) : c.createLinearGradient(W, 0, W * 0.7, 0);
+    gx.addColorStop(0, `rgba(255,60,60,${a})`); gx.addColorStop(1, "rgba(255,60,60,0)");
+    c.fillStyle = gx; tug.side === "left" ? c.fillRect(0, 0, W * 0.3, H) : c.fillRect(W * 0.7, 0, W * 0.3, H);
+    const key = tug.side === "right" ? "A" : "D", arrow = tug.side === "right" ? "⬅" : "➡";
+    const good = tug.side === "right" ? (f.keyL && !f.keyR) : (f.keyR && !f.keyL);
+    c.font = "900 30px 'Trebuchet MS', sans-serif"; c.textAlign = "center"; c.lineJoin = "round";
+    const txt = pulling ? (good ? `ต้านไว้! ${arrow} ${key}` : `กด ${key} ค้าง! ${arrow}`) : `ปลากำลังจะกระชากไปทาง${tug.side === "right" ? "ขวา" : "ซ้าย"}…`;
+    c.strokeStyle = "rgba(10,6,16,.9)"; c.lineWidth = 7; c.strokeText(txt, W * 0.45, H * 0.2);
+    c.fillStyle = pulling ? (good ? "#7CFFB2" : "#ff8080") : "#ffe27a"; c.fillText(txt, W * 0.45, H * 0.2);
+  }
+  // vertical tension bar (right)
+  const bw = 48, bh = H * 0.66, bxr = W - 150, byTop = H * 0.16;
+  c.fillStyle = "rgba(8,12,24,.72)"; roundRect(c, bxr - 12, byTop - 14, bw + 24, bh + 28, 16); c.fill();
+  c.fillStyle = "#1b2233"; c.fillRect(bxr, byTop, bw, bh);
+  if(f.phase === "reel" || f.phase === "done"){
+    const zy = byTop + bh * (1 - f.zoneC - f.zoneH / 2), zh = bh * f.zoneH;
+    c.fillStyle = f.inZone ? "rgba(90,255,150,.85)" : "rgba(60,200,120,.6)"; c.fillRect(bxr, zy, bw, zh);
+    if(f.inZone){ c.shadowColor = "#7CFFB2"; c.shadowBlur = 18; c.strokeStyle = "#caffdd"; c.lineWidth = 2; c.strokeRect(bxr, zy, bw, zh); c.shadowBlur = 0; }
+    const my = byTop + bh * (1 - f.power);
+    c.fillStyle = "#fff"; c.fillRect(bxr - 10, my - 3, bw + 20, 6);
+    c.fillStyle = "#ffd166"; c.beginPath(); c.moveTo(bxr - 22, my - 10); c.lineTo(bxr - 8, my); c.lineTo(bxr - 22, my + 10); c.fill();
+  }
+  c.fillStyle = "#e9e3f7"; c.font = "bold 14px 'Trebuchet MS', sans-serif"; c.textAlign = "center";
+  c.fillText("แรงดึง", bxr + bw / 2, byTop - 22);
+  c.fillText(f.hold ? "⬆ ดึงอยู่" : "⬇ ผ่อนสาย", bxr + bw / 2, byTop + bh + 36);
+  // catch progress + line strain (top)
+  const pw = Math.min(520, W * 0.42), px = W / 2 - pw / 2, py = 28;
+  c.fillStyle = "rgba(8,12,24,.72)"; roundRect(c, px - 14, py - 10, pw + 28, 58, 14); c.fill();
+  c.fillStyle = "#1b2233"; c.fillRect(px, py + 18, pw, 16);
+  const pg = c.createLinearGradient(px, 0, px + pw, 0); pg.addColorStop(0, "#3fd08a"); pg.addColorStop(1, "#ffe27a");
+  c.fillStyle = pg; c.fillRect(px, py + 18, pw * f.progress, 16);
+  c.fillStyle = "#fff"; c.textAlign = "left"; c.font = "bold 14px 'Trebuchet MS', sans-serif";
+  c.fillText(f.phase === "wait" ? "🎣 รอปลากินเบ็ด…" : `🐟 จับปลา ${Math.round(f.progress * 100)}%`, px, py + 10);
+  c.textAlign = "right"; c.fillText("สาย: " + "🟥".repeat(f.strain) + "⬜".repeat(Math.max(0, FISH_MAX_STRAIN - f.strain)), px + pw, py + 10);
+  // callouts + splash
+  for(const k of f.callouts){
+    const age = f.t - k.t, s = age < 0.12 ? 0.5 + age / 0.12 * 0.8 : Math.max(1, 1.3 - (age - 0.12) * 2);
+    c.save(); c.globalAlpha = age > 0.9 ? Math.max(0, 1 - (age - 0.9) / 0.4) : 1;
+    c.translate(W * 0.45, H * (k.big ? 0.38 : 0.44) - age * 24); c.scale(s, s);
+    c.font = `900 ${k.big ? 36 : 28}px 'Trebuchet MS', sans-serif`; c.textAlign = "center"; c.lineJoin = "round";
+    c.shadowColor = k.color; c.shadowBlur = 16; c.strokeStyle = "rgba(10,6,16,.9)"; c.lineWidth = 7; c.strokeText(k.text, 0, 0);
+    c.shadowBlur = 0; c.fillStyle = k.color; c.fillText(k.text, 0, 0); c.restore();
+  }
+  for(const p of f.parts){ c.globalAlpha = Math.max(0, p.life); c.fillStyle = p.c; c.beginPath(); c.arc(p.x, p.y, 4, 0, Math.PI * 2); c.fill(); }
+  c.globalAlpha = 1;
+  // how to play
+  const howTo = "คลิกซ้ายค้าง (หรือ Space) = ดึงขึ้น · ปล่อย = ผ่อนลง · เลี้ยงขีดให้อยู่ในแถบเขียว · ปลากระชากทางไหน กด A/D ค้างฝั่งตรงข้าม";
+  c.font = "14px 'Trebuchet MS', sans-serif"; const hw = c.measureText(howTo).width + 32;
+  c.fillStyle = "rgba(8,12,24,.7)"; roundRect(c, W / 2 - hw / 2, H - 50, hw, 34, 12); c.fill();
+  c.fillStyle = "#e9e3f7"; c.textAlign = "center";
+  c.fillText(howTo, W / 2, H - 28);
+  c.restore();
+}
+// ---- 📖 fish book ----
+function renderFishBook(){
+  const book = fishBook(), got = FISH_DEFS.filter(f => book[f.id]).length;
+  document.getElementById("fbCount").textContent = `${got} / ${FISH_DEFS.length} ชนิด · ตกได้รวม ${(game.stats.fishCaught || 0).toLocaleString()} ตัว`;
+  const grid = document.getElementById("fbGrid");
+  grid.innerHTML = FISH_DEFS.map(f => {
+    const e = book[f.id], R = FISH_RARITY[f.rarity];
+    return `<div class="fb-card${e ? "" : " locked"}" style="--rc:${R.color}" data-id="${f.id}">
+      <canvas width="180" height="90"></canvas>
+      <div class="fb-name">${e ? f.name : "???"}</div>
+      <div class="fb-tip"><b style="color:${R.color}">${e ? f.name : "ปลาปริศนา"}</b><br>${R.label} · ${f.from}<br>` +
+      (e ? `ตกได้ ${e.n} ตัว · ใหญ่สุด ${e.best} ซม.<br>ขาย ${f.price} 💰<br><i>${f.desc}</i>` : `ยังไม่เคยตกได้ · ยาว ${f.size[0]}–${f.size[1]} ซม.`) + `</div></div>`;
+  }).join("");
+  grid.querySelectorAll(".fb-card").forEach(el => {
+    const f = FISH_BY_ID[el.dataset.id], cv = el.querySelector("canvas");
+    drawFishArt(cv.getContext("2d"), f, 90, 45, 150, { silhouette: !book[f.id] });
+  });
+}
+function openFishBook(){ renderFishBook(); document.getElementById("fishBookPanel").hidden = false; sfx.click(); }
+document.getElementById("fishSpotBtn").addEventListener("click", ()=> startFishing());
+document.getElementById("fishCanvas").addEventListener("pointerdown", e => { if(fishing.phase === "reel") fishing.hold = true; e.preventDefault(); });
+window.addEventListener("pointerup", ()=>{ fishing.hold = false; });
+window.addEventListener("blur", ()=>{ fishing.hold = false; fishing.keyL = fishing.keyR = false; });
+window.addEventListener("keydown", e => {
+  if(!game) return;
+  const k = hotKey(e);
+  if(!fishing.active){ if(k === "f" && fishNearSpot() && !e.repeat && !(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || ""))) startFishing(); return; }
+  if(k === "a") fishing.keyL = true;
+  else if(k === "d") fishing.keyR = true;
+  else if(k === " "){ if(fishing.phase === "reel") fishing.hold = true; e.preventDefault(); }
+  else if(e.key === "Escape"){ if(!document.getElementById("fishBookPanel").hidden) document.getElementById("fishBookPanel").hidden = true; else closeFishing(); }
+});
+window.addEventListener("keyup", e => {
+  const k = hotKey(e);
+  if(k === "a") fishing.keyL = false; else if(k === "d") fishing.keyR = false; else if(k === " ") fishing.hold = false;
+});
+document.getElementById("fishQuit").addEventListener("click", ()=>{ sfx.click(); closeFishing(); });
+document.getElementById("fishBookBtn").addEventListener("click", openFishBook);
+document.getElementById("fbClose").addEventListener("click", ()=>{ sfx.click(); document.getElementById("fishBookPanel").hidden = true; });
+document.getElementById("frAgain").addEventListener("click", ()=>{ sfx.click(); fishCast(); });
+document.getElementById("frDone").addEventListener("click", ()=>{ sfx.click(); closeFishing(); });
+
 let monkBuffWarned = false;
 function updateMonkBuffChip(){
   const el = document.getElementById("hudBuff");
@@ -13610,6 +14062,7 @@ function slotDisplayName(slot){
 const SELL_PRICE_BY_RARITY = { common:15, uncommon:35, rare:80, epic:180, legendary:400 };
 const CONSUMABLE_SELL_PRICE = { herb:3, potion:5, slime_jelly:4, wolf_fang:6, stone_fragment:8, secret_key:20, junk_scrap:2, mana_stone:12,
   sample_t1:7, sample_t2:23, sample_t3:39, sample_t4:54, sample_t5:69, sample_t6:85, sample_t7:100, sample_t8:115, sample_t9:130, sample_t10:146 };
+FISH_DEFS.forEach(f => { CONSUMABLE_SELL_PRICE[f.id] = f.price; }); // v66 🎣 fish sell to the merchant like any loot
 
 function getSellPrice(entry){
   if(entry.kind === "equipment") return SELL_PRICE_BY_RARITY[entry.rarity] || 10;
@@ -16224,7 +16677,7 @@ alter table public.saves_archive enable row level security;
 revoke all on public.econ_flags, public.saves_archive from anon, authenticated;
 
 -- ECON_DATA_BEGIN
-create or replace function public.econ_data() returns jsonb language sql immutable as $$ select '{"tiers":{"1":{"g":[9,16,28,46,70,263],"x":[21,35,56,84,123,385]},"2":{"g":[86,102,116,131,147,431],"x":[149,173,200,224,250,735]},"3":{"g":[163,177,193,208,224,648],"x":[275,301,326,352,376,1089]},"4":{"g":[238,254,270,285,299,863],"x":[403,427,453,478,504,1446]},"5":{"g":[315,331,347,361,376,1073],"x":[529,555,579,606,630,1799]},"6":{"g":[392,408,422,438,453,1288],"x":[656,681,707,732,758,2156]},"7":{"g":[469,483,499,515,530,1505],"x":[782,809,833,859,884,2510]},"8":{"g":[544,560,576,592,606,1720],"x":[910,935,961,985,1012,2867]},"9":{"g":[621,637,653,667,683,1930],"x":[1036,1062,1087,1113,1138,3220]},"10":{"g":[698,714,728,744,760,2146],"x":[1164,1188,1215,1239,1265,3577]}},"dimStep":0.3,"items":{"kings_armor":["epic",0],"collector_medal":["legendary",1],"sword_1":["common",0],"sword_2":["common",0],"sword_3":["uncommon",0],"sword_4":["uncommon",0],"sword_5":["rare",0],"sword_6":["rare",0],"sword_7":["epic",0],"sword_8":["epic",0],"sword_9":["legendary",0],"sword_10":["legendary",0],"heavy_1":["common",0],"heavy_2":["common",0],"heavy_3":["uncommon",0],"heavy_4":["uncommon",0],"heavy_5":["rare",0],"heavy_6":["rare",0],"heavy_7":["epic",0],"heavy_8":["epic",0],"heavy_9":["legendary",0],"heavy_10":["legendary",0],"bow_1":["common",0],"bow_2":["common",0],"bow_3":["uncommon",0],"bow_4":["uncommon",0],"bow_5":["rare",0],"bow_6":["rare",0],"bow_7":["epic",0],"bow_8":["epic",0],"bow_9":["legendary",0],"bow_10":["legendary",0],"orb_1":["common",0],"orb_2":["common",0],"orb_3":["uncommon",0],"orb_4":["uncommon",0],"orb_5":["rare",0],"orb_6":["rare",0],"orb_7":["epic",0],"orb_8":["epic",0],"orb_9":["legendary",0],"orb_10":["legendary",0],"armor_1":["common",0],"armor_2":["uncommon",0],"armor_3":["rare",0],"armor_4":["epic",0],"armor_5":["legendary",0],"headgear_1":["common",0],"headgear_2":["uncommon",0],"headgear_3":["rare",0],"headgear_4":["epic",0],"headgear_5":["legendary",0],"accessory_1":["common",0],"accessory_2":["uncommon",0],"accessory_3":["rare",0],"accessory_4":["epic",0],"accessory_5":["legendary",0]},"pts":{"common":1.2,"uncommon":1.7,"rare":2.4,"epic":3.4,"legendary":4.4},"eliteMult":2,"price":{"herb":3,"potion":5,"slime_jelly":4,"wolf_fang":6,"stone_fragment":8,"secret_key":20,"junk_scrap":2,"mana_stone":12,"sample_t1":7,"sample_t2":23,"sample_t3":39,"sample_t4":54,"sample_t5":69,"sample_t6":85,"sample_t7":100,"sample_t8":115,"sample_t9":130,"sample_t10":146,"green_slime_card":11,"pink_slime_card":11,"goblin_card":25,"wolf_card":25,"skeleton_card":56,"stone_king_card":280,"kings_oath_secret":280},"eqPrice":{"common":15,"uncommon":35,"rare":80,"epic":180,"legendary":400},"starter":["sword_1","heavy_1","bow_1","orb_1"],"shopOnly":["herb","potion"],"stack":["herb","potion","slime_jelly","wolf_fang","stone_fragment","secret_key","old_letter","junk_scrap","mana_stone","sample_t1","sample_t2","sample_t3","sample_t4","sample_t5","sample_t6","sample_t7","sample_t8","sample_t9","sample_t10","bark_tag","barrier_lantern","inscribed_wrap","green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"cards":["green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"rankExp":[0,500,1500,3500,7000,13000,23000,40000,70000,120000],"skill":{"sword":[[1,2],[3,2],[5,2],[7,2],[9,2]],"heavy":[[1,2],[3,2],[5,2],[7,2],[9,2]],"bow":[[1,2],[3,2],[5,2],[7,2],[9,2]],"orb":[[1,2],[3,2],[5,2],[7,2],[9,2]]},"titles":{"first_blood":["kills",100],"reaper":["kills",1000],"death_walker":["kills",5000],"calamity":["kills",20000],"slime_hunter":["slimeKills",100],"one_beat":["perfectHits",300],"flawless_blade":["perfectHits",3000],"rhythm_sage":["perfectHits",15000],"perfect_warrior":["bestPerfectStreak",50],"swaying_shadow":["perfectDodges",50],"formless_wind":["perfectDodges",500],"shadowless":["perfectDodges",2500],"counter_art":["counters",50],"mirror_blade":["counters",500],"keen_eye":["crits",500],"fortune_chosen":["crits",5000],"star_assassin":["crits",25000],"unscathed":["flawless",50],"invisible_armor":["flawless",500],"survivor":["survivor",1],"never_give_up":["deaths",25],"elite_hunter":["eliteKills",10],"star_breaker":["eliteKills",100],"elite_bane":["eliteKills",500],"boss_slayer":["bossKills",10],"throne_hunter":["bossKills",50],"king_of_kings":["bossKills",200],"untouchable":["untouchable",1],"five_realms":["bossTiers",5],"ten_kings":["bossTiers",10],"wanderer":["reach",3],"pathfinder":["reach",6],"worlds_edge":["reach",10],"story_c1":["chapters",1],"story_c2":["chapters",2],"story_c3":["chapters",3],"story_c5":["chapters",5],"story_c7":["chapters",7],"story_c10":["chapters",10],"whisper_listener":["listened",1],"secret_seeker":["secrets",5],"secret_keeper":["secrets",30],"dungeon_diver":["dungeons",1],"labyrinth_lord":["dungeons",10],"underworld_ruler":["dungeons",30],"treasure_hunter":["chests",10],"rising_hero":["level",25],"menalars_hero":["level",50],"peak":["level",100],"barrier_breaker":["maxDim",2],"dimension_walker":["maxDim",3],"void_voyager":["maxDim",5],"novice_collector":["colPct",10],"monster_hunter":["monstersHalf",1],"monster_master":["monstersAll",1],"card_collector":["cards",3],"full_deck":["allCards",1],"half_collector":["colPct",50],"curator":["colPct",75],"full_collector":["colPct",100],"treasure_bearer":["epics",5],"legend_chosen":["legends",1],"legend_vault":["legends",10],"apprentice_smith":["refines",10],"artisan":["bestRefine",5],"forge_master":["bestRefine",10],"new_rich":["goldEarned",10000],"tycoon":["goldEarned",100000],"gold_king":["goldEarned",1000000],"mind_trainee":["meditations",10],"still_water":["meditations",100],"town_friend":["junkQuest",1],"letter_reader":["lettersRead",15],"letter_keeper":["lettersRead",40],"letter_all":["lettersRead",60],"shadow_unmasker":["spyUnmasked",1],"courier":["letters",3],"skill_student":["skills",5],"weapon_scholar":["skills",15],"weapon_master":["bestRank",5],"four_arms":["rankedWeapons",4],"transcender":["bestRank",9]},"quests":{"c1_wake":[40,60,0,1,0],"c1_town":[50,95,0,1,0],"c1_squad":[50,95,0,1,0],"c1_test":[100,190,0,1,0],"c1_wreck":[100,190,0,1,0],"c1_bark":[100,190,0,1,0],"c1_mind":[100,190,0,1,0],"c1_counter":[100,190,0,1,0],"c1_boss":[270,510,1,1,1],"c2_child":[350,600,0,2,0],"c2_lantern":[350,600,0,2,0],"c2_incense":[350,600,0,2,0],"c2_preacher":[350,600,0,2,0],"c2_lost":[350,600,0,2,0],"c2_boss":[930,1600,1,2,1],"c3_tablets":[580,980,0,3,0],"c3_wrap":[580,980,0,3,0],"c3_vent":[580,980,0,3,0],"c3_heat":[580,980,0,3,0],"c3_boss":[1540,2600,1,3,1],"c4_hut":[810,1365,0,4,0],"c4_frozen":[810,1365,0,4,0],"c4_ice":[810,1365,0,4,0],"c4_still":[810,1365,0,4,0],"c4_boss":[2150,3600,1,4,1],"c5_brother":[1040,1750,0,5,0],"c5_ore":[1040,1750,0,5,0],"c5_camp":[1040,1750,0,5,0],"c5_dark":[1040,1750,0,5,0],"c5_boss":[2760,4600,1,5,1],"c6_cure":[1270,2135,0,6,0],"c6_drowned":[1270,2135,0,6,0],"c6_ferry":[1270,2135,0,6,0],"c6_calm":[1270,2135,0,6,0],"c6_boss":[3370,5600,1,6,1],"c7_mirror":[1500,2520,0,7,0],"c7_cage":[1500,2520,0,7,0],"c7_home":[1500,2520,0,7,0],"c7_sight":[1500,2520,0,7,0],"c7_boss":[3980,6600,1,7,1],"c8_mural":[1730,2905,0,8,0],"c8_pilgrims":[1730,2905,0,8,0],"c8_doubt":[1730,2905,0,8,0],"c8_sun":[1730,2905,0,8,0],"c8_boss":[4590,7600,1,8,1],"c9_edge":[1960,3290,0,9,0],"c9_echo":[1960,3290,0,9,0],"c9_warriors":[1960,3290,0,9,0],"c9_untouched":[1960,3290,0,9,0],"c9_boss":[5200,8600,1,9,1],"c10_saints":[2190,3675,0,10,0],"c10_mind":[2190,3675,0,10,0],"c10_throne":[2190,3675,0,10,0],"c10_boss":[5810,9600,1,10,1]},"letters":["L01","L02","L03","L04","L05","L06","L07","L08","L09","L10","L11","L12","L13","L14","L15","L16","L17","L18","L19","L20","L21","L22","L23","L24","L25","L26","L27","L28","L29","L30","L31","L32","L33","L34","L35","L36","L37","L38","L39","L40","L41","L42","L43","L44","L45","L46","L47","L48","L49","L50","L51","L52","L53","L54","L55","L56","L57","L58","L59","L60"],"totals":{"mon":6,"card":7,"eq":561},"base":{"atk":6,"hp":50,"atkLv":2,"hpLv":10,"spLv":3,"spDim":3,"masteryMax":100,"refineMax":10,"sanityMax":100,"tierMax":10,"bag":48,"storage":100}}'::jsonb $$;
+create or replace function public.econ_data() returns jsonb language sql immutable as $$ select '{"tiers":{"1":{"g":[9,16,28,46,70,263],"x":[21,35,56,84,123,385]},"2":{"g":[86,102,116,131,147,431],"x":[149,173,200,224,250,735]},"3":{"g":[163,177,193,208,224,648],"x":[275,301,326,352,376,1089]},"4":{"g":[238,254,270,285,299,863],"x":[403,427,453,478,504,1446]},"5":{"g":[315,331,347,361,376,1073],"x":[529,555,579,606,630,1799]},"6":{"g":[392,408,422,438,453,1288],"x":[656,681,707,732,758,2156]},"7":{"g":[469,483,499,515,530,1505],"x":[782,809,833,859,884,2510]},"8":{"g":[544,560,576,592,606,1720],"x":[910,935,961,985,1012,2867]},"9":{"g":[621,637,653,667,683,1930],"x":[1036,1062,1087,1113,1138,3220]},"10":{"g":[698,714,728,744,760,2146],"x":[1164,1188,1215,1239,1265,3577]}},"dimStep":0.3,"items":{"kings_armor":["epic",0],"collector_medal":["legendary",1],"sword_1":["common",0],"sword_2":["common",0],"sword_3":["uncommon",0],"sword_4":["uncommon",0],"sword_5":["rare",0],"sword_6":["rare",0],"sword_7":["epic",0],"sword_8":["epic",0],"sword_9":["legendary",0],"sword_10":["legendary",0],"heavy_1":["common",0],"heavy_2":["common",0],"heavy_3":["uncommon",0],"heavy_4":["uncommon",0],"heavy_5":["rare",0],"heavy_6":["rare",0],"heavy_7":["epic",0],"heavy_8":["epic",0],"heavy_9":["legendary",0],"heavy_10":["legendary",0],"bow_1":["common",0],"bow_2":["common",0],"bow_3":["uncommon",0],"bow_4":["uncommon",0],"bow_5":["rare",0],"bow_6":["rare",0],"bow_7":["epic",0],"bow_8":["epic",0],"bow_9":["legendary",0],"bow_10":["legendary",0],"orb_1":["common",0],"orb_2":["common",0],"orb_3":["uncommon",0],"orb_4":["uncommon",0],"orb_5":["rare",0],"orb_6":["rare",0],"orb_7":["epic",0],"orb_8":["epic",0],"orb_9":["legendary",0],"orb_10":["legendary",0],"armor_1":["common",0],"armor_2":["uncommon",0],"armor_3":["rare",0],"armor_4":["epic",0],"armor_5":["legendary",0],"headgear_1":["common",0],"headgear_2":["uncommon",0],"headgear_3":["rare",0],"headgear_4":["epic",0],"headgear_5":["legendary",0],"accessory_1":["common",0],"accessory_2":["uncommon",0],"accessory_3":["rare",0],"accessory_4":["epic",0],"accessory_5":["legendary",0]},"pts":{"common":1.2,"uncommon":1.7,"rare":2.4,"epic":3.4,"legendary":4.4},"eliteMult":2,"price":{"herb":3,"potion":5,"slime_jelly":4,"wolf_fang":6,"stone_fragment":8,"secret_key":20,"junk_scrap":2,"mana_stone":12,"sample_t1":7,"sample_t2":23,"sample_t3":39,"sample_t4":54,"sample_t5":69,"sample_t6":85,"sample_t7":100,"sample_t8":115,"sample_t9":130,"sample_t10":146,"fish_siw":4,"fish_kad":6,"fish_ayu":6,"fish_tu":7,"fish_nil":8,"fish_saba":14,"fish_takhian":12,"fish_salid":12,"fish_duk":15,"fish_chon":30,"fish_koi":34,"fish_fugu":36,"fish_madai":38,"fish_unagi":70,"fish_kaphong":64,"fish_katsuo":66,"fish_buek":160,"fish_maguro":180,"green_slime_card":11,"pink_slime_card":11,"goblin_card":25,"wolf_card":25,"skeleton_card":56,"stone_king_card":280,"kings_oath_secret":280},"eqPrice":{"common":15,"uncommon":35,"rare":80,"epic":180,"legendary":400},"starter":["sword_1","heavy_1","bow_1","orb_1"],"shopOnly":["herb","potion"],"stack":["herb","potion","slime_jelly","wolf_fang","stone_fragment","secret_key","old_letter","junk_scrap","mana_stone","sample_t1","sample_t2","sample_t3","sample_t4","sample_t5","sample_t6","sample_t7","sample_t8","sample_t9","sample_t10","bark_tag","barrier_lantern","inscribed_wrap","fish_siw","fish_kad","fish_ayu","fish_tu","fish_nil","fish_saba","fish_takhian","fish_salid","fish_duk","fish_chon","fish_koi","fish_fugu","fish_madai","fish_unagi","fish_kaphong","fish_katsuo","fish_buek","fish_maguro","green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"cards":["green_slime_card","pink_slime_card","goblin_card","wolf_card","skeleton_card","stone_king_card","kings_oath_secret"],"rankExp":[0,500,1500,3500,7000,13000,23000,40000,70000,120000],"skill":{"sword":[[1,2],[3,2],[5,2],[7,2],[9,2]],"heavy":[[1,2],[3,2],[5,2],[7,2],[9,2]],"bow":[[1,2],[3,2],[5,2],[7,2],[9,2]],"orb":[[1,2],[3,2],[5,2],[7,2],[9,2]]},"titles":{"first_blood":["kills",100],"reaper":["kills",1000],"death_walker":["kills",5000],"calamity":["kills",20000],"slime_hunter":["slimeKills",100],"one_beat":["perfectHits",300],"flawless_blade":["perfectHits",3000],"rhythm_sage":["perfectHits",15000],"perfect_warrior":["bestPerfectStreak",50],"swaying_shadow":["perfectDodges",50],"formless_wind":["perfectDodges",500],"shadowless":["perfectDodges",2500],"counter_art":["counters",50],"mirror_blade":["counters",500],"keen_eye":["crits",500],"fortune_chosen":["crits",5000],"star_assassin":["crits",25000],"unscathed":["flawless",50],"invisible_armor":["flawless",500],"survivor":["survivor",1],"never_give_up":["deaths",25],"elite_hunter":["eliteKills",10],"star_breaker":["eliteKills",100],"elite_bane":["eliteKills",500],"boss_slayer":["bossKills",10],"throne_hunter":["bossKills",50],"king_of_kings":["bossKills",200],"untouchable":["untouchable",1],"five_realms":["bossTiers",5],"ten_kings":["bossTiers",10],"wanderer":["reach",3],"pathfinder":["reach",6],"worlds_edge":["reach",10],"story_c1":["chapters",1],"story_c2":["chapters",2],"story_c3":["chapters",3],"story_c5":["chapters",5],"story_c7":["chapters",7],"story_c10":["chapters",10],"whisper_listener":["listened",1],"secret_seeker":["secrets",5],"secret_keeper":["secrets",30],"dungeon_diver":["dungeons",1],"labyrinth_lord":["dungeons",10],"underworld_ruler":["dungeons",30],"treasure_hunter":["chests",10],"rising_hero":["level",25],"menalars_hero":["level",50],"peak":["level",100],"barrier_breaker":["maxDim",2],"dimension_walker":["maxDim",3],"void_voyager":["maxDim",5],"novice_collector":["colPct",10],"monster_hunter":["monstersHalf",1],"monster_master":["monstersAll",1],"card_collector":["cards",3],"full_deck":["allCards",1],"half_collector":["colPct",50],"curator":["colPct",75],"full_collector":["colPct",100],"treasure_bearer":["epics",5],"legend_chosen":["legends",1],"legend_vault":["legends",10],"apprentice_smith":["refines",10],"artisan":["bestRefine",5],"forge_master":["bestRefine",10],"new_rich":["goldEarned",10000],"tycoon":["goldEarned",100000],"gold_king":["goldEarned",1000000],"mind_trainee":["meditations",10],"still_water":["meditations",100],"fish_novice":["fish",10],"fish_master":["fish",200],"fish_sage":["fishSpecies",18],"town_friend":["junkQuest",1],"letter_reader":["lettersRead",15],"letter_keeper":["lettersRead",40],"letter_all":["lettersRead",60],"shadow_unmasker":["spyUnmasked",1],"courier":["letters",3],"skill_student":["skills",5],"weapon_scholar":["skills",15],"weapon_master":["bestRank",5],"four_arms":["rankedWeapons",4],"transcender":["bestRank",9]},"quests":{"c1_wake":[40,60,0,1,0],"c1_town":[50,95,0,1,0],"c1_squad":[50,95,0,1,0],"c1_test":[100,190,0,1,0],"c1_wreck":[100,190,0,1,0],"c1_bark":[100,190,0,1,0],"c1_mind":[100,190,0,1,0],"c1_counter":[100,190,0,1,0],"c1_boss":[270,510,1,1,1],"c2_child":[350,600,0,2,0],"c2_lantern":[350,600,0,2,0],"c2_incense":[350,600,0,2,0],"c2_preacher":[350,600,0,2,0],"c2_lost":[350,600,0,2,0],"c2_boss":[930,1600,1,2,1],"c3_tablets":[580,980,0,3,0],"c3_wrap":[580,980,0,3,0],"c3_vent":[580,980,0,3,0],"c3_heat":[580,980,0,3,0],"c3_boss":[1540,2600,1,3,1],"c4_hut":[810,1365,0,4,0],"c4_frozen":[810,1365,0,4,0],"c4_ice":[810,1365,0,4,0],"c4_still":[810,1365,0,4,0],"c4_boss":[2150,3600,1,4,1],"c5_brother":[1040,1750,0,5,0],"c5_ore":[1040,1750,0,5,0],"c5_camp":[1040,1750,0,5,0],"c5_dark":[1040,1750,0,5,0],"c5_boss":[2760,4600,1,5,1],"c6_cure":[1270,2135,0,6,0],"c6_drowned":[1270,2135,0,6,0],"c6_ferry":[1270,2135,0,6,0],"c6_calm":[1270,2135,0,6,0],"c6_boss":[3370,5600,1,6,1],"c7_mirror":[1500,2520,0,7,0],"c7_cage":[1500,2520,0,7,0],"c7_home":[1500,2520,0,7,0],"c7_sight":[1500,2520,0,7,0],"c7_boss":[3980,6600,1,7,1],"c8_mural":[1730,2905,0,8,0],"c8_pilgrims":[1730,2905,0,8,0],"c8_doubt":[1730,2905,0,8,0],"c8_sun":[1730,2905,0,8,0],"c8_boss":[4590,7600,1,8,1],"c9_edge":[1960,3290,0,9,0],"c9_echo":[1960,3290,0,9,0],"c9_warriors":[1960,3290,0,9,0],"c9_untouched":[1960,3290,0,9,0],"c9_boss":[5200,8600,1,9,1],"c10_saints":[2190,3675,0,10,0],"c10_mind":[2190,3675,0,10,0],"c10_throne":[2190,3675,0,10,0],"c10_boss":[5810,9600,1,10,1]},"letters":["L01","L02","L03","L04","L05","L06","L07","L08","L09","L10","L11","L12","L13","L14","L15","L16","L17","L18","L19","L20","L21","L22","L23","L24","L25","L26","L27","L28","L29","L30","L31","L32","L33","L34","L35","L36","L37","L38","L39","L40","L41","L42","L43","L44","L45","L46","L47","L48","L49","L50","L51","L52","L53","L54","L55","L56","L57","L58","L59","L60"],"totals":{"mon":6,"card":7,"eq":561},"base":{"atk":6,"hp":50,"atkLv":2,"hpLv":10,"spLv":3,"spDim":3,"masteryMax":100,"refineMax":10,"sanityMax":100,"tierMax":10,"bag":48,"storage":100}}'::jsonb $$;
 -- ECON_DATA_END
 
 create or replace function public.econ_n(v jsonb) returns numeric language sql immutable as $$
@@ -16295,7 +16748,11 @@ begin
     'monstersHalf', case when mon >= ceil((C -> 'totals' ->> 'mon')::numeric / 2) then 1 else 0 end,
     'monstersAll', case when mon >= (C -> 'totals' ->> 'mon')::int then 1 else 0 end,
     'cards', cards, 'allCards', case when cards >= (C -> 'totals' ->> 'card')::int then 1 else 0 end,
-    'epics', epics, 'legends', legends);
+    'epics', epics, 'legends', legends,
+    -- v66 🎣 fishing
+    'fish', public.econ_n(st -> 'fishCaught'),
+    'fishSpecies', (select count(*) from jsonb_each(public.econ_obj(p -> 'fishBook')) f
+                     where f.key like 'fish\_%' and (C -> 'stack') ? f.key and public.econ_n(f.value -> 'n') > 0));
 end $$;
 
 -- o = last accepted save, d = the new one, e = budget state, dt = seconds since the last accepted save.
@@ -16314,6 +16771,7 @@ declare
   luck numeric := 0; dboss numeric; neq numeric := 0; nstarter numeric := 0; nshop numeric := 0;
   qg numeric := 0; qx numeric := 0; qgear numeric := 0; lgone numeric := 0;
   rebuy numeric := 0; rq numeric := 0;
+  fishd numeric := 0;   -- v66 🎣 fish caught since the last save (they arrive without kills)
 begin
   np := public.econ_obj(d -> 'player');
   if jsonb_typeof(o) is distinct from 'object' or jsonb_typeof(o -> 'player') is distinct from 'object' then o := '{}'::jsonb; end if;
@@ -16323,6 +16781,7 @@ begin
   if public.econ_n(np -> 'level') < public.econ_n(o -> 'player' -> 'level') or hc < ohc then o := '{}'::jsonb; ohc := 0; end if;
   op := public.econ_obj(o -> 'player'); st := public.econ_obj(d -> 'stats'); ost := public.econ_obj(o -> 'stats');
   B := C -> 'base';
+  fishd := greatest(public.econ_n(st -> 'fishCaught') - public.econ_n(ost -> 'fishCaught'), 0);
 
   -- ---------- 1. character numbers ----------
   lv := public.econ_n(np -> 'level'); olv := greatest(public.econ_n(op -> 'level'), 1);
@@ -16563,7 +17022,9 @@ begin
   bank_k := least(coalesce(public.econ_n(p_econ -> 'k'), rk * 1800) + rk * acc, rk * 1800);
   bank_u := least(coalesce(public.econ_n(p_econ -> 'u'), ru * 1800) + ru * acc, ru * 1800);
   if jsonb_typeof(p_econ) is distinct from 'object' then bank_k := rk * 1800; bank_u := ru * 1800; end if;
-  units := greatest(units - 3 - public.econ_n(st -> 'chestsOpened') + public.econ_n(ost -> 'chestsOpened')
+  -- v66 🎣 a fish takes at least ~4 s (bite + reeling): each one caught may bring one new stack item
+  if fishd > floor(acc / 4) + 3 then return jsonb_build_object('ok', false, 'reason', 'econ', 'detail', 'fish', 'n', fishd, 'max', floor(acc / 4) + 3); end if;
+  units := greatest(units - 3 - fishd - public.econ_n(st -> 'chestsOpened') + public.econ_n(ost -> 'chestsOpened')
                             - public.econ_n(st -> 'secrets') + public.econ_n(ost -> 'secrets')
                             - public.econ_n(st -> 'letters') + public.econ_n(ost -> 'letters'), 0);
   -- new gear only comes from kills (≤3 pieces each), letters, secret spots and the one-time collector medal
@@ -16598,6 +17059,9 @@ revoke execute on function public.econ_data(), public.econ_n(jsonb), public.econ
 -- so a newer index.html uploaded before this SQL can never make a save carry a quest id the server would reject.
 create or replace function public.story_chapters() returns int language sql immutable as $$ select 10 $$;
 grant execute on function public.story_chapters() to anon, authenticated;
+-- v66: systems the client may switch on (it asks once at login; missing function = all off)
+create or replace function public.game_features() returns jsonb language sql immutable as $$ select '{"fish":1}'::jsonb $$;
+grant execute on function public.game_features() to anon, authenticated;
 
 -- one flag row per kind per minute at most (a cheat client retrying can't flood the table)
 create or replace function public.econ_flag(p_user uuid, p_kind text, p_detail jsonb, p_rejected boolean)

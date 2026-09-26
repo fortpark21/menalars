@@ -2,7 +2,7 @@
 
 เกม RPG บนเบราว์เซอร์ **ไฟล์เดียว** `index.html` (HTML/CSS/JS ล้วน ไม่มี framework/npm) + โฟลเดอร์ `assets/` (รูป .webp, เสียง .mp3)
 ออนไลน์ด้วย **Supabase** และโฮสต์บน **GitHub Pages** จาก repo นี้ (`fortpark21/menalars`, branch `main`) — ตอนนี้เป็น **เบต้า** (จะล้างเซิร์ฟก่อนเปิดจริง)
-เวอร์ชันล่าสุด: **`GAME_VERSION = 65`** (27 ก.ย. 2026) · ประวัติงานละเอียด v52–v67: `dev/docs/history-v52-v67.md`
+เวอร์ชันล่าสุด: **`GAME_VERSION = 66`** (27 ก.ย. 2026) · ประวัติงานละเอียด v52–v67: `dev/docs/history-v52-v67.md`
 
 ## 👤 เจ้าของ (Andy)
 - **ไม่ใช่โปรแกรมเมอร์** — อธิบายเป็น **ภาษาไทยง่ายๆ ทีละขั้น** ห้ามใช้ศัพท์เทคนิคโดยไม่อธิบาย
@@ -32,7 +32,7 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 - Playwright: `npm i -g playwright` + `npx playwright install chromium` ถ้ายังไม่มี · สคริปต์ Playwright อ้าง `http://localhost:8765/index.html`
 - `dev/t/harness.js` = DOM ปลอมสำหรับ Node (`loadGame("game.html")`, `g.run(src)`, `g.get(expr)`, `g.clock.advance(ms)`, `g.errors()`) — ไม่มี setTimeout/fetch/WebSocket, canvas mock ไม่มี `getTransform` (โค้ดต้องมี fallback)
 - ตอนเปิดหน้าต่างคุย NPC ในเทสต์ ต้องย้ายตัวละครไปใกล้ NPC ก่อน (เดินห่าง = ปิดเอง) · หน้าต่างสรุปผล/ป้ายต่างๆ อาจบังภาพ
-- เซิร์ฟเวอร์: `dev/sql/setup.sql` คือ SQL เต็ม (สำเนาเดียวกับบล็อกท้าย index.html) · `story_db_test.js`/econ tests ต้องมี Postgres ในเครื่อง (ถ้าไม่มี ข้ามได้ แต่ต้องคิดเพดาน econ ด้วยมือ)
+- เซิร์ฟเวอร์: `dev/sql/setup.sql` คือ SQL เต็ม (สำเนาเดียวกับบล็อกท้าย index.html — แก้ setup.sql แล้วรัน `python3 dev/tools/sync_sql.py` ให้ econ_data + บล็อกใน index.html ตรงกัน) · `story_db_test.js`/econ tests ต้องมี Postgres ในเครื่อง (ถ้าไม่มี ข้ามได้ แต่ต้องคิดเพดาน econ ด้วยมือ)
 - เครื่องมืออื่นที่ **อยู่ใน Cowork Project "Menalars Game" เท่านั้น** (ขอให้ Andy ดาวน์โหลดมาถ้าต้องใช้): `sim.js`/`sim_run.js` (จำลองสมดุลการต่อสู้), `legit_bot.js`/`cheat_test.js` (ทดสอบกันโกงกับ Postgres), `regression_diff.js`, `market_*`, เอกสารสถานะเก่า (v8–v50), `main-quest-design.md`, `art-prompts-v1.md`
 
 ## 🗂️ โครงสร้างโค้ด (ค้นด้วยชื่อ — ไฟล์ ~17,600 บรรทัด)
@@ -43,6 +43,7 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 - หน้าต่างคุยทุกอย่าง: `openTalk({ npcKind | emoji, name, role, bg, text, extra, choices, anchor })` — `**คำ**` = ตัวทอง, `\n` ขึ้นบรรทัด
 - จุดลับ (v60): `SECRET_LOCATION_DEFS` 13 defs (จุดจดหมาย 2 แบบใช้ช่องเดียว → 12 แบบ), สุ่ม 5 จุด/แมพ `generateRandomSecretLocations`, บันทึกลงเซฟ `game.secretSaved` ผ่าน `secretSpotsFor`, ตัวจัดการ `interactWithLocation` / `secretSpotInteract`, มิมิก `m.mimic` → `mimicWon`
 - เนื้อเรื่องหลัก 10 บท `STORY_QUESTS` (54 เควส), จดหมาย 60 ฉบับ `LETTER_DEFS` (L60 = จดหมายสายลับ มีรหัสลับคำแรกของบรรทัด ห้ามแก้), ฉายา `TITLE_DEFS`
+- ตกปลา (v66): `FISH_DEFS`/`FISH_RARITY`/`FISH_SPOTS`, `startFishing` → `fishStep` (เทสต์ขับได้), `drawFishArt`, สมุด `game.player.fishBook` · ระบบที่ต้องมี SQL ใหม่เปิดด้วย `serverHas("fish")` ← RPC `game_features()`
 - ลานฝึก (tutorial) `TUT`, `tutBuildSteps`, `tutFrame` (ลูกศรชี้ใช้ getBoundingClientRect หาร zoom)
 - เสียง: `AUDIO` (บรรทัดเดียว), `sfx.*`, `playJingle` (`JINGLE_MAX_S` ตัดเพลงชนะ 3 วิ), `SFX_FILE_GAIN` · v63: ระหว่าง jingle เพลงเงียบ + เสียงรางวัลเข้าคิว (`sfxHoldBegin`, `SFX_AFTER_JINGLE`)
 - ชื่อบนหัว (v61): ทุก `fillText/strokeText` ของ world ctx ระหว่าง `renderOverworld()` ถูกวาดซ้ำที่ `#labelCanvas` ความละเอียดจอจริง (`labelFlush`) — แคนวาสโลกสูง 720 แล้วยืด
