@@ -2,7 +2,7 @@
 
 เกม RPG บนเบราว์เซอร์ **ไฟล์เดียว** `index.html` (HTML/CSS/JS ล้วน ไม่มี framework/npm) + โฟลเดอร์ `assets/` (รูป .webp, เสียง .mp3)
 ออนไลน์ด้วย **Supabase** และโฮสต์บน **GitHub Pages** จาก repo นี้ (`fortpark21/menalars`, branch `main`) — ตอนนี้เป็น **เบต้า** (จะล้างเซิร์ฟก่อนเปิดจริง)
-เวอร์ชันล่าสุด: **`GAME_VERSION = 64`** (26 ก.ย. 2026) · ประวัติงานละเอียด v52–v64: `dev/docs/history-v52-v64.md`
+เวอร์ชันล่าสุด: **`GAME_VERSION = 65`** (27 ก.ย. 2026) · ประวัติงานละเอียด v52–v67: `dev/docs/history-v52-v67.md`
 
 ## 👤 เจ้าของ (Andy)
 - **ไม่ใช่โปรแกรมเมอร์** — อธิบายเป็น **ภาษาไทยง่ายๆ ทีละขั้น** ห้ามใช้ศัพท์เทคนิคโดยไม่อธิบาย
@@ -39,7 +39,7 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 - ค่าคงที่/ระบบเรียงเป็นหมวดมีหัวคอมเมนต์ `/* ==== ... ==== */` · คอมเมนต์บอกเหตุผลแทบทุกจุด — **ยึดโค้ดจริงเป็นหลัก**
 - เซฟ: `buildSaveData()` / `continueGame()` / `SAVE_GAME_FIELDS` (field บน `game` ที่เซฟ) · offline = localStorage, online = RPC `save_game`
 - แมพ: `warpToMap(tier, dim)`, `TOWN_TIER`, `MAP_TIER_COUNT = 10`, มิติ `game.dimension` (`DIM_RULES` กฎหลอมรวม) · state แมพในเซสชัน `game.mapStates`
-- ต่อสู้: `enterBattle` / `updateBattle` / `battleAttack` / `exitBattle(result)` · ท่าบอส (v62) `BOSS_MOVES` / `startBossComboHit` · เกจ Perfect `getPerfectZoneStart` · สติ `drainSanity`, `SANITY_*` · พรพระ `p.monkBuff` (`monkBuffActive`)
+- ต่อสู้: `enterBattle` / `updateBattle` / `battleAttack` / `exitBattle(result)` · ท่าบอส (v62) `BOSS_MOVES` / `startBossComboHit` · ข้อความสู้ (v65) `spawnBattleMsg` → เลน enemy/player/info `BATTLE_MSG_STYLES`, `drawBattleMsg` · เกจ Perfect `getPerfectZoneStart` · สติ `drainSanity`, `SANITY_*` · พรพระ `p.monkBuff` (`monkBuffActive`)
 - หน้าต่างคุยทุกอย่าง: `openTalk({ npcKind | emoji, name, role, bg, text, extra, choices, anchor })` — `**คำ**` = ตัวทอง, `\n` ขึ้นบรรทัด
 - จุดลับ (v60): `SECRET_LOCATION_DEFS` 13 defs (จุดจดหมาย 2 แบบใช้ช่องเดียว → 12 แบบ), สุ่ม 5 จุด/แมพ `generateRandomSecretLocations`, บันทึกลงเซฟ `game.secretSaved` ผ่าน `secretSpotsFor`, ตัวจัดการ `interactWithLocation` / `secretSpotInteract`, มิมิก `m.mimic` → `mimicWon`
 - เนื้อเรื่องหลัก 10 บท `STORY_QUESTS` (54 เควส), จดหมาย 60 ฉบับ `LETTER_DEFS` (L60 = จดหมายสายลับ มีรหัสลับคำแรกของบรรทัด ห้ามแก้), ฉายา `TITLE_DEFS`
