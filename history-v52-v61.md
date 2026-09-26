@@ -1,0 +1,124 @@
+# v52 — ลานฝึกจับมือทำ + เพลง/เสียงใหม่ + มอนภาพวาดแมพ 4–10 + เนื้อเรื่องบท 4–10 (26 ก.ย. 2026)
+
+## 🎯 ลานฝึก (hand-held combat training)
+- ตัวละครใหม่: หลัง startGame ขึ้นการ์ด "ลานฝึกหน่วยกวาดล้าง" (เริ่มฝึก / ข้ามการฝึก) → `game.player.tutorialDone=false` จนกว่าจะจบ/ข้าม/ออก (เซฟไว้ — ปิดเกมกลางคันแล้วเล่นต่อ จะถามใหม่) · ตัวละครเก่า (ไม่มี field) ไม่ถูกบังคับ
+- ฝึกซ้ำ: ❓ วิธีเล่น → ปุ่ม "🎯 ฝึกต่อสู้แบบจับมือทำ" (ไม่มีขั้นเดิน เข้าหุ่นเลย; ห้ามตอนสู้/ดันเจี้ยน/สติ < 50%)
+- ขั้นตอน (ตัวใหม่ 10 ขั้น / ฝึกซ้ำ 8): เดินไปวงแสง → คลิกหุ่นฝึก (เข้าสู้) → เกจ 3 ครั้ง → PERFECT 3 → ท่าพิเศษอาวุธ (ดาบ/ค้อน/ธนู 2, สื่อเวทย์ 1) → สกิล 1 → หลบ 3 → หลบเฉียบขาด+สวนกลับ 1 → สตั้น (รัวคลิก 6 ฮิต) → ปราบหุ่น
+  - แต่ละขั้นรอให้ทำได้จริง (tutEvent จากโค้ดสู้จริง) มีคำแนะนำเมื่อพลาด (เร็วไป/ช้าไป/ลากผิดทิศ/ไม่โดนวง ฯลฯ), ปุ่ม ⏭ ข้ามขั้นนี้ (กระพริบเมื่อพลาดบ่อย), ✖ ออกจากการฝึก
+  - การ์ดโค้ช: ซ้ายใต้ HUD ตอนเดิน / มุมขวาบนตอนสู้ · ลูกศรชี้เกจ/ปุ่มสกิล (ใส่ใน offsetParent เพื่อไม่เพี้ยนกับ body zoom) · บนจอสู้: ป้าย "กด D ➡ / ⬅ กด A" ตามฝั่งที่ต้องหลบ (สลับตามสติ), "รอ… / ตอนนี้!", "คลิกเลย!", ป้ายหลอดสตั้น
+- หุ่นฝึก = monster.isTraining + trainingDef ของตัวเอง (วาดด้วยโค้ด drawTrainingDummy; ถ้ามี ART.dummy จะใช้ภาพแทน) · ไฟต์ฝึกไม่ให้อะไรเลย: exitBattle → tutBattleExit (ไม่มี EXP/ทอง/ดรอป/game.stats/bestPerfectStreak/Mastery/proficiency/สติ/encountered) — เซิร์ฟเวอร์ไม่เห็นอะไร
+  - ระหว่างฝึก: โซนเขียวกว้างขึ้น TUT_ZONE_WIDEN 0.14, ไม่มี MISS, ไม่มี feint, หุ่นตีเฉพาะขั้นหลบ/สวน/ด่านสุดท้าย (เตือน 1.5 วิ, ดาเมจ 2–4), หุ่นลุกเต็มเลือดจนถึงด่านสุดท้าย, ไม่มีวันตาย (เติมเลือด), หลอดสตั้นเติมเฉพาะขั้นสตั้นขึ้นไป (×1.6)
+  - ป๊อปอัปเนื้อเรื่อง/จดหมาย และการชนมอนจริงรอจนฝึกเสร็จ (tutBusy)
+- ทดสอบ: t/tut_e2e.js (W=sword|heavy|bow|orb ผ่านครบทุกอาวุธด้วยเมาส์/คีย์จริง), t/tut_shots.js (ข้าม/ฝึกซ้ำ/ออกกลางทาง/สติต่ำ)
+
+## 🎵 เพลง (Gemini Lyria ในเบราว์เซอร์ของแอป)
+- **ครบทุกช่องแล้ว (23 เพลง + 3 jingle)**: bgm_map02…map10, bgm_fight02 (แมพ 4–7) / fight03 (8–10), bgm_boss, bgm_boss_story (เจ้าเมืองปลอม), bgm_dungeon, bgm_meditate (ทำสมาธิ+มินิเกมพระ), bgm_title (หน้าล็อกอิน/สร้างตัว), bgm_city03 + bgm_city04 (เพลย์ลิสต์เมือง 4 เพลง), jgl_victory (~8 วิ) / jgl_victory_boss (~11 วิ) / jgl_defeat (~6 วิ)
+- Jingle: Gemini ทำ ~60 วิ → ดู RMS ทีละ 0.25 วิ หาจุดจบวลี แล้ว ffmpeg -ss/-t + afade out ก่อนเข้า add_audio.py (ไฟล์ gen/*_cut.wav)
+- สร้าง 2 แท็บขนานได้ (seed + tab-3) แต่ **ห้าม navigate แท็บที่กำลังเจน** (เพลงหาย) · Map10 prompt อ่อนลง (ตัด "terrifying villain") ผ่าน · บางครั้งขึ้น "encountered an error" แต่มี <video> ให้ดึงได้ — ตรวจเสียงด้วย ebur128 ก่อนใช้
+- music_test: เพิ่ม delete AUDIO.bgm_boss/fight02/fight03 ก่อนเช็ก fallback, หน้าแรก = bgm_title, เพลย์ลิสต์เมือง 4 เพลง
+- วิธีที่ใช้ได้: navigate https://gemini.google.com/music (เลือกเครื่องมือเพลงให้เอง) → JS คลิกปุ่ม "เสียงร้อง" → menuitemradio "เพลงบรรเลง" → focus [contenteditable] → type prompt (ขึ้นต้น "Create a music track.") → JS คลิก aria-label "ส่งข้อความ" · เสร็จเมื่อมี <video> · ดึงไฟล์: fetch(video.src,{credentials:'include'}) → blob → <a download> → ไฟล์ .tmp ใน Downloads (หน้าต่าง Save As ค้างบนเครื่องเจ้าของ แต่ .tmp ใช้ได้เลย) → device_stage_files → add_audio.py
+- add_audio.py รับ key ตัวพิมพ์ใหญ่ได้แล้ว (sfx_playerHurt ฯลฯ)
+
+## 🔊 เสียงเอฟเฟกต์ (ElevenLabs ฟรี, Duration Auto = 200 เครดิต/ครั้ง ได้ 4 แบบ)
+- ครบ 23 เสียง: attack crit miss playerHurt dodge perfectDodge counter die skillReady heal click talk levelUp rareDrop chest refineOk questDone notice warp coin equip itemGet madness → assets/sfx_*.mp3
+- วิธีดึงไม่ให้มีหน้าต่าง Save As 92 อัน: hook URL.createObjectURL ในหน้า ElevenLabs เก็บ blob audio/mpeg ที่หน้าเว็บสร้างตอนแสดง 4 แบบ (window.__take(key) หลังเจนแต่ละครั้ง) → รวมเป็นไฟล์เดียว (หัว JSON + ต่อท้ายกัน) ดาวน์โหลดครั้งเดียว → แยกใน sandbox
+- เลือกแบบ + ตัดด้วย pick_sfx.py (onset, พลังงานในช่วงความยาวเป้าหมาย, ตัดหางเงียบ + fade) · ในเกมคูณเสียงไฟล์ด้วย SFX_FILE_GAIN (เสียง UI เบากว่าเสียงสู้)
+
+## 👾 มอนภาพวาดแมพ 4–10 (35 ตัว)
+- เจนต่อในแชท Gemini เดิมของมอนแมพ 2–3 (https://gemini.google.com/app/6663221fe61621cb) คำสั่ง "Generate another image in exactly the same art style: Game monster character art … Hand-painted fantasy JRPG style: bold dark ink outlines, muted colors, soft painterly shading, highly detailed." — ภาพใหม่เป็น blob: → canvas.toBlob เก็บใน window.__imgs แล้วรวมดาวน์โหลดครั้งเดียว
+- mon_key.py: ตัดพื้นขาวที่ต่อกับขอบ + ขอบนุ่ม + ลบรูขาวข้างใน (ยกเว้นมอนสีขาว --keep-holes) → สูง 400 (กว้าง ≤720) → add_art.py → MONSTER_ART 4_0…10_4 + MONSTER_ART_SIZE
+
+## 📜 เนื้อเรื่องบท 4–10 (34 เควสใหม่ — ครบ 10 บท)
+- 4 คำสารภาพบนยอดเขา (ปรมัตถ์คืออาจารย์ของนักบวช เสียภรรยา-ลูกสาวเมื่อ 30 ปีก่อน) · 5 เหมืองแห่งเสียงกระซิบ (น้องชายช่างตีเหล็ก, แร่จดจำเจตจำนง, ภาพวาดของมิว) · 6 น้ำที่จดจำ (พิษ = ความทุกข์ที่ถูกทิ้ง, คนแจวเรือ) · 7 กระจกเจตจำนง (ความทรงจำ: ผู้เล่น = ทหารคุ้มกันเกวียนบาเรีย, ช่วยมิวกลับบ้าน) · 8 วิหารแห่งความเมตตา (ภาพสลัก, ศิษย์ที่ลังเล, ช่องระบายสุดท้าย) · 9 เงาของใจ · 10 ผู้เมตตา (พบปรมัตถ์, บาเรียครบ 10 ต้นแบบมีช่องระบาย, ปรมัตถ์หายเข้ารอยแยกมิติ → โยงระบบมิติ)
+- ตัวเลือกใหม่ (story.ch): c5b c6f c7m c8d c9 c10 · ใช้ goal เดิมทั้งหมด (ไม่มีไอเทมเควสใหม่; give ใช้ตัวอย่างมานา sample_t4/5/6/8)
+- รางวัล: บทปกติ ทอง 580+230·(N−3) / EXP 980+385·(N−3), บอส 1540+610·(N−3) / 2600+1000·(N−3) + อุปกรณ์หายาก
+- ฉายาใหม่: story_c5 (VIT+6), story_c7 (LUK+6), story_c10 (MEDITATE+5 STR+5)
+- เซฟเก่าที่จบบท 3 (i=20, st active) → migration ครั้งเดียว (s.m52) เปลี่ยนเป็น offer จากนักบวช
+- **กันเซิร์ฟเวอร์ยังไม่อัปเดต**: เกมถาม RPC story_chapters() ตอนล็อกอิน (net.storyMax) — ถ้ายังไม่ได้รัน SQL v52 จะหยุดที่บท 3 เหมือนเดิม (ไม่มีเซฟโดนปัดตกเพราะ quest id ที่เซิร์ฟเวอร์ไม่รู้จัก)
+- SQL v52 (ต้องรัน): econ_data() ใหม่ (quests + titles) + story_chapters() — ไฟล์ menalars_v52_story.sql
+
+## อื่นๆ
+- P4 ย้อมสีชุดไม่ทับเครื่องรางคริสตัลแล้ว (dyedSprite ข้ามพิกเซล h≥178 & s>0.35 & l>0.3)
+- ทดสอบ: story_test (54 เควสครบ 10 เสา, errors []), story_db_test บน Postgres (DB=b3 setup เต็ม และ b4 = setup_v44 + menalars_v52_story.sql รัน 2 รอบ) → 184 เซฟ rejects [] (test แก้ให้วาปไปแมพของ sample_tN ก่อน give — ไม่งั้นโดน stack>reach ซึ่งผู้เล่นจริงไม่เจอ), t/gate_test.js (ออนไลน์ + storyMax 3 → ไม่มีเควสบท 4), music_test, buyback_test, monk_test, tut_e2e ×4 อาวุธ
+- menalars_v52_story.sql = econ_items_all + econ_data + econ_check (เหมือน v45) + story_chapters → รันไฟล์นี้ไฟล์เดียวพอ แม้ยังไม่เคยรัน v45
+- ส่งแล้ว: index.html (v52) + 44 mp3 + 35 mon_*.webp → MenalarsGame\assets · คลังเสียง artifact อัปเดตครบ (IN_GAME_SFX 23 ตัว, ปุ่มฟังทุกเพลง)
+
+## v53 (26 ก.ย. 2026) — เปลี่ยนเสียงคลิก
+- sfx_click (ปุ่มเมนูทุกอัน + คลิกคุย NPC) → แบบ B "แตะม้วนกระดาษ" (ElevenLabs, prompt ใน SE01 ของคลังเสียง) · เจ้าของเลือกจาก 3 แบบ (A คริสตัล, B กระดาษ, C ดีดโคโตะ — ไฟล์ gen/click_opts/) · SFX_FILE_GAIN.click ยัง 0.4
+- ElevenLabs: ปิดสวิตช์ Duration Auto แล้วตั้ง 0.5 วิ = 20 เครดิต/ครั้ง (Auto = 200) · ลากค่าไป 0.4 จะเด้งกลับเป็น Auto · ปุ่ม download ในหน้าโดน hook ต้องตั้ง window.__allowDl = true ก่อน a.click() · เครดิตเหลือ ~4,780
+- ตรวจ repo GitHub (fortpark21/menalars) ได้จากเบราว์เซอร์: api.github.com/repos/fortpark21/menalars/git/trees/HEAD?recursive=1 เทียบ blob sha (ไฟล์ใน /mnt/user-data/outputs ถูกเติม metadata ~5.8KB จึงต้องคิด sha จากไฟล์ใน outputs ไม่ใช่ assets/)
+
+## ดึงข้อความทั้งเกมให้ AI อื่นแก้สำนวน (26 ก.ย. 2026, จาก v53)
+- ไฟล์ส่งเจ้าของ: MenalarsGame\ข้อความเกม\ (00_อ่านก่อน_โลกของเกม.txt, 01_main_story, 02_letters, 03_npc_dialogue, 04_system_texts, 05_ui_messages + zip) · รูปแบบ [ID] - [Type] / บริบท / ผู้พูด / ผู้ฟัง / ข้อความ
+- สร้างใหม่ได้: node tools/dump_text_data.js (harness → text_export/_data.json) → python3 tools/text_scan.py (สแกน string ไทยใน <script> → _scan.json) → python3 tools/build_text_export.py (→ ไฟล์ .txt + _map.json)
+- ID: STORY.<qid>.give/done/desc/fight/name/spotK.text/.name/.choice.<val>.label|text · LETTER.Lxx (body+"(ลงชื่อ)"+note) · SPY.pageN · NPC.* · SIDE.junk_hunt.* · GUIDE.pageN · TRAIN.input.<w> · STAT/SANITY/MONK/DIM/SKILL/SKILLTREE/TITLE/MILESTONE/LOCATION/DUNGEON/ITEM/CARD.* (ข้อความแบบ "ชื่อ: …\nคำอธิบาย: …") · SRC.<ฟังก์ชัน>.<n> (สแกนจากโค้ด, _map.json เก็บตำแหน่ง start/end ของ literal) · HTML#<id>.<n>
+- ตอนใส่คืน: ต้องสร้าง _map.json จาก index ตัวเดียวกับที่ export (index_v53.html) — ถ้า index เปลี่ยนแล้ว ให้จับคู่ด้วยข้อความเดิม (text ใน _map) แทนตำแหน่ง · ข้อมูลโครงสร้าง (STORY/LETTER/…) แก้ด้วย rep(old,new) ทีละจุดตามข้อความเดิม · {…} = ${…} ในโค้ด ต้องแปลงกลับ
+
+## v54 (26 ก.ย. 2026) — ใส่สำนวนใหม่ไฟล์ 01 (เนื้อเรื่องหลัก)
+- เจ้าของส่ง 01_main_story_improved.txt (AI อื่นแก้) → ตรวจด้วย tools/check_revised.py (ID/ตัวหนา/ตัวเลข/{…}/อีโมจิ/จำนวนบรรทัด/ความยาว) → ครบ 381, แก้ 156
+- ผมแก้เพิ่มก่อนใส่ (/tmp/fix01.json): c9_echo.spot1 ความหมายกลับด้าน (ไปช่วยช้า→เร็ว), c2_preacher.done "การุณย์"→"เมตตา" (มุกผู้เมตตา), c1_test.done "โดยสาร"→"พลัดตกลงมา" (ผู้เล่นเป็นทหารคุ้มกัน), มิว "นาง"→"แก" 7 จุด, c7_cage.give กรงแก้ว→กรงผลึก, c9_echo.spot3 / c4_hut.done กลับสำนวนเดิม
+- ใส่ด้วย tools/apply_text.py (data: หา JSON literal ของข้อความเดิมที่ตรง 1 จุดแล้วแทน · html: แทนข้อความตรง) + 6 รายการ SRC แก้มือ · ตรวจซ้ำโดย export ใหม่เทียบทุก ID
+- **ฐานสำหรับไฟล์ 02–05 ยังเป็น text_export/ (v53)** — export v54 อยู่ที่ text_export_v54/ · SRC.* ตำแหน่งเลื่อนแล้ว ให้จับคู่ด้วยข้อความเดิม
+- หน้าต่างคุย c10_boss.done ยาวสุด เลื่อนดูได้ (talk-main scroll 622/490, เดิม 572/490)
+
+## v55 (26 ก.ย. 2026) — ใส่สำนวนใหม่ไฟล์ 02 (จดหมาย)
+- 02_letters.txt จาก AI อื่น: 71 รายการ (จดหมาย 60 + ฉากผนึก 5 + ข้อความระบบ 6) ไม่มีบรรทัดผู้พูด/บริบท (ไม่เป็นไร) · ข้อความระบบจดหมายอีก 23 รายการไม่ได้ส่งกลับ = คงเดิม
+- ตรวจผ่านหมด (ตัวหนา/ตัวเลข/{…}/บรรทัด) · L60 รหัสลับไม่ถูกแก้ · แก้เพิ่ม: L09 "กลายกลาย", L18 "ไอสมาธิ"→"ออร่าตอนทำสมาธิ", L24 "ทั้งคุ้งน้ำ"→"ทั้งหมู่บ้าน", L42 "สิบลำแสง"→"สิบดวง"
+- AI เปลี่ยน L51/L57 "ผู้โดยสารไร้ชื่อ" → "ผู้คุ้มกันไร้นาม" (ตรงกับเฉลยบท 7) — ยอมรับ
+- ใส่จดหมาย: แยก body / (ลงชื่อ) sign / (หมายเหตุ) note แล้วแทนใน object { id:"Lxx" … } เฉพาะช่วงนั้น (sign ซ้ำกันหลายฉบับ เช่น "แม่") · SRC 6 ตัวแก้มือ
+- ทดสอบ: เปิดจดหมายครบ 60 + L60 ไฮไลต์ 10 คำ + ฉากผนึก 5 หน้า + story_test
+- ⚠️ ตอนส่ง index.html ในโฟลเดอร์เจ้าของกลับเป็น v53 (mtime ใหม่กว่า v54 ที่ผมเขียน) — น่าจะถูกเขียนทับจากที่อื่น · เขียน v55 ทับ (มีของ v54 ครบ)
+- ฐานไฟล์ 03–05 = text_export/ (v53) · export ล่าสุด text_export_v55/
+
+## v56 (26 ก.ย. 2026) — ใส่สำนวนใหม่ไฟล์ 03 (บทพูด NPC)
+- 03_npc_dialogue.txt (ส่งรอบ 2; รอบแรกเป็นไฟล์เดิมไม่ได้แก้) → 41 รายการ แก้ 40 (ข้อมูลโปรไฟล์/ชื่อปุ่มไม่ได้ส่งมา = คงเดิม) · AI เปลี่ยน "นักผจญภัย" → "นักกวาดล้าง" ในบทพ่อค้า (ยอมรับ)
+- แก้เพิ่ม: doctor.line1 "ทวารบานแรก"→"ประตูบานแรก" · temple .1/.7 คืนการขึ้นบรรทัดใหม่ · temple .1 + performDimensionRitual.2 "แต้มสถานะ"→"แต้มสเตตัส" (ให้ตรงกับหน้าสเตตัสในเกม) · junk_hunt.done / openMerchantDialog.3 ยาวขึ้นเล็กน้อย (ไม่เป็นไร)
+- ใส่: apply_text.py 23 รายการ (/tmp/fix03.json) + SRC 17 รายการแก้มือ (/tmp/src03.py; {required}/{haveQty}→${quest.required}/${quest.required - haveQty}, {ชื่อ}→${p.name}, {mana}, {เลขมิติ}→${next}, {harder}/{gain}/{MAP_TIER_COUNT})
+- ตรวจ: export ใหม่ (text_export_v56/) ตรงทั้ง 40 ID, ID อื่นไม่เปลี่ยนเทียบ v55 · t/npc03.js เปิดคุยพ่อค้า/ช่างตีเหล็ก/เจ้าเมือง (เควส 3 สถานะ)/วิหาร (confirm/lore/ยังไม่พร้อม) errors [] · story_test + music_test ผ่าน
+- ฐานไฟล์ 04–05 = text_export/ (v53) · export ล่าสุด text_export_v56/
+
+## v57 (26 ก.ย. 2026) — ใส่สำนวนใหม่ไฟล์ 04 (ข้อความระบบ) บางส่วน
+- 04_system_texts.txt จาก AI อื่นส่งกลับแค่ 47/390 รายการ (แก้จริง 40): GUIDE 7/13, TRAIN 4/4, STAT 6/6, SANITY 4/8, MONK 4/4 (ไม่เปลี่ยน), DIM 6/6, SKILL 5/24, SKILLTREE 4/40, TITLE 3/82, ITEM 3/22 ("ไอเทมเควส"→"ไอเทมภารกิจ" ครบทั้ง 3 จุดในเกม), CARD 1/7, SRC 0/159 · เจ้าของเลือกให้ใส่ส่วนนี้ก่อน ที่เหลือรอ AI ทำเพิ่ม
+- แก้เพิ่ม: GUIDE.page8 "ไม่สามารถตีสวนได้"→"ช่วงนั้นจะโจมตีไม่ได้" · SKILLTREE.orb.barrier_ward "กางม่านบาเรีย"→"กางโล่มานา"
+- ใส่ด้วย /tmp/apply04b.py: รายการแบบหลายช่อง (ชื่อ/คำอธิบาย/ป้ายสั้น, หัวข้อ/ข้อความ) แยกช่องแล้วแทน JSON literal ทีละช่อง · GUIDE (TUTORIAL_STEPS ต่อ string ด้วย +) แทนทั้งนิพจน์ text เป็น literal เดียว (ตรวจด้วย node eval ว่าตรงข้อความเดิมก่อนแทน)
+- ⚠️ ถ้าไฟล์ 04 ฉบับเต็มมาทีหลัง: 40 ID นี้ในเกมไม่ตรงกับ text_export/ (v53) แล้ว ต้องใช้ text_export_v57/_map.json เป็นข้อความเดิมสำหรับ ID เหล่านี้
+- คู่มือหน้า 13 (สำรวจโลก) ยาวขึ้น เลื่อนได้ 15px (389/374)
+- ตรวจ: export ใหม่ text_export_v57/ ตรงทั้ง 40, ID อื่นไม่เปลี่ยน · story_test, music_test, tut_e2e (heavy) ผ่าน · t/sys04.js ภาพคู่มือ/หน้าสเตตัส
+- ⚠️ ครั้งที่ 2: index.html ในเครื่องเจ้าของกลับเป็น v55 (mtime 19:16) หลังผมส่ง v56 — เขียน v57 ทับ (มี v56 ครบ)
+
+## v58 (26 ก.ย. 2026) — ไฟล์ 04 ฉบับเต็ม (ข้อความระบบ)
+- เจ้าของส่ง 04_system_texts.txt ใหม่ ครบ 390 รายการ · รอบนี้ AI แก้แบบเบามือ: หลายอันกลับเป็นข้อความสั้นแบบเดิม (STAT/DIM/SANITY/ไอเทม "ไอเทมเควส") ส่วนใหญ่แค่ขยาย "มอน"→"มอนสเตอร์", "คริ"→"คริติคอล" · ถือไฟล์นี้เป็นฉบับจริงทั้งไฟล์
+- เทียบกับเกม v57 (MAP=text_export_v57/_map.json — check_revised.py และ apply_text.py รับตัวแปร MAP ได้แล้ว) → เปลี่ยน 107 (GUIDE 13, TRAIN 4, SRC ลานฝึก 20, STAT 5, SANITY 4, DIM 6, SKILL 17, SKILLTREE 32, TITLE 2, ITEM 3, CARD 1)
+- 2 จุดที่พลาดรอบก่อนถูกแก้แล้วในไฟล์นี้ (GUIDE.page8 "ช่วงนั้นโจมตีไม่ได้", barrier_ward "โล่ดูดซับดาเมจ") · ผมแก้เพิ่ม: GUIDE.page10 "รอให้อัปเกรด"→"รอให้เลือก", GUIDE.page9 "โจมตีสวนไม่ได้"→"โจมตีกลับไม่ได้", SKILLTREE.bow.safe_range "สกิลตรึง"→"ธนูตรึง"
+- ฉายา swaying_shadow "เงาพริ้วไหว"→"เงาพลิ้วไหว" (ชื่อไม่อยู่ใน econ_data → ไม่ต้องรัน SQL)
+- ใส่ด้วย /tmp/apply04c.py: data แยกช่อง + GUIDE แทนนิพจน์ text · SRC ลานฝึก แทนทีละบรรทัดภายในช่วงของ literal เดิม ({tutDodgeHint}→${tutDodgeHint()}, {RIGHT}/{LEFT} เป็นข้อความจริงในโค้ด)
+- ตรวจ: export text_export_v58/ — ทั้ง 390 ID ในไฟล์ตรงกับเกม, ID อื่นไม่เปลี่ยน · story_test, music_test, tut_e2e sword+heavy จบครบ errors []
+- ฐานไฟล์ 05 = text_export/ (v53) หรือใช้ MAP=text_export_v58/_map.json (ตรงกับเกมปัจจุบัน — แนะนำ)
+
+## ไฟล์ 05 แบ่ง 3 ส่วน (26 ก.ย. 2026, จากเกม v58)
+- AI อื่นทำ 05_ui_messages (546KB, 1,256 รายการ) ไม่ไหว → แบ่งเป็น 05_ui_messages_part1/2/3.txt (360/353/356 รายการ, ~110–130KB) ในโฟลเดอร์ ข้อความเกม\ · ตัดหมวด "GM เท่านั้น" 143 รายการออก (คงเดิม) · ตัดบรรทัด ผู้ฟัง และ ผู้พูด ที่เป็น "System (ระบบ)" ธรรมดาออก (ประหยัดขนาด)
+- หัวไฟล์บอก AI ให้ส่งกลับ "เฉพาะรายการที่แก้" + ห้ามแตะ {…}, แท็ก HTML, ตัวเลข, อีโมจิ, [title]/[placeholder]
+- ใช้ข้อความจาก text_export_v58 → ตรวจด้วย MAP=text_export_v58/_map.json python3 tools/check_revised.py <part> (เพิ่มเช็ก 'tag' = แท็ก <…> และคำนำหน้า [title]) · สำเนาอยู่ที่ text_export_v58/parts05/
+
+## v59 (26 ก.ย. 2026) — ใส่สำนวนใหม่ไฟล์ 05 (UI) ครบ 3 ส่วน → งานแก้ข้อความ 01–05 เสร็จ
+- AI ส่งกลับเฉพาะรายการที่แก้: part1 55, part2 27, part3 33 = 115 รายการ (ตรวจกับ MAP=text_export_v58)
+- คำที่เปลี่ยนทั้งเกม: ออฟชั่น→ตั้งค่า (ปุ่ม/หน้าต่าง/เมนู/ปุ่มลัด), พาสสิฟ→ติดตัว (รวมคู่มือหน้า 10 ที่ผมตามแก้), แอ็คชั่นบาร์→แถบสกิล (รวมคู่มือหน้า 10 + toast unlockWeaponSkill), แอดเพื่อน→เพิ่มเพื่อน, ประตูวาป→ประตูเดินทาง, 0 Hit→ไร้รอยขีดข่วน, ใบ้/แบน (GM)→ระงับการแชท/ระงับบัญชี, ข้อความระบบกันโกง (ECON_FLAG/NET_BLOCK) สุภาพขึ้น
+- ผมแก้กลับ/เพิ่ม: "แต้มสถานะ"→"แต้มสเตตัส" (gainExp.2/.3, renderGearSummary.3, resetStatsBtn), "ติดมึนงง"→"ติดสตั้น", defeatPanel "จุดพัก"→"จุดเริ่มต้น", NET_BLOCK.20 "ถูกยกเว้น"→"ถูกปฏิเสธ", "ปราบมอนสเตอร์บอส"→"ปราบบอส", GM เตะ/แบน "ทันที"→"ภายในไม่กี่วินาที", showSkillTip.3 "กดตามจังหวะอาวุธ"→"ท่าพิเศษอาวุธ", "แผนที่"→"แมพ" 3 จุด, usePlayerSkill.4 "ป้องกันหรือสนับสนุน"→"ป้องกัน/ยูทิลิตี้", renderBagDetail.5 "กล่องรับฝากของ"→"ช่องฝากของ" · meditate label ใน JS (renderMeditatePanel.7) เปลี่ยนตาม HTML
+- วิธีใส่: tools/apply05.py — SRC แก้ตามตำแหน่งใน _map (v58) จากท้ายไฟล์ขึ้นมา ทีละบรรทัด ถ้าไม่เจอใช้ word-diff (difflib) แทนเฉพาะคำที่เปลี่ยนในช่วงนั้น · HTML ที่ซ้ำหลายจุด + showSkillTip.5 / artMissingWarn.1 (หลาย literal) แก้มือ
+- ตรวจ: text_export_v59/ ตรงทั้ง 115 + ต่างจาก v58 เพิ่มแค่ 3 ID ที่ตั้งใจ (GUIDE.page10, SRC.unlockWeaponSkill.2, SRC.renderMeditatePanel.7) · story_test, music_test, tut_e2e orb, ภาพหน้าสกิลอาวุธ/ปุ่มตั้งค่า
+
+## v60 (26 ก.ย. 2026) — จุดลับใหม่ 12 แบบ + บันทึกจุดลับลงเซฟ
+- ทุกแมพสุ่ม **5 จุด** (SECRET_LOCATIONS_PER_MAP) จาก 12 แบบ ไม่ซ้ำ · กระเป๋าคนส่งสาร/ซากปรักหักพัง (letter:true) ใช้ช่องเดียวกัน → จดหมายไม่เกิน 1 จุด/แมพ
+- เดิม 5: ถ้ำลับ (portal) · รูปปั้น (item) · ต้นไม้ (key) · บ้านร้าง (monster) · จุดจดหมาย (quest)
+- ใหม่ 7 (secretSpotInteract): 💠 สายแร่มานา หินมานา 1–3 · 🌸 ดอกไม้ดูดมานา sample_t<แมพ> 1–2 · 🎁 หีบสั่น เปิด: 60% ทอง 25–50 (+40% อุปกรณ์แบบรูปปั้น, chestsOpened++, saveGameNow ทันที) / 40% มิมิก = Elite (m.mimic) ชนะแล้ว mimicWon(): ทอง 30–50 + อุปกรณ์ 1 ชิ้น + chestsOpened++ · 💧 บ่อมานา ดื่ม: 70% เลือดเต็ม+สติ+20 / 30% สติ−15 · 🌫️ เสียงก้องฯ ฟัง: EXP อาวุธ (rank) 150+45×แมพ สติ−10 / ปลดปล่อย: สติ+10 (มีประโยค ECHO_LINES 5 แบบ ไม่สปอย) · 🕯️ ศาลเจ้า พร 2 นาที = monkBuff grade "shrine" (ชิป "🕯️ พรศาลเจ้า", ไม่ตัดพรพระที่ยาวกว่า) · 🗼 หอสังเกตการณ์ ทำ l.revealed ให้จุดที่เหลือ → แผนที่ย่อวาดเพชรทอง (revealed หรือ discovered ที่ยังไม่ used)
+- เสียงก้องให้ "EXP อาวุธ" แทน EXP ตัวละคร เพราะเซิร์ฟเวอร์ยอม EXP ตัวละครนอกการฆ่าแค่ ~80/เซฟ แต่ EXP อาวุธยอม 800/เซฟ → ไม่ต้องแก้ SQL · ทองหีบ ≤50 ตรงกับเผื่อ 50/หีบของเซิร์ฟเวอร์
+- จุดลับบันทึกลงเซฟ: game.secretSaved["dim:tier"] (SAVE_GAME_FIELDS) ผ่าน secretSpotsFor(tier) → รีเฟรชหน้าเว็บไม่สุ่มใหม่แล้ว (ปิดช่องฟาร์ม)
+- ทดสอบ t/secret_test.js: สุ่ม 3000 ครั้ง ได้ 5 จุดเสมอ ไม่ซ้ำ จดหมาย ≤1 · กดทุกแบบ · มิมิกชนะ · reload แล้วจุดเดิม · story_test, music_test, tut_e2e sword
+- ⚠️ ครั้งที่ 3: index.html ในเครื่องเจ้าของกลับเป็น v58 (20:19) ก่อนส่ง v60 — น่าจะมีโปรแกรมดึงไฟล์จาก GitHub มาทับ
+
+## v61 (26 ก.ย. 2026) — แก้ 4 จุดจากเจ้าของ (หลังเปิด repo กลับเป็น Public แล้วเกมใช้ได้)
+- ลานฝึก ขั้น PERFECT: ลูกศรชี้ไม่ตรงเพราะ #attackGauge มี translateX(-50%) แต่โค้ดใช้ offsetLeft (+ครึ่งเกจ) → tutFrame คำนวณจาก getBoundingClientRect แล้วหารสเกล zoom ของ offsetParent · ขั้น perfect ชี้ที่ #attackGaugePerfect (tg.focus)
+- ชื่อ/เลเวลบนหัวไม่คม: แคนวาสโลกสูง 720 แล้วยืด → เพิ่ม #labelCanvas (ทับ gameCanvas, ใต้ battleCanvas) · ระหว่าง renderOverworld() ทุก fillText/strokeText ของ ctx ถูกบันทึก (พร้อม transform/font/สี/เงา) แล้ว labelFlush() วาดซ้ำที่ความละเอียดจริงของจอ (dpr ≤2) · enterBattle ล้างชั้นนี้ · ถ้าไม่มี getTransform (harness) วาดตรงเหมือนเดิม · ชื่อตัวเอง/ผู้เล่นอื่น bold 13px, ข้อมูล bold 11px, ขอบดำ .75
+- รูปหน้า HUD: เดิม crop ตายตัวติดที่ว่างเหนือหัว → หา bbox ของพิกเซลตัวละคร แล้วครอปหัวถึงอก (64% ของความสูง) · แคนวาส 120×120 (แสดง 56px) คมขึ้น
+- เพลงชนะ jgl_victory ตัดเหลือ 3 วิ + fade 0.6 วิ (JINGLE_MAX_S ใน playJingle) · บอส/แพ้ยังเต็มเพลง
+- ทดสอบ: tut_e2e heavy (ภาพ heavy_4_perfect ลูกศรตรงโซนเขียว), t/v61_shots.js (1920×1080), jingle จำลอง Audio หยุดที่ 3.0 วิ, story_test, music_test, secret_test
