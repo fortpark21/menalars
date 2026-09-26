@@ -37,17 +37,10 @@ R("enterBattle(game.monsters.find(m => m.alive && !MONSTER_DEFS[m.type].isBoss))
 eq("fight", G("music.key"), "bgm_fight01");
 eq("fight starts at 0", G("Math.round(music.els[music.cur].currentTime)"), 0);
 eq("only fight audible", playing(), ["bgm_fight01"]);
-R("exitBattle('win')"); tick(1200);
-// v63: silent while the victory jingle plays, reward sounds wait in line
-eq("silent under jingle", G("music.jingle ? music.key : 'no-jingle'"), G("music.jingle ? null : 'no-jingle'"));
-eq("nothing audible under jingle", G("music.jingle ? music.els.filter(e => e && !e.paused && e.volume > 0.001).length : 0"), 0);
-R("sfxHold.queue.length = 0; sfx.levelUp(); sfx.coin(); sfx.levelUp()");
-eq("reward sfx queued once each", G("music.jingle ? sfxHold.queue.slice() : ['levelUp','coin']"), ["levelUp", "coin"]);
-R("if(music.jingle) music.jingle._l.ended.forEach(f => f())"); tick(100);
-eq("queue drains one at a time", G("sfxHold.queue.slice()"), ["coin"]);
+R("exitBattle('win')");
+// v64: no fanfare after a road-side monster — the map music simply carries on
+eq("no jingle after normal win", G("!!music.jingle"), false);
 tick(1200);
-eq("queue empty", G("sfxHold.queue.length"), 0);
-tick(3000);
 eq("back to map", G("music.key"), "bgm_map01");
 eq("map resumes near 60s", G("music.els[music.cur].currentTime >= 59"), true);
 // boss without boss track → fight01
@@ -65,7 +58,14 @@ R("exitBattle('win')"); tick(200);
 eq("victory jingle ducks", G("music.duckTarget"), 0.12);
 eq("jingle playing", G("!!music.jingle && !music.jingle.paused"), true);
 eq("boss win: no music under jingle", G("music.key"), null);
-R("music.jingle._l.ended.forEach(f => f())"); tick(800);
+eq("boss jingle capped at 7 s", G("JINGLE_MAX_S[music.jingle.src.includes('victory_boss') ? 'jgl_victory_boss' : 'jgl_victory']"), G("AUDIO.jgl_victory_boss ? 7 : 3"));
+tick(800); eq("nothing audible under jingle", G("music.els.filter(e => e && !e.paused && e.volume > 0.001).length"), 0);
+R("sfxHold.queue.length = 0; sfx.levelUp(); sfx.coin(); sfx.levelUp()");
+eq("reward sfx queued once each", G("sfxHold.queue.slice()"), ["levelUp", "coin"]);
+R("music.jingle._l.ended.forEach(f => f())"); tick(100);
+eq("queue drains one at a time", G("sfxHold.queue.slice()"), ["coin"]);
+tick(700);
+eq("queue empty", G("sfxHold.queue.length"), 0);
 eq("duck restored", G("music.duck"), 1);
 eq("map fades back in after jingle", G("music.key"), "bgm_map01");
 // a new fight right after a win cuts the leftover jingle

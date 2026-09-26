@@ -2,7 +2,7 @@
 
 เกม RPG บนเบราว์เซอร์ **ไฟล์เดียว** `index.html` (HTML/CSS/JS ล้วน ไม่มี framework/npm) + โฟลเดอร์ `assets/` (รูป .webp, เสียง .mp3)
 ออนไลน์ด้วย **Supabase** และโฮสต์บน **GitHub Pages** จาก repo นี้ (`fortpark21/menalars`, branch `main`) — ตอนนี้เป็น **เบต้า** (จะล้างเซิร์ฟก่อนเปิดจริง)
-เวอร์ชันล่าสุด: **`GAME_VERSION = 63`** (26 ก.ย. 2026) · ประวัติงานละเอียด v52–v63: `dev/docs/history-v52-v63.md`
+เวอร์ชันล่าสุด: **`GAME_VERSION = 64`** (26 ก.ย. 2026) · ประวัติงานละเอียด v52–v64: `dev/docs/history-v52-v64.md`
 
 ## 👤 เจ้าของ (Andy)
 - **ไม่ใช่โปรแกรมเมอร์** — อธิบายเป็น **ภาษาไทยง่ายๆ ทีละขั้น** ห้ามใช้ศัพท์เทคนิคโดยไม่อธิบาย
@@ -63,6 +63,7 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 - เสียง: `python3 tools/add_audio.py <bgm_|jgl_|sfx_key> <ไฟล์> ["ชื่อ"]` (ffmpeg ตัดเงียบ + loudnorm → assets/*.mp3 + บรรทัด `AUDIO`) แล้ว `dev/deliver.sh`
 - เคยสร้างเพลงด้วย Gemini (Lyria), SFX ด้วย ElevenLabs, รูปมอน/ฉากด้วย Gemini — Andy ต้องเป็นคนกดในบัญชีตัวเอง
 - เมื่อเพิ่มไฟล์ใน assets/ ต้องบอก Andy ว่ามีไฟล์ใหม่ (เขาเคยอัปโหลดไม่ครบ)
+- เซสชันคลาวด์ (Claude Code): เข้าเบราว์เซอร์ของ Andy ไม่ได้ → Andy เจนเอง แล้วอัปไฟล์ดิบที่หน้าแรก repo (Add file → Upload files) · ffmpeg: `pip install imageio-ffmpeg` + symlink/shim ffprobe · python http.server ไม่รองรับ Range (เพลงกระโดดกลางไม่ได้ในเทสต์ — ของจริงได้)
 
 ## 📝 ข้อความในเกม (text pipeline)
 - ส่งออกข้อความทั้งเกมให้ AI อื่นแก้สำนวน: `cd /tmp/mw/t && node ../tools/dump_text_data.js && cd .. && python3 tools/text_scan.py && python3 tools/build_text_export.py` → `/tmp/mw/text_export/` (01–05 .txt + `_map.json`)
@@ -72,4 +73,4 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 ## 🗺️ ยังไม่ได้ทำ / ข้อสังเกต
 - มอนธรรมดาแทบไม่ได้ตีผู้เล่น (ไฟต์สั้น), ค้อน DPS ต่ำกว่าอาวุธอื่น ~15%, วงกลมสื่อเวทย์ยาก, คริเพดาน 85% จากเลเวล, ยังไม่รัน sim รวมโบนัสฉายา
 - บอสโลก (มิติสูง), ปุ่มใช้ยา/สมุนไพร (ตอนนี้ขายได้อย่างเดียว), Realtime private channels, CAPTCHA สำหรับ Guest, SMTP ของตัวเองก่อนเปิดจริง
-- เพลงชนะบอส/แพ้ ยังยาวเต็มเพลง (ถ้า Andy อยากตัด ใช้ `JINGLE_MAX_S`)
+- เพลงแพ้ยังยาวเต็มเพลง (ชนะบอสตัด 7 วิแล้ว, ชนะมอนธรรมดาไม่มีเพลง — v64) · บอสทุกแมพยังใช้ bgm_boss เพลงเดียว
