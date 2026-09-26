@@ -2852,7 +2852,29 @@ function monsterStatsForLevel(level){
 // getMapBossLevelRequirement is only used to show a heads-up warning before an underleveled fight.
 const BOSS_HP_MULT = 2.3;     // boss tankiness over a same-level trash monster
 const BOSS_REWARD_MULT = 2.8; // exp/gold over a same-level trash monster
-const BOSS_COMBO_MULT = 1.3;  // the 3-hit combo bites a bit harder than the boss's regular single hit
+const BOSS_COMBO_MULT = 1.3;  // the combo bites a bit harder than the boss's regular single hit
+// v62: every map boss has ONE signature combo. groups = hits per burst; between bursts the boss pauses
+// (BOSS_COMBO_PAUSE_MS) and the player MAY attack/use skills — risky, the next burst comes right after.
+// Difficulty climbs by map: 3 slow hits → 5 hits with a feint and mirrored sides. Hits inside a burst keep
+// the old spacing (comboGap + telegraph ≥ 1 s), so they never come faster than the 1 s dodge cooldown.
+//   pause: [min,max] ms random pause (หยุดหลอก) · alternate: sides flip every hit · feint: one hit (not the 1st) switches side
+const BOSS_COMBO_PAUSE_MS = 1800;
+const BOSS_MOVES = [null,
+  { name:"ทุบพสุธาสามครา",   groups:[1,1,1] },
+  { name:"กรงเล็บพงไพร",     groups:[2,1] },
+  { name:"เปลวอัคคีซ้อน",     groups:[1,2] },
+  { name:"พายุหิมะสามสาย",   groups:[3] },
+  { name:"หินถล่มคู่",         groups:[2,2] },
+  { name:"โคลนพิษซุ่มกัด",    groups:[1,3], pause:[1200,3000] },
+  { name:"สะท้อนกระจกผลึก",  groups:[3,1], alternate:true },
+  { name:"สุริยะพิพากษา",     groups:[4] },
+  { name:"เงาลวงห้าคม",       groups:[2,3], feint:true },
+  { name:"สวรรค์ทัณฑ์ห้าครา", groups:[3,2], feint:true, alternate:true }
+];
+const BOSS_MOVE_DEFAULT = { name:"ท่าต่อเนื่อง", groups:[3] }; // เจ้าเมืองร่างหลอม (letter spy) keeps the old 3-hit combo
+function getBossMove(monster){ return (!monster.isSpyBoss && BOSS_MOVES[game.mapTier]) || BOSS_MOVE_DEFAULT; }
+function bossMovePattern(move){ return move.groups.map(n => "●".repeat(n)).join(" ｜ "); }
+function bossMoveHits(move){ return move.groups.reduce((a, n) => a + n, 0); }
 function getMapBossLevelRequirement(tier){ return Math.max(1, tier*10 - 5); } // "recommended" level — a soft heads-up, not a hard lock
 function getLevelGapPenaltyMult(monsterLevel){
   const gap = monsterLevel - game.player.level;
@@ -4970,7 +4992,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 61;
+const GAME_VERSION = 62;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -8733,7 +8755,7 @@ function spawnEffect(type, x, y, crit, masteryGlow, style){
   game.battle.effects.push({ type, x, y, start: performance.now(), duration: type === "impact" ? 260 : 200, crit: !!crit, masteryGlow: !!masteryGlow, style: style || null });
 }
 
-// usable during a boss's 3-hit combo (attacks + damage skills stay locked until it ends) — plus every utility:true weapon skill
+// usable during a boss's combo (attacks + damage skills stay locked until it ends) — plus every utility:true weapon skill
 const COMBO_SAFE_SKILLS = new Set(["guard", "heal", "haste"]);
 function usePlayerSkill(skillId){
   if(!game || !game.inBattle) return;
@@ -8751,7 +8773,7 @@ function usePlayerSkill(skillId){
     return;
   }
   const p = game.player, b = game.battle, m = b.monster;
-  if(b.isBoss && b.comboActive && !COMBO_SAFE_SKILLS.has(skillId) && !skillDef.utility){ showToast("ระหว่างท่าต่อเนื่องของบอส ใช้ได้เฉพาะสกิลป้องกัน/ยูทิลิตี้"); return; }
+  if(b.isBoss && b.comboActive && !COMBO_SAFE_SKILLS.has(skillId) && !skillDef.utility){ showToast("ระหว่างท่าต่อเนื่องของบอส ใช้ได้เฉพาะสกิลป้องกัน/ยูทิลิตี้ (รอจังหวะบอสหยุดพัก)"); return; }
   if(skillDef.weaponType){
     if(getEquippedWeaponMasteryType() !== skillDef.weaponType){
       showToast(`ต้องถือ${WEAPON_CATEGORIES[skillDef.weaponType].name}ถึงจะใช้ ${skillDef.name} ได้`);
@@ -9168,13 +9190,18 @@ function enterBattle(monster){
     bowTargetZone: null,       // set by rerollBowTargetZone() right after this object is built
     orbGestureShape: null,     // set by rerollOrbGestureShape() right after this object is built
     playerShake: 0,
-    // boss-only 3-hit combo: player may only dodge while comboActive is true
+    // boss-only signature combo (BOSS_MOVES): player may only dodge while comboActive is true;
+    // during a pause between bursts comboActive is false (attacks allowed) and comboPauseUntil > 0
     isBoss: def.isBoss,
+    bossMove: def.isBoss ? getBossMove(monster) : null,
     comboActive: false,
     comboStep: 0,
-    comboTotal: 3,
+    comboTotal: def.isBoss ? bossMoveHits(getBossMove(monster)) : 3,
     comboGap: def.comboGap || 550,
     nextComboHitAt: 0,
+    comboPauseUntil: 0,
+    comboFeintStep: -1,
+    comboLastSide: null,
     // combat log — shown on the victory/defeat summary panel afterward
     stats: {
       startedAt: performance.now(),
@@ -9202,7 +9229,7 @@ function enterBattle(monster){
   document.getElementById("victoryPanel").hidden = true;
   document.getElementById("defeatPanel").hidden = true;
   document.getElementById("hint").textContent = def.isBoss
-    ? "คลิกซ้ายเพื่อโจมตี · กด A/D เพื่อหลบ · ระวังท่าโจมตี 3 จังหวะของบอส!"
+    ? `คลิกซ้ายเพื่อโจมตี · กด A/D เพื่อหลบ · ระวังท่าประจำตัวของบอส «${game.battle.bossMove.name}» ${bossMovePattern(game.battle.bossMove)}`
     : (monster.isElite ? "⚡ ELITE! แข็งแกร่งกว่าปกติมาก · " : "") + "คลิกซ้ายเพื่อโจมตี · กด A เพื่อหลบซ้าย · กด D เพื่อหลบขวา · กด 1-8 ใช้สกิล";
   game.battle.baseHintText = document.getElementById("hint").textContent;
 }
@@ -9898,6 +9925,24 @@ window.addEventListener("keydown", (e)=>{
   closeAllPanels();
 });
 
+// v62: one hit of a boss's signature combo (BOSS_MOVES) — side (random / mirrored) + optional feint
+function startBossComboHit(b, now){
+  const move = b.bossMove || BOSS_MOVE_DEFAULT;
+  const side = move.alternate && b.comboLastSide ? oppositeSide(b.comboLastSide) : (Math.random() < 0.5 ? "left" : "right");
+  const isFeint = b.comboStep === b.comboFeintStep;
+  b.telegraphSide = side;
+  b.telegraphStart = now;
+  b.telegraphFeintAt = isFeint ? now + b.telegraphDuration * FEINT_SWITCH_AT : 0;
+  b.telegraphTotalMs = b.telegraphDuration + (isFeint ? Math.max(0, FEINT_MIN_REACT_MS - b.telegraphDuration * (1 - FEINT_SWITCH_AT)) : 0);
+  b.feintSwitchProgress = null;
+  extendTelegraph(b);
+}
+// true when the boss pauses after `hitsDone` hits (end of a burst that isn't the last one)
+function bossComboPausesAfter(move, hitsDone){
+  let sum = 0;
+  for(let i = 0; i < move.groups.length - 1; i++){ sum += move.groups[i]; if(sum === hitsDone) return true; }
+  return false;
+}
 // อ่านทาง (passive) / คำรามศึก (active charges) lengthen a freshly started warning.
 function extendTelegraph(b){
   const read = fx("read_intent");
@@ -9935,6 +9980,7 @@ function updateBattle(){
     b.stunnedUntil = 0; b.stunGauge = STUN_GAUGE_MAX * fx("mountain")/100; // ภูผา keeps part of the bar
     b.nextAttackAt = Math.max(b.nextAttackAt, now + 1200);
     b.nextComboHitAt = Math.max(b.nextComboHitAt, now + 1200);
+    if(b.comboPauseUntil) b.comboPauseUntil = Math.max(b.comboPauseUntil, now + 1200);
     document.getElementById("hint").textContent = b.baseHintText;
   } else if(b.stunGauge > 0 && now - b.stunLastFillAt > STUN_DECAY_DELAY_MS && !fx("mountain")){
     b.stunGauge = Math.max(0, b.stunGauge - STUN_DECAY_PER_SEC * dtMs / 1000);
@@ -9946,19 +9992,23 @@ function updateBattle(){
   }
 
   if(!stunned && b.telegraphSide === null){
-    if(b.isBoss && b.comboActive){
-      if(now >= b.nextComboHitAt){
-        b.telegraphSide = Math.random() < 0.5 ? "left" : "right";
-        b.telegraphStart = now;
-        b.telegraphTotalMs = b.telegraphDuration; b.feintSwitchProgress = null;
-        extendTelegraph(b);
-      }
-    } else if(now >= b.nextAttackAt){
-      if(b.isBoss){
+    if(b.isBoss && b.comboPauseUntil){
+      if(now >= b.comboPauseUntil){ // pause over — next burst
+        b.comboPauseUntil = 0;
         b.comboActive = true;
-        b.comboStep = 0;
-        spawnBattleMsg("บอสออกท่าโจมตี 3 จังหวะ! หลบให้พ้น!", "#ffb84d", "info");
+        startBossComboHit(b, now);
       }
+    } else if(b.isBoss && b.comboActive){
+      if(now >= b.nextComboHitAt) startBossComboHit(b, now);
+    } else if(now >= b.nextAttackAt && b.isBoss){
+      const move = b.bossMove;
+      b.comboActive = true;
+      b.comboStep = 0;
+      b.comboLastSide = null;
+      b.comboFeintStep = move.feint && !b.training ? randInt(1, b.comboTotal - 1) : -1;
+      spawnBattleMsg(`«${move.name}» ${bossMovePattern(move)}`, "#ffb84d", "info");
+      startBossComboHit(b, now);
+    } else if(now >= b.nextAttackAt){
       b.telegraphSide = Math.random() < 0.5 ? "left" : "right";
       b.telegraphStart = now;
       const feint = !b.isBoss && getFeintChance();
@@ -10063,6 +10113,7 @@ function updateBattle(){
         if(p.hp <= 0){ exitBattle("lose"); return; }
       }
     }
+    if(b.isBoss) b.comboLastSide = b.telegraphSide; // mirrored moves (alternate) flip from where the last hit really landed
     b.telegraphSide = null;
     b.dodgeSide = "center"; // must dodge fresh for every incoming attack, no camping on one side
 
@@ -10073,6 +10124,12 @@ function updateBattle(){
         spawnBattleMsg("จบท่าต่อเนื่องแล้ว! โจมตีสวนได้เลย!", "#7CE0A8", "info");
         const [lo, hi] = b.attackIntervalRange;
         b.nextAttackAt = now + randInt(lo, hi);
+      } else if(bossComboPausesAfter(b.bossMove, b.comboStep)){ // gap between bursts: the player may strike
+        const pr = b.bossMove.pause;
+        b.comboActive = false;
+        b.comboPauseUntil = now + (pr ? randInt(pr[0], pr[1]) : BOSS_COMBO_PAUSE_MS);
+        spawnCallout("เปิดช่อง! ตีได้", "#7CE0A8");
+        spawnBattleMsg(`อีก ${b.comboTotal - b.comboStep} จังหวะตามมา!`, "#ffb84d", "info");
       } else {
         b.nextComboHitAt = now + b.comboGap;
       }
@@ -10683,7 +10740,7 @@ const TUTORIAL_STEPS = [
   { title: "🪄 สื่อเวทย์ — โบนัสสูงสุด ต้องมีสมาธิ", text: // ORB_GESTURE_BONUS_MULT / ORB_REQUIRED_DEG
     "อินพุต: โจทย์บอกให้วาด วงกลม (270°) / ครึ่งวงบน / ครึ่งวงล่าง (130°) → กดค้างลากวาดรูปนั้น ปล่อยตอนเกจอยู่โซนเขียว = ARCANE CIRCLE x1.35\n\nมีเกจองศาข้างเคอร์เซอร์ระหว่างวาด และแจ้งเหตุผลหากพลาด\n\nจุดเด่น: โบนัสสูงสุด แต่ ATK ต่ำสุดและเติมสตั้นช้าที่สุด\n\nรีดดาเมจ:\n• เริ่มวาดตั้งแต่เกจอยู่ช่วงกลาง ให้เสร็จพอดีโซนเขียว\n• Arcane Circle แล้วกด 🌀 คลื่นมานา (ดูดพลังชีวิตกลับคืน)" },
   { title: "หลบ & สวนกลับ", text: // PERFECT_DODGE_WINDOW_MS / COUNTER_WINDOW_MS / COUNTER_DAMAGE_MULT
-    "มีสัญญาณเตือนซ้ายหรือขวา → กด A หลบซ้าย / D หลบขวา (ต้องกดหลบใหม่ทุกครั้ง)\n\n• หลบช่วง 0.3 วิสุดท้าย = หลบเฉียบขาด → คลิกภายใน 1.2 วิ ได้สวนกลับ x1.3 โดนแน่นอน\n• ระวังคำว่า \"หลอก!\" มอนสเตอร์สลับฝั่งกลางทาง แต่จะมีเวลาให้กดหลบใหม่เสมอ\n• มอนสเตอร์เลเวลสูงกว่า / แมพลึก สัญญาณเตือนจะสั้นลง\n• บอสมีท่าผสม 3 จังหวะ ช่วงนั้นโจมตีไม่ได้ — ให้หลบ หรือใช้สกิลป้องกัน/ยูทิลิตี้" },
+    "มีสัญญาณเตือนซ้ายหรือขวา → กด A หลบซ้าย / D หลบขวา (ต้องกดหลบใหม่ทุกครั้ง)\n\n• หลบช่วง 0.3 วิสุดท้าย = หลบเฉียบขาด → คลิกภายใน 1.2 วิ ได้สวนกลับ x1.3 โดนแน่นอน\n• ระวังคำว่า \"หลอก!\" มอนสเตอร์สลับฝั่งกลางทาง แต่จะมีเวลาให้กดหลบใหม่เสมอ\n• มอนสเตอร์เลเวลสูงกว่า / แมพลึก สัญญาณเตือนจะสั้นลง\n• บอสแต่ละตัวมีท่าประจำตัว (3–5 จังหวะ) ระหว่างจังหวะโจมตีไม่ได้ — ให้หลบ หรือใช้สกิลป้องกัน/ยูทิลิตี้\n• ถ้าบอสหยุดพักกลางท่า (ป้าย \"เปิดช่อง!\") ตีได้ แต่จังหวะถัดไปจะตามมาทันที" },
   { title: "ทำให้มอนสเตอร์ติดสตั้น", text: // STUN_* constants
     "ทุกการโจมตีจะเติมหลอดสีส้มใต้แถบเลือดมอนสเตอร์ (Perfect x1.5, อินพุตอาวุธ x1.5, สกิล x2, สวนกลับ x1.5) หากหยุดตี 2 วิ หลอดจะค่อยๆ ลดลง\n\nหลอดเต็ม = มอนสเตอร์มึนงง 2 วิ (บอส 1.5 วิ) โจมตีกลับไม่ได้:\n• รัวคลิกซ้าย (สูงสุด 10 ครั้ง/วิ) หรือกดค้าง (4 ครั้ง/วิ)\n\nElite และบอสต้านทานสตั้น จึงเติมหลอดได้ช้ากว่าปกติ" },
   { title: "สกิล & ต้นสกิลอาวุธ", text:
