@@ -4685,12 +4685,12 @@ const DIM_REWARD_STEP = 0.3;      // EXP/gold per layer
 const DIM_RITUAL_STAT_POINTS = 3; // permanent stat points per ritual (on top of a free respec)
 const DIM_RULE_EVERY = 3;         // layer 2 has 1 law, +1 law every 3 layers (5, 8, 11 …); repeats stack
 const DIM_RULES = [
-  { id:"gale",      icon:"🌪️", name:"ลมกรด",      desc:"มอนสเตอร์จู่โจมถี่ขึ้น (ช่วงห่างการโจมตี x0.85)", mult:0.85 },
-  { id:"quake",     icon:"🌍", name:"แผ่นดินไหว", desc:"มอนสเตอร์ต้านทานสถานะสตั้น (เติมหลอดสตั้นได้ x0.75)",     mult:0.75 },
-  { id:"sunburn",   icon:"☀️", name:"สุริยะเผา",  desc:"สติลดลงเร็วกว่าปกติ x1.5",                         mult:1.5 },
-  { id:"rainstorm", icon:"⛈️", name:"พายุฝน",     desc:"มอนสเตอร์ระดับ Elite ปรากฏตัวบ่อยขึ้น x2",                      mult:2 },
-  { id:"stoneskin", icon:"🪨", name:"ผิวศิลา",    desc:"มอนสเตอร์มีพลังชีวิตเพิ่มขึ้น (HP x1.25)",                               mult:1.25 },
-  { id:"razor",     icon:"🔪", name:"คมมานา",     desc:"มอนสเตอร์โจมตีรุนแรงขึ้น (ดาเมจ x1.2)",                          mult:1.2 }
+  { id:"gale",      icon:"🌪️", name:"ลมกรด",      desc:"มอนสเตอร์โจมตีถี่ขึ้น (ช่วงห่างการโจมตี x0.85)", mult:0.85 },
+  { id:"quake",     icon:"🌍", name:"แผ่นดินไหว", desc:"มอนสเตอร์ต้านสตั้น (เติมหลอดสตั้นได้ x0.75)",     mult:0.75 },
+  { id:"sunburn",   icon:"☀️", name:"สุริยะเผา",  desc:"สติลดเร็วขึ้น x1.5",                         mult:1.5 },
+  { id:"rainstorm", icon:"⛈️", name:"พายุฝน",     desc:"Elite เกิดบ่อยขึ้น x2",                      mult:2 },
+  { id:"stoneskin", icon:"🪨", name:"ผิวศิลา",    desc:"มอนสเตอร์ HP x1.25",                               mult:1.25 },
+  { id:"razor",     icon:"🔪", name:"คมมานา",     desc:"มอนสเตอร์ตีแรงขึ้น x1.2",                          mult:1.2 }
 ];
 function getDimRuleList(dim){
   const count = dim < 2 ? 0 : 1 + Math.floor((dim - 2) / DIM_RULE_EVERY);
@@ -4943,7 +4943,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 57;
+const GAME_VERSION = 58;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -6026,9 +6026,9 @@ const ITEM_TABLE = [
   { id: "sample_t9",  name: "เศษเงาที่มีชีวิต",    icon: "🌑", desc: "ตัวอย่างมานาจากห้วงเงามืด — ส่งให้นักวิจัย" },
   { id: "sample_t10", name: "ขนนกสวรรค์",         icon: "🪶", desc: "ตัวอย่างมานาจากบัลลังก์สวรรค์ — ส่งให้นักวิจัย" },
   // 📜 main-story quest items (not sellable, handed in to the NPC)
-  { id: "bark_tag",        name: "ป้ายชื่อบนเปลือกไม้", icon: "🪵", quest: true, desc: "ไอเทมภารกิจ — ป้ายชื่อของผู้ร่วมเดินทางที่ถูกเปลือกไม้กลืนกินไปครึ่งหนึ่ง" },
-  { id: "barrier_lantern", name: "ตะเกียงบาเรีย",       icon: "🏮", quest: true, desc: "ไอเทมภารกิจ — ชิ้นส่วนประกายแสงของบาเรียที่ถูกช่วงชิงไป" },
-  { id: "inscribed_wrap",  name: "ผ้าพันแผลจารึก",      icon: "📜", quest: true, desc: "ไอเทมภารกิจ — ผืนผ้าที่ผู้รอดชีวิตจากคลื่นครั้งก่อนจารึกเจตจำนงของตนเองไว้" }
+  { id: "bark_tag",        name: "ป้ายชื่อบนเปลือกไม้", icon: "🪵", quest: true, desc: "ไอเทมเควส — ป้ายชื่อของผู้ร่วมเดินทางที่ถูกเปลือกไม้กลืนไปครึ่งหนึ่ง" },
+  { id: "barrier_lantern", name: "ตะเกียงบาเรีย",       icon: "🏮", quest: true, desc: "ไอเทมเควส — ชิ้นส่วนเล็กๆ ของบาเรียที่ถูกขโมยไป" },
+  { id: "inscribed_wrap",  name: "ผ้าพันแผลจารึก",      icon: "📜", quest: true, desc: "ไอเทมเควส — ผ้าที่ผู้รอดจากคลื่นครั้งก่อนเขียนเจตจำนงของตัวเองไว้" }
 ];
 
 /* ============================================================
@@ -6234,7 +6234,7 @@ const CARD_DEFS = {
   skeleton_card:    { name: "การ์ดนักเดินทางไม้ผุ", rarity: "rare", icon: "🃏", desc: "การ์ดที่ระลึกจากนักเดินทางไม้ผุ" },
   stone_king_card:  { name: "การ์ดราชันย์หินยักษ์",  rarity: "legendary", icon: "🃏", desc: "การ์ดหายากจากราชันย์หินยักษ์" },
   // unknown item — shows "???" until the player has obtained it once, then reveals its true identity
-  kings_oath_secret:{ name: "คำสาบานแห่งราชันย์", secretName: "???", rarity: "legendary", icon: "👑", secretIcon: "❓", isSecret: true, desc: "สมบัติลับที่ซ่อนเร้นอยู่ใต้ร่างของราชันย์หินยักษ์" }
+  kings_oath_secret:{ name: "คำสาบานแห่งราชันย์", secretName: "???", rarity: "legendary", icon: "👑", secretIcon: "❓", isSecret: true, desc: "สมบัติลับที่ซ่อนอยู่ภายใต้ร่างของราชันย์หินยักษ์" }
 };
 
 // Each monster type (index matches MONSTER_DEFS) has its own independent drop rows.
@@ -6777,7 +6777,7 @@ const TITLE_DEFS = [
   mkTitle("flawless_blade",  "combat", 2, "🌙", "ดาบไร้ที่ติ",               "ตี Perfect รวม 3,000 ครั้ง",             3000,  "perfectHits", { MEDITATE:6 }),
   mkTitle("rhythm_sage",     "combat", 3, "🎼", "ผู้หยั่งรู้จังหวะสวรรค์",    "ตี Perfect รวม 15,000 ครั้ง",            15000, "perfectHits", { MEDITATE:10 }),
   mkTitle("perfect_warrior", "combat", 3, "✨", "นักรบสมบูรณ์แบบ",           "ตี Perfect ติดกัน 50 ครั้งในไฟต์เดียว",   50,    "bestPerfectStreak", { MEDITATE:5, DEX:5 }, { alias:["Perfect Warrior"] }),
-  mkTitle("swaying_shadow",  "combat", 1, "🍃", "เงาพริ้วไหว",               "หลบแบบ Perfect รวม 50 ครั้ง",            50,    "perfectDodges", { AGI:3 }),
+  mkTitle("swaying_shadow",  "combat", 1, "🍃", "เงาพลิ้วไหว",               "หลบแบบ Perfect รวม 50 ครั้ง",            50,    "perfectDodges", { AGI:3 }),
   mkTitle("formless_wind",   "combat", 2, "🌪️", "สายลมไร้รูป",               "หลบแบบ Perfect รวม 500 ครั้ง",           500,   "perfectDodges", { AGI:6 }),
   mkTitle("shadowless",      "combat", 3, "👤", "ผู้ไร้เงา",                 "หลบแบบ Perfect รวม 2,500 ครั้ง",         2500,  "perfectDodges", { AGI:10 }),
   mkTitle("counter_art",     "combat", 1, "🔄", "ศิลปะแห่งการสวนกลับ",       "โจมตีสวนกลับรวม 50 ครั้ง",               50,    "counters",    { STR:3 }),
@@ -6808,7 +6808,7 @@ const TITLE_DEFS = [
   mkTitle("story_c3",        "adventure", 2, "🗿", "ผู้ถอดรหัสพันปี",            "จบเนื้อเรื่องหลักบทที่ 3",                3,     "chapters",    { DEX:6 }),
   mkTitle("story_c5",        "adventure", 2, "⛏️", "ผู้ฟังเสียงกระซิบใต้พิภพ",   "จบเนื้อเรื่องหลักบทที่ 5",                5,     "chapters",    { VIT:6 }),
   mkTitle("story_c7",        "adventure", 2, "🏮", "ผู้พามิวกลับบ้าน",           "จบเนื้อเรื่องหลักบทที่ 7",                7,     "chapters",    { LUK:6 }),
-  mkTitle("story_c10",       "adventure", 3, "🛕", "ผู้จุดบาเรียทั้งสิบ",          "สำเร็จเนื้อเรื่องหลักครบทั้ง 10 บท",              10,    "chapters",    { MEDITATE:5, STR:5 }),
+  mkTitle("story_c10",       "adventure", 3, "🛕", "ผู้จุดบาเรียทั้งสิบ",          "จบเนื้อเรื่องหลักครบ 10 บท",              10,    "chapters",    { MEDITATE:5, STR:5 }),
   mkTitle("whisper_listener","adventure", 1, "👂", "ผู้รับฟังเสียงกระซิบ",        "ฟังผู้เผยแผ่ชุดขาวพูดจนจบ",               1,     "listened",    { LUK:3 }, { secret:true, hint:"ฉายาลับ — บางคำพูด ต้องฟังให้จบก่อนตัดสิน" }),
   mkTitle("secret_seeker",   "adventure", 1, "🔍", "นักตามหาความลับ",        "ค้นพบจุดลับ 5 แห่ง",                     5,     "secrets",     { LUK:3 }),
   mkTitle("secret_keeper",   "adventure", 2, "🗝️", "ผู้ไขปริศนาแห่งพงไพร",    "ค้นพบจุดลับ 30 แห่ง",                    30,    "secrets",     { LUK:6 }),
@@ -7770,10 +7770,10 @@ const SANITY_PENALTY_FLOOR = 25;    // the stat penalty stops growing here (max 
 //   below 30: A and D are swapped (A dodges right, D dodges left)
 //   below 15: the right part of the battle screen (where the monster stands) sinks into ~90% darkness
 const SANITY_MADNESS = [
-  { below:50, name:"ภาพหลอน",         desc:"สัญญาณเตือนการโจมตีจะปรากฏขึ้นทั้งสองฝั่งพร้อมกัน จนแยกไม่ออกว่าฝั่งใดคือของจริง", tag:"เตือนสองฝั่ง" },
-  { below:30, name:"สับสนทิศทาง",     desc:"การควบคุมกลับด้าน — กด A หลบไปทางขวา กด D หลบไปทางซ้าย", tag:"A↔D สลับ" },
-  { below:15, name:"ความมืดกลืนกิน", desc:"บดบังทัศนวิสัย — ครึ่งจอด้านขวาขณะต่อสู้จะมืดสนิทจนมองแทบไม่เห็นมอนสเตอร์", tag:"มืดบอด" },
-  { below:7,  name:"สติแตกสลาย",      desc:"ไม่สามารถใช้สกิลได้โดยสิ้นเชิง และศีรษะจะกลายสภาพเป็นหัวสัตว์ — ผู้เล่นคนอื่นสามารถมองเห็นได้", tag:"ห้ามสกิล" }
+  { below:50, name:"ภาพหลอน",         desc:"สัญญาณเตือนการโจมตีขึ้นทั้งสองฝั่ง แยกไม่ออกว่าฝั่งไหนของจริง", tag:"เตือนสองฝั่ง" },
+  { below:30, name:"สับสนทิศทาง",     desc:"กด A กลับหลบไปทางขวา กด D กลับหลบไปทางซ้าย", tag:"A↔D สลับ" },
+  { below:15, name:"ความมืดกลืนกิน", desc:"ครึ่งจอด้านขวาตอนต่อสู้มืดสนิท มองแทบไม่เห็นมอนสเตอร์", tag:"มืดบอด" },
+  { below:7,  name:"สติแตกสลาย",      desc:"ใช้สกิลไม่ได้เลย และหัวกลายเป็นหัวสัตว์ — ผู้เล่นคนอื่นก็เห็น", tag:"ห้ามสกิล" }
 ];
 // v47: below 7 the head turns into one of these (random each time) — stored in look.madHead so the online
 // presence carries it and everyone nearby sees it too; it goes away once Sanity climbs back to 7+
@@ -8189,19 +8189,19 @@ const SKILL_PROFICIENCY_EXP_PER_LEVEL = 150; // flat per level — landing that 
 const WEAPON_SKILL_TREES = {
   sword: { tiers: [
     { unlockRankIndex:1, points:2, skills:[ { id:"triple_slash", active:true },
-      { id:"riposte",        name:"ปัดป้อง",      icon:"💨", desc:"เมื่อหลบเฉียบขาดสำเร็จ ช่วงเวลาเปิดโอกาสโต้กลับจะนานขึ้น + โจมตีสวนกลับรุนแรงขึ้น", effectPerLevel:40, suffix:"%" },
+      { id:"riposte",        name:"ปัดป้อง",      icon:"💨", desc:"หลบสมบูรณ์แบบแล้ว หน้าต่างโต้กลับนานขึ้น + สวนกลับแรงขึ้น", effectPerLevel:40, suffix:"%" },
       { id:"swift_blade",    name:"ดาบไว",        icon:"⚡", desc:"ได้ Speed Boost อัตโนมัติหลังตี Perfect", effectPerLevel:900, suffix:"ms" } ]},
     { unlockRankIndex:3, points:2, skills:[ { id:"parry_stance", active:true },
       { id:"double_riposte", name:"สวนสองจังหวะ", icon:"✌️", desc:"สวนกลับฟันซ้ำอีกครั้ง", effectPerLevel:30, suffix:"% ดาเมจครั้งที่ 2" },
       { id:"wind_step",      name:"ลมใต้ดาบ",     icon:"🍃", desc:"Perfect Slash ลดคูลดาวน์หลบ", effectPerLevel:200, suffix:"ms" } ]},
     { unlockRankIndex:5, points:2, skills:[ { id:"blink_step", active:true },
-      { id:"flow_rhythm",    name:"จังหวะไหล",    icon:"🌊", desc:"หลบสมบูรณ์แบบแต่ละครั้งเพิ่ม ATK สะสม (สูงสุด 3 ชั้น) หายเมื่อโดนตี", effectPerLevel:4, suffix:"% ATK/ชั้น" },
-      { id:"keen_edge",      name:"คมกริบ",       icon:"🔪", desc:"Perfect Slash มีโอกาสคริเพิ่ม", effectPerLevel:12, suffix:"%" } ]},
+      { id:"flow_rhythm",    name:"จังหวะไหล",    icon:"🌊", desc:"หลบสมบูรณ์แบบแต่ละครั้งเพิ่ม ATK สะสม (สูงสุด 3 ชั้น) หายไปเมื่อโดนตี", effectPerLevel:4, suffix:"% ATK/ชั้น" },
+      { id:"keen_edge",      name:"คมกริบ",       icon:"🔪", desc:"Perfect Slash มีโอกาสคริติคอลเพิ่ม", effectPerLevel:12, suffix:"%" } ]},
     { unlockRankIndex:7, points:2, skills:[ { id:"expose_weakness", active:true },
-      { id:"rapid_flurry",   name:"ฟันรัว",       icon:"💫", desc:"ฮิตรัวตอนมอนสตั้นแรงขึ้น (ปกติ 60%)", effectPerLevel:2.3, suffix:"% ต่อฮิต" },
-      { id:"read_intent",    name:"อ่านทาง",      icon:"👁️", desc:"สัญญาณเตือนการโจมตีของมอนยาวขึ้น", effectPerLevel:30, suffix:"ms" } ]},
+      { id:"rapid_flurry",   name:"ฟันรัว",       icon:"💫", desc:"ฮิตรัวตอนมอนสเตอร์ติดสตั้นแรงขึ้น (ปกติ 60%)", effectPerLevel:2.3, suffix:"% ต่อฮิต" },
+      { id:"read_intent",    name:"อ่านทาง",      icon:"👁️", desc:"สัญญาณเตือนการโจมตีของมอนสเตอร์ยาวขึ้น", effectPerLevel:30, suffix:"ms" } ]},
     { unlockRankIndex:9, points:2, skills:[ { id:"thousand_blades", active:true },
-      { id:"lethal_counter", name:"สวนสังหาร",    icon:"☠️", desc:"สวนกลับคริแน่นอน และแรงขึ้น", effectPerLevel:8, suffix:"% ดาเมจ" },
+      { id:"lethal_counter", name:"สวนสังหาร",    icon:"☠️", desc:"สวนกลับติดคริติคอลแน่นอน และแรงขึ้น", effectPerLevel:8, suffix:"% ดาเมจ" },
       { id:"shadowless",     name:"ดาบไร้เงา",    icon:"🌑", desc:"หน้าต่าง EMPOWERED ยาวขึ้น (ปกติ 1.5 วิ)", effectPerLevel:1500, suffix:"ms" } ]}
   ]},
   heavy: { tiers: [
@@ -8209,51 +8209,51 @@ const WEAPON_SKILL_TREES = {
       { id:"juggernaut",     name:"ทะลวง",        icon:"🛡️", desc:"ลดดาเมจที่ได้รับ 2.5 วิ หลังใช้โจมตีหนัก", effectPerLevel:9, suffix:"%" },
       { id:"armor_break",    name:"ทลายเกราะ",    icon:"💥", desc:"ศัตรูรับดาเมจเพิ่ม 2.5 วิ หลังโดนโจมตีหนัก", effectPerLevel:3, suffix:"%" } ]},
     { unlockRankIndex:3, points:2, skills:[ { id:"war_cry", active:true },
-      { id:"stone_skin",     name:"ผิวหิน",       icon:"🪨", desc:"ระหว่างกดค้างชาร์จ ลดดาเมจที่ได้รับ", effectPerLevel:8, suffix:"%" },
-      { id:"earthshaker",    name:"สั่นสะเทือน",  icon:"🌍", desc:"Charged Strike เติมหลอดสตั้นเพิ่ม", effectPerLevel:15, suffix:"% สตั้น" } ]},
+      { id:"stone_skin",     name:"ผิวหิน",       icon:"🪨", desc:"ระหว่างกดค้างชาร์จ จะช่วยลดดาเมจที่ได้รับ", effectPerLevel:8, suffix:"%" },
+      { id:"earthshaker",    name:"สั่นสะเทือน",  icon:"🌍", desc:"Charged Strike เติมหลอดสตั้นเพิ่มขึ้น", effectPerLevel:15, suffix:"% สตั้น" } ]},
     { unlockRankIndex:5, points:2, skills:[ { id:"brace", active:true },
-      { id:"momentum",       name:"แรงเหวี่ยง",   icon:"🌀", desc:"ขยายระยะ Perfect Zone ให้กว้างขึ้น", effectPerLevel:1.5, suffix:"% ของหลอด", always:true },
-      { id:"pound",          name:"ทุบซ้ำ",       icon:"🔨", desc:"มอนติดสตั้นรับดาเมจเพิ่ม", effectPerLevel:6, suffix:"%" } ]},
+      { id:"momentum",       name:"แรงเหวี่ยง",   icon:"🌀", desc:"Perfect Zone กว้างขึ้น", effectPerLevel:1.5, suffix:"% ของหลอด", always:true },
+      { id:"pound",          name:"ทุบซ้ำ",       icon:"🔨", desc:"มอนสเตอร์ติดสตั้นจะรับดาเมจเพิ่มขึ้น", effectPerLevel:6, suffix:"%" } ]},
     { unlockRankIndex:7, points:2, skills:[ { id:"quake_slam", active:true },
-      { id:"stand_firm",     name:"ยืนหยัด",      icon:"🗿", desc:"HP ต่ำกว่า 30% ได้ DEF เพิ่ม", effectPerLevel:15, suffix:"% DEF" },
-      { id:"crush",          name:"ขยี้",         icon:"🫳", desc:"มอนมึนนานขึ้น", effectPerLevel:150, suffix:"ms" } ]},
+      { id:"stand_firm",     name:"ยืนหยัด",      icon:"🗿", desc:"HP ต่ำกว่า 30% จะได้ DEF เพิ่มขึ้น", effectPerLevel:15, suffix:"% DEF" },
+      { id:"crush",          name:"ขยี้",         icon:"🫳", desc:"มอนสเตอร์มึนงงนานขึ้น", effectPerLevel:150, suffix:"ms" } ]},
     { unlockRankIndex:9, points:2, skills:[ { id:"sky_breaker", active:true },
-      { id:"mountain",       name:"ภูผา",         icon:"⛰️", desc:"หลอดสตั้นไม่ลดลงเอง + เหลือค้างไว้หลังมึนจบ", effectPerLevel:14, suffix:"% หลอดคงเหลือ", always:true },
-      { id:"rift",           name:"แผ่นดินแยก",   icon:"🕳️", desc:"บอสต้านสตั้นน้อยลง (ปกติเติมได้ 50%)", effectPerLevel:13, suffix:"% เติมเพิ่ม", always:true } ]}
+      { id:"mountain",       name:"ภูผา",         icon:"⛰️", desc:"หลอดสตั้นไม่ลดลงเอง + เหลือค้างไว้หลังหายมึน", effectPerLevel:14, suffix:"% หลอดคงเหลือ", always:true },
+      { id:"rift",           name:"แผ่นดินแยก",   icon:"🕳️", desc:"บอสต้านทานสตั้นน้อยลง (ปกติเติมได้ 50%)", effectPerLevel:13, suffix:"% เติมเพิ่ม", always:true } ]}
   ]},
   bow: { tiers: [
     { unlockRankIndex:1, points:2, skills:[ { id:"deadeye_shot", active:true },
-      { id:"kiting_step",    name:"ก้าวถอยยิง",   icon:"🦶", desc:"เมื่อหลบหลีกสำเร็จ การโจมตีศรนัดถัดไปจะรุนแรงขึ้น", effectPerLevel:10, suffix:"%" },
-      { id:"eagle_eye",      name:"ตาเหยี่ยว",    icon:"🦅", desc:"Called Shot มีโอกาสคริเพิ่ม", effectPerLevel:8, suffix:"%" } ]},
+      { id:"kiting_step",    name:"ก้าวถอยยิง",   icon:"🦶", desc:"หลบสำเร็จแล้ว การยิงนัดถัดไปจะแรงขึ้น", effectPerLevel:10, suffix:"%" },
+      { id:"eagle_eye",      name:"ตาเหยี่ยว",    icon:"🦅", desc:"Called Shot มีโอกาสคริติคอลเพิ่มขึ้น", effectPerLevel:8, suffix:"%" } ]},
     { unlockRankIndex:3, points:2, skills:[ { id:"retreat_shot", active:true },
-      { id:"quick_eye",      name:"สายตาไว",      icon:"🔎", desc:"จุดเป้าบนตัวมอนใหญ่ขึ้น", effectPerLevel:10, suffix:"% ขนาด", always:true },
-      { id:"twin_arrow",     name:"ลูกดอกคู่",    icon:"🏹", desc:"โอกาสยิงซ้ำลูกที่ 2 (50% ดาเมจ)", effectPerLevel:6, suffix:"% โอกาส" } ]},
+      { id:"quick_eye",      name:"สายตาไว",      icon:"🔎", desc:"จุดเป้าบนตัวมอนสเตอร์จะใหญ่ขึ้น", effectPerLevel:10, suffix:"% ขนาด", always:true },
+      { id:"twin_arrow",     name:"ลูกดอกคู่",    icon:"🏹", desc:"มีโอกาสยิงซ้ำลูกที่ 2 (50% ดาเมจ)", effectPerLevel:6, suffix:"% โอกาส" } ]},
     { unlockRankIndex:5, points:2, skills:[ { id:"pinning_arrow", active:true },
-      { id:"safe_range",     name:"ระยะปลอดภัย",  icon:"📏", desc:"6 วิหลังตรึง ลดดาเมจที่ได้รับ", effectPerLevel:21, suffix:"%" },
-      { id:"steady_breath",  name:"ลมหายใจนิ่ง",  icon:"🫁", desc:"Called Shot ติดกัน ดาเมจสะสม (สูงสุด 3 ชั้น)", effectPerLevel:4.6, suffix:"%/ชั้น" } ]},
+      { id:"safe_range",     name:"ระยะปลอดภัย",  icon:"📏", desc:"6 วิหลังใช้ธนูตรึง จะช่วยลดดาเมจที่ได้รับ", effectPerLevel:21, suffix:"%" },
+      { id:"steady_breath",  name:"ลมหายใจนิ่ง",  icon:"🫁", desc:"Called Shot ต่อเนื่อง จะเพิ่มดาเมจสะสม (สูงสุด 3 ชั้น)", effectPerLevel:4.6, suffix:"%/ชั้น" } ]},
     { unlockRankIndex:7, points:2, skills:[ { id:"true_sight", active:true },
-      { id:"hunter",         name:"นักล่า",       icon:"🐺", desc:"มอน HP ต่ำกว่า 30% รับดาเมจเพิ่ม", effectPerLevel:8, suffix:"%" },
-      { id:"shadow_veil",    name:"เงาเร้น",      icon:"🌫️", desc:"โอกาสหลบอัตโนมัติเมื่อกำลังจะโดนตี", effectPerLevel:4, suffix:"% โอกาส" } ]},
+      { id:"hunter",         name:"นักล่า",       icon:"🐺", desc:"มอนสเตอร์ HP ต่ำกว่า 30% จะรับดาเมจเพิ่มขึ้น", effectPerLevel:8, suffix:"%" },
+      { id:"shadow_veil",    name:"เงาเร้น",      icon:"🌫️", desc:"มีโอกาสหลบอัตโนมัติเมื่อกำลังจะโดนโจมตี", effectPerLevel:4, suffix:"% โอกาส" } ]},
     { unlockRankIndex:9, points:2, skills:[ { id:"will_arrow", active:true },
-      { id:"shatter_arrow",  name:"ศรแตก",        icon:"✨", desc:"ยิงคริแล้วแตกเป็นฮิตเสริม", effectPerLevel:12, suffix:"% ดาเมจ" },
+      { id:"shatter_arrow",  name:"ศรแตก",        icon:"✨", desc:"เมื่อยิงติดคริติคอลจะแตกออกเป็นฮิตเสริม", effectPerLevel:12, suffix:"% ดาเมจ" },
       { id:"heaven_eye",     name:"ตาสวรรค์",     icon:"🌟", desc:"Called Shot แรงขึ้น + เติมหลอดสตั้นเพิ่ม 3 เท่าของค่านี้", effectPerLevel:19, suffix:"% ดาเมจ" } ]}
   ]},
   orb: { tiers: [
     { unlockRankIndex:1, points:2, skills:[ { id:"mana_surge", active:true },
-      { id:"barrier_ward",   name:"เกราะมานา",    icon:"🔵", desc:"กางโล่มานาดูดซับดาเมจ เมื่อแตกสลายจะฟื้นฟูกลับมาใหม่ทุก 12 วินาที", effectPerLevel:4, suffix:"% Max HP" },
-      { id:"mana_flow",      name:"กระแสมานา",    icon:"🌊", desc:"คูลดาวน์สกิลทุกตัวลดลง", effectPerLevel:3, suffix:"%", always:true } ]},
+      { id:"barrier_ward",   name:"เกราะมานา",    icon:"🔵", desc:"โล่ดูดซับดาเมจ เมื่อแตกแล้วจะฟื้นใหม่ทุก 12 วิ", effectPerLevel:4, suffix:"% Max HP" },
+      { id:"mana_flow",      name:"กระแสมานา",    icon:"🌊", desc:"ลดคูลดาวน์ของสกิลทุกตัว", effectPerLevel:3, suffix:"%", always:true } ]},
     { unlockRankIndex:3, points:2, skills:[ { id:"calm_mind", active:true },
-      { id:"still_mind",     name:"จิตนิ่ง",      icon:"🪷", desc:"สติลดลงช้าลง", effectPerLevel:12, suffix:"%", always:true },
+      { id:"still_mind",     name:"จิตนิ่ง",      icon:"🪷", desc:"สติจะลดลงช้าลง", effectPerLevel:12, suffix:"%", always:true },
       { id:"true_circle",    name:"วงแม่น",       icon:"⭕", desc:"โจทย์วาดทุกแบบใช้องศาน้อยลง (ปกติ วงกลม 270° / ครึ่งวง 130°)", effectPerLevel:16, suffix:"°", always:true } ]},
     { unlockRankIndex:5, points:2, skills:[ { id:"reverse_flow", active:true },
-      { id:"mana_drain",     name:"ดูดมานา",      icon:"💧", desc:"Arcane Circle ฟื้น HP", effectPerLevel:2, suffix:"% Max HP" },
-      { id:"unified_mind",   name:"ผสานจิต",      icon:"🧠", desc:"สติ 90% ขึ้นไป ATK เพิ่ม", effectPerLevel:5, suffix:"% ATK", always:true } ]},
+      { id:"mana_drain",     name:"ดูดมานา",      icon:"💧", desc:"Arcane Circle ช่วยฟื้นฟู HP", effectPerLevel:2, suffix:"% Max HP" },
+      { id:"unified_mind",   name:"ผสานจิต",      icon:"🧠", desc:"เมื่อสติ 90% ขึ้นไป จะได้รับ ATK เพิ่มขึ้น", effectPerLevel:5, suffix:"% ATK", always:true } ]},
     { unlockRankIndex:7, points:2, skills:[ { id:"mana_seal", active:true },
-      { id:"layered_circle", name:"วงซ้อน",       icon:"🔁", desc:"Arcane Circle ติดกันตั้งแต่ครั้งที่ 2 ลดคูลดาวน์สกิลสื่อเวทย์", effectPerLevel:360, suffix:"ms" },
-      { id:"storm_eye",      name:"ใจกลางพายุ",   icon:"🌩️", desc:"โล่เกราะมานาแตก ปล่อยดาเมจสวน (ต้องมีเกราะมานา)", effectPerLevel:140, suffix:"% ดาเมจ" } ]},
+      { id:"layered_circle", name:"วงซ้อน",       icon:"🔁", desc:"Arcane Circle ต่อเนื่องตั้งแต่ครั้งที่ 2 จะช่วยลดคูลดาวน์สกิลสื่อเวทย์", effectPerLevel:360, suffix:"ms" },
+      { id:"storm_eye",      name:"ใจกลางพายุ",   icon:"🌩️", desc:"เมื่อโล่เกราะมานาแตก จะปล่อยดาเมจสวนกลับ (ต้องมีเกราะมานา)", effectPerLevel:140, suffix:"% ดาเมจ" } ]},
     { unlockRankIndex:9, points:2, skills:[ { id:"mana_storm", active:true },
-      { id:"true_will",      name:"เจตจำนงแท้",   icon:"🔥", desc:"บทลงโทษจากสติต่ำลดลง", effectPerLevel:50, suffix:"%", always:true },
-      { id:"overflow",       name:"มานาล้น",      icon:"🫧", desc:"EMPOWERED แรงขึ้น (ปกติ x1.5)", effectPerLevel:0.27, suffix:"x" } ]}
+      { id:"true_will",      name:"เจตจำนงแท้",   icon:"🔥", desc:"บทลงโทษจากอาการสติต่ำจะลดลง", effectPerLevel:50, suffix:"%", always:true },
+      { id:"overflow",       name:"มานาล้น",      icon:"🫧", desc:"สถานะ EMPOWERED จะรุนแรงยิ่งขึ้น (ปกติ x1.5)", effectPerLevel:0.27, suffix:"x" } ]}
   ]}
 };
 const SKILL_PROFICIENCY_GAIN = 20;           // per trigger of a passive / per cast of an active
@@ -8466,45 +8466,45 @@ const SKILL_DEFS = {
   // normal hit's roll (randInt(minDmg,maxDmg)), so ATK/Sanity/Mastery carry over. utility:true skills deal
   // no damage and don't spend EMPOWERED — T2-T4 are utility/control on purpose, only T5 hits hard.
   triple_slash: { name: "ฟันสามจังหวะ", icon: "🌪️", cooldown: 9000,  weaponType: "sword", hits: 3, mult: 0.9,
-                  desc: "ฟันต่อเนื่อง 3 ครั้ง ครั้งละ 90% ดาเมจ (คิดโอกาสคริติคอลแยกทุกครั้ง)" },
+                  desc: "ฟันต่อเนื่อง 3 ครั้ง ครั้งละ 90% ดาเมจ (คิดคริติคอลแยกทุกครั้ง)" },
   parry_stance: { name: "ตั้งท่าปัด", icon: "🤺", cooldown: 12000, weaponType: "sword", utility: true, durationMs: 1200,
-                  desc: "ภายใน 1.2 วินาที หากถูกโจมตีจะไม่เสียพลังชีวิต พร้อมเปิดจังหวะให้โจมตีสวนกลับทันที" },
+                  desc: "1.2 วิ ถ้าโดนตีจะไม่เสียเลือด และเปิดหน้าต่างสวนกลับทันที" },
   blink_step:   { name: "ก้าวพริบตา", icon: "👣", cooldown: 10000, weaponType: "sword", utility: true,
                   desc: "รีเซ็ตคูลดาวน์หลบ + เปิดหน้าต่างสวนกลับทันที" },
   expose_weakness: { name: "เปิดช่องโหว่", icon: "🔍", cooldown: 14000, weaponType: "sword", utility: true, amount: 3,
-                  desc: "ฮิตถัดไปเติมหลอดสตั้น x3" },
+                  desc: "การโจมตีถัดไปเติมหลอดสตั้น x3" },
   thousand_blades: { name: "พันดาบ", icon: "✴️", cooldown: 20000, weaponType: "sword", hits: 5, mult: 0.52, perCombo: 1,
-                  desc: "ฟัน 5 ครั้ง ครั้งละ 52% +1 ครั้งต่อคอมโบ Perfect ที่ค้างอยู่ (สูงสุด +4)" },
+                  desc: "ฟัน 5 ครั้ง ครั้งละ 52% +1 ครั้งต่อคอมโบ Perfect ที่สะสมอยู่ (สูงสุด +4)" },
   ground_slam:  { name: "ทุบแผ่นดิน",   icon: "🌋", cooldown: 12000, weaponType: "heavy", hits: 1, mult: 1.95,
-                  desc: "ทุบครั้งเดียว 195% ดาเมจ ช้าแต่หนักที่สุด" },
+                  desc: "ทุบครั้งเดียว 195% ดาเมจ ช้าแต่หนักหน่วงที่สุด" },
   war_cry:      { name: "คำรามศึก", icon: "📯", cooldown: 15000, weaponType: "heavy", utility: true, charges: 3, amount: 1.4,
-                  desc: "การโจมตี 3 ครั้งถัดไปของมอน สัญญาณเตือนยาวขึ้น 40%" },
+                  desc: "การโจมตี 3 ครั้งถัดไปของมอนสเตอร์ สัญญาณเตือนจะยาวขึ้น 40%" },
   brace:        { name: "ตั้งหลัก", icon: "🧱", cooldown: 16000, weaponType: "heavy", utility: true, durationMs: 3000, amount: 0.6, holdBy: 0.6,
-                  desc: "3 วิ ดาเมจที่ได้รับเหลือ 60% และเริ่มชาร์จ Charged Strike ได้ถึง 60% ของหลอด (ปกติ 30%)" },
+                  desc: "3 วิ ดาเมจที่ได้รับลดเหลือ 60% และเริ่มชาร์จ Charged Strike ได้ถึง 60% ของหลอด (ปกติ 30%)" },
   quake_slam:   { name: "ทุบสะเทือน", icon: "💢", cooldown: 18000, weaponType: "heavy", utility: true, amount: 50,
-                  desc: "เติมหลอดสตั้น 50 ทันที (บอส/Elite ต้านตามปกติ) ไม่มีดาเมจ" },
+                  desc: "เติมหลอดสตั้น 50 ทันที (บอส/Elite ต้านทานตามปกติ) ไม่มีดาเมจ" },
   sky_breaker:  { name: "ทลายฟ้า", icon: "☄️", cooldown: 20000, weaponType: "heavy", hits: 1, mult: 2.5, stunnedMult: 2.1,
-                  desc: "ทุบโจมตี 250% ดาเมจ — หากศัตรูติดสตั้นอยู่จะรุนแรง x2.1 (525%)" },
+                  desc: "ทุบ 250% ดาเมจ — ถ้ามอนสเตอร์ติดสตั้นอยู่จะแรง x2.1 (525%)" },
   deadeye_shot: { name: "ยิงจุดตาย",    icon: "🎯", cooldown: 10000, weaponType: "bow",   hits: 1, mult: 1.3, alwaysCrit: true,
-                  desc: "ยิง 130% ดาเมจ คริติคอลแน่นอน" },
+                  desc: "ยิง 130% ดาเมจ ติดคริติคอลแน่นอน" },
   retreat_shot: { name: "ถอยหลังยิง", icon: "🍃", cooldown: 12000, weaponType: "bow", utility: true, durationMs: 4000, mult: 0.8,
-                  desc: "4 วิ ถ้ากำลังจะโดนตี หลบให้อัตโนมัติ 1 ครั้ง + ยิงสวน 80%" },
+                  desc: "4 วิ ถ้ากำลังจะโดนตี จะหลบให้อัตโนมัติ 1 ครั้ง + ยิงสวนกลับ 80%" },
   pinning_arrow:{ name: "ธนูตรึง", icon: "📌", cooldown: 14000, weaponType: "bow", utility: true, delayMs: 2200, durationMs: 6000,
                   desc: "ยกเลิกการโจมตีที่กำลังมา และเลื่อนการโจมตีถัดไปออกไป 2.2 วิ" },
   true_sight:   { name: "ตาทะลุ", icon: "👁️‍🗨️", cooldown: 16000, weaponType: "bow", utility: true, charges: 3, amount: 2,
-                  desc: "3 นัดถัดไป จุดเป้า Called Shot ใหญ่ขึ้น x2" },
+                  desc: "3 นัดถัดไป จุดเป้า Called Shot จะใหญ่ขึ้น x2" },
   will_arrow:   { name: "ศรเจตจำนง", icon: "🌠", cooldown: 20000, weaponType: "bow", hits: 1, mult: 5.4, minRatio: 0.25,
                   desc: "ใช้หลอดโจมตีทั้งหลอด: 135% ตอนหลอดว่าง → 540% ตอนหลอดเต็ม (ยิ่งรอยิ่งแรง)" },
   mana_surge:   { name: "คลื่นมานา",    icon: "🌀", cooldown: 11000, weaponType: "orb",   hits: 1, mult: 2.0, healPct: 30,
-                  desc: "ปล่อยคลื่นมานา 200% ดาเมจ พร้อมดูดกลืนเป็นพลังชีวิต 30% ของดาเมจที่ทำได้" },
+                  desc: "ปล่อยคลื่นมานา 200% ดาเมจ ดูดกลับเป็น HP 30% ของดาเมจ" },
   calm_mind:    { name: "สงบจิต", icon: "🧘", cooldown: 33000, weaponType: "orb", utility: true, amount: 2,
-                  desc: "ฟื้นฟูสติ 2% ในทันที (ไม่สามารถใช้แทนการนั่งสมาธิได้)" },
+                  desc: "ฟื้นสติ 2% ทันที (ไม่สามารถใช้แทนการนั่งสมาธิได้)" },
   reverse_flow: { name: "ย้อนกระแส", icon: "🔄", cooldown: 15000, weaponType: "orb", utility: true, durationMs: 5000, mult: 1.5,
-                  desc: "5 วิ การโจมตีที่โดนครั้งถัดไปถูกสะท้อน: ไม่เสียเลือด + สวนกลับ 150%" },
+                  desc: "5 วิ การโจมตีที่โดนครั้งถัดไปจะถูกสะท้อน: ไม่เสียเลือด + สวนกลับ 150%" },
   mana_seal:    { name: "ผนึกมานา", icon: "🔒", cooldown: 24000, weaponType: "orb", utility: true,
-                  desc: "การโจมตีครั้งถัดไปของมอนสลายไป (ไม่มีดาเมจ ไม่เสียสติ)" },
+                  desc: "การโจมตีครั้งถัดไปของมอนสเตอร์จะสลายไป (ไม่มีดาเมจ ไม่เสียสติ)" },
   mana_storm:   { name: "พายุมานา", icon: "⛈️", cooldown: 22000, weaponType: "orb", hits: 1, mult: 3, perStreak: 1.5, maxStreak: 3,
-                  desc: "ระเบิด 300% +150% ต่อ Arcane Circle ติดกันที่สะสมไว้ (สูงสุด 3 = 750%) ใช้แล้วรีเซ็ต" }
+                  desc: "ระเบิด 300% +150% ต่อ Arcane Circle ต่อเนื่องที่สะสมไว้ (สูงสุด 3 = 750%) ใช้แล้วรีเซ็ต" }
 };
 // "Press always casts, Perfect input adds a bonus": landing a weapon input bonus (Perfect Slash / Charged
 // Strike / Called Shot / Arcane Circle) opens a short window where the next weapon active skill hits harder.
@@ -10450,50 +10450,31 @@ const TUTORIAL_SEEN_KEY = "menalars_tutorial_seen";
 // Numbers quoted here mirror the constants named in the comments; update both if you retune.
 const TUTORIAL_STEPS = [
   { title: "ยินดีต้อนรับสู่ Menalars", text:
-    "มานาระเบิด บาเรียเพิ่งแตกสลาย สรรพสิ่งถูกเจตจำนงแทรกแซงกลายเป็นมอนสเตอร์ — คุณคือนักกวาดล้างที่ฟื้นขึ้นข้างเกวียนโดยไร้ความทรงจำ\n\n• คลิกพื้นเพื่อเดิน\n• เดินชนมอนสเตอร์เพื่อเข้าต่อสู้\n• คลิก NPC เพื่อสนทนา\n\nเปิดคู่มือนี้ซ้ำได้ทุกเมื่อที่ปุ่ม ❓ วิธีเล่น" },
+    "มานาระเบิด บาเรียเพิ่งแตกสลาย สรรพสิ่งถูกเจตจำนงแทรกแซงกลายเป็นมอนสเตอร์ — คุณคือนักกวาดล้างที่ฟื้นขึ้นข้างเกวียนโดยไร้ความทรงจำ\n\n• คลิกพื้นเพื่อเดิน\n• เดินชนมอนสเตอร์เพื่อเข้าต่อสู้\n• คลิก NPC เพื่อสนทนา\n\nคู่มือนี้เปิดซ้ำได้ทุกเมื่อที่ปุ่ม ❓ วิธีเล่น" },
   { title: "① จังหวะ Perfect — หัวใจของดาเมจ", text: // PERFECT_COMBO_MULT
-    "เมื่อเกจใต้จอเต็ม คลิกซ้าย = โจมตี\n\n• คลิกตอนเกจอยู่ในโซนสีเขียว (ท้ายเกจ) = PERFECT ดาเมจ x1.15\n• Perfect ต่อเนื่องแรงขึ้นเรื่อยๆ: x1.20 → x1.25 → x1.30 (สูงสุด 4 ครั้ง)\n• ตีหลุดจังหวะหรือพลาด = รีเซ็ตคอมโบ · คลิกก่อนถึงโซน = ไม่เกิดการโจมตี\n\nสเตตัส สมาธิ ช่วยขยายโซนเขียว ส่วน ความคล่องแคล่ว ช่วยให้เกจเต็มเร็วขึ้น" },
+    "เมื่อเกจใต้จอเต็ม คลิกซ้าย = โจมตี\n\n• คลิกตอนเกจอยู่ในโซนสีเขียว (ท้ายเกจ) = PERFECT ดาเมจ x1.15\n• Perfect ต่อเนื่องแรงขึ้นเรื่อยๆ: x1.20 → x1.25 → x1.30 (สูงสุด 4 ครั้ง)\n• ตีไม่ Perfect หรือพลาด = คอมโบหาย · คลิกก่อนถึงโซน = ไม่เกิดการโจมตี\n\nสเตตัส สมาธิ ช่วยขยายโซนเขียว ส่วนความคล่องแคล่วทำให้เกจเต็มไวขึ้น" },
   { title: "② โบนัสอินพุตอาวุธ", text: // SKILL_EMPOWER_WINDOW_MS / SKILL_EMPOWER_MULT / STUN_FILL_INPUT_BONUS_MULT
-    "คลิกธรรมดาสามารถโจมตีได้ปกติทุกอาวุธ แต่หากทำ \"อินพุตพิเศษ\" ของอาวุธนั้นพร้อมจังหวะ Perfect จะได้รับ:\n\n• ดาเมจโบนัสเฉพาะอาวุธ (หน้าถัดไป)\n• เพิ่มหลอดสตั้นมอนสเตอร์ x1.5\n• ⚡ EMPOWERED — กดสกิลใช้งานของอาวุธภายใน 1.5 วินาที แรงขึ้น x1.5 (ปุ่มเรืองแสงสีทอง)\n\nสูตรรีดดาเมจ: Perfect + อินพุตถูกต้อง → กดใช้สกิลอาวุธทันที" },
-  { title: "🗡️ ดาบ — เร็ว สวนกลับเก่ง", text: // SWORD_SLASH_BONUS_MULT
-    "อินพุต: ดูลูกศรเหนือหัวมอน → กดค้างแล้วลากไปทิศนั้น ปล่อยตอนเกจอยู่โซนเขียว = PERFECT SLASH x1.2\n\n" +
-    "จุดเด่น: ตีไว เล่นกับการสวนกลับ\n\n" +
-    "รีดดาเมจ:\n• ลาก + Perfect ทุกครั้ง รักษาคอมโบให้ถึง x1.30\n" +
-    "• หลบเฉียบขาดเพื่อได้สวนกลับ x1.3 ฟรี\n• Slash แล้วกด 🌪️ ฟันสามจังหวะทันที (EMPOWERED)" },
-  { title: "🔨 ค้อน — หนักสุด สตั้นเร็วสุด", text: // HAMMER_CHARGE_HOLD_BY / HAMMER_CHARGE_BONUS_MULT / STUN_FILL_BY_WEAPON
-    "อินพุต: กดค้างก่อนเกจถึงเส้น 30% (เกจเป็นสีส้ม มีเสียงชาร์จ) แล้วปล่อยตรงโซนเขียว = CHARGED STRIKE x1.2\n\n" +
-    "จุดเด่น: ATK สูงสุด แต่ตีช้ากว่า 25% และเติมสตั้นเร็วที่สุด\n\n" +
-    "รีดดาเมจ:\n• ชาร์จทุกครั้ง → มอนสตั้นไว\n" +
-    "• ช่วงสตั้นรัวคลิกให้สุด (ค้อนได้ประโยชน์จากการรัวมากที่สุด)\n• Charged Strike แล้วกด 🌋 ทุบแผ่นดินทันที" },
-  { title: "🏹 ธนู — แม่นและคริ", text: // BOW_CALLED_SHOT_MULT
-    "อินพุต: วงเป้าบนตัวมอน (หัว/ตัว/แขน/ขา) สุ่มทุกรอบ → คลิกให้โดนวงนั้นตอนเกจอยู่โซนเขียว = CALLED SHOT x1.25\n\n" +
-    "จุดเด่น: เล่นคริติคอล (🎯 ยิงจุดตาย คริแน่นอน)\n\n" +
-    "รีดดาเมจ:\n• เอาเมาส์ไปรอที่วงก่อนเกจเต็ม แล้วคลิกทันทีที่เข้าโซน\n" +
-    "• เพิ่มโชค (คริ) · Called Shot แล้วกดยิงจุดตายทันที" },
+    "คลิกธรรมดาเพื่อโจมตีได้ปกติทุกอาวุธ แต่ถ้าทำ \"อินพุตพิเศษ\" ของอาวุธนั้นพร้อมจังหวะ Perfect จะได้รับ:\n\n• ดาเมจโบนัสเฉพาะอาวุธ (หน้าถัดไป)\n• เติมหลอดสตั้นเพิ่ม x1.5\n• ⚡ EMPOWERED — กดสกิลใช้งานของอาวุธภายใน 1.5 วิ แรงขึ้น x1.5 (ปุ่มเรืองแสงสีทอง)\n\nสูตรรีดดาเมจ: Perfect + อินพุตถูกต้อง → กดใช้สกิลอาวุธทันที" },
+  { title: "🗡️ ดาบ — รวดเร็ว สวนกลับเก่ง", text: // SWORD_SLASH_BONUS_MULT
+    "อินพุต: ดูลูกศรเหนือหัวมอนสเตอร์ → กดค้างแล้วลากไปทิศนั้น ปล่อยตอนเกจอยู่โซนเขียว = PERFECT SLASH x1.2\n\nจุดเด่น: โจมตีไว เด่นเรื่องการสวนกลับ\n\nรีดดาเมจ:\n• ลาก + Perfect ทุกครั้ง รักษาคอมโบให้ถึง x1.30\n• หลบเฉียบขาดเพื่อรับโอกาสสวนกลับ x1.3 ฟรี\n• Slash แล้วกด 🌪️ ฟันสามจังหวะทันที (EMPOWERED)" },
+  { title: "🔨 ค้อน — หนักหน่วง สตั้นเร็วที่สุด", text: // HAMMER_CHARGE_HOLD_BY / HAMMER_CHARGE_BONUS_MULT / STUN_FILL_BY_WEAPON
+    "อินพุต: กดค้างก่อนเกจถึงเส้น 30% (เกจเป็นสีส้ม มีเสียงชาร์จ) แล้วปล่อยตรงโซนเขียว = CHARGED STRIKE x1.2\n\nจุดเด่น: ATK สูงสุด แต่ตีช้ากว่า 25% และเติมหลอดสตั้นเร็วที่สุด\n\nรีดดาเมจ:\n• ชาร์จทุกครั้ง → มอนสเตอร์ติดสตั้นไว\n• ช่วงสตั้นรัวคลิกให้สุด (ค้อนได้ประโยชน์จากการคลิกรัวมากที่สุด)\n• Charged Strike แล้วกด 🌋 ทุบแผ่นดินทันที" },
+  { title: "🏹 ธนู — แม่นยำและคริติคอล", text: // BOW_CALLED_SHOT_MULT
+    "อินพุต: วงเป้าบนตัวมอนสเตอร์ (หัว/ตัว/แขน/ขา) สุ่มทุกรอบ → คลิกให้โดนวงนั้นตอนเกจอยู่โซนเขียว = CALLED SHOT x1.25\n\nจุดเด่น: เน้นคริติคอล (🎯 ยิงจุดตาย คริติคอลแน่นอน)\n\nรีดดาเมจ:\n• เลื่อนเมาส์ไปรอที่วงก่อนเกจเต็ม แล้วคลิกทันทีที่เข้าโซน\n• เพิ่มค่าโชค (คริติคอล) · Called Shot แล้วกดยิงจุดตายทันที" },
   { title: "🪄 สื่อเวทย์ — โบนัสสูงสุด ต้องมีสมาธิ", text: // ORB_GESTURE_BONUS_MULT / ORB_REQUIRED_DEG
-    "อินพุต: โจทย์กำหนดให้วาด วงกลม (270°) / ครึ่งวงบน / ครึ่งวงล่าง (130°) → กดค้างแล้วลากวาดตามรูป ปล่อยตอนเกจเข้าสู่โซนเขียว = ARCANE CIRCLE x1.35\n\nมีเกจระบุองศาข้างเคอร์เซอร์ระหว่างวาด พร้อมแจ้งเหตุผลหากทำไม่สำเร็จ\n\nจุดเด่น: ได้รับโบนัสสูงสุด แต่ค่า ATK ต่ำสุดและเติมสตั้นได้ช้าที่สุด\n\nรีดดาเมจ:\n• เริ่มลากวาดตั้งแต่เกจอยู่ช่วงกลาง เพื่อปล่อยให้พอดีกับโซนเขียว\n• Arcane Circle แล้วกด 🌀 คลื่นมานา (ดูดเลือดกลับคืน)" },
+    "อินพุต: โจทย์บอกให้วาด วงกลม (270°) / ครึ่งวงบน / ครึ่งวงล่าง (130°) → กดค้างลากวาดรูปนั้น ปล่อยตอนเกจอยู่โซนเขียว = ARCANE CIRCLE x1.35\n\nมีเกจองศาข้างเคอร์เซอร์ระหว่างวาด และแจ้งเหตุผลหากพลาด\n\nจุดเด่น: โบนัสสูงสุด แต่ ATK ต่ำสุดและเติมสตั้นช้าที่สุด\n\nรีดดาเมจ:\n• เริ่มวาดตั้งแต่เกจอยู่ช่วงกลาง ให้เสร็จพอดีโซนเขียว\n• Arcane Circle แล้วกด 🌀 คลื่นมานา (ดูดพลังชีวิตกลับคืน)" },
   { title: "หลบ & สวนกลับ", text: // PERFECT_DODGE_WINDOW_MS / COUNTER_WINDOW_MS / COUNTER_DAMAGE_MULT
-    "เมื่อมีสัญญาณเตือนซ้ายหรือขวา → กด A หลบซ้าย / D หลบขวา (ต้องกดหลบใหม่ทุกรอบ)\n\n• หลบในช่วง 0.3 วินาทีสุดท้าย = หลบเฉียบขาด → คลิกภายใน 1.2 วินาที สวนกลับ x1.3 การันตีโดนแน่นอน\n• ระวังคำเตือน \"หลอก!\" มอนสเตอร์อาจสลับฝั่งกะทันหัน แต่จะมีช่วงเวลาให้กดหลบใหม่เสมอ\n• มอนสเตอร์เลเวลสูงกว่า / ดินแดนลึก สัญญาณเตือนจะสั้นลง\n• บอสมีท่าโจมตีผสม 3 จังหวะ ซึ่งช่วงนั้นจะโจมตีไม่ได้ — ให้หลบหลีก หรือใช้สกิลป้องกัน/ยูทิลิตี้" },
-  { title: "ทำให้มอนติดสตั้น", text: // STUN_* constants
-    "ทุกฮิตเติมหลอดสีส้มใต้เลือดมอน (Perfect x1.5, อินพุตอาวุธ x1.5, สกิล x2, สวนกลับ x1.5) หยุดตี 2 วิ หลอดจะค่อยๆ ลด\n\n" +
-    "หลอดเต็ม = มอนมึน 2 วิ (บอส 1.5 วิ) ตีกลับไม่ได้:\n• รัวคลิกซ้าย (สูงสุด 10 ฮิต/วิ) หรือกดค้าง (4 ฮิต/วิ)\n\n" +
-    "Elite และบอสต้านสตั้น เติมได้ช้ากว่า" },
+    "มีสัญญาณเตือนซ้ายหรือขวา → กด A หลบซ้าย / D หลบขวา (ต้องกดหลบใหม่ทุกครั้ง)\n\n• หลบช่วง 0.3 วิสุดท้าย = หลบเฉียบขาด → คลิกภายใน 1.2 วิ ได้สวนกลับ x1.3 โดนแน่นอน\n• ระวังคำว่า \"หลอก!\" มอนสเตอร์สลับฝั่งกลางทาง แต่จะมีเวลาให้กดหลบใหม่เสมอ\n• มอนสเตอร์เลเวลสูงกว่า / แมพลึก สัญญาณเตือนจะสั้นลง\n• บอสมีท่าผสม 3 จังหวะ ช่วงนั้นโจมตีไม่ได้ — ให้หลบ หรือใช้สกิลป้องกัน/ยูทิลิตี้" },
+  { title: "ทำให้มอนสเตอร์ติดสตั้น", text: // STUN_* constants
+    "ทุกการโจมตีจะเติมหลอดสีส้มใต้แถบเลือดมอนสเตอร์ (Perfect x1.5, อินพุตอาวุธ x1.5, สกิล x2, สวนกลับ x1.5) หากหยุดตี 2 วิ หลอดจะค่อยๆ ลดลง\n\nหลอดเต็ม = มอนสเตอร์มึนงง 2 วิ (บอส 1.5 วิ) โจมตีกลับไม่ได้:\n• รัวคลิกซ้าย (สูงสุด 10 ครั้ง/วิ) หรือกดค้าง (4 ครั้ง/วิ)\n\nElite และบอสต้านทานสตั้น จึงเติมหลอดได้ช้ากว่าปกติ" },
   { title: "สกิล & ต้นสกิลอาวุธ", text:
-    "กดปุ่ม 1-8 (หรือคลิกแอ็คชั่นบาร์) ใช้สกิล — มีสกิลพื้นฐาน 4 ตัวให้ทุกคน\n\n" +
-    "⚔️ สกิลอาวุธ: 5 Tier ปลดตาม Rank ของอาวุธนั้น (Apprentice → Transcender) Tier ละ 3 ตัว เลือกได้ 2:\n" +
-    "• สกิลกดใช้ 1 + พาสสิฟ 2 (จะเอาพาสสิฟคู่ ไม่เอาสกิลกดก็ได้)\n" +
-    "• ใช้บ่อย = ชำนาญ Lv.1-10 แรงขึ้น / คูลดาวน์ลด\n" +
-    "• ลากการ์ดไปวางในบาร์ — 8 ช่องใส่ไม่ครบทุกตัว ต้องเลือก\n\n" +
-    "ปุ่ม ⚔️ มีป้ายตัวเลข = มีแต้มสกิลรอเลือก" },
-  { title: "🧘 สติ — อย่าปล่อยให้ลดต่ำ", text: // SANITY_* constants / SANITY_BADGE_THRESHOLD
-    "หลอดสีม่วงใต้แถบ EXP จะลดลงเมื่อสังหารมอนสเตอร์และเมื่อถูกโจมตี\n\n• ต่ำกว่า 90%: สเตตัสทุกค่าลดลง (ATK/แม่นยำ/DEF/HP) สูงสุดราว 40%\n• ต่ำกว่า 50%: เกิดภาพหลอน สัญญาณเตือนจะขึ้นทั้งสองฝั่งจนแยกไม่ออกว่าฝั่งใดคือของจริง\n• ต่ำกว่า 30%: สับสนทิศทาง ปุ่ม A จะหลบขวา / ปุ่ม D จะหลบซ้าย\n• ต่ำกว่า 15%: ความมืดเข้าครอบงำ ครึ่งจอขวาขณะต่อสู้จะมืดสนิท\n• ต่ำกว่า 7%: สติแตกสลาย ใช้สกิลไม่ได้โดยสิ้นเชิง + ศีรษะกลายสภาพเป็นหัวสัตว์ (ผู้เล่นอื่นมองเห็นได้!)\n\nวิธีฟื้นฟูสติ:\n• กด 🧘 ทำสมาธิ นอกฉากต่อสู้ — จากจุดต่ำสุดจนเต็มใช้เวลาไม่เกิน 2 นาที (สลับหน้าแท็บระบบจะหยุดนับ)\n• พักผ่อนอยู่ในเมือง สติจะค่อยๆ ฟื้นฟูขึ้นเองช้าๆ\n• 🪷 นั่งสมาธิกับพระ (มินิเกม 1 นาที): คลิกปัดเป่ามารก่อนถึงตัว ได้รับพร 3–5 นาที สติไม่ลดลง + อัตราดรอปของหายากเพิ่มขึ้น" },
-  { title: "เก่งขึ้น: สเตตัส & อุปกรณ์", text:
-    "• 📋 สถานะ: เลเวลอัพได้แต้มสเตตัส 6 ค่า (ป้ายตัวเลข = มีแต้มเหลือ)\n" +
-    "• อาวุธได้จากมอนดรอป (บอสการันตี Rare+, เคลียร์ดันเจี้ยนการันตี Epic+) ร้านขายแค่อาวุธเริ่มต้นไว้ลองเล่น\n" +
-    "• อุปกรณ์ 5 ระดับ มีโบนัสสเตตัสสุ่ม ✦ นำหน้าชื่อ = คุณภาพ 95% ขึ้นไป\n" +
-    "• 🎒 กระเป๋า 48 ช่อง เต็มแล้วของส่งเข้ากล่องที่บ้านเอง\n• ช่างตีเหล็กในเมืองตีบวกอุปกรณ์ได้" },
+    "กดปุ่ม 1-8 (หรือคลิกแอ็คชั่นบาร์) เพื่อใช้สกิล — มีสกิลพื้นฐาน 4 สกิลมอบให้ทุกคน\n\n⚔️ สกิลอาวุธ: 5 Tier ปลดตาม Rank ของอาวุธนั้น (Apprentice → Transcender) แต่ละ Tier มี 3 สกิล เลือกได้ 2:\n• สกิลกดใช้ 1 + พาสสิฟ 2 (เลือกพาสสิฟคู่โดยไม่เอาสกิลกดใช้ก็ได้)\n• ใช้บ่อย = ชำนาญ Lv.1-10 แรงขึ้น / คูลดาวน์ลดลง\n• ลากการ์ดไปวางในบาร์ — ช่องมีจำกัดเพียง 8 ช่อง ต้องเลือกจัดสรรให้ดี\n\nปุ่ม ⚔️ มีป้ายตัวเลข = มีแต้มสกิลรอให้เลือก" },
+  { title: "🧘 สติ — อย่าปล่อยให้ต่ำ", text: // SANITY_* constants / SANITY_BADGE_THRESHOLD
+    "หลอดสีม่วงใต้แถบ EXP จะลดลงเมื่อสังหารมอนสเตอร์หรือถูกโจมตี\n\n• ต่ำกว่า 90%: สเตตัสทุกค่าลดลง (ATK/แม่นยำ/DEF/HP) สูงสุดราว 40%\n• ต่ำกว่า 50%: ภาพหลอน — สัญญาณเตือนขึ้นทั้งสองฝั่ง แยกไม่ออกว่าของจริงมาทางไหน\n• ต่ำกว่า 30%: สับสนทิศ — A กลายเป็นหลบขวา / D กลายเป็นหลบซ้าย\n• ต่ำกว่า 15%: ความมืด — ครึ่งจอขวาขณะต่อสู้จะมืดสนิท\n• ต่ำกว่า 7%: สติแตกสลาย — ใช้สกิลไม่ได้ + หัวกลายเป็นหัวสัตว์ (คนอื่นมองเห็นด้วย!)\n\nวิธีฟื้นสติ:\n• กด 🧘 ทำสมาธิ นอกฉากต่อสู้ — จากจุดต่ำสุดจนเต็มใช้เวลาไม่เกิน 2 นาที (สลับแท็บระบบจะหยุดนับ)\n• พักผ่อนอยู่ในเมือง สติจะฟื้นฟูเองช้าๆ\n• 🪷 นั่งสมาธิกับพระ (มินิเกม 1 นาที): คลิกปัดเป่ามารก่อนถึงตัว รับพร 3–5 นาที สติไม่ลดลง + ของหายากดรอปง่ายขึ้น" },
+  { title: "พัฒนาตัวละคร: สเตตัส & อุปกรณ์", text:
+    "• 📋 สถานะ: เลเวลอัปจะได้รับแต้มสเตตัส 6 ค่า (ป้ายตัวเลข = มีแต้มรออัป)\n• อาวุธหาได้จากมอนสเตอร์ดรอป (บอสการันตี Rare+, ดันเจี้ยนการันตี Epic+) ร้านค้ามีขายเฉพาะอาวุธเริ่มต้นไว้ทดลองเล่น\n• อุปกรณ์มี 5 ระดับ มีโบนัสสเตตัสสุ่ม สัญลักษณ์ ✦ นำหน้าชื่อ = คุณภาพ 95% ขึ้นไป\n• 🎒 กระเป๋าจุ 48 ช่อง หากกระเป๋าเต็ม ไอเทมใหม่จะส่งเข้ากล่องที่บ้านอัตโนมัติ\n• ช่างตีเหล็กในเมืองสามารถตีบวกอุปกรณ์ได้" },
   { title: "สำรวจโลก", text:
-    "• มอนสเตอร์เลเวลสูงกว่าเรา ดาเมจเราจะลดลง 10% ต่อเลเวล — ควรเก็บเลเวลให้ทัดเทียมกับแมพ\n• ⚡ Elite แข็งแกร่งกว่าปกติมาก แต่ให้ผลตอบแทนและของดรอปที่ดีกว่า\n• มองหาจุดลับเรืองแสงและดันเจี้ยนระหว่างออกเดินสำรวจ\n• ปราบบอสประจำแมพเพื่อปลดล็อกเส้นทางสู่แมพถัดไปผ่านประตูเดินทาง\n• เมื่อปราบบอสแมพ 10 สำเร็จ จงทำพิธีที่ 🛕 โบสถ์ในเมือง เพื่อก้าวข้ามสู่มิติถัดไป (ไอเทมและเลเวลคงเดิม มอนสเตอร์แกร่งขึ้น พร้อมกฎหลอมรวม)\n• เมือง (แดนมานาอรุณ) = เขตปลอดภัย: ร้านค้า ช่างตีเหล็ก กล่องเก็บของ นักวิจัย หมอ พระ\n• 📜 ภารกิจหลัก (มุมขวาบน) = เนื้อเรื่อง ติดตามลูกศร 📜 บนจอ เพื่อรับเงิน EXP อุปกรณ์ และฉายา\n• 🧪 ตัวอย่างมานาจากแต่ละแดน สามารถนำไปขายให้นักวิจัยได้ (ยิ่งแดนลึก ยิ่งได้ราคาสูง)\n• ✉️ จดหมายที่ส่งไม่ถึง (จากย่ามคนส่งสาร / ซากโบราณ / ถูกก็อบลินขโมย) สามารถเปิดอ่านซ้ำได้ที่ปุ่ม ✉️ ในกระเป๋า แล้วนำไปส่งมอบให้เจ้าเมือง\n• ระบบจะบันทึกข้อมูลอัตโนมัติ — เมื่อเข้าเกมใหม่ให้กด \"เล่นต่อ\"" }
+    "• มอนสเตอร์เลเวลสูงกว่าเรา ดาเมจเราจะลดลง 10% ต่อเลเวล — อัปเลเวลให้ทันระดับแมพ\n• ⚡ Elite แข็งแกร่งกว่าปกติมาก แต่ดรอปของดีกว่า\n• สังเกตหาจุดลับเรืองแสงและดันเจี้ยนระหว่างเดินทาง\n• ปราบบอสประจำแมพเพื่อปลดล็อกเส้นทางสู่แมพถัดไปผ่านประตูเดินทาง\n• ปราบบอสแมพ 10 แล้ว ทำพิธีที่ 🛕 โบสถ์ในเมือง เพื่อขึ้นมิติถัดไป (ไอเทม/เลเวลอยู่ครบ มอนสเตอร์แกร่งขึ้น พร้อมกฎหลอมรวม)\n• เมือง (แดนมานาอรุณ) = จุดปลอดภัย: ร้านค้า ช่างตีเหล็ก กล่องเก็บของ นักวิจัย หมอ พระ\n• 📜 ภารกิจหลัก (มุมขวาบน) = เนื้อเรื่อง ตามลูกศร 📜 บนจอ เพื่อรับเงิน EXP อุปกรณ์ และฉายา\n• 🧪 ตัวอย่างมานาจากแต่ละแมพ นำไปขายให้นักวิจัยได้ (ยิ่งแมพไกล = ราคายิ่งดี)\n• ✉️ จดหมายที่ส่งไม่ถึง (จากย่ามคนส่งสาร / ซากโบราณ / ถูกก็อบลินขโมย) เปิดอ่านซ้ำได้ที่ปุ่ม ✉️ ในกระเป๋า แล้วนำไปส่งให้เจ้าเมือง\n• เกมบันทึกข้อมูลอัตโนมัติ — เปิดเกมใหม่แล้วกด \"เล่นต่อ\"" }
 ];
 let tutorialStep = 0;
 
@@ -10556,16 +10537,16 @@ function tutDodgeHint(){ return `ขอบจอ แดงซ้าย → ก�
 
 const TUT_INPUT = {
   sword: { title:"🗡️ ท่าพิเศษดาบ: PERFECT SLASH", need:2,
-    text:"สังเกต **ลูกศร** เหนือศีรษะหุ่นฝึก (⬆️⬇️⬅️➡️) — สุ่มทิศทางใหม่ทุกครั้ง\n① **คลิกเมาส์ค้างไว้** ② **ลากไปตามทิศทางลูกศร** (ลากให้ได้ระยะ) ③ **ปล่อยคลิกตอนเกจเป็นสีเขียว**\n= PERFECT SLASH รุนแรงยิ่งกว่าจังหวะ PERFECT ธรรมดา!",
+    text:"ดู **ลูกศร** เหนือหัวหุ่นฝึก (⬆️⬇️⬅️➡️) — สุ่มทิศทางใหม่ทุกครั้ง\n① **กดเมาส์ค้างไว้** ② **ลากไปตามทิศทางลูกศร** (ลากให้ยาวพอสมควร) ③ **ปล่อยคลิกตอนเกจเป็นสีเขียว**\n= PERFECT SLASH รุนแรงยิ่งกว่าจังหวะ PERFECT ธรรมดา!",
     tip: e => e.dragDir && e.dragDir !== e.reqDir ? `ลากผิดทาง! รอบนั้นต้องลากไป ${SWORD_SWIPE_ARROWS[e.reqDir]}` : "จังหวะดีแล้ว — แต่ต้อง กดค้างแล้วลาก ไปตามลูกศรด้วย (ลากยาวๆ แล้วปล่อยตอนเขียว)" },
   heavy: { title:"🔨 ท่าพิเศษค้อน: CHARGED STRIKE", need:2,
-    text:"① **กดคลิกเมาส์ค้างไว้** ตั้งแต่เกจยังไม่พ้น **ขีดสีขาว (30%)** — แถบเกจจะกลายเป็น **สีส้ม** พร้อมเสียงชาร์จพลัง\n② กดค้างไว้ต่อเนื่อง… ③ **ปล่อยคลิกตอนเกจเข้าสู่โซนสีเขียว**\n= CHARGED STRIKE รุนแรงยิ่งกว่าจังหวะ PERFECT ธรรมดา!",
+    text:"① **กดเมาส์ค้างไว้เลย** ตั้งแต่เกจยังไม่ถึง **ขีดขาว (30%)** — เกจจะกลายเป็น **สีส้ม** พร้อมมีเสียงชาร์จพลัง\n② กดค้างไว้เรื่อยๆ… ③ **ปล่อยคลิกตอนเกจเข้าสู่โซนสีเขียว**\n= CHARGED STRIKE รุนแรงยิ่งกว่าจังหวะ PERFECT ธรรมดา!",
     tip: () => "ต้องเริ่มกดค้างให้เร็วกว่านี้ (ก่อนเกจถึงขีดขาว) แล้วค้างไว้จนเกจเขียวค่อยปล่อย" },
   bow: { title:"🏹 ท่าพิเศษธนู: CALLED SHOT", need:2,
-    text:"บนตัวหุ่นฝึกจะมี **วงเป้าหมายสีแดง** (ศีรษะ/ลำตัว/แขน/ขา) สุ่มตำแหน่งใหม่ทุกครั้ง\nเลื่อนเมาส์ไปรอที่วงเป้าหมาย แล้ว **คลิกเล็งในวงจังหวะที่เกจเป็นสีเขียว**\n= CALLED SHOT รุนแรงยิ่งกว่าจังหวะ PERFECT ธรรมดา!",
+    text:"บนตัวหุ่นฝึกจะมี **วงเป้าสีแดง** (หัว/ตัว/แขน/ขา) สุ่มตำแหน่งใหม่ทุกรอบ\nเลื่อนเมาส์ไปรอที่วงเป้าหมาย แล้ว **คลิกในวง จังหวะที่เกจเป็นสีเขียว**\n= CALLED SHOT รุนแรงยิ่งกว่าจังหวะ PERFECT ธรรมดา!",
     tip: () => "จังหวะดีแล้ว — แต่ต้องคลิกให้โดน วงเป้าสีแดง บนตัวหุ่นด้วย" },
   orb: { title:"🪄 ท่าพิเศษสื่อเวทย์: ARCANE CIRCLE", need:1,
-    text:"สังเกต **เส้นประสีม่วง** รอบตัวหุ่นฝึก (วงกลม / ครึ่งวงบน / ครึ่งวงล่าง)\n① **คลิกเมาส์ค้างไว้** ② **ลากวาดตามรูปทรงให้สมบูรณ์** ③ **ปล่อยคลิกตอนเกจเข้าสู่โซนสีเขียว**\nเริ่มลากวาดตั้งแต่เกจอยู่ช่วงกลางหลอด จะปล่อยทันพอดี = ARCANE CIRCLE รุนแรงที่สุด!",
+    text:"สังเกต **เส้นประสีม่วง** รอบตัวหุ่นฝึก (วงกลม / ครึ่งวงบน / ครึ่งวงล่าง)\n① **กดเมาส์ค้างไว้** ② **ลากวาดตามรูปทรงนั้นให้ครบ** ③ **ปล่อยคลิกตอนเกจเข้าสู่โซนสีเขียว**\nเริ่มวาดตั้งแต่เกจอยู่ช่วงกลางหลอด จะปล่อยทันพอดี = ARCANE CIRCLE รุนแรงที่สุด!",
     tip: () => "วาดตามเส้นประให้ครบองศา แล้วปล่อยตอนเกจเขียว (ดูคำแนะนำใต้หุ่นประกอบ)" }
 };
 
@@ -10575,24 +10556,24 @@ function tutBuildSteps(withWalk){
     S.push({ id:"walk", world:true, title:"🚶 เดิน",
       text:"**คลิกซ้ายที่พื้น** ตรง **วงแสงสีทอง ✨** เพื่อเดินไปหา\n(ในเกมจริง คลิกพื้นตรงไหนก็เดินไปตรงนั้น)" });
     S.push({ id:"engage", world:true, title:"⚔️ เข้าต่อสู้",
-      text:"เห็น **🎯 หุ่นฝึก** ไหม? **คลิกที่หุ่น** (หรือเดินไปชน) เพื่อเข้าฉากต่อสู้\nในเกมจริงก็แบบนี้ — เดินชนมอนสเตอร์ = เริ่มสู้" });
+      text:"เห็น **🎯 หุ่นฝึก** ไหม? **คลิกที่หุ่น** (หรือเดินไปชน) เพื่อเข้าฉากต่อสู้\nในเกมจริงก็เป็นเช่นนี้ — เดินชนมอนสเตอร์ = เริ่มสู้" });
   }
   S.push({ id:"gauge", title:"⏳ เกจโจมตี", need:3, unit:"ครั้ง", point:"gauge",
-    text:"ดู **แถบเกจใต้จอ** — มันวิ่งจากซ้ายไปขวาเรื่อยๆ\nรอให้เกจ **เกือบเต็ม** แล้ว **คลิกซ้ายตรงไหนก็ได้บนจอ** = ฟัน!\n(คลิกตอนเกจยังไม่ถึง = ไม่ตี)" });
+    text:"ดู **แถบเกจใต้จอ** — มันจะวิ่งจากซ้ายไปขวาเรื่อยๆ\nรอให้เกจ **เกือบเต็ม** แล้ว **คลิกซ้ายตรงไหนก็ได้บนจอ** = ฟัน!\n(คลิกตอนเกจยังไม่ถึง = ไม่โจมตี)" });
   S.push({ id:"perfect", title:"✨ จังหวะ PERFECT", need:3, unit:"ครั้ง", point:"gauge",
-    text:"ท้ายเกจมี **โซนสีเขียว** — คลิกตอนแถบกลายเป็น **สีเขียว** = **PERFECT!** แรงขึ้น\nPERFECT ติดกันหลายครั้ง ยิ่งแรงขึ้นเรื่อยๆ" });
+    text:"ท้ายเกจมี **โซนสีเขียว** — คลิกตอนแถบวิ่งเข้าสู่ **สีเขียว** = **PERFECT!** แรงขึ้น\nทำ PERFECT ต่อเนื่องกันหลายครั้ง ยิ่งรุนแรงขึ้นเรื่อยๆ" });
   const w = getEquippedWeaponMasteryType(), wi = w && TUT_INPUT[w];
   if(wi) S.push({ id:"input", title:wi.title, need:wi.need, unit:"ครั้ง", text:wi.text, weapon:w, point:"gauge" });
   S.push({ id:"skill", title:"💥 ใช้สกิล", need:1, unit:"ครั้ง", point:"skill",
     text:"กดปุ่ม <kbd>{KEY}</kbd> บนคีย์บอร์ด (หรือคลิกปุ่ม **{SKILL}** ที่แถบล่าง) = ใช้สกิล\nใช้แล้วต้องรอ **คูลดาวน์** (ตัวเลขนับถอยหลังบนปุ่ม) · ปุ่ม <kbd>1</kbd>–<kbd>8</kbd> คือช่องสกิลทั้งหมด" });
   S.push({ id:"dodge", title:"🛡️ หลบการโจมตี", need:3, unit:"ครั้ง", attacks:true,
-    text:"คราวนี้หุ่นจะ **ยิงลูกพลัง** ใส่!\nขอบจอฝั่งไหน **กระพริบแดง** = ลูกพลังพุ่งมาฝั่งนั้น → **หลบไปอีกฝั่ง**\n• แดงซ้าย → กด <kbd>{RIGHT}</kbd> (หลบขวา)\n• แดงขวา → กด <kbd>{LEFT}</kbd> (หลบซ้าย)" });
+    text:"คราวนี้หุ่นฝึกจะ **ยิงลูกพลัง** ใส่!\nขอบจอฝั่งไหน **กะพริบแดง** = ลูกพลังพุ่งมาฝั่งนั้น → **หลบไปอีกฝั่ง**\n• แดงซ้าย → กด <kbd>{RIGHT}</kbd> (หลบขวา)\n• แดงขวา → กด <kbd>{LEFT}</kbd> (หลบซ้าย)" });
   S.push({ id:"counter", title:"⚡ หลบเฉียบขาด + สวนกลับ", need:1, unit:"ครั้ง", attacks:true,
-    text:"**อย่ารีบหลบ!** รอให้ลูกพลังเกือบถึงตัว (ตอนขึ้นว่า **\"ตอนนี้!\"**) ค่อยกดหลบ = **PERFECT DODGE**\nแล้ว **คลิกซ้ายทันที** = **COUNTER!** สวนแรงและโดนแน่นอน" });
-  S.push({ id:"stun", title:"💫 ทำให้มอนมึน (สตั้น)", need:6, unit:"ฮิต",
-    text:"ตีโดนแต่ละครั้ง **หลอดสีส้ม** ใต้เลือดหุ่นจะเพิ่มขึ้น (PERFECT / ท่าพิเศษ / สกิล เติมเยอะกว่า)\nหลอดเต็ม = มอน **มึน 2 วิ** → **รัวคลิกซ้าย** ให้ไวที่สุด! (กดค้างไว้ก็ได้)" });
+    text:"**อย่ารีบหลบ!** รอให้ลูกพลังเกือบถึงตัว (ตอนขึ้นคำว่า **\"ตอนนี้!\"**) ค่อยกดหลบ = **PERFECT DODGE**\nแล้ว **คลิกซ้ายทันที** = **COUNTER!** สวนกลับแรงและโดนแน่นอน" });
+  S.push({ id:"stun", title:"💫 ทำให้มอนสเตอร์มึน (สตั้น)", need:6, unit:"ฮิต",
+    text:"โจมตีโดนแต่ละครั้ง **หลอดสีส้ม** ใต้เลือดหุ่นจะเพิ่มขึ้น (PERFECT / ท่าพิเศษ / สกิล เติมได้เยอะกว่า)\nหลอดเต็ม = มอนสเตอร์ **มึน 2 วิ** → **รัวคลิกซ้าย** ให้ไวที่สุด! (หรือกดค้างไว้ก็ได้)" });
   S.push({ id:"final", title:"🏁 ด่านสุดท้าย: ปราบหุ่นฝึก!", final:true, attacks:true,
-    text:"ใช้ทุกอย่างที่เรียนมา: **PERFECT · ท่าพิเศษ · สกิล · หลบ · สวนกลับ · สตั้น**\nปราบหุ่นฝึกให้ได้! (ในลานฝึกไม่มีวันตาย ไม่ต้องกลัว)" });
+    text:"ใช้ทุกอย่างที่เรียนรู้มา: **PERFECT · ท่าพิเศษ · สกิล · หลบ · สวนกลับ · สตั้น**\nปราบหุ่นฝึกให้จงได้! (ในลานฝึกไม่มีวันตาย ไม่ต้องกังวล)" });
   return S;
 }
 
@@ -10601,8 +10582,8 @@ function tutBegin(opts){
   opts = opts || {};
   if(!game) return;
   if(TUT.active) return;
-  if(game.inBattle || game.dungeon || game.player.isMeditating){ showToast("🎯 ฝึกได้ตอนอยู่นอกฉากต่อสู้ (และไม่ได้อยู่ในดันเจี้ยน/ทำสมาธิ)"); return; }
-  if(!opts.newChar && sanityTier() >= 1){ showToast("🧘 สติต่ำกว่า 50% — ทำสมาธิให้สติกลับมาก่อนค่อยมาฝึก"); return; }
+  if(game.inBattle || game.dungeon || game.player.isMeditating){ showToast("🎯 เข้าฝึกได้เฉพาะตอนอยู่นอกฉากต่อสู้ (และไม่ได้อยู่ในดันเจี้ยน/ทำสมาธิ)"); return; }
+  if(!opts.newChar && sanityTier() >= 1){ showToast("🧘 สติต่ำกว่า 50% — ทำสมาธิให้สติฟื้นคืนมาก่อนค่อยมาฝึก"); return; }
   if(talk.open) closeTalk();
   closeAllPanels();
   TUT.newChar = !!opts.newChar;
@@ -10618,23 +10599,23 @@ function tutModal(kind){
     set("cmIcon", "🎯");
     set("cmTitle", TUT.newChar ? "ลานฝึกหน่วยกวาดล้าง" : "ลานฝึก — ทบทวนการต่อสู้");
     set("cmText", tutMd((TUT.newChar ? "ก่อนออกผจญภัยจริง มาฝึกสู้กับ **🎯 หุ่นฝึก** แบบจับมือทำกันก่อน (ประมาณ 3 นาที)\n\n" : "ฝึกสู้กับ **🎯 หุ่นฝึก** แบบจับมือทำอีกรอบ (ประมาณ 3 นาที)\n\n")
-      + "• ทำตามคำแนะนำ **ทีละขั้น** — ทำได้แล้วถึงจะไปขั้นต่อไป\n"
-      + "• หุ่นฝึก **ไม่ทำให้ตาย** และไม่เสียอะไรเลย (แต่ก็ไม่ได้ของ/EXP นะ)\n"
-      + "• ติดตรงไหน กด **⏭ ข้ามขั้นนี้** ได้ · ออกได้ทุกเมื่อ"), true);
+      + "• ปฏิบัติตามคำแนะนำ **ทีละขั้น** — สำเร็จขั้นก่อนหน้าแล้วจึงจะไปขั้นถัดไป\n"
+      + "• หุ่นฝึก **ไม่ทำให้ถึงแก่ชีวิต** และไม่เสียสิ่งใด (แต่จะไม่ได้ไอเทม/EXP นะ)\n"
+      + "• ติดขัดตรงไหน กด **⏭ ข้ามขั้นนี้** ได้ · ออกได้ทุกเมื่อ"), true);
     skipBtn.hidden = false; skipBtn.textContent = TUT.newChar ? "ข้ามการฝึก (เล่นเป็นแล้ว)" : "ยกเลิก";
     set("cmGoBtn", "🎯 เริ่มฝึก!");
   } else {
     const w = getEquippedWeaponMasteryType(), wi = w && TUT_INPUT[w];
     set("cmIcon", "🎉");
     set("cmTitle", "ผ่านการฝึกแล้ว!");
-    set("cmText", tutMd("เก่งมาก! สรุปสั้นๆ ก่อนออกไปจริง:\n"
+    set("cmText", tutMd("เก่งมาก! สรุปสั้นๆ ก่อนออกเดินทางจริง:\n"
       + "⏳ รอเกจ → **คลิกตอนแถบเขียว = PERFECT**\n"
       + (wi ? `${wi.title.split(":")[0]}: ${wi.title.split(":")[1].trim()} = PERFECT + ท่าพิเศษของอาวุธ\n` : "")
-      + `🛡️ **${tutDodgeHint()}** · รอให้ใกล้ค่อยหลบ = สวนกลับ\n`
-      + "💫 หลอดส้มเต็ม = มอนมึน → **รัวคลิก**\n\n"
-      + "⚠️ ในสนามจริง **โซนเขียวแคบกว่า** ในลานฝึก — อัปสเตตัส **สมาธิ** ช่วยให้กว้างขึ้น\n"
-      + "🧘 ฆ่ามอน/โดนตีแล้ว **สติ** จะลด — อย่าลืม **ทำสมาธิ**\n"
-      + "❓ ปุ่ม **วิธีเล่น** มีคู่มือละเอียด + กลับมาฝึกซ้ำได้"), true);
+      + `🛡️ **${tutDodgeHint()}** · รอให้ใกล้ถึงตัวค่อยหลบ = สวนกลับ\n`
+      + "💫 หลอดส้มเต็ม = มอนสเตอร์มึน → **รัวคลิก**\n\n"
+      + "⚠️ ในสนามจริง **โซนเขียวจะแคบกว่า** ในลานฝึก — อัปสเตตัส **สมาธิ** ช่วยให้กว้างขึ้น\n"
+      + "🧘 สังหารมอนสเตอร์/ถูกโจมตีแล้ว **สติ** จะลดลง — อย่าลืม **ทำสมาธิ**\n"
+      + "❓ ปุ่ม **วิธีเล่น** มีคู่มือละเอียด + กลับมาฝึกซ้ำได้เสมอ"), true);
     skipBtn.hidden = true;
     set("cmGoBtn", "⚔️ ออกผจญภัย!");
   }
@@ -10867,7 +10848,7 @@ function tutStartBattle(){
   b.training = true;
   b.nextAttackAt = performance.now() + 1500;
   b.telegraphDuration = 1500;
-  b.baseHintText = "🎯 ลานฝึก — ทำตามคำแนะนำในกล่องมุมขวาบน · กด ✖ ออกจากการฝึก ได้ทุกเมื่อ";
+  b.baseHintText = "🎯 ลานฝึก — ปฏิบัติตามคำแนะนำในกล่องมุมขวาบน · กด ✖ ออกจากการฝึก ได้ทุกเมื่อ";
   document.getElementById("hint").textContent = b.baseHintText;
   updateHud();
 }
@@ -10907,7 +10888,7 @@ function tutBattleExit(result){
   if(result === "lose"){ // nobody dies in the training yard
     p.hp = getEffectiveMaxHp(); updateHud();
     spawnBattleMsg("❤️ เติมเลือดเต็ม!", "#7CE0A8", "heal");
-    tutTip("เกือบไปแล้ว! เติมเลือดให้เต็ม — " + tutDodgeHint(), "warn");
+    tutTip("เกือบไปแล้ว! เติมพลังชีวิตให้เต็ม — " + tutDodgeHint(), "warn");
     return;
   }
   if(TUT.passing) return;
@@ -10915,7 +10896,7 @@ function tutBattleExit(result){
   m.hp = 0;
   b.telegraphSide = null; b.nextAttackAt = performance.now() + 9e9;
   sfx.die();
-  spawnCallout("🎉 ปราบหุ่นฝึกแล้ว!", "#ffd166");
+  spawnCallout("🎉 ปราบหุ่นฝึกสำเร็จแล้ว!", "#ffd166");
   playJingle("jgl_victory");
   tutPass();
 }
@@ -10946,17 +10927,17 @@ function tutEvent(kind, e){
       break;
     case "input":
       if(kind === "hit"){
-        if(e.input) tutCount("สุดยอด! ท่าพิเศษเข้า!");
+        if(e.input) tutCount("สุดยอด! ท่าพิเศษเข้าเป้า!");
         else { TUT.fails++; tutTip(e.perfect ? TUT_INPUT[st.weapon].tip(e) : "ท่าพิเศษต้องทำตอนเกจ สีเขียว (PERFECT) ด้วยนะ", "warn"); }
-      } else if(kind === "early"){ TUT.fails++; tutTip("ยังไม่ถึงโซนเขียว — ค้าง/เล็งไว้ก่อน แล้วค่อยปล่อยตอนเขียว", "warn"); }
-      if(TUT.fails >= 6){ document.getElementById("coach").classList.add("stuck"); if(TUT.fails === 6) tutTip("ยากไปไหม? กด ⏭ ข้ามขั้นนี้ได้ — ค่อยฝึกในสนามจริงก็ได้", "warn"); }
+      } else if(kind === "early"){ TUT.fails++; tutTip("ยังไม่ถึงโซนเขียว — กดค้าง/เล็งไว้ก่อน แล้วค่อยปล่อยตอนเขียว", "warn"); }
+      if(TUT.fails >= 6){ document.getElementById("coach").classList.add("stuck"); if(TUT.fails === 6) tutTip("ยากเกินไปไหม? กด ⏭ ข้ามขั้นนี้ได้ — ค่อยไปฝึกในสนามจริงได้เสมอ", "warn"); }
       break;
     case "skill":
       if(kind === "skill") tutCount("ใช้สกิลแล้ว! 💥");
       break;
     case "dodge":
       if(kind === "dodge") tutCount(e.perfect ? "PERFECT DODGE! เก่งมาก" : "หลบได้!");
-      else if(kind === "hurt") tutTip("โดนแล้ว! " + tutDodgeHint(), "warn");
+      else if(kind === "hurt") tutTip("โดนโจมตีแล้ว! " + tutDodgeHint(), "warn");
       break;
     case "counter":
       if(kind === "counter") tutCount("COUNTER! สวนกลับสำเร็จ ⚡");
@@ -13535,12 +13516,12 @@ function renderStatusPanel(){
 }
 
 const STAT_INFO = {
-  STR:      { label:"เจตจำนง",     desc:"เพิ่มพลังโจมตี (ATK)" },
-  AGI:      { label:"ความคล่องแคล่ว", desc:"เพิ่มความเร็วโจมตี (สูงสุด 1 ครั้ง/วินาที ส่วนเกินเปลี่ยนเป็นแรงโจมตี) + ลดดีเลย์การกดหลบ" },
+  STR:      { label:"เจตจำนง",     desc:"เพิ่ม ATK" },
+  AGI:      { label:"ความคล่องแคล่ว", desc:"เพิ่มความเร็วโจมตี (เต็มที่ 1 ครั้ง/วิ ส่วนเกินกลายเป็นแรงตี) + ลดดีเลย์กดหลบ" },
   DEX:      { label:"ไหวพริบ",     desc:"เพิ่มความแม่นยำ + ขยาย Perfect Zone เล็กน้อย" },
-  VIT:      { label:"ความทนทาน",   desc:"เพิ่มพลังชีวิต (HP) + พลังป้องกัน (DEF)" },
-  LUK:      { label:"โชค",         desc:"เพิ่มอัตราคริติคอล + โอกาสได้รับไอเทมหายากขึ้นเล็กน้อย" },
-  MEDITATE: { label:"สมาธิ",       desc:"ขยาย Perfect Zone (เป็นหลัก)" }
+  VIT:      { label:"ความทนทาน",   desc:"เพิ่ม HP + DEF" },
+  LUK:      { label:"โชค",         desc:"เพิ่มคริติคอล + โอกาสได้ของหายากขึ้นเล็กน้อย" },
+  MEDITATE: { label:"สมาธิ",       desc:"ขยาย Perfect Zone (หลัก)" }
 };
 function renderStatPointsSection(){
   const p = game.player, sp = p.statPoints, gear = getGearStatPoints(), tb = getTitleStatBonus();
