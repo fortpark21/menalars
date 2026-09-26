@@ -1432,12 +1432,12 @@
     <div class="creation-grid">
       <div class="creation-preview">
         <canvas id="previewCanvas" width="160" height="190"></canvas>
-        <div class="caption">เงาสะท้อนในแอ่งน้ำ<br>นี่คือตัวคุณ</div>
+        <div class="caption">เงาสะท้อนในแอ่งน้ำ<br>นี่คือตัวเจ้า</div>
         <button class="btn-secondary" id="randomBtn" type="button">🎲 สุ่มรูปลักษณ์</button>
       </div>
       <div class="creation-form">
         <div class="field">
-          <label for="nameInput">ชื่อที่คุณยังจำได้</label>
+          <label for="nameInput">นามที่เจ้ายังจดจำได้</label>
           <input type="text" id="nameInput" maxlength="20" placeholder="เช่น สายลมยามเย็น" autocomplete="off">
           <span class="err" id="nameErr"></span>
         </div>
@@ -1528,7 +1528,7 @@
     <button class="menu-btn" id="weaponSkillBtn" type="button" style="position:relative;">⚔️ สกิลอาวุธ<span id="weaponSkillBadge" class="stat-badge" hidden>!</span></button>
     <button class="menu-btn" id="meditateBtn" type="button" style="position:relative;">🧘 ทำสมาธิ<span id="sanityLowBadge" class="stat-badge sanity-badge" hidden>!</span></button>
     <button class="menu-btn" id="tutorialBtn" type="button">❓ วิธีเล่น</button>
-    <button class="menu-btn" id="optionsBtn" type="button">⚙️ ออฟชั่น</button>
+    <button class="menu-btn" id="optionsBtn" type="button">⚙️ ตั้งค่า</button>
     <button class="menu-btn" id="friendsBtn" type="button" style="position:relative;" hidden>👥 เพื่อน<span id="friendsBadge" class="stat-badge" hidden>0</span></button>
     <button class="menu-btn" id="accountBtn" type="button" hidden>👤 บัญชี</button>
     <button class="menu-btn" id="gmBtn" type="button" hidden style="border:2px solid var(--gold);">🛡️ GM</button>
@@ -1629,7 +1629,7 @@
       </div>
       <div class="panel-col">
         <h4 style="display:flex; justify-content:space-between; align-items:center;">
-          <span>Stat Points (<span id="statPointsAvailable">0</span> เหลือ)</span>
+          <span>Stat Points (<span id="statPointsAvailable">0</span> คงเหลือ)</span>
           <button class="btn-secondary" id="resetStatsBtn" type="button" style="font-size:11px; padding:6px 10px;">รีเซ็ตสเตตัส</button>
         </h4>
         <div class="slot-list" id="statPointsList"></div>
@@ -1762,10 +1762,10 @@
 
   <div class="panel" id="optionsPanel" hidden style="width:560px;">
     <button class="close-x" id="closeOptionsBtn" type="button">✕</button>
-    <h2>⚙️ ออฟชั่น</h2>
+    <h2>⚙️ ตั้งค่า</h2>
     <div class="opt-tabs" role="tablist" id="optTabs"></div>
     <div id="optBody"></div>
-    <div class="opt-foot"><span>ตั้งค่าจำไว้ในเครื่องและเบราว์เซอร์นี้</span><button type="button" class="opt-reset" id="optReset">คืนค่าเริ่มต้น</button></div>
+    <div class="opt-foot"><span>การตั้งค่าจะบันทึกไว้ในอุปกรณ์และเบราว์เซอร์นี้</span><button type="button" class="opt-reset" id="optReset">คืนค่าเริ่มต้น</button></div>
   </div>
 
   <div class="panel" id="accountPanel" hidden style="width:540px;">
@@ -1780,7 +1780,7 @@
     <div class="choice-row" id="weaponSkillCategoryTabs" style="margin-bottom:12px;"></div>
     <div id="weaponSkillRankInfo"></div>
     <div id="weaponSkillTierList" class="skt-tree"></div>
-    <div class="skt-legend"><span><i class="skt-key act"></i>สกิลกดใช้</span><span><i class="skt-key pas"></i>พาสสิฟ</span><span>ชี้ที่สกิลเพื่อดูรายละเอียด · ลากสกิลที่ปลดแล้วไปวางในแอ็คชั่นบาร์</span></div>
+    <div class="skt-legend"><span><i class="skt-key act"></i>สกิลกดใช้</span><span><i class="skt-key pas"></i>ติดตัว</span><span>ชี้ที่สกิลเพื่อดูรายละเอียด · ลากสกิลที่ปลดแล้วไปวางในแอ็คชั่นบาร์</span></div>
   </div>
   <div id="skillTip" hidden></div>
 
@@ -1834,7 +1834,7 @@
         <div id="meditateBreathLabel">หายใจเข้า</div>
       </div>
     </div>
-    <div class="meditate-sub" id="meditateProgressLabel">สติกำลังฟื้นคืน...</div>
+    <div class="meditate-sub" id="meditateProgressLabel">กำลังฟื้นฟูสติ...</div>
     <div class="meditate-bar"><div class="meditate-bar-fill" id="meditateBarFill"></div></div>
     <div class="meditate-sub" id="meditateProgressDetail"></div>
     <button class="btn-secondary" id="meditateStopBtn" type="button">หยุดทำสมาธิ</button>
@@ -1856,11 +1856,11 @@
 </div>
 <div id="sanityAlert" hidden role="alertdialog" aria-modal="true" aria-labelledby="saTitle">
   <div class="sa-card">
-    <div class="sa-eyebrow">⚠️ ตัวละครไม่ปกติแล้ว</div>
+    <div class="sa-eyebrow">⚠️ สภาพจิตใจเริ่มผิดปกติ</div>
     <h3 id="saTitle"></h3>
     <div class="sa-meter"><i id="saFill"></i><span id="saPct"></span></div>
     <ul id="saList"></ul>
-    <p class="sa-tip">ทำสมาธิเพื่อดึงสติกลับคืน (นอกฉากต่อสู้) · จากต่ำสุดจนเต็มใช้ไม่เกิน 2 นาที · อยู่ในเมืองสติฟื้นเองช้าๆ</p>
+    <p class="sa-tip">ทำสมาธินอกการต่อสู้เพื่อฟื้นสติ · จากวิกฤตจนเต็มใช้เวลาไม่เกิน 2 นาที · เมื่ออยู่ในเมืองสติจะฟื้นเองช้าๆ</p>
     <div class="sa-actions"><button type="button" class="btn-primary" id="saMeditate">🧘 นั่งสมาธิเลย</button><button type="button" class="btn-secondary" id="saLater">ไว้ทีหลัง</button></div>
   </div>
 </div>
@@ -2121,7 +2121,7 @@ function artMissingWarn(key){
   const el = document.createElement("div");
   el.style.cssText = "position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99;max-width:92vw;padding:10px 16px;border-radius:12px;" +
     "background:#5b1a1a;color:#fff;font:13px/1.5 'Trebuchet MS',sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.5);border:2px solid #ff8a8a;text-align:center;cursor:pointer";
-  el.innerHTML = "⚠️ โหลดภาพในเกมไม่ได้ (" + key + ") — โฟลเดอร์ <b>assets</b> ยังไม่ได้อัปโหลดคู่กับ index.html<br>เกมเลยใช้กราฟิกแบบเก่าแทนชั่วคราว · คลิกเพื่อปิด";
+  el.innerHTML = "⚠️ โหลดภาพในเกมไม่สำเร็จ (" + key + ") — โฟลเดอร์ <b>assets</b> ยังไม่ได้อัปโหลดพร้อม index.html<br>ระบบจึงแสดงผลกราฟิกสำรองแทนชั่วคราว · คลิกเพื่อปิด";
   el.onclick = () => el.remove();
   document.body.appendChild(el);
 }
@@ -2465,7 +2465,7 @@ function audioMissingWarn(key){
   console.warn("missing sound:", AUDIO[key]);
   if(audioMissingShown || location.protocol === "file:") return; // double-clicked file: fetch() is blocked there, not a missing upload
   audioMissingShown = true;
-  if(typeof showToast === "function") showToast("🔇 โหลดเพลง/เสียงไม่ได้ (" + key + ") — อัปโหลดไฟล์ .mp3 ในโฟลเดอร์ assets ขึ้น GitHub ด้วย");
+  if(typeof showToast === "function") showToast("🔇 โหลดเสียงไม่สำเร็จ (" + key + ") — กรุณาอัปโหลดไฟล์ .mp3 ในโฟลเดอร์ assets ขึ้น GitHub ");
 }
 
 // ---- sound-effect files: decoded once into AudioBuffers, played through the shared SFX volume ----
@@ -3714,7 +3714,7 @@ function validateName(raw){
   if(name.length < 2) return { ok:false, msg:"ชื่อสั้นเกินไป (อย่างน้อย 2 ตัวอักษร)" };
   if(name.length > 20) return { ok:false, msg:"ชื่อยาวเกินไป (ไม่เกิน 20 ตัวอักษร)" };
   if(/\s{2,}/.test(name)) return { ok:false, msg:"ห้ามมีช่องว่างติดกัน" };
-  if(!/^[A-Za-zก-๙]+( [A-Za-zก-๙]+)*$/.test(name)) return { ok:false, msg:"ใช้ได้เฉพาะตัวอักษรไทย/อังกฤษ และเว้นวรรคเท่านั้น" };
+  if(!/^[A-Za-zก-๙]+( [A-Za-zก-๙]+)*$/.test(name)) return { ok:false, msg:"ใช้ได้เฉพาะอักษรไทย อังกฤษ และเว้นวรรคเท่านั้น" };
   return { ok:true, name };
 }
 
@@ -3923,9 +3923,9 @@ function matchesOrbShape(points, requiredShape){
 // One short Thai line explaining a finished drawing's result (shown under the guide after release).
 function describeOrbGesture(g, requiredShape, timingNote){
   const need = getOrbRequiredDeg(requiredShape);
-  if(g.reason === "short") return { ok:false, text:"ลากสั้นเกินไป — ยังไม่เป็นรูป" };
+  if(g.reason === "short") return { ok:false, text:"ลากสั้นเกินไป — ยังไม่เป็นรูปทรง" };
   if(g.reason === "small") return { ok:false, text:"วงเล็กเกินไป — วาดให้ใหญ่ขึ้น" };
-  if(g.reason === "wobbly") return { ok:false, text:"เส้นเบี้ยวเกินไป — ลองวาดให้กลมกว่านี้" };
+  if(g.reason === "wobbly") return { ok:false, text:"เส้นบิดเบี้ยวเกินไป — พยายามวาดให้โค้งมนขึ้น" };
   const deg = Math.round(g.sweepDeg);
   if(deg < need) return { ok:false, text:`กวาดได้ ${deg}° / ${need}° — ขาดอีก ${need - deg}°` };
   if(!orbArcFacesRightWay(g, requiredShape)) return { ok:false, text:`โค้งผิดด้าน — ต้องโค้ง${ORB_SEMICIRCLE_FACING[requiredShape] < 0 ? "ขึ้นบน" : "ลงล่าง"}` };
@@ -4661,9 +4661,13 @@ function buildMonsterInstances(monsterSpawns){
 // each once, at a random free spot — not "one of everything" every map, and never a duplicate type
 // within the same map.
 function generateRandomSecretLocations(tier){
+  // v60: 12 kinds in the draw — the two letter spots (bag / ruins) share ONE slot, so a map never holds more than one letter
   const allDefIds = Object.keys(SECRET_LOCATION_DEFS);
-  const count = randInt(Math.min(4, allDefIds.length), Math.min(7, allDefIds.length));
-  const chosenIds = allDefIds.slice().sort(()=> Math.random()-0.5).slice(0, count);
+  const letterIds = allDefIds.filter(id => SECRET_LOCATION_DEFS[id].letter);
+  const pool = allDefIds.filter(id => !SECRET_LOCATION_DEFS[id].letter);
+  pool.push(letterIds[randInt(0, letterIds.length - 1)]);
+  for(let i = pool.length - 1; i > 0; i--){ const j = randInt(0, i); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+  const chosenIds = pool.slice(0, SECRET_LOCATIONS_PER_MAP);
   return chosenIds.map((defId, i) => {
     const spot = pickFreeWorldPosition(150);
     return { id: "loc_" + tier + "_" + i, defId, x: spot.x, y: spot.y, discovered: false, used: false };
@@ -4743,6 +4747,15 @@ function getMapMonsterDefs(tier){
   }));
 }
 // mapStates keys: layer 1 keeps the plain tier key (unchanged), other layers are "dim:tier".
+// v60: a map's secret spots live in the save (game.secretSaved) — reloading the page used to re-roll them (free keys/gear/letters).
+// ~0.4 KB per map, so even many layers stay far below the save size limit.
+function secretSpotsFor(tier){
+  const key = String(mapStateKey(tier));
+  if(!game.secretSaved || typeof game.secretSaved !== "object") game.secretSaved = {};
+  const saved = game.secretSaved[key];
+  if(Array.isArray(saved) && saved.length && saved.every(l => l && SECRET_LOCATION_DEFS[l.defId])) return saved;
+  return (game.secretSaved[key] = generateRandomSecretLocations(tier));
+}
 function mapStateKey(tier){ return game.dimension === 1 ? tier : game.dimension + ":" + tier; }
 function getDimReach(dim){ return dim === 1 ? game.maxMapTierReachedDim1 : (game.dimReach[dim] || 1); }
 
@@ -4804,7 +4817,7 @@ function warpToMap(tier, dim){
       game.monsters.forEach(m => rollEliteForMonster(m));
       // Ambush monsters spawned from these (grantType:"monster") already pull from MONSTER_DEFS, which
       // generateMapMonsterDefs(tier) just reassigned above, so they automatically match this map's types/levels.
-      game.secretLocations = generateRandomSecretLocations(tier);
+      game.secretLocations = secretSpotsFor(tier);
       game.warpPoint = null;
       game.bossDefeatedThisMap = false;
     }
@@ -4855,7 +4868,7 @@ function startGame(name, chosenLook, startWeapon){
 
   warpToMap(1); // the adventure starts straight in Map 1 — the town is reached later via the travel gate
   storyState();
-  storyPendingScene = { text: STORY_QUESTS[0].give, art: STORY_QUESTS[0].art, artPos: STORY_QUESTS[0].artPos, extra: storyCard(STORY_QUESTS[0], '<span class="tk-tag">กำลังทำ</span>') };
+  storyPendingScene = { text: STORY_QUESTS[0].give, art: STORY_QUESTS[0].art, artPos: STORY_QUESTS[0].artPos, extra: storyCard(STORY_QUESTS[0], '<span class="tk-tag">กำลังดำเนินการ</span>') };
   updateHud();
   requestAnimationFrame(loop);
   game.player.tutorialDone = false; // v52: a new character plays the 🎯 hand-held training first (skippable)
@@ -4897,6 +4910,7 @@ function createGameState(name, chosenLook){
     npcs: [],
     trees,
     secretLocations: [],
+    secretSaved: {}, // v60: "dim:tier" → that map's secret spots (saved)
     mapStates: {}, // tier -> { monsters, secretLocations, warpPoint, bossDefeatedThisMap, nextEliteEligibleAt } — saved when leaving a battle map, restored on return, so town-hopping can't re-roll a map's content to farm it
     dungeon: null,
     mapTier: TOWN_TIER,
@@ -4943,7 +4957,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 58;
+const GAME_VERSION = 60;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -4988,7 +5002,7 @@ async function netFetch(path, opts = {}, retried){
   if(net.session && !opts.noAuth) headers.Authorization = "Bearer " + net.session.access_token;
   let res;
   try{ res = await fetch(NET_CONFIG.url + path, { method: opts.method || "GET", headers, body: opts.body, keepalive: !!opts.keepalive }); }
-  catch(err){ throw new Error("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ — ตรวจอินเทอร์เน็ตแล้วลองใหม่"); }
+  catch(err){ throw new Error("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ — กรุณาตรวจสัญญาณอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง"); }
   if(res.status === 401 && net.session && !opts.noAuth && !retried && await netRefresh()) return netFetch(path, opts, true);
   const text = await res.text();
   let data = null;
@@ -5061,7 +5075,7 @@ function renderUpdateBanner(){
   document.getElementById("updateBanner").hidden = !upd.newer || performance.now() < upd.snoozeUntil || net.blocked;
 }
 async function applyUpdate(){
-  if(game && game.inBattle){ showToast("จบไฟต์ก่อน แล้วกดอัปเดตอีกครั้ง"); return; }
+  if(game && game.inBattle){ showToast("โปรดจบการต่อสู้ก่อน แล้วกดอัปเดตใหม่อีกครั้ง"); return; }
   const btn = document.getElementById("updateNowBtn");
   btn.disabled = true; btn.textContent = "กำลังบันทึก…";
   if(game && net.session) await netSaveAndWait(); // keep this session's progress
@@ -5199,30 +5213,30 @@ function netSetConnected(on){
   if(!document.getElementById("accountPanel").hidden) renderAccountPanel();
 }
 const NET_BLOCK_TEXT = {
-  session: ["🔗", "บัญชีนี้ถูกเปิดเล่นจากที่อื่น", "บาเรียเชื่อมกับการเดินทางได้ทีละที่ เพื่อกันไอเทมซ้ำ — หน้านี้จะไม่บันทึกต่อแล้ว โหลดใหม่เพื่อดึงการเดินทางกลับมาเล่นที่นี่"],
+  session: ["🔗", "บัญชีนี้ถูกเปิดเล่นจากที่อื่น", "บาเรียเชื่อมต่อได้ทีละแห่งเพื่อป้องกันไอเทมซ้ำซ้อน — หน้านี้หยุดบันทึกแล้ว โหลดใหม่เพื่อย้ายการเล่นมายังหน้านี้"],
   rev:     ["⏳", "ข้อมูลไม่ตรงกับบาเรีย", "มีการบันทึกที่ใหม่กว่าหน้านี้อยู่แล้ว — โหลดการเดินทางล่าสุดเพื่อเล่นต่อ"],
-  dupe:    ["⚠️", "ตรวจพบไอเทมซ้ำ", "อุปกรณ์บางชิ้นเคยออกจากตัวคุณไปแล้ว หรือมีชิ้นเดียวกันสองที่ — บาเรียปฏิเสธการบันทึกครั้งนี้"],
+  dupe:    ["⚠️", "ตรวจพบไอเทมซ้ำ", "พบอุปกรณ์ที่เคยออกจากตัวไปแล้ว หรือมีชิ้นเดียวกันสองแห่ง — บาเรียปฏิเสธการบันทึกครั้งนี้"],
   nouid:   ["⚠️", "ตรวจพบอุปกรณ์ผิดปกติ", "อุปกรณ์บางชิ้นไม่มีรหัสประจำชิ้น — บาเรียปฏิเสธการบันทึกครั้งนี้"],
   auth:    ["🔑", "การเข้าสู่ระบบหมดอายุ", "เข้าสู่ระบบใหม่เพื่อเล่นต่อ ความคืบหน้าล่าสุดที่บันทึกไว้ยังอยู่ครบ"],
-  kicked:  ["👢", "คุณถูกทีมงานเตะออกจากเกม", "โหลดใหม่เพื่อเข้าเล่นอีกครั้ง"],
+  kicked:  ["👢", "คุณถูกนำออกจากเกมโดยทีมงาน", "โหลดใหม่เพื่อเข้าเล่นอีกครั้ง"],
   banned:  ["⛔", "บัญชีนี้ถูกระงับการเล่น", "ติดต่อทีมงานหากคิดว่าเป็นความผิดพลาด"],
-  version: ["✨", "มีอัปเดตสำคัญของ Menalars", "เวอร์ชันที่เปิดอยู่เก่าเกินไปแล้ว — โหลดใหม่เพื่อเล่นต่อ ความคืบหน้าที่บันทึกไว้อยู่ครบ"],
+  version: ["✨", "มีอัปเดตสำคัญของ Menalars", "เวอร์ชันที่เปิดอยู่เก่าเกินไป — กรุณารีเฟรชเพื่อเล่นต่อ ข้อมูลที่บันทึกไว้ยังอยู่ครบถ้วน"],
   invalid: ["🛡️", "บาเรียปฏิเสธข้อมูลตัวละคร", "ข้อมูลผิดปกติ — ครั้งนี้ไม่ถูกบันทึก โหลดใหม่เพื่อกลับไปยังเซฟล่าสุดที่ถูกต้อง"],
-  econ:    ["🛡️", "บาเรียปฏิเสธข้อมูลตัวละคร", "ได้ของ/เงินเร็วผิดปกติ — ครั้งนี้ไม่ถูกบันทึก โหลดใหม่เพื่อกลับไปยังเซฟล่าสุดที่ถูกต้อง"]
+  econ:    ["🛡️", "บาเรียปฏิเสธข้อมูลตัวละคร", "ได้รับไอเทมหรือเงินเร็วผิดปกติ — บันทึกครั้งนี้ถูกปฏิเสธ โหลดใหม่เพื่อกลับไปยังจุดบันทึกล่าสุดที่ถูกต้อง"]
 };
 // Server economy-guard reasons (econ_check detail) → words for the player / the GM cheat review.
 const ECON_FLAG_TEXT = {
-  level:"เลเวลผิดรูปแบบ", exp:"EXP เกินหลอด", expNeeded:"หลอด EXP ถูกแก้", gold:"เงินผิดรูปแบบ", atk:"ATK เกินเลเวล", maxHp:"HP เกินเลเวล",
+  level:"เลเวลผิดรูปแบบ", exp:"EXP เกินขีดจำกัด", expNeeded:"แถบ EXP ผิดปกติ", gold:"เงินผิดรูปแบบ", atk:"ATK เกินเลเวล", maxHp:"HP เกินเลเวล",
   sanity:"สติเกินเพดาน", statPoints:"แต้มสเตตัสเกินที่ได้จริง", mastery:"ความชำนาญเกินเพดาน", dimension:"ข้ามมิติผิดขั้นตอน",
-  reach:"ไปแมพไกลเร็วเกินไป", cleared:"ปลดบาเรียโดยไม่ถึงแมพ 10", item_changed:"แก้ค่าไอเทมที่มีอยู่", refine:"ค่าตีบวกผิด",
+  reach:"เข้าสู่แมพระยะไกลเร็วเกินไป", cleared:"ปลดผนึกบาเรียโดยยังไม่ถึงแมพ 10", item_changed:"ค่าสถานะไอเทมถูกดัดแปลง", refine:"ค่าตีบวกผิด",
   item_def:"ไอเทมที่ไม่มีในเกม", item_rarity:"ระดับไอเทมปลอม", item_tier:"ไอเทมจากแมพที่ยังไปไม่ถึง", item_refine:"ไอเทมใหม่มาพร้อมค่าตีบวก",
-  item_stats:"โบนัสไอเทมเกินเพดาน", stack:"ไอเทมกองผิดปกติ", hunt:"ตัวนับมอนถูกแก้", kills:"ตัวนับการฆ่าผิดปกติ", combat:"สถิติการต่อสู้ผิดปกติ",
+  item_stats:"โบนัสไอเทมเกินเพดาน", stack:"จำนวนไอเทมในกองผิดปกติ", hunt:"ตัวนับกำจัดมอนสเตอร์ถูกดัดแปลง", kills:"สถิติการกำจัดผิดปกติ", combat:"สถิติการต่อสู้ผิดปกติ",
   dungeon:"ตัวนับดันเจี้ยนผิดปกติ", counters:"ตัวนับผิดปกติ", rank:"EXP อาวุธเพิ่มเร็วเกิน", skills:"สกิลเกินแต้มที่มี", title:"ฉายาที่ยังไม่ถึงเป้า",
   titleId:"สวมฉายาที่ยังไม่ปลด", discovery:"ค้นพบของที่ไม่เคยมี", goldEarned:"ตัวนับเงินผิดปกติ",
-  "econ:gold":"เงินเพิ่มเกินที่ฆ่ามอนได้", "econ:exp":"EXP เพิ่มเกินที่ฆ่ามอนได้", "econ:kills":"ฆ่ามอนเร็วเกินคน", "econ:items":"ได้ไอเทมเร็วเกินไป",
-  "econ:bosses":"ฆ่าบอสถี่เกินที่บอสเกิด", "econ:elites":"ฆ่า Elite ถี่เกินที่เกิด", "econ:rare":"ได้ของหายากเกินดวงที่เป็นไปได้", bag:"ช่องกระเป๋า/กล่องเกิน",
-  fast_kills:"ฆ่าเร็วผิดปกติ (ยังบันทึกให้)", fast_items:"ได้ไอเทมเร็วผิดปกติ (ยังบันทึกให้)", fast_bosses:"ฆ่าบอสถี่ผิดปกติ (ยังบันทึกให้)",
-  fast_elites:"ฆ่า Elite ถี่ผิดปกติ (ยังบันทึกให้)", market_pair:"🏪 ซื้อขายกับคนเดิมซ้ำๆ (อาจโยกของ/ขายเงินจริง)", market_high:"🏪 ตั้ง/ซื้อราคาตั้งแต่ 2 เท่าของราคากลาง", market_snipe:"🏪 ซื้อของแพงทันทีที่ขึ้นตลาด (เหมือนนัดกันไว้)", market_newbie:"🏪 บัญชีใหม่/เลเวลต่ำ ซื้อขายราคาสูง", lucky:"ดวงดีผิดปกติ — ได้ของหายากเยอะ (ยังบันทึกให้)", discovery_soft:"ค้นพบของที่ไม่มีในตัว (ยังบันทึกให้)"
+  "econ:gold":"เงินเพิ่มเกินอัตราการปราบมอนสเตอร์", "econ:exp":"EXP เพิ่มเกินอัตราการปราบมอนสเตอร์", "econ:kills":"กำจัดมอนสเตอร์เร็วกว่าปกติมาก", "econ:items":"ได้รับไอเทมเร็วผิดปกติ",
+  "econ:bosses":"ปราบบอสถี่เกินอัตราเกิด", "econ:elites":"ปราบมอนสเตอร์ Elite ถี่เกินอัตราเกิด", "econ:rare":"ได้รับของหายากเกินอัตราสุ่มปกติ", bag:"ช่องกระเป๋า/กล่องเกิน",
+  fast_kills:"กำจัดเร็วผิดปกติ (ระบบยังบันทึกให้)", fast_items:"ได้รับไอเทมเร็วผิดปกติ (ระบบยังบันทึกให้)", fast_bosses:"ปราบบอสถี่ผิดปกติ (ระบบยังบันทึกให้)",
+  fast_elites:"ปราบมอนสเตอร์ Elite ถี่ผิดปกติ (ระบบยังบันทึกให้)", market_pair:"🏪 ซื้อขายกับผู้เล่นเดิมซ้ำๆ (เสี่ยงโยกย้ายของหรือซื้อขายเงินจริง)", market_high:"🏪 ตั้งราคาหรือซื้อสูงกว่าราคากลางตั้งแต่ 2 เท่าขึ้นไป", market_snipe:"🏪 ซื้อไอเทมราคาสูงทันทีที่ลงขาย (มีพฤติกรรมนัดหมายล่วงหน้า)", market_newbie:"🏪 บัญชีสร้างใหม่หรือเลเวลต่ำ มีการซื้อขายมูลค่าสูง", lucky:"อัตราได้รับของหายากสูงผิดปกติ (ระบบยังบันทึกให้)", discovery_soft:"ค้นพบไอเทมที่ไม่มีอยู่ในช่องเก็บของ (ระบบยังบันทึกให้)"
 };
 function econFlagText(kind){
   const k = String(kind || ""), bare = k.replace(/^(invalid|econ):/, ""), base = bare.split(":")[0];
@@ -5260,7 +5274,7 @@ function renderAccountPanel(){
          <button data-act="email" type="button"${web ? "" : " disabled"}>${u.new_email ? "ส่งลิงก์ใหม่" : "ผูกอีเมล"}</button></div>`;
   const googleTile = providers.has("google")
     ? `<div class="acct-tile done"><h4><span class="ico g-mark">G</span>Google</h4><div class="state">✔ ผูกแล้ว</div></div>`
-    : `<div class="acct-tile"><h4><span class="ico g-mark">G</span>Google</h4><div class="state">เข้าเล่นด้วยปุ่มเดียว ทุกเครื่อง</div>
+    : `<div class="acct-tile"><h4><span class="ico g-mark">G</span>Google</h4><div class="state">เข้าเล่นง่ายด้วยคลิกเดียว ทุกอุปกรณ์</div>
          <button data-act="google" type="button"${web ? "" : " disabled"}>ผูกกับ Google</button></div>`;
   document.getElementById("accountBody").innerHTML = `
     <div class="acct-hero">
@@ -5268,12 +5282,12 @@ function renderAccountPanel(){
       <div><div class="name">${netEsc(game ? game.player.name : "")}</div><div class="sub">${guest ? "บัญชี Guest" : netEsc(u.email || "")}</div></div>
       <div class="acct-net"><span class="net-dot${net.connected ? "" : " off"}"></span>${net.connected ? "เชื่อมต่อบาเรีย" : "ขาดการเชื่อมต่อ"}<br><small>${saved}</small></div>
     </div>
-    ${guest ? `<div class="acct-warn">⚠️ บัญชี Guest จำได้แค่ในเบราว์เซอร์นี้ — ถ้าล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่อง การเดินทางจะหายไป ผูกอีเมลหรือ Google ไว้ก่อน</div>` : ""}
-    ${web ? "" : `<div class="acct-warn">การผูกอีเมล/Google ต้องเปิดเกมผ่านเว็บ (https) — ไฟล์ในเครื่องรับลิงก์ยืนยันกลับมาไม่ได้</div>`}
+    ${guest ? `<div class="acct-warn">⚠️ บัญชี Guest จะจดจำเฉพาะในเบราว์เซอร์นี้ — หากล้างข้อมูลหรือเปลี่ยนเครื่อง ข้อมูลจะสูญหาย แนะนำให้ผูกบัญชีก่อน</div>` : ""}
+    ${web ? "" : `<div class="acct-warn">การผูกบัญชีต้องเปิดผ่านหน้าเว็บ (https) เท่านั้น — ไฟล์ออฟไลน์ไม่สามารถรับลิงก์ยืนยันได้</div>`}
     <div class="acct-links">${emailTile}${googleTile}</div>
     <div class="acct-msg" id="acctMsg"></div>
     <div class="acct-foot"><span>ข้อมูลทั้งหมดเก็บไว้กับบาเรีย (เซิร์ฟเวอร์) · เล่นได้ทีละเครื่อง</span>
-      <button class="btn-secondary" data-act="logout" type="button">${accountLogoutArmed ? (guest ? "ยืนยัน — Guest จะกลับเข้าไม่ได้อีก" : "ยืนยันออกจากระบบ") : "ออกจากระบบ"}</button></div>`;
+      <button class="btn-secondary" data-act="logout" type="button">${accountLogoutArmed ? (guest ? "ยืนยัน — บัญชี Guest จะไม่สามารถกู้คืนได้อีก" : "ยืนยันออกจากระบบ") : "ออกจากระบบ"}</button></div>`;
 }
 function acctMsg(text, isErr){ const el = document.getElementById("acctMsg"); if(el){ el.textContent = text; el.className = "acct-msg" + (isErr ? " err" : ""); } }
 async function netAccountAction(act){
@@ -5528,9 +5542,9 @@ function socName(id, fallback){
   return (o && o.name) || (f && f.name) || fallback || "?";
 }
 function socRpcMsg(r){
-  return { offline:"ผู้เล่นนี้ออฟไลน์อยู่ — กระซิบได้เฉพาะตอนออนไลน์", blocked:"ส่งไม่ได้ — มีการบล็อกกันอยู่",
+  return { offline:"ผู้เล่นนี้ออฟไลน์อยู่ — กระซิบได้เฉพาะตอนออนไลน์", blocked:"ไม่สามารถส่งข้อความได้ — มีการระงับการติดต่อระหว่างกัน",
            fast:"ช้าลงหน่อย — ส่งถี่เกินไป", full:"รายชื่อเพื่อนเต็มแล้ว (100 คน)", invalid:"ทำรายการนี้ไม่ได้",
-           nosave:"ผู้เล่นนี้ยังไม่มีข้อมูลบนเซิร์ฟเวอร์", muted:"🔇 คุณถูกปิดการแชทอยู่ — ส่งข้อความไม่ได้" }[r && r.reason] || "ทำรายการไม่สำเร็จ";
+           nosave:"ไม่พบข้อมูลของผู้เล่นนี้บนเซิร์ฟเวอร์", muted:"🔇 คุณถูกปิดการแชทอยู่ — ส่งข้อความไม่ได้" }[r && r.reason] || "ทำรายการไม่สำเร็จ";
 }
 async function socPoll(){
   soc.polling = true;
@@ -5607,7 +5621,7 @@ function renderPlayerMenu(){
   const friendItem = st === "friends" ? item("unfriend", "👥", soc.menuConfirm === "unfriend" ? "ยืนยันลบเพื่อน" : "ลบเพื่อน", ' class="warn"')
     : st === "outgoing" ? item("unfriend", "⏳", "ยกเลิกคำขอเพื่อน")
     : st === "incoming" ? item("addfriend", "✅", "ตอบรับเป็นเพื่อน")
-    : st === "none" ? item("addfriend", "➕", "แอดเพื่อน") : "";
+    : st === "none" ? item("addfriend", "➕", "เพิ่มเพื่อน") : "";
   const canGo = st === "friends" && f && f.online && !(f.map === game.mapTier && (f.map === TOWN_TIER || f.dim === game.dimension));
   document.getElementById("playerMenu").innerHTML = `
     <div class="pm-head"><b>${gm ? '<span class="pm-gm">[GM]</span> ' : ""}${netEsc(m.name)}</b>${o ? `<small>Lv.${o.level} · มิติ ${o.maxDim} · แมพ ${o.maxMap}</small>` : ""}</div>
@@ -5760,9 +5774,9 @@ function renderProfile(){
     inspect = `<h4>🛡️ อุปกรณ์ที่สวม</h4><div class="pf-gear">${EQUIPMENT_SLOTS.map(sk => tile(byId.get((d.equipment || {})[sk]), SLOT_LABELS[sk])).join("")}</div>
       <h4>📊 แต้มสเตตัสที่ลง</h4><div class="pf-stats">${Object.keys(STAT_INFO).map(k => `<span><small>${STAT_INFO[k].label}</small><b>${Math.max(0, Math.floor(+sp[k]) || 0)}</b></span>`).join("")}</div>`;
   } else {
-    inspect = `<div class="pf-locked">🔒 เป็นเพื่อนกันก่อน ถึงจะส่องอุปกรณ์และสเตตัสทั้งหมดได้</div>`;
+    inspect = `<div class="pf-locked">🔒 ต้องเป็นเพื่อนกันก่อน จึงจะดูอุปกรณ์และสเตตัสทั้งหมดได้</div>`;
   }
-  const friendBtn = st === "none" ? `<button type="button" data-act="addfriend">➕ แอดเพื่อน</button>`
+  const friendBtn = st === "none" ? `<button type="button" data-act="addfriend">➕ เพิ่มเพื่อน</button>`
     : st === "incoming" ? `<button type="button" data-act="addfriend">✅ ตอบรับเพื่อน</button>`
     : st === "outgoing" ? `<button type="button" disabled>⏳ รอตอบรับ</button>` : "";
   document.getElementById("profileBody").innerHTML = `
@@ -5779,7 +5793,7 @@ function renderProfile(){
     <div class="pf-weapon">${weapon ? `<span class="pf-ic">${equipIconHtml(wdef)}</span><div><b>${netEsc(equipDisplayName(weapon))} <span class="pf-rar" style="background:${RARITY_DEFS[weapon.rarity].color}">${RARITY_DEFS[weapon.rarity].label}</span></b>
       <small>${wtype && WEAPON_CATEGORIES[wtype] ? WEAPON_CATEGORIES[wtype].icon + " " + WEAPON_CATEGORIES[wtype].name + " · Rank " + rankName : ""}</small></div>` : `<small>ไม่ได้ถืออาวุธ</small>`}</div>
     ${inspect}
-    ${id === "self" ? `<div class="pf-actions"><button type="button" data-act="selfstatus">📋 ดูสถานะละเอียด</button><button type="button" data-act="selfbag">🎒 เปิดกระเป๋า</button></div>`
+    ${id === "self" ? `<div class="pf-actions"><button type="button" data-act="selfstatus">📋 ดูสถานะโดยละเอียด</button><button type="button" data-act="selfbag">🎒 เปิดกระเป๋า</button></div>`
       : net.user && id === net.user.id ? "" : `<div class="pf-actions">${st === "blocked" ? "" : `<button type="button" data-act="whisper">💬 กระซิบ</button>`}${friendBtn}
       <button type="button" data-act="report" class="warn">🚩 รายงาน</button>${net.admin && !d.gm ? `<button type="button" data-act="gm">🛡️ จัดการ (GM)</button>` : ""}</div>`}`;
   const cv = document.getElementById("profileAvatar");
@@ -5887,7 +5901,7 @@ function renderFriendsPanel(){
       const here = f.online && f.map === game.mapTier && (f.map === TOWN_TIER || f.dim === game.dimension);
       return row(f, (f.online ? b("whisper", "💬", "กระซิบ") : "") + (f.online && !here ? b("goto", "🧭", "ไปหา") : "") + b("profile", "👤", "ข้อมูล")
         + b("unfriend", soc.confirmRemove === f.id ? "ยืนยัน?" : "✖", "ลบเพื่อน", soc.confirmRemove === f.id ? ' class="warn"' : ""));
-    }).join("") : `<div class="empty-note">ยังไม่มีเพื่อน — คลิกขวาที่ผู้เล่นคนอื่นในแมพ แล้วเลือก ➕ แอดเพื่อน</div>`}
+    }).join("") : `<div class="empty-note">ยังไม่มีเพื่อน — คลิกขวาที่ผู้เล่นคนอื่นในแมพ แล้วเลือก ➕ เพิ่มเพื่อน</div>`}
     ${outgoing.length ? `<h4>⏳ รอตอบรับ</h4>${outgoing.map(f => row(f, b("unfriend", "ยกเลิก", "ยกเลิกคำขอ"))).join("")}` : ""}
     ${blocked.length ? `<h4>🚫 บล็อกไว้</h4>${blocked.map(x => row(Object.assign({ state:"blocked", online:false }, x), b("unblock", "เลิกบล็อก", "เลิกบล็อก"))).join("")}` : ""}`;
 }
@@ -5945,7 +5959,7 @@ const SaveStore = {
 const SAVE_PLAYER_SKIP = ["x","y","targetX","targetY","path","pathIndex","destinationMarker","targetMonsterId",
   "pendingNpcId","pendingLocationId","pendingWarp","pendingTravelGate","skillCooldowns","isMeditating","meditateShownFull","facing","walkPhase"];
 const SAVE_GAME_FIELDS = ["inventory","storage","maxMapTierReached","maxMapTierReachedDim1","dimension","maxDimension",
-  "dimReach","dimCleared","stats","pity","huntCounts","hasNewTitleUnlock","mapTier","buyback"];
+  "dimReach","dimCleared","stats","pity","huntCounts","hasNewTitleUnlock","mapTier","buyback","secretSaved"];
 const SAVE_GAME_SETS = ["unlockedAchievements","unlockedMilestones","encounteredMonsters","discoveredItems","unlockedTitles","newTitles"];
 let lastSaveAt = 0;
 function buildSaveData(){
@@ -6317,9 +6331,28 @@ const SECRET_LOCATION_DEFS = {
   ancient_statue:  { name:"รูปปั้นโบราณ",   icon:"🗿", flavor:"รูปปั้นโบราณที่ถูกลืมเลือน มีบางอย่างซุกซ่อนอยู่ใต้ฐานของมัน",       grantType:"item" },
   strange_tree:    { name:"ต้นไม้ประหลาด",     icon:"🌳", flavor:"เจ้ารู้สึกถึงพลังบางอย่างจากภายในต้นไม้",                              grantType:"key" },
   abandoned_house: { name:"บ้านร้าง",  icon:"🏚️", flavor:"บ้านร้างที่ไม่มีใครกล้าเข้าไป ทันใดนั้นประตูก็เปิดออกเบาๆ...",         grantType:"monster" },
-  messenger_bag:   { name:"กระเป๋าคนส่งสาร", icon:"🎒", flavor:"กระเป๋าหนังขาดวิ่นตกอยู่ข้างรอยเลือดแห้ง… เจ้าของไม่อยู่แล้ว แต่ข้างในยังมีซองจดหมายที่ไม่เคยถูกเปิด", grantType:"quest" },
-  ancient_ruins:   { name:"ซากปรักหักพังโบราณ",    icon:"🏛️", flavor:"ซากปรักหักพังของอารยธรรมเก่าแก่ ยังพบจดหมายเก่าเก็บอยู่ใต้เศษหิน",     grantType:"quest" }
+  messenger_bag:   { name:"กระเป๋าคนส่งสาร", icon:"🎒", flavor:"กระเป๋าหนังขาดวิ่นตกอยู่ข้างรอยเลือดแห้ง… เจ้าของไม่อยู่แล้ว แต่ข้างในยังมีซองจดหมายที่ไม่เคยถูกเปิด", grantType:"quest", letter:true },
+  ancient_ruins:   { name:"ซากปรักหักพังโบราณ",    icon:"🏛️", flavor:"ซากปรักหักพังของอารยธรรมเก่าแก่ ยังพบจดหมายเก่าเก็บอยู่ใต้เศษหิน",     grantType:"quest", letter:true },
+  // v60: seven new kinds
+  mana_vein:       { name:"สายแร่มานา",        icon:"💠", flavor:"สายแร่สีฟ้าแทรกอยู่ในผนังหิน มันเต้นเป็นจังหวะช้าๆ ราวกับมีชีพจร…", grantType:"vein" },
+  mana_flower:     { name:"ดอกไม้ดูดมานา",      icon:"🌸", flavor:"ดอกไม้ประหลาดบานอยู่กลางแสงสลัว กลีบของมันดูดมานารอบตัวจนอากาศแถวนี้ใสผิดปกติ", grantType:"flower" },
+  shaking_chest:   { name:"หีบเก่าที่สั่นเบาๆ",   icon:"🎁", flavor:"หีบไม้เก่าคร่ำคร่าวางอยู่ลำพัง… ฝาของมันสั่นกึกๆ เป็นระยะ ทั้งที่ไม่มีลมพัดสักนิด", grantType:"chest" },
+  mana_pool:       { name:"บ่อมานาข้น",         icon:"💧", flavor:"แอ่งน้ำสีฟ้าเรืองแสง มานาข้นจนผิวน้ำหนืดราวน้ำผึ้ง ว่ากันว่าดื่มแล้วร่างกายจะฟื้นคืน… หากใจรับไหว", grantType:"pool" },
+  echo_voice:      { name:"เสียงก้องของผู้ที่จากไป", icon:"🌫️", flavor:"เงาจางๆ ของนักรบคนหนึ่งยังยืนอยู่ตรงนี้ เจตจำนงของเขายังไม่ยอมจากไป มันพึมพำถึงการต่อสู้ครั้งสุดท้ายซ้ำไปซ้ำมา", grantType:"echo" },
+  roadside_shrine: { name:"ศาลเจ้าเล็กริมทาง",   icon:"🕯️", flavor:"ศาลไม้หลังเล็กที่ใครสักคนยังจุดเทียนทิ้งไว้ เปลวเทียนนิ่งสนิท แม้ลมรอบตัวจะพัดแรง", grantType:"shrine" },
+  watchtower:      { name:"หอสังเกตการณ์พัง",    icon:"🗼", flavor:"หอไม้ของกองคาราวานที่พังไปครึ่งหลัง บันไดยังพอปีนขึ้นไปได้ จากบนนั้นน่าจะมองเห็นได้ทั่วแมพ", grantType:"tower" }
 };
+const SECRET_LOCATIONS_PER_MAP = 5;       // v60: exactly 5 spots per map (was 4–7)
+const SECRET_POOL_HEAL_CHANCE = 0.7;      // 💧 drink: 70% heal + calm, 30% the mana is too much
+const SECRET_SHRINE_BLESS_MS = 120000;    // 🕯️ a 2-minute version of the monk's blessing
+const SECRET_CHEST_MIMIC_CHANCE = 0.4;    // 🎁 40% it bites
+const ECHO_LINES = [
+  "…ถ้าข้าหลบช้ากว่านั้นอีกนิดเดียว… ไม่สิ ข้าหลบช้าไปจริงๆ นั่นแหละ",
+  "…อย่ามองแค่คมดาบของมัน มองไหล่ มองลมหายใจ มันจะบอกเจ้าก่อนเสมอ…",
+  "…ข้าสัญญากับน้องสาวว่าจะกลับไปก่อนหน้าหนาว…",
+  "…จังหวะ… ทุกอย่างคือจังหวะ ตีตอนที่ใจนิ่งที่สุด…",
+  "…ข้ายังไม่ได้ส่งจดหมายฉบับนั้นเลย…"
+];
 const SECRET_LOCATION_TRIGGER_DIST = 34;
 const NORMAL_EQUIPMENT_IDS = Object.keys(EQUIPMENT_DEFS).filter(id => !EQUIPMENT_DEFS[id].dungeonOnly);
 
@@ -6522,12 +6555,128 @@ function interactWithLocation(loc){
 
   if(def.grantType === "portal"){
     showLocationDialog(def, def.flavor, null, { loc, hasKey: getKeyCount() >= 1 });
+    return;
   }
+  secretSpotInteract(loc, def);
 }
 
-function showLocationDialog(def, flavorText, resultText, portalOptions){
+/* ---- v60: the seven new secret spots ---- */
+function secretSpotResult(def, text, result){ showLocationDialog(def, text, result, null); updateHud(); }
+function secretSanity(delta){
+  const p = game.player;
+  p.sanity = Math.max(SANITY_FLOOR, Math.min(SANITY_MAX, p.sanity + delta));
+  checkSanityWarning();
+}
+function secretSpotInteract(loc, def){
+  const p = game.player, tier = game.mapTier;
+  const ask = (text, choices) => showLocationDialog(def, text, null, null, choices);
+  if(def.grantType === "vein"){
+    loc.used = true;
+    const n = randInt(1, 3);
+    for(let i = 0; i < n; i++) addToInventory("mana_stone");
+    sfx.itemGet();
+    secretSpotResult(def, def.flavor + "\nเจ้าค่อยๆ แซะก้อนแร่ที่เรืองแสงที่สุดออกมา", `ได้รับ 💠 หินมานา ×${n}`);
+    return;
+  }
+  if(def.grantType === "flower"){
+    loc.used = true;
+    const n = randInt(1, 2), id = "sample_t" + tier, it = ITEM_TABLE.find(i => i.id === id);
+    for(let i = 0; i < n; i++) addToInventory(id);
+    sfx.itemGet();
+    secretSpotResult(def, def.flavor + "\nเกสรของมันจับตัวเป็นผลึกมานาเล็กๆ เจ้าเก็บใส่ขวดไว้", `ได้รับ ${it ? it.icon + " " + it.name : "🧪 ตัวอย่างมานา"} ×${n}`);
+    return;
+  }
+  if(def.grantType === "chest"){
+    ask(def.flavor, [{ icon:"🗝️", label:"เปิดหีบ", sub:"อาจมีสมบัติ… หรืออะไรบางอย่าง", cls:"gold", onPick: ()=>{
+      loc.used = true;
+      if(Math.random() < SECRET_CHEST_MIMIC_CHANCE){
+        closeTalk();
+        showToast("😱 หีบอ้าปากกว้าง — มันคือมิมิก!");
+        const m = createDungeonMonster(randInt(0, 4), true);
+        m.isDungeonRoom = false; m.mimic = true;
+        enterBattle(m);
+        return;
+      }
+      const gold = randInt(25, 50);
+      p.gold += gold; game.stats.chestsOpened++;
+      let extra = "";
+      if(Math.random() < 0.4){
+        const defId = rollAncientStatueEquipment(), isNew = registerDiscovery({ kind:"equipment", defId });
+        addEquipmentToInventory(rollEquipmentInstance(defId));
+        extra = ` และ ${EQUIPMENT_DEFS[defId].icon} ${EQUIPMENT_DEFS[defId].name}${isNew ? " (ใหม่!)" : ""}`;
+      }
+      sfx.chest();
+      saveGameNow(); // the server allows one chest per save without a kill — save right away so two chests never share one
+      secretSpotResult(def, "ฝาหีบเปิดออกอย่างง่ายดาย… ที่สั่นอยู่คงเป็นแค่ลมใต้พื้นดิน", `ได้รับ 💰${gold}${extra}`);
+    } }]);
+    return;
+  }
+  if(def.grantType === "pool"){
+    ask(def.flavor, [{ icon:"🥤", label:"ดื่มน้ำจากบ่อ", sub:"มักฟื้นเลือด + สติ · แต่อาจเสียสติ", cls:"primary", onPick: ()=>{
+      loc.used = true;
+      if(Math.random() < SECRET_POOL_HEAL_CHANCE){
+        p.hp = getEffectiveMaxHp(); secretSanity(20); sfx.heal();
+        secretSpotResult(def, "ความเย็นแล่นไปทั่วร่าง บาดแผลปิดสนิท ความคิดใสขึ้นอย่างประหลาด", "❤️ เลือดเต็ม · 🧘 สติ +20%");
+      } else {
+        secretSanity(-15); sfx.madness();
+        secretSpotResult(def, "มานาข้นเกินไป… เสียงอื้ออึงดังขึ้นในหัว กว่าจะตั้งสติได้ก็ใช้เวลานาน", "🌀 สติ −15%");
+      }
+    } }]);
+    return;
+  }
+  if(def.grantType === "echo"){
+    const line = ECHO_LINES[randInt(0, ECHO_LINES.length - 1)];
+    ask(def.flavor + `\n\n"${line}"`, [
+      { icon:"👂", label:"ฟังเขาจนจบ", sub:"EXP อาวุธ +" + (150 + 45 * tier) + " · สติ −10%", cls:"primary", onPick: ()=>{
+        loc.used = true;
+        const type = getEquippedWeaponMasteryType(), exp = 150 + 45 * tier;
+        if(type) gainWeaponRankExp(type, exp);
+        secretSanity(-10); sfx.notice();
+        secretSpotResult(def, "เจ้าฟังเขาเล่าจนเงานั้นจางหายไป ท่วงท่าสุดท้ายของเขายังติดตาอยู่ แต่ในหัวก็หนักอึ้งตามไปด้วย",
+          (type ? `⚔️ EXP ${WEAPON_CATEGORIES[type].name} +${exp}` : "⚔️ (ไม่ได้ถืออาวุธ — ไม่ได้ EXP อาวุธ)") + " · 🌀 สติ −10%");
+      } },
+      { icon:"🕊️", label:"ปลดปล่อยเขา", sub:"ส่งเขาไปสู่ความสงบ · สติ +10%", onPick: ()=>{
+        loc.used = true;
+        secretSanity(10); sfx.heal();
+        secretSpotResult(def, "เจ้าบอกเขาว่าพอแล้ว… เงานั้นพยักหน้าช้าๆ ก่อนสลายไปกับลม ใจเจ้าเบาขึ้นอย่างบอกไม่ถูก", "🧘 สติ +10%");
+      } }
+    ]);
+    return;
+  }
+  if(def.grantType === "shrine"){
+    ask(def.flavor, [{ icon:"🙏", label:"สวดภาวนา", sub:"พร 2 นาที: สติไม่ลด + ดรอปดีขึ้น", cls:"gold", onPick: ()=>{
+      loc.used = true;
+      const until = Math.max(p.monkBuff && p.monkBuff.until || 0, Date.now() + SECRET_SHRINE_BLESS_MS);
+      p.monkBuff = { until, grade: p.monkBuff && p.monkBuff.until > Date.now() ? p.monkBuff.grade : "shrine" };
+      monkBuffWarned = false; updateMonkBuffChip(); sfx.questDone();
+      secretSpotResult(def, "เปลวเทียนสว่างวาบขึ้นครู่หนึ่ง ความอบอุ่นแผ่ซ่านไปทั่วร่าง", "🕯️ ได้รับพร 2 นาที — สติไม่ลด + ของหายากดรอปง่ายขึ้น");
+    } }]);
+    return;
+  }
+  if(def.grantType === "tower"){
+    loc.used = true;
+    const others = game.secretLocations.filter(l => l !== loc && !l.used);
+    others.forEach(l => { l.revealed = true; });
+    sfx.notice();
+    secretSpotResult(def, def.flavor + "\nลมบนยอดหอพัดแรง แต่มองเห็นแสงเรืองๆ กระจายอยู่ทั่วแมพ",
+      others.length ? `🗺️ เห็นจุดลับอีก ${others.length} แห่ง — ดูได้บนแผนที่ย่อ (มุมขวาล่าง)` : "🗺️ ไม่เหลือจุดลับที่ยังไม่ได้สำรวจในแมพนี้แล้ว");
+    return;
+  }
+}
+// the mimic from a 🎁 chest fell: its hoard is still inside
+function mimicWon(){
+  const p = game.player;
+  const gold = randInt(30, 50);
+  p.gold += gold; game.stats.chestsOpened++;
+  const defId = rollAncientStatueEquipment(), isNew = registerDiscovery({ kind:"equipment", defId });
+  addEquipmentToInventory(rollEquipmentInstance(defId));
+  updateHud();
+  showToast(`🎁 ในท้องมิมิกยังมีสมบัติ! ได้ 💰${gold} และ ${EQUIPMENT_DEFS[defId].icon} ${EQUIPMENT_DEFS[defId].name}${isNew ? " (ใหม่!)" : ""}`);
+}
+
+function showLocationDialog(def, flavorText, resultText, portalOptions, moreChoices){
   const loc = lastTalkLocation;
-  const choices = [];
+  const choices = (moreChoices || []).slice();
   let extra = "";
   if(resultText) extra += `<div class="tk-reward"><span class="big">🎁</span><span>${netEsc(resultText)}</span></div>`;
   if(portalOptions){
@@ -6537,7 +6686,7 @@ function showLocationDialog(def, flavorText, resultText, portalOptions){
       ? { icon:"🔑", label:"เข้าดันเจี้ยน", sub:"ใช้กุญแจลับ 1 ดอก", cls:"gold", onPick: ()=> enterDungeon(portalOptions.loc) }
       : { icon:"🔒", label:"ประตูถูกผนึก", sub:"ต้องมี 🔑 กุญแจลับ — ลองสำรวจจุดลับอื่นดู", disabled:true });
   }
-  choices.push({ icon:"👣", label: portalOptions ? "ไว้ก่อน" : "ออกไปสำรวจต่อ", leave:true });
+  choices.push({ icon:"👣", label: portalOptions || (moreChoices && moreChoices.length) ? "ไว้ก่อน" : "ออกไปสำรวจต่อ", leave:true });
   openTalk({ emoji: def.icon, name: def.name, role: "📍 จุดลับ", bg: ["#3f7a6a", "#0f2420"],
     text: flavorText, extra, choices, anchor: loc ? { x: loc.x, y: loc.y, r: SECRET_LOCATION_TRIGGER_DIST + 140 } : null });
 }
@@ -7716,6 +7865,12 @@ function renderMinimap(){
   for(const npc of game.npcs){ mmctx.beginPath(); mmctx.arc(npc.x*sx, npc.y*sy, 3, 0, Math.PI*2); mmctx.fill(); }
   if(game.travelGate){ mmctx.beginPath(); mmctx.arc(game.travelGate.x*sx, game.travelGate.y*sy, 3, 0, Math.PI*2); mmctx.fill(); }
 
+  for(const l of game.secretLocations){ // v60: 🗼 revealed spots (and ones left for later) show as gold diamonds
+    if(l.used || !(l.revealed || l.discovered)) continue;
+    const x = l.x*sx, y = l.y*sy;
+    mmctx.fillStyle = "#ffd166"; mmctx.strokeStyle = "rgba(60,30,0,.8)"; mmctx.lineWidth = 1;
+    mmctx.beginPath(); mmctx.moveTo(x, y-4); mmctx.lineTo(x+3.5, y); mmctx.lineTo(x, y+4); mmctx.lineTo(x-3.5, y); mmctx.closePath(); mmctx.fill(); mmctx.stroke();
+  }
   mmctx.fillStyle = "#ef476f";
   for(const m of game.monsters){ if(!m.alive) continue; mmctx.beginPath(); mmctx.arc(m.x*sx, m.y*sy, 2.5, 0, Math.PI*2); mmctx.fill(); }
 
@@ -8026,7 +8181,7 @@ function updateMonkBuffChip(){
   if(!el || !game || !game.player) return;
   const left = monkBuffLeft();
   el.hidden = left <= 0;
-  if(left > 0) el.textContent = "🪷 พรแห่งสมาธิ " + fmtMmSs(left);
+  if(left > 0) el.textContent = (game.player.monkBuff.grade === "shrine" ? "🕯️ พรศาลเจ้า " : "🪷 พรแห่งสมาธิ ") + fmtMmSs(left);
   else if(game.player.monkBuff){ delete game.player.monkBuff; if(!monkBuffWarned){ monkBuffWarned = true; showToast("🪷 พรแห่งสมาธิหมดแล้ว — กลับไปนั่งสมาธิกับพระได้อีก"); } }
 }
 setInterval(updateMonkBuffChip, 1000);
@@ -8116,7 +8271,7 @@ function renderMeditatePanel(){
   if(p.meditateShownFull === false && full){ game.stats.meditations = (game.stats.meditations || 0) + 1; checkTitles(false); storyOnMeditateFull(); } // meditated all the way back to full
   if(p.meditateShownFull !== full){ // only touch the DOM when the state flips
     p.meditateShownFull = full;
-    document.getElementById("meditateProgressLabel").textContent = full ? "✨ จิตสงบนิ่ง สติเต็มเปี่ยม" : "สติกำลังฟื้นคืน...";
+    document.getElementById("meditateProgressLabel").textContent = full ? "✨ จิตสงบนิ่ง สติเต็มเปี่ยม" : "กำลังฟื้นฟูสติ...";
     const btn = document.getElementById("meditateStopBtn");
     btn.textContent = full ? "✨ ออกจากสมาธิ" : "หยุดทำสมาธิ";
     btn.className = full ? "btn-primary" : "btn-secondary";
@@ -8316,7 +8471,7 @@ function unlockWeaponSkill(type, skillId){
   if(d && !slots.includes(skillId)){
     const empty = slots.indexOf(null);
     if(empty >= 0){ slots[empty] = skillId; showToast(`ปลดสกิล ${d.icon} ${d.name} ใส่ช่อง ${empty + 1} แล้ว`); renderSkillBar(); }
-    else showToast(`ปลดสกิล ${d.icon} ${d.name} แล้ว — ลากจากหน้าสกิลอาวุธไปใส่แอ็คชั่นบาร์`);
+    else showToast(`ปลดสกิล ${d.icon} ${d.name} แล้ว — ลากจากหน้าสกิลอาวุธไปใส่แถบสกิล`);
   }
   return true;
 }
@@ -8380,8 +8535,8 @@ function gainWeaponMastery(amount){
   const m = game.player.mastery;
   const before = m[type] || 0;
   m[type] = Math.min(MASTERY_MAX, before + amount);
-  if(before < 50 && m[type] >= 50) showDiscoveryBanner("⚔️ MASTERY 50!", MASTERY_LABELS[type] + " — ปลดพาสซีฟ ATK");
-  if(before < 100 && m[type] >= 100) showDiscoveryBanner("🌟 MASTERY MAX!", MASTERY_LABELS[type] + " — ปลดเอฟเฟกต์พิเศษ + สกิลเสริม");
+  if(before < 50 && m[type] >= 50) showDiscoveryBanner("⚔️ MASTERY 50!", MASTERY_LABELS[type] + " — ปลดล็อกสกิลติดตัว ATK");
+  if(before < 100 && m[type] >= 100) showDiscoveryBanner("🌟 MASTERY MAX!", MASTERY_LABELS[type] + " — ปลดล็อกเอฟเฟกต์พิเศษ + สกิลเสริม");
   gainWeaponRankExp(type, amount * WEAPON_RANK_EXP_PER_MASTERY_POINT);
 }
 // Passive unlocked by Mastery: a small, permanent ATK% bonus while that weapon category is equipped
@@ -8542,11 +8697,11 @@ function usePlayerSkill(skillId){
     // A skill-tree skill sitting in a slot — those are passive by design (see riposte/swift_blade/
     // juggernaut/armor_break in battleAttack); the castable weapon skills live in SKILL_DEFS instead.
     const info = getActionBarSkillInfo(skillId);
-    if(info) showToast(`${info.icon} ${info.name} เป็นสกิลพาสสิฟ ทำงานอัตโนมัติ ไม่ต้องกดใช้`);
+    if(info) showToast(`${info.icon} ${info.name} เป็นสกิลติดตัว ทำงานอัตโนมัติ ไม่ต้องกดใช้`);
     return;
   }
   const p = game.player, b = game.battle, m = b.monster;
-  if(b.isBoss && b.comboActive && !COMBO_SAFE_SKILLS.has(skillId) && !skillDef.utility){ showToast("ระหว่างท่าผสมบอส ใช้ได้แค่สกิลป้องกัน/ยูทิลิตี้"); return; }
+  if(b.isBoss && b.comboActive && !COMBO_SAFE_SKILLS.has(skillId) && !skillDef.utility){ showToast("ระหว่างท่าต่อเนื่องของบอส ใช้ได้เฉพาะสกิลป้องกัน/ยูทิลิตี้"); return; }
   if(skillDef.weaponType){
     if(getEquippedWeaponMasteryType() !== skillDef.weaponType){
       showToast(`ต้องถือ${WEAPON_CATEGORIES[skillDef.weaponType].name}ถึงจะใช้ ${skillDef.name} ได้`);
@@ -8678,7 +8833,7 @@ function addStunAmount(amount){
   b.telegraphSide = null; b.telegraphFeintAt = 0; // an incoming attack is cancelled — the monster is reeling
   spawnCallout("STUN! รัวคลิก!", "#ffd166");
   if(b.training) tutEvent("stun");
-  document.getElementById("hint").textContent = "💫 มอนติดสตั้น! รัวคลิกซ้าย (หรือกดค้างไว้)";
+  document.getElementById("hint").textContent = "💫 มอนสเตอร์ติดสตั้น! รัวคลิกซ้าย (หรือกดค้างไว้)";
   sfx.counter();
 }
 // One flurry hit while the monster is stunned (mash-capped). Reuses the skill hit path: always lands,
@@ -8996,7 +9151,7 @@ function enterBattle(monster){
   document.getElementById("victoryPanel").hidden = true;
   document.getElementById("defeatPanel").hidden = true;
   document.getElementById("hint").textContent = def.isBoss
-    ? "คลิกซ้ายเพื่อโจมตี · กด A/D เพื่อหลบ · ระวังท่าผสม 3 จังหวะของบอส!"
+    ? "คลิกซ้ายเพื่อโจมตี · กด A/D เพื่อหลบ · ระวังท่าโจมตี 3 จังหวะของบอส!"
     : (monster.isElite ? "⚡ ELITE! แข็งแกร่งกว่าปกติมาก · " : "") + "คลิกซ้ายเพื่อโจมตี · กด A เพื่อหลบซ้าย · กด D เพื่อหลบขวา · กด 1-8 ใช้สกิล";
   game.battle.baseHintText = document.getElementById("hint").textContent;
 }
@@ -9114,6 +9269,7 @@ function exitBattle(result){
     }
     if(bannerText) showDiscoveryBanner(bannerText.title, bannerText.sub);
     if(m.isDungeonRoom) advanceDungeonAfterWin(m);
+    else if(m.mimic) mimicWon();
     else if(m.isSpyBoss) letterSpyWon();
     else if(b.isBoss && !game.bossDefeatedThisMap){
       // this was the current map's own boss (not a dungeon-room fight) — open the warp point, but never force the move
@@ -9123,7 +9279,7 @@ function exitBattle(result){
         game.dimCleared[game.dimension] = true;
         showDiscoveryBanner("🛕 บาเรียชั้นนี้สั่นไหว!", "กลับเมืองไปทำพิธีที่โบสถ์ เพื่อเปิดทางสู่มิติถัดไป");
       }
-      showToast("🌀 ปลดล็อกประตูวาปกลางแมพแล้ว! เดินไปใช้งานได้ทุกเมื่อที่พร้อม");
+      showToast("🌀 ปลดล็อกประตูเดินทางกลางแมพแล้ว! เดินไปใช้งานได้ทุกเมื่อที่พร้อม");
     }
   } else {
     const penalty = applyDeathPenalty();
@@ -9229,17 +9385,17 @@ function renderDropRow(drop){
 // scoreboard, not a wall of report text, since this is a game not a spreadsheet.
 function renderCombatLogHtml(summary){
   const hpTile = summary.hpLost === 0
-    ? `<div class="combat-log-hero praise">🛡️✨ 0 Hit! ไม่โดนดาเมจแม้แต่หยดเดียว สุดยอดมาก!</div>`
-    : `<div class="combat-log-hero">❤️‍🩹 เลือดที่เสียไป: ${summary.hpLost}</div>`;
+    ? `<div class="combat-log-hero praise">🛡️✨ ไร้รอยขีดข่วน! ไม่ได้รับความเสียหายแม้แต่น้อย ยอดเยี่ยมมาก!</div>`
+    : `<div class="combat-log-hero">❤️‍🩹 พลังชีวิตที่สูญเสีย: ${summary.hpLost}</div>`;
   return `
     <div class="combat-log">
       <div class="combat-log-title">📜 สรุปการต่อสู้ล่าสุด</div>
       <div class="combat-log-grid">
-        <div class="combat-log-tile"><span class="icon">⚔️</span><span class="value">${summary.normalHits}</span><span class="label">ตีปกติ</span></div>
+        <div class="combat-log-tile"><span class="icon">⚔️</span><span class="value">${summary.normalHits}</span><span class="label">โจมตีปกติ</span></div>
         <div class="combat-log-tile"><span class="icon">✨</span><span class="value">${summary.perfectHits}</span><span class="label">Perfect</span></div>
-        <div class="combat-log-tile"><span class="icon">💢</span><span class="value">${summary.critHits}</span><span class="label">คริ</span></div>
+        <div class="combat-log-tile"><span class="icon">💢</span><span class="value">${summary.critHits}</span><span class="label">คริติคอล</span></div>
         <div class="combat-log-tile"><span class="icon">😵</span><span class="value">${summary.misses}</span><span class="label">พลาด</span></div>
-        <div class="combat-log-tile"><span class="icon">🛡️</span><span class="value">${summary.dodges} (${summary.perfectDodges})</span><span class="label">หลบ (Perfect)</span></div>
+        <div class="combat-log-tile"><span class="icon">🛡️</span><span class="value">${summary.dodges} (${summary.perfectDodges})</span><span class="label">หลบหลีก (Perfect)</span></div>
         <div class="combat-log-tile"><span class="icon">⚡</span><span class="value">${summary.counters}</span><span class="label">สวนกลับ</span></div>
         <div class="combat-log-tile"><span class="icon">💥</span><span class="value">${summary.totalDamage}</span><span class="label">ดาเมจรวม</span></div>
         <div class="combat-log-tile"><span class="icon">🔥</span><span class="value">${summary.maxHit}</span><span class="label">สูงสุด/ครั้ง</span></div>
@@ -9750,7 +9906,7 @@ function updateBattle(){
       if(b.isBoss){
         b.comboActive = true;
         b.comboStep = 0;
-        spawnBattleMsg("บอสออกท่าผสม 3 จังหวะ! หลบให้ครบ!", "#ffb84d", "info");
+        spawnBattleMsg("บอสออกท่าโจมตี 3 จังหวะ! หลบให้พ้น!", "#ffb84d", "info");
       }
       b.telegraphSide = Math.random() < 0.5 ? "left" : "right";
       b.telegraphStart = now;
@@ -9863,7 +10019,7 @@ function updateBattle(){
       b.comboStep++;
       if(b.comboStep >= b.comboTotal){
         b.comboActive = false;
-        spawnBattleMsg("จบท่าผสม! โจมตีได้แล้ว!", "#7CE0A8", "info");
+        spawnBattleMsg("จบท่าต่อเนื่องแล้ว! โจมตีสวนได้เลย!", "#7CE0A8", "info");
         const [lo, hi] = b.attackIntervalRange;
         b.nextAttackAt = now + randInt(lo, hi);
       } else {
@@ -9974,7 +10130,7 @@ function renderBattle(){
   bctx.fillStyle = "rgba(0,0,0,.4)"; bctx.fillRect(barX, barY + 13, barW, 6);
   bctx.fillStyle = stunLeft > 0 ? "#ffd166" : "#ff9d3f"; bctx.fillRect(barX, barY + 13, barW * clamp(stunFrac, 0, 1), 6);
   bctx.font = "bold 10px 'Trebuchet MS', sans-serif"; bctx.textAlign = "right"; bctx.fillStyle = "#fff";
-  bctx.fillText("สตั้น", barX - 4, barY + 19);
+  bctx.fillText("มึนงง", barX - 4, barY + 19);
   if(stunLeft > 0){ // dizzy stars circling above the monster + a pulsing call to mash
     bctx.font = "18px serif"; bctx.textAlign = "center";
     for(let i = 0; i < 3; i++){
@@ -10348,8 +10504,8 @@ function gainExp(amount){
   if(leveledUp){
     sfx.levelUp();
     showDiscoveryBanner(`⭐ LEVEL UP! เลเวล ${p.level}`,
-      `มีสเตตัสค้างอัพ ${p.statPoints.available} แต้ม — กด 📋 สถานะ เพื่อไปอัพเลย!`, 3000);
-    showToast(`เลเวลอัพ! ตอนนี้เลเวล ${p.level} (สเตตัสค้างอัพรวม ${p.statPoints.available} แต้ม)`);
+      `มีแต้มสเตตัสคงเหลือ ${p.statPoints.available} แต้ม — กด 📋 สถานะ เพื่ออัปเกรด!`, 3000);
+    showToast(`เลเวลอัป! ตอนนี้เลเวล ${p.level} (มีแต้มสเตตัสคงเหลือ ${p.statPoints.available} แต้ม)`);
   }
   updateHud();
 }
@@ -10468,7 +10624,7 @@ const TUTORIAL_STEPS = [
   { title: "ทำให้มอนสเตอร์ติดสตั้น", text: // STUN_* constants
     "ทุกการโจมตีจะเติมหลอดสีส้มใต้แถบเลือดมอนสเตอร์ (Perfect x1.5, อินพุตอาวุธ x1.5, สกิล x2, สวนกลับ x1.5) หากหยุดตี 2 วิ หลอดจะค่อยๆ ลดลง\n\nหลอดเต็ม = มอนสเตอร์มึนงง 2 วิ (บอส 1.5 วิ) โจมตีกลับไม่ได้:\n• รัวคลิกซ้าย (สูงสุด 10 ครั้ง/วิ) หรือกดค้าง (4 ครั้ง/วิ)\n\nElite และบอสต้านทานสตั้น จึงเติมหลอดได้ช้ากว่าปกติ" },
   { title: "สกิล & ต้นสกิลอาวุธ", text:
-    "กดปุ่ม 1-8 (หรือคลิกแอ็คชั่นบาร์) เพื่อใช้สกิล — มีสกิลพื้นฐาน 4 สกิลมอบให้ทุกคน\n\n⚔️ สกิลอาวุธ: 5 Tier ปลดตาม Rank ของอาวุธนั้น (Apprentice → Transcender) แต่ละ Tier มี 3 สกิล เลือกได้ 2:\n• สกิลกดใช้ 1 + พาสสิฟ 2 (เลือกพาสสิฟคู่โดยไม่เอาสกิลกดใช้ก็ได้)\n• ใช้บ่อย = ชำนาญ Lv.1-10 แรงขึ้น / คูลดาวน์ลดลง\n• ลากการ์ดไปวางในบาร์ — ช่องมีจำกัดเพียง 8 ช่อง ต้องเลือกจัดสรรให้ดี\n\nปุ่ม ⚔️ มีป้ายตัวเลข = มีแต้มสกิลรอให้เลือก" },
+    "กดปุ่ม 1-8 (หรือคลิกแถบสกิล) เพื่อใช้สกิล — มีสกิลพื้นฐาน 4 สกิลมอบให้ทุกคน\n\n⚔️ สกิลอาวุธ: 5 Tier ปลดตาม Rank ของอาวุธนั้น (Apprentice → Transcender) แต่ละ Tier มี 3 สกิล เลือกได้ 2:\n• สกิลกดใช้ 1 + สกิลติดตัว 2 (เลือกสกิลติดตัวคู่โดยไม่เอาสกิลกดใช้ก็ได้)\n• ใช้บ่อย = ชำนาญ Lv.1-10 แรงขึ้น / คูลดาวน์ลดลง\n• ลากการ์ดไปวางในบาร์ — ช่องมีจำกัดเพียง 8 ช่อง ต้องเลือกจัดสรรให้ดี\n\nปุ่ม ⚔️ มีป้ายตัวเลข = มีแต้มสกิลรอให้เลือก" },
   { title: "🧘 สติ — อย่าปล่อยให้ต่ำ", text: // SANITY_* constants / SANITY_BADGE_THRESHOLD
     "หลอดสีม่วงใต้แถบ EXP จะลดลงเมื่อสังหารมอนสเตอร์หรือถูกโจมตี\n\n• ต่ำกว่า 90%: สเตตัสทุกค่าลดลง (ATK/แม่นยำ/DEF/HP) สูงสุดราว 40%\n• ต่ำกว่า 50%: ภาพหลอน — สัญญาณเตือนขึ้นทั้งสองฝั่ง แยกไม่ออกว่าของจริงมาทางไหน\n• ต่ำกว่า 30%: สับสนทิศ — A กลายเป็นหลบขวา / D กลายเป็นหลบซ้าย\n• ต่ำกว่า 15%: ความมืด — ครึ่งจอขวาขณะต่อสู้จะมืดสนิท\n• ต่ำกว่า 7%: สติแตกสลาย — ใช้สกิลไม่ได้ + หัวกลายเป็นหัวสัตว์ (คนอื่นมองเห็นด้วย!)\n\nวิธีฟื้นสติ:\n• กด 🧘 ทำสมาธิ นอกฉากต่อสู้ — จากจุดต่ำสุดจนเต็มใช้เวลาไม่เกิน 2 นาที (สลับแท็บระบบจะหยุดนับ)\n• พักผ่อนอยู่ในเมือง สติจะฟื้นฟูเองช้าๆ\n• 🪷 นั่งสมาธิกับพระ (มินิเกม 1 นาที): คลิกปัดเป่ามารก่อนถึงตัว รับพร 3–5 นาที สติไม่ลดลง + ของหายากดรอปง่ายขึ้น" },
   { title: "พัฒนาตัวละคร: สเตตัส & อุปกรณ์", text:
@@ -11527,7 +11683,7 @@ function renderRefineDetail(entry){
   act.appendChild(btn);
   const note = document.createElement("div");
   note.className = "refine-note";
-  note.textContent = maxed ? "" : (short || "กดซ้ำได้เลย");
+  note.textContent = maxed ? "" : (short || "กดต่อได้ทันที");
   act.appendChild(note);
   refineFlashEntry = null;
 }
@@ -13183,7 +13339,7 @@ function renderBagDetail(entry){
     `;
   } else {
     const def = ITEM_TABLE.find(i => i.id === entry.id);
-    detail.innerHTML = `<h4>${def.icon} ${def.name} x${entry.qty}</h4><div class="effect-line">${netEsc(def.desc || "ไอเทมสำหรับพักฟื้น — ฝากไว้กับ NPC ได้จากช่องฝากของ")}</div>`;
+    detail.innerHTML = `<h4>${def.icon} ${def.name} x${entry.qty}</h4><div class="effect-line">${netEsc(def.desc || "ไอเทมฟื้นฟู — ฝากไว้กับ NPC ได้จากช่องฝากของ")}</div>`;
     if(entry.id === "old_letter"){
       const btn = document.createElement("button");
       btn.className = "btn-primary"; btn.style.cssText = "padding:8px 14px; font-size:13px;";
@@ -13326,7 +13482,7 @@ function renderSellDetail(entry){
   } else {
     const def = ITEM_TABLE.find(i => i.id === entry.id);
     nameHtml = `${def.icon} ${def.name} x${entry.qty}`;
-    descHtml = def.desc || "ไอเทมสำหรับพักฟื้น";
+    descHtml = def.desc || "ไอเทมฟื้นฟู";
   }
 
   detail.innerHTML = `
@@ -13505,7 +13661,7 @@ function renderStatusPanel(){
     statusRow("พลังโจมตี (Final ATK)", `${stats.minDmg} - ${stats.maxDmg}`),
     statusRow("พลังป้องกัน (DEF)", stats.def),
     statusRow("ความเร็วโจมตี", `${(1000/stats.cooldown).toFixed(2)} ครั้ง/วินาที` + (stats.speedDmgMult > 1 ? ` (สูงสุดแล้ว)` : "")),
-    ...(stats.speedDmgMult > 1 ? [statusRow("ความเร็วส่วนเกิน → แรงตีปกติ", `x${stats.speedDmgMult.toFixed(2)}`)] : []),
+    ...(stats.speedDmgMult > 1 ? [statusRow("ความเร็วส่วนเกิน → พลังโจมตีปกติ", `x${stats.speedDmgMult.toFixed(2)}`)] : []),
     statusRow("ความแม่นยำ", `${Math.round(stats.accuracy*100)}%`),
     statusRow("อัตราคริติคอล", `${Math.round(stats.critRate*100)}%`),
     statusRow("แรงคริติคอล", `x${stats.critMult.toFixed(2)}`),
@@ -13562,7 +13718,7 @@ document.getElementById("resetStatsBtn").addEventListener("click", ()=>{
   sfx.click();
   const p = game.player, sp = p.statPoints;
   const totalSpent = sp.STR+sp.AGI+sp.DEX+sp.VIT+sp.LUK+sp.MEDITATE;
-  if(totalSpent === 0){ showToast("ยังไม่ได้ใช้ Stat Point เลย"); return; }
+  if(totalSpent === 0){ showToast("ยังไม่ได้จัดสรรแต้มสเตตัสเลย"); return; }
   const cost = totalSpent * STAT_RESET_GOLD_PER_POINT;
   if(p.gold < cost){ showToast(`ต้องใช้เงิน ${cost} 💰 เพื่อรีเซ็ต (มีอยู่ ${p.gold})`); return; }
   p.gold -= cost;
@@ -13596,14 +13752,14 @@ function renderHuntLog(){
 
 /* ---- Collection panel ---- */
 const COLLECTION_TABS = [
-  { id:"titles",    label:"🏅 ฉายา & ชาเลนจ์" },
+  { id:"titles",    label:"🏅 ฉายา & การท้าทาย" },
   { id:"monsters",  label:"มอนสเตอร์" },
   { id:"mastery",   label:"ความชำนาญ" },
   { id:"cards",     label:"การ์ด" },
   { id:"equipment", label:"อุปกรณ์" },
   { id:"rare",      label:"ของหายาก" },
   { id:"bosses",    label:"บอส" },
-  { id:"secret",    label:"ลับ" },
+  { id:"secret",    label:"ความลับ" },
   { id:"locations", label:"แผนที่ลับ" },
   { id:"milestones",   label:"🚩 Milestone" }
 ];
@@ -13806,10 +13962,10 @@ function showSkillTip(node, type, tier, skill, pin){
   const d = skill.active ? SKILL_DEFS[skill.id] : skill;
   const lvl = state === "owned" ? getSkillProficiencyLevel(entry.unlockedSkills[skill.id]) : 1;
   let html = `<div class="h"><span class="i">${d.icon}</span><div><b>${d.name}</b>` +
-    (skill.active ? `<span class="ty act">สกิลกดใช้ · คูลดาวน์ ${(getSkillCooldownMs(skill.id, d)/1000).toFixed(1)} วิ</span>` : `<span class="ty pas">พาสสิฟ</span>`) +
+    (skill.active ? `<span class="ty act">สกิลกดใช้ · คูลดาวน์ ${(getSkillCooldownMs(skill.id, d)/1000).toFixed(1)} วิ</span>` : `<span class="ty pas">ติดตัว</span>`) +
     `</div></div><div class="d">${d.desc}</div>`;
   if(skill.active){
-    if(!d.utility) html += `<div class="emp">⚡ ตี Perfect + อินพุตอาวุธ แล้วกดภายใน ${SKILL_EMPOWER_WINDOW_MS/1000} วิ = แรงขึ้น x${SKILL_EMPOWER_MULT}</div>`;
+    if(!d.utility) html += `<div class="emp">⚡ โจมตี Perfect + ท่าพิเศษอาวุธ แล้วใช้สกิลภายใน ${SKILL_EMPOWER_WINDOW_MS/1000} วิ = เสริมพลัง x${SKILL_EMPOWER_MULT}</div>`;
     html += `<div class="fx">ชำนาญ Lv.${lvl}: คูลดาวน์ -${Math.round((lvl - 1) * ACTIVE_SKILL_CD_CUT_PER_LEVEL * 100)}%` +
       (lvl < SKILL_PROFICIENCY_MAX ? `<div class="nx">Lv.${lvl + 1}: -${Math.round(lvl * ACTIVE_SKILL_CD_CUT_PER_LEVEL * 100)}%</div>` : "") + `</div>`;
   } else {
@@ -13819,12 +13975,12 @@ function showSkillTip(node, type, tier, skill, pin){
   if(state === "owned"){
     const exp = entry.unlockedSkills[skill.id];
     const inLvl = lvl >= SKILL_PROFICIENCY_MAX ? 1 : (exp % SKILL_PROFICIENCY_EXP_PER_LEVEL) / SKILL_PROFICIENCY_EXP_PER_LEVEL;
-    html += `<div class="st">ความชำนาญ Lv.${lvl}/${SKILL_PROFICIENCY_MAX} — ใช้บ่อยยิ่งเก่ง</div><div class="track"><div style="width:${Math.round(inLvl*100)}%"></div></div>` +
-      `<div class="st">ลากไอคอนไปวางในแอ็คชั่นบาร์เพื่อใช้งาน</div>`;
+    html += `<div class="st">ความชำนาญ Lv.${lvl}/${SKILL_PROFICIENCY_MAX} — ยิ่งใช้บ่อยยิ่งชำนาญ</div><div class="track"><div style="width:${Math.round(inLvl*100)}%"></div></div>` +
+      `<div class="st">ลากไอคอนไปวางในแถบสกิลเพื่อใช้งาน</div>`;
   } else if(state === "locked"){
     html += `<div class="st">🔒 ปลดที่ Rank ${WEAPON_RANK_LADDER[tier.unlockRankIndex].name}</div>`;
   } else if(state === "dim"){
-    html += `<div class="st">${countTierUnlocked(type, tier) >= tier.points ? `เลือกครบ ${tier.points} ตัวใน Tier นี้แล้ว` : "ไม่มีแต้มสกิลเหลือ"}</div>`;
+    html += `<div class="st">${countTierUnlocked(type, tier) >= tier.points ? `เลือกครบ ${tier.points} สกิลในระดับนี้แล้ว` : "ไม่มีแต้มสกิลเหลือ"}</div>`;
   } else {
     html += pin ? `<button type="button" id="skillTipUnlock">ปลดล็อก (ใช้ 1 แต้ม)</button>` : `<div class="st" style="color:#ffd166;">คลิกเพื่อเลือกปลดล็อก</div>`;
   }
@@ -13902,7 +14058,7 @@ function renderCollectionContent(){
   }
   if(collectionActiveTab === "mastery"){
     container.innerHTML = `
-      <h4 style="margin:0 0 8px; font-size:13px; color:#7a7186;">Weapon Mastery</h4>
+      <h4 style="margin:0 0 8px; font-size:13px; color:#7a7186;">ความชำนาญอาวุธ</h4>
       <div class="slot-list" style="margin-bottom:14px;">${renderMasterySection()}</div>
       <h4 style="margin:0 0 8px; font-size:13px; color:#7a7186;">บันทึกการล่า (แมพปัจจุบัน)</h4>
       <div class="slot-list">${renderHuntLog()}</div>
@@ -14382,10 +14538,10 @@ document.getElementById("closeFriendsBtn").addEventListener("click", ()=>{ sfx.c
    who may vote/propose (linked account, Lv.10+), 12 h proposal rounds, the most-backed proposal going up,
    hidden counts until close. The page only shows the board and sends choices. ---- */
 const VOTE_REFRESH_MS = 20000;
-const VOTE_REASON = { guest: "ต้องผูกบัญชีกับอีเมลหรือ Google ก่อน (เมนู 👤 บัญชี) — กันการปั๊มเสียงด้วย Guest",
+const VOTE_REASON = { guest: "ต้องผูกบัญชีกับอีเมลหรือ Google ก่อน (เมนู 👤 บัญชี) — ป้องกันการสร้างบัญชี Guest เพื่อโหวตซ้ำ",
                       level: "ต้องเลเวล 10 ขึ้นไปถึงจะโหวต/เสนอหัวข้อได้", closed: "โหวตนี้ปิดไปแล้ว — กำลังโหลดใหม่",
                       invalid: "ข้อมูลไม่ครบ: คำถาม 4–120 ตัวอักษร, ตัวเลือก 2–4 ข้อ ข้อละไม่เกิน 40 ตัว และห้ามซ้ำกัน",
-                      limit: "รอบนี้คุณเสนอไปแล้ว 1 หัวข้อ — รอรอบถัดไปนะ", gm: "เฉพาะ GM", muted: "🔇 คุณถูกปิดการแชทอยู่ — เสนอหัวข้อไม่ได้" };
+                      limit: "รอบนี้คุณเสนอหัวข้อครบโควตาแล้ว — โปรดรอรอบถัดไป", gm: "เฉพาะ GM", muted: "🔇 คุณถูกปิดการแชทอยู่ — เสนอหัวข้อไม่ได้" };
 const vb = { data: null, at: 0, loading: false, err: "", tab: "open", pending: 0, busy: false, skew: 0, gmForm: false };
 
 function openVoteBoard(){
@@ -14431,23 +14587,23 @@ function renderVoteBoard(){
   let html = `<div class="vb-tabs">${tab("open", "🗳️ กำลังโหวต", open.filter(p => p.my == null).length || "")}${tab("props", "💡 หัวข้อเสนอ", props.length || "")}${tab("closed", "📜 ผลโหวต", "")}</div>`;
   if(!can) html += `<div class="vb-note warn">👀 ดูได้ แต่${esc(VOTE_REASON[d.ineligible] || "ยังโหวตไม่ได้")}</div>`;
   if(vb.tab === "open"){
-    html += `<div class="vb-note">1 คน 1 เสียง · เปลี่ยนใจได้จนกว่าจะปิด · คะแนนจะเปิดเผยตอนปิดโหวต แล้วผู้พัฒนาจะนำข้อที่ชนะไปทำในอัปเดตถัดไป</div>`;
+    html += `<div class="vb-note">1 บัญชี 1 เสียง · เปลี่ยนตัวเลือกได้จนกว่าจะปิดรับ · ผลคะแนนจะประกาศหลังปิดโหวต และผู้พัฒนาจะนำแนวทางที่ชนะไปปรับปรุงในอัปเดตถัดไป</div>`;
     html += open.length ? open.map(p => `<div class="vb-card${p.gm ? " gm" : ""}">
         <div class="vb-q">${p.gm ? "🛡️ " : ""}${esc(p.q)}</div>
         <div class="vb-meta"><span class="vb-time">⏳ ${voteTimeLeft(p.closesAt)}</span><span>🙋 โหวตแล้ว ${p.voters} คน</span>${p.gm ? "<span>คำถามจาก GM</span>" : ""}${p.my != null ? `<span style="color:#2f9e5b;font-weight:bold">✔ คุณเลือกข้อ ${p.my + 1}</span>` : ""}</div>
         <div class="vb-choices">${p.opts.map((o, i) => `<button type="button" class="vb-choice${p.my === i ? " picked" : ""}" data-act="vote" data-id="${p.id}" data-choice="${i}"${can && !vb.busy ? "" : " disabled"}><span class="vb-n">${i + 1}</span>${esc(o)}</button>`).join("")}</div>
         ${gm ? `<div class="vb-row">${gmDel(p)}</div>` : ""}</div>`).join("")
-      : `<div class="empty-note">ยังไม่มีหัวข้อเปิดโหวตตอนนี้ — ไปดู 💡 หัวข้อเสนอ แล้วช่วยกันหนุนให้ขึ้นป้าย</div>`;
+      : `<div class="empty-note">ยังไม่มีหัวข้อเปิดโหวตในขณะนี้ — โปรดตรวจสอบ 💡 หัวข้อเสนอ เพื่อร่วมสนับสนุน</div>`;
     if(gm) html += vb.gmForm ? voteFormHtml("gm") : `<div class="vb-row"><button type="button" data-act="gmform">🛡️ ตั้งคำถามโหวตทันที (GM)</button></div>`;
   } else if(vb.tab === "props"){
-    html += `<div class="vb-note">เสนอหัวข้อพร้อมตัวเลือก 2–4 ข้อ แล้วให้ผู้เล่นกด 👍 หนุน — ครบรอบ (<b>${voteTimeLeft(d.roundEnds)}</b>) หัวข้อที่ได้เสียงหนุนมากสุด (อย่างน้อย 2 เสียง) จะขึ้นป้ายให้โหวต 12 ชม. ที่เหลือจะหมดรอบ</div>`;
+    html += `<div class="vb-note">เสนอหัวข้อพร้อมตัวเลือก 2–4 ข้อ แล้วเปิดให้ผู้เล่นกด 👍 หนุน — เมื่อครบกำหนด (<b>${voteTimeLeft(d.roundEnds)}</b>) หัวข้อที่ได้เสียงหนุนสูงสุด (อย่างน้อย 2 เสียง) จะขึ้นเป็นโหวตหลัก 12 ชม. </div>`;
     html += props.length ? props.map((p, rank) => `<div class="vb-card">
         <div class="vb-q">${rank === 0 && p.supports >= 2 ? "🥇 " : ""}${esc(p.q)}</div>
         <div class="vb-meta"><span>เสนอโดย ${esc(p.by)}</span><span>👍 หนุน ${p.supports}</span></div>
         <div class="vb-opts">${p.opts.map((o, i) => `<span>${i + 1}. ${esc(o)}</span>`).join("")}</div>
         <div class="vb-row">${p.own ? `<small style="color:#7a7186">หัวข้อของคุณ (หนุนอัตโนมัติ)</small>`
           : `<button type="button" class="${p.mine ? "on" : ""}" data-act="support" data-id="${p.id}" data-on="${p.mine ? 0 : 1}"${can && !vb.busy ? "" : " disabled"}>${p.mine ? "✔ หนุนแล้ว (กดเพื่อยกเลิก)" : "👍 หนุนหัวข้อนี้"}</button>`}${gmDel(p)}</div></div>`).join("")
-      : `<div class="empty-note">รอบนี้ยังไม่มีใครเสนอ — เป็นคนแรกเลย!</div>`;
+      : `<div class="empty-note">รอบนี้ยังไม่มีใครเสนอหัวข้อ — มาร่วมเสนอเป็นคนแรกเลย!</div>`;
     if(can) html += voteFormHtml("propose");
   } else {
     html += closed.length ? closed.map(p => {
@@ -14529,15 +14685,15 @@ function drawVoteBadge(ctx, x, y, n){
    starts from exactly what the server has.
    ============================================================ */
 const MK_REASON = {
-  guest: "ต้องผูกบัญชีกับอีเมลหรือ Google ก่อน (เมนู 👤 บัญชี) — Guest ซื้อ–ขายไม่ได้",
+  guest: "ต้องผูกบัญชีกับอีเมลหรือ Google ก่อน (เมนู 👤 บัญชี) — บัญชี Guest ไม่สามารถซื้อขายได้",
   level: "ต้องเลเวล 5 ขึ้นไปถึงจะซื้อ–ขายได้ (ดูของได้ตามสบาย)",
-  new: "บัญชีต้องมีอายุอย่างน้อย 1 วันก่อนถึงจะซื้อ–ขายได้ — กันบัญชีปั๊มมาโยกของ",
-  banned: "บัญชีนี้ถูกระงับ", slots: "ช่องวางขายเต็มแล้ว — ยกเลิกหรือรอให้ของชิ้นอื่นขายได้ก่อน",
-  daily: "วันนี้วางขายครบ 30 ครั้งแล้ว — พรุ่งนี้ค่อยมาใหม่", price: "ราคาต้องอยู่ในช่วงที่ตลาดกำหนด",
+  new: "บัญชีต้องสร้างมาแล้วอย่างน้อย 1 วัน จึงจะซื้อขายได้ — ป้องกันการสร้างบัญชีใหม่มาถ่ายโอนสิ่งของ",
+  banned: "บัญชีนี้ถูกระงับ", slots: "ช่องวางขายเต็มแล้ว — โปรดยกเลิกรายการเดิมหรือรอให้จำหน่ายออกก่อน",
+  daily: "วันนี้วางขายครบโควตา 30 ครั้งแล้ว — สามารถวางขายได้ใหม่อีกครั้งในวันพรุ่งนี้", price: "ราคาต้องอยู่ในช่วงที่ตลาดกำหนด",
   gold: "เงินไม่พอ", noitem: "ไม่พบไอเทมนี้ในกระเป๋าแล้ว", equipped: "ถอดอุปกรณ์ออกก่อนวางขาย",
   nosell: "ไอเทมนี้วางขายในตลาดไม่ได้", qty: "จำนวนไม่ถูกต้อง", hours: "ระยะเวลาไม่ถูกต้อง",
   gone: "สินค้านี้ถูกซื้อหรือถูกถอนไปแล้ว", own: "ซื้อของที่ตัวเองวางขายไม่ได้",
-  full: "กระเป๋าและกล่องที่บ้านเต็ม — เคลียร์ช่องก่อน", empty: "ยังไม่มีของที่รับได้ตอนนี้", format: "ข้อมูลตัวละครผิดรูปแบบ"
+  full: "กระเป๋าและกล่องเก็บของเต็ม — โปรดจัดการพื้นที่ว่างก่อน", empty: "ยังไม่มีของที่รับได้ตอนนี้", format: "ข้อมูลตัวละครผิดรูปแบบ"
 };
 const MK_CATS = [
   { k:"",          label:"ทั้งหมด" },
@@ -14549,7 +14705,7 @@ const MK_CATS = [
   { k:"material",  label:"💠 วัตถุดิบ" }
 ];
 const MK_WTYPES = [["", "ทุกแบบ"], ["sword", "🗡️ ดาบ"], ["heavy", "🔨 ค้อน"], ["bow", "🏹 ธนู"], ["orb", "🪄 เวท"]];
-const MK_SORTS = [["cheap", "ราคาต่ำ → สูง"], ["dear", "ราคาสูง → ต่ำ"], ["power", "⚡ พลังรวมสูงสุด"], ["deal", "💎 คุ้มสุด (เทียบราคากลาง)"],
+const MK_SORTS = [["cheap", "ราคาต่ำ → สูง"], ["dear", "ราคาสูง → ต่ำ"], ["power", "⚡ พลังรวมสูงสุด"], ["deal", "💎 คุ้มค่าสูงสุด (เทียบราคากลาง)"],
                   ["new", "🆕 วางขายล่าสุด"], ["ending", "⏳ ใกล้หมดเวลา"]];
 const MK_STACKS = ["mana_stone"]; // besides cards
 const MK_NEVER = ["kings_oath_secret", "collector_medal"];
@@ -14802,7 +14958,7 @@ function mkBuyTab(){
       <h5>ราคา (💰)</h5>
       <div class="mk-row2"><input type="number" min="0" id="mkPmin" class="mk-in" placeholder="ต่ำสุด" value="${f.pmin}"><span>–</span><input type="number" min="0" id="mkPmax" class="mk-in" placeholder="สูงสุด" value="${f.pmax}"></div>
       <label class="mk-check"><input type="checkbox" id="mkStar"${f.star ? " checked" : ""}> ✦ เฉพาะคุณภาพสูง (95%+)</label>
-      <label class="mk-check"><input type="checkbox" id="mkBetter"${f.better ? " checked" : ""}> ⚡ เฉพาะที่แรงกว่าของที่ใส่อยู่</label>
+      <label class="mk-check"><input type="checkbox" id="mkBetter"${f.better ? " checked" : ""}> ⚡ เฉพาะที่พลังสูงกว่าของที่สวมอยู่</label>
       <div class="mk-row2"><button type="button" class="mk-go" data-mk="search">🔎 ค้นหา</button><button type="button" class="mk-go alt" data-mk="reset">ล้าง</button></div>
     </aside>`;
   let rows = (mk.rows || []).slice();
@@ -14928,10 +15084,10 @@ function mkSumHtml(){
   const c = mkCfg(), p = mk.sellPrice, why = mkWhy();
   const fee = Math.max(Math.ceil(p * c.fee), 1), tax = Math.ceil(p * c.tax), poor = game.player.gold < fee;
   return `<div class="mk-sum">
-      <div><span>ค่าวางขาย ${Math.round(c.fee * 100)}% (จ่ายตอนนี้ ไม่คืน)</span><b>💰 ${mkNum(fee)}</b></div>
-      <div><span>ภาษีเมื่อขายได้ ${Math.round(c.tax * 100)}%</span><b>💰 ${mkNum(tax)}</b></div>
-      <div class="tot"><span>ได้รับจริงเมื่อขายได้</span><b>💰 ${mkNum(p - tax)}</b></div>
-      <small>เงินเข้า 📬 กล่องรับของ รับได้หลังขายได้ ${c.holdH} ชม. · ขายไม่ออก/ถอนเอง → ของกลับกล่องรับของ</small>
+      <div><span>ค่าวางขาย ${Math.round(c.fee * 100)}% (ชำระทันที ไม่คืนเงิน)</span><b>💰 ${mkNum(fee)}</b></div>
+      <div><span>ภาษีการขาย ${Math.round(c.tax * 100)}%</span><b>💰 ${mkNum(tax)}</b></div>
+      <div class="tot"><span>ยอดรับสุทธิ</span><b>💰 ${mkNum(p - tax)}</b></div>
+      <small>เงินจะถูกส่งเข้า 📬 กล่องรับของ หลังขายได้ ${c.holdH} ชม. · หากหมดเวลาหรือถอนออก สิ่งของจะส่งคืนที่กล่องรับของ</small>
     </div>
     ${why ? `<div class="vb-note warn">${MK_REASON[why] || why}</div>`
           : `<button type="button" class="mk-go buy wide${mk.sellArm ? " arm" : ""}" data-mk="list"${mk.busy || poor ? " disabled" : ""}>${mk.busy ? "⏳ กำลังวางขาย…" : poor ? "เงินไม่พอจ่ายค่าวาง" : mk.sellArm ? `✔ ยืนยันวางขาย 💰${mkNum(p)}` : "📤 วางขาย"}</button>`}`;
@@ -14963,7 +15119,7 @@ function mkMineTab(){
       ${l.status === "active" ? `<button type="button" class="mk-go alt" data-mk="cancel" data-v="${l.id}"${mk.busy ? " disabled" : ""}>ถอน</button>` : ""}</div>`;
   }).join("");
   const used = (h.mine || []).filter(l => l.status === "active").length;
-  return `<div class="vb-note">ใช้ช่องวางขาย <b>${used}/${h.slots}</b> ช่อง (ทุก 20 เลเวลได้เพิ่ม 1 ช่อง สูงสุด 10) · ถอนได้ทุกเมื่อ แต่ค่าวางไม่คืน</div>
+  return `<div class="vb-note">ใช้ช่องวางขาย <b>${used}/${h.slots}</b> ช่อง (เพิ่ม 1 ช่องทุกๆ 20 เลเวล สูงสุด 10 ช่อง) · สามารถถอนสินค้าได้ตลอดเวลา (ไม่คืนค่าวางขาย)</div>
     ${rows || `<div class="mk-empty">ยังไม่มีของที่วางขาย — ไปที่แท็บ 💰 ลงขาย</div>`}`;
 }
 function mkMailTab(){
@@ -14978,15 +15134,15 @@ function mkMailTab(){
       ${when}</span><span class="mk-lp"><small>${m.note === "expired" ? "⌛ หมดเวลา" : "↩️ ถอนคืน"}</small></span></div>`;
   }).join("");
   const ready = mail.filter(m => m.ready).length;
-  return `<div class="vb-note">เงินที่ขายได้จะพักไว้ ${mkCfg().holdH} ชม. ก่อนรับได้ (ช่วงตรวจสอบการโกง/ซื้อขายเงินจริง) · ของที่ขายไม่ออกหรือถอนคืนรับได้ทันที</div>
+  return `<div class="vb-note">เงินจากการขายจะถูกพักไว้ ${mkCfg().holdH} ชม. เพื่อตรวจสอบความถูกต้องก่อนรับได้ · สินค้าที่หมดอายุหรือถอนคืนสามารถกดรับคืนได้ทันที</div>
     ${rows || `<div class="mk-empty">กล่องว่าง</div>`}
     ${mail.length ? `<button type="button" class="mk-go buy wide" data-mk="claim"${!ready || mk.busy ? " disabled" : ""}>${mk.busy ? "⏳ กำลังรับ…" : `📥 รับทั้งหมดที่พร้อม (${ready})`}</button>` : ""}`;
 }
 function mkRender(){
   const body = document.getElementById("marketBody");
   if(!body || document.getElementById("marketPanel").hidden || !game) return;
-  if(!NET_ONLINE){ body.innerHTML = `<div class="mk-empty">🏪 ตลาดกลางเปิดเฉพาะตอนเล่นออนไลน์ (ต้องมีบาเรียคอยตรวจสอบการซื้อขาย)</div>`; return; }
-  if(!net.user){ body.innerHTML = `<div class="mk-empty">เข้าสู่ระบบก่อนนะ</div>`; return; }
+  if(!NET_ONLINE){ body.innerHTML = `<div class="mk-empty">🏪 ตลาดกลางเปิดให้บริการเฉพาะโหมดออนไลน์เท่านั้น (ต้องเชื่อมต่อกับบาเรียเพื่อดูแลความปลอดภัย)</div>`; return; }
+  if(!net.user){ body.innerHTML = `<div class="mk-empty">กรุณาเข้าสู่ระบบก่อนใช้งาน</div>`; return; }
   const keepScroll = [...body.querySelectorAll(".mk-side, .mk-main")].map(el => el.scrollTop);
   const focusId = document.activeElement && document.activeElement.id, selStart = focusId && document.activeElement.selectionStart;
   const tab = mk.tab === "sell" ? mkSellTab() : mk.tab === "mine" ? mkMineTab() : mk.tab === "mail" ? mkMailTab() : mkBuyTab();
@@ -15465,12 +15621,12 @@ document.getElementById("gmPlayerBody").addEventListener("click", e => {
   if(a === "unmute" || a === "unban") return gmAskRevoke(id, a === "unban" ? "ban" : "mute", name, reload);
   if(a === "warn") return gmAsk({ kind: "warn", icon: "⚠️", title: "ส่งคำเตือน", name, verb: "ส่งคำเตือนถึง", safe: true, needText: true, textLabel: "ข้อความ", placeholder: "เช่น กรุณาใช้คำสุภาพในแชท",
     onConfirm: (m, t) => sanction("warn", 0, t, "⚠️ ส่งคำเตือนแล้ว — ผู้เล่นจะเห็นทันทีที่ออนไลน์") });
-  if(a === "mute") return gmAsk({ kind: "mute", icon: "🔇", title: "ใบ้ (ปิดแชท/กระซิบ/เสนอหัวข้อโหวต)", name, verb: "ใบ้", durations: GM_DURATIONS, textLabel: "เหตุผล", placeholder: "ผู้เล่นจะเห็นข้อความนี้",
-    onConfirm: (m, t) => sanction("mute", m, t, "🔇 ใบ้แล้ว") });
-  if(a === "kick") return gmAsk({ kind: "kick", icon: "👢", title: "เตะออกจากเกม", name, verb: "เตะ", durations: GM_KICK_DURATIONS, textLabel: "เหตุผล", placeholder: "ผู้เล่นจะเห็นข้อความนี้",
-    onConfirm: (m, t) => sanction("kick", m, t, "👢 เตะแล้ว — หลุดภายในไม่กี่วินาที") });
+  if(a === "mute") return gmAsk({ kind: "mute", icon: "🔇", title: "ระงับการแชท (ห้ามพิมพ์แชท/กระซิบ/เสนอหัวข้อโหวต)", name, verb: "ระงับการแชท", durations: GM_DURATIONS, textLabel: "เหตุผล", placeholder: "ผู้เล่นจะเห็นข้อความนี้",
+    onConfirm: (m, t) => sanction("mute", m, t, "🔇 ระงับการแชทแล้ว") });
+  if(a === "kick") return gmAsk({ kind: "kick", icon: "👢", title: "ตัดการเชื่อมต่อ (เตะออกจากเกม)", name, verb: "เตะ", durations: GM_KICK_DURATIONS, textLabel: "เหตุผล", placeholder: "ผู้เล่นจะเห็นข้อความนี้",
+    onConfirm: (m, t) => sanction("kick", m, t, "👢 เตะออกจากเกมแล้ว — ผู้เล่นจะหลุดจากการเชื่อมต่อภายในไม่กี่วินาที") });
   if(a === "ban") return gmAsk({ kind: "ban", icon: "⛔", title: "แบน (ห้ามเข้าเล่น)", name, verb: "แบน", durations: GM_DURATIONS, textLabel: "เหตุผล", placeholder: "ผู้เล่นจะเห็นข้อความนี้",
-    onConfirm: (m, t) => sanction("ban", m, t, "⛔ แบนแล้ว — หลุดภายในไม่กี่วินาที") });
+    onConfirm: (m, t) => sanction("ban", m, t, "⛔ ระงับบัญชีแล้ว — ผู้เล่นจะหลุดจากการเชื่อมต่อภายในไม่กี่วินาที") });
   if(a === "wipe") return gmAsk({ kind: "wipe", icon: "📦", title: "เก็บตัวละครเข้าคลัง แล้วล้างออก (หายจากอันดับ เริ่มใหม่จากศูนย์ — กู้คืนได้ภายหลัง)", name, verb: "ล้างตัวละคร",
     needText: true, textLabel: "เหตุผล", placeholder: "เช่น โกงเงินผ่าน console",
     onConfirm: (m, t) => gmRpc("gm_wipe", { p_target: id, p_reason: t }, "📦 เก็บเข้าคลังและล้างแล้ว").then(reload) });
@@ -15525,7 +15681,7 @@ const OPT_TABS = [
     { type:"choice", key:"talkSpeed", label:"ความเร็วข้อความบทสนทนา", options:[["slow", "ช้า"], ["normal", "ปกติ"], ["fast", "เร็ว"], ["instant", "ทันที"]] },
     { type:"toggle", key:"minimap", label:"แผนที่ย่อ", note:"มุมขวาล่างตอนเดินสำรวจ" },
     { type:"toggle", key:"hint", label:"แถบคำแนะนำด้านล่างจอ" },
-    { type:"toggle", key:"lowPower", label:"โหมดประหยัดพลังงาน", note:"จำกัด 30 ภาพต่อวินาที เครื่องไม่ร้อน แบตอยู่นานขึ้น แต่ภาพลื่นน้อยลง" } ]},
+    { type:"toggle", key:"lowPower", label:"โหมดประหยัดพลังงาน", note:"จำกัด 30 เฟรมต่อวินาที ช่วยลดความร้อนและประหยัดแบตเตอรี่ แต่อาจลดความลื่นไหลของภาพ" } ]},
   { id:"battle", label:"⚔️ การต่อสู้", rows:[
     { type:"toggle", key:"shake", label:"ภาพสั่นเมื่อตีโดนหรือโดนตี", note:"ปิดได้ถ้าเวียนหัว" },
     { type:"toggle", key:"dmgNums", label:"ตัวเลขดาเมจลอยขึ้น", note:"รวมตัวเลขฟื้นเลือด" },
@@ -15541,11 +15697,11 @@ const OPT_KEYS_HTML = `<div class="opt-keys">
     <dt>คลิกพื้น</dt><dd>เดินไปจุดนั้น</dd><dt>เดินชนมอนสเตอร์</dt><dd>เข้าสู้</dd><dt>คลิก NPC</dt><dd>คุย</dd></dl></div>
   <div><h4>เมนู</h4><dl>
     <dt><kbd>C</kbd></dt><dd>สถานะ</dd><dt><kbd>B</kbd> / <kbd>I</kbd></dt><dd>กระเป๋า</dd><dt><kbd>K</kbd></dt><dd>สกิลอาวุธ</dd>
-    <dt><kbd>J</kbd></dt><dd>คอลเลกชัน / ฉายา</dd><dt><kbd>O</kbd></dt><dd>ออฟชั่น</dd><dt><kbd>M</kbd></dt><dd>ปิด/เปิดเพลง</dd>
+    <dt><kbd>J</kbd></dt><dd>คอลเลกชัน / ฉายา</dd><dt><kbd>O</kbd></dt><dd>ตั้งค่า</dd><dt><kbd>M</kbd></dt><dd>ปิด/เปิดเพลง</dd>
     <dt><kbd>Enter</kbd></dt><dd>พิมพ์แชท (เล่นออนไลน์)</dd><dt><kbd>Esc</kbd></dt><dd>ปิดหน้าต่าง / ไปต่อหลังสู้</dd></dl></div>
   <div><h4>ต่อสู้</h4><dl>
     <dt>คลิกซ้าย</dt><dd>โจมตีเมื่อเกจเต็ม (ตรงโซนเขียว = PERFECT)</dd><dt><kbd>A</kbd> / <kbd>D</kbd></dt><dd>หลบซ้าย / หลบขวา</dd>
-    <dt><kbd>1</kbd>–<kbd>8</kbd></dt><dd>ใช้สกิลในแอ็คชั่นบาร์</dd></dl></div>
+    <dt><kbd>1</kbd>–<kbd>8</kbd></dt><dd>ใช้สกิลในแถบสกิล</dd></dl></div>
   <div><h4>บทสนทนา</h4><dl>
     <dt><kbd>1</kbd>–<kbd>9</kbd></dt><dd>เลือกคำตอบ</dd><dt><kbd>Space</kbd></dt><dd>แสดงข้อความทั้งหมดทันที</dd></dl></div>
   <p class="storage-hint" style="margin:0">ปุ่มลัดใช้ได้ทั้งแป้นพิมพ์ภาษาไทยและภาษาอังกฤษ</p>
@@ -15664,7 +15820,7 @@ if(typeof MutationObserver !== "undefined"){
   const mo = new MutationObserver(syncMenuActive);
   Object.values(MENU_PANELS).forEach(id => { const el = document.getElementById(id); if(el) mo.observe(el, { attributes:true, attributeFilter:["hidden"] }); });
 }
-[["statusBtn","C","สถานะ"],["bagBtn","B","กระเป๋า"],["weaponSkillBtn","K","สกิลอาวุธ"],["collectionBtn","J","คอลเลกชัน"],["optionsBtn","O","ออฟชั่น"]].forEach(([id, k, label]) => {
+[["statusBtn","C","สถานะ"],["bagBtn","B","กระเป๋า"],["weaponSkillBtn","K","สกิลอาวุธ"],["collectionBtn","J","คอลเลกชัน"],["optionsBtn","O","ตั้งค่า"]].forEach(([id, k, label]) => {
   const b = document.getElementById(id);
   if(!b || !b.insertBefore) return;
   const hk = document.createElement("span"); hk.className = "hk"; hk.textContent = k;
