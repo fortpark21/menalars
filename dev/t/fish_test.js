@@ -50,5 +50,12 @@ const save = G("JSON.stringify(buildSaveData())");
 const g2 = loadGame(process.env.GAME || "game.html"); g2.run(`continueGame(JSON.parse(${JSON.stringify(save)}))`);
 if(g2.get("Object.keys(game.player.fishBook).length") !== G("Object.keys(game.player.fishBook).length")) fails.push("book not saved");
 R("openFishBook ? (startFishing(), openFishBook()) : 0"); if(!G("document.querySelectorAll ? true : true")) fails.push("book");
+// v68: the fish book pauses the water — no bite while it's open
+R("closeFishing(); startFishing(); document.getElementById('fishResult').hidden = true; openFishBook(); fishing.last = performance.now()");
+const t0 = G("fishing.t"); for(let i = 0; i < 50; i++){ g.clock.advance(100); R("fishTick(performance.now())"); }
+if(G("fishing.t") !== t0 || G("fishing.phase") !== "wait") fails.push("book should pause fishing");
+R("document.getElementById('fishBookPanel').hidden = true"); for(let i = 0; i < 5; i++){ g.clock.advance(100); R("fishTick(performance.now())"); }
+if(!(G("fishing.t") > t0)) fails.push("fishing should resume after the book");
+R("closeFishing()");
 console.log("fails", JSON.stringify(fails));
 console.log("errors:", JSON.stringify(g.errors().concat(g2.errors()).slice(0, 5)));

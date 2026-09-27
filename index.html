@@ -1932,7 +1932,7 @@
     <h3 id="frTitle"></h3><div class="fr-rar" id="frRarity"></div>
     <canvas id="frArt" width="640" height="320"></canvas>
     <div id="frBody"></div>
-    <div class="fr-actions"><button type="button" class="btn-primary" id="frAgain">🎣 ตกต่อ</button><button type="button" class="btn-secondary" id="frDone">กลับเมือง</button></div>
+    <div class="fr-actions"><button type="button" class="btn-primary" id="frAgain">🎣 ตกต่อ</button><button type="button" class="btn-secondary" id="frBook">📖 สมุดปลา</button><button type="button" class="btn-secondary" id="frDone">กลับเมือง</button></div>
   </div></div>
   <div id="fishBookPanel" hidden><div class="fb-box">
     <button class="close-x" id="fbClose" type="button">✕</button>
@@ -5099,7 +5099,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 67;
+const GAME_VERSION = 68;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -8586,7 +8586,7 @@ function fishTick(now){
   const f = fishing;
   if(!f.active) return;
   const dt = Math.min(0.1, Math.max(0, (now - f.last) / 1000)); f.last = now;
-  fishStep(dt);
+  if(document.getElementById("fishBookPanel").hidden) fishStep(dt); // v68: reading the fish book pauses the water (no bites, no tugs)
   drawFishing(now);
   f.raf = requestAnimationFrame(fishTick);
 }
@@ -8783,7 +8783,7 @@ function drawFishing(now){
     c.fillStyle = pulling ? (good ? "#7CFFB2" : "#ff8080") : "#ffe27a"; c.fillText(txt, W * 0.45, H * 0.2);
   }
   // vertical tension bar (right)
-  const bw = 48, bh = H * 0.66, bxr = W - 150, byTop = H * 0.16;
+  const bw = 48, bh = H * 0.66, bxr = Math.round(W * 0.66 - bw / 2), byTop = H * 0.16; // v68: left of the right-side tug flash (W·0.7→W) so the red warning stays visible
   c.fillStyle = "rgba(8,12,24,.72)"; roundRect(c, bxr - 12, byTop - 14, bw + 24, bh + 28, 16); c.fill();
   c.fillStyle = "#1b2233"; c.fillRect(bxr, byTop, bw, bh);
   if(f.phase === "reel" || f.phase === "done"){
@@ -8843,7 +8843,7 @@ function renderFishBook(){
     drawFishArt(cv.getContext("2d"), f, 90, 45, 150, { silhouette: !book[f.id] });
   });
 }
-function openFishBook(){ renderFishBook(); document.getElementById("fishBookPanel").hidden = false; sfx.click(); }
+function openFishBook(){ fishing.hold = false; fishing.keyL = fishing.keyR = false; renderFishBook(); document.getElementById("fishBookPanel").hidden = false; sfx.click(); }
 document.getElementById("fishSpotBtn").addEventListener("click", ()=> startFishing());
 document.getElementById("fishCanvas").addEventListener("pointerdown", e => { if(fishing.phase === "reel") fishing.hold = true; e.preventDefault(); });
 window.addEventListener("pointerup", ()=>{ fishing.hold = false; });
@@ -8863,6 +8863,7 @@ window.addEventListener("keyup", e => {
 });
 document.getElementById("fishQuit").addEventListener("click", ()=>{ sfx.click(); closeFishing(); });
 document.getElementById("fishBookBtn").addEventListener("click", openFishBook);
+document.getElementById("frBook").addEventListener("click", openFishBook); // v68: browse the book from the catch card, then pick ตกต่อ / กลับเมือง
 document.getElementById("fbClose").addEventListener("click", ()=>{ sfx.click(); document.getElementById("fishBookPanel").hidden = true; });
 document.getElementById("frAgain").addEventListener("click", ()=>{ sfx.click(); fishCast(); });
 document.getElementById("frDone").addEventListener("click", ()=>{ sfx.click(); closeFishing(); });
