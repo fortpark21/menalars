@@ -5099,7 +5099,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 68;
+const GAME_VERSION = 69;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -6319,12 +6319,13 @@ const FISH_SPOTS = [ { x: 1200, y: 1545, r: 115 }, { x: 1700, y: 1545, r: 115 } 
 const FISH_ZONE_SCALE = 2.5, FISH_ZONE_MIN = 0.14, FISH_ZONE_MAX = 0.6;
 const FISH_LIFT = 2.7, FISH_GRAV = 2.1, FISH_DAMP = 1.6;           // marker physics (bar heights per s²)
 const FISH_TUG_PULL_S = 0.7, FISH_TUG_OK = 0.45, FISH_TUG_BONUS = 0.07, FISH_MAX_STRAIN = 3;
+// v69: need tuned so a quick bot averages 5 / 7 / 9 / 12 / 16 s per rarity (epic+ also lose time to tugs & a drifting zone)
 const FISH_RARITY = {
-  common:    { label:"ธรรมดา",   color:"#cfd8dc", weight:50, need:3.0, tug:[2600, 3400], warn:850, grav:1.0,  drift:0.0,  thrash:0.2 },
-  uncommon:  { label:"ไม่ธรรมดา", color:"#7CE0A8", weight:28, need:4.2, tug:[2200, 3000], warn:780, grav:1.15, drift:0.08, thrash:0.35 },
-  rare:      { label:"หายาก",    color:"#6ec6ff", weight:14, need:5.6, tug:[1900, 2600], warn:720, grav:1.3,  drift:0.15, thrash:0.5 },
-  epic:      { label:"มหากาพย์", color:"#c792ff", weight:6,  need:7.2, tug:[1600, 2200], warn:660, grav:1.45, drift:0.22, thrash:0.7 },
-  legendary: { label:"ตำนาน",    color:"#ffd166", weight:2,  need:9.5, tug:[1300, 1800], warn:600, grav:1.6,  drift:0.28, thrash:0.9 }
+  common:    { label:"ธรรมดา",   color:"#cfd8dc", weight:50, need:5.0, tug:[2600, 3400], warn:850, grav:1.0,  drift:0.0,  thrash:0.2 },
+  uncommon:  { label:"ไม่ธรรมดา", color:"#7CE0A8", weight:28, need:7.2, tug:[2200, 3000], warn:780, grav:1.15, drift:0.08, thrash:0.35 },
+  rare:      { label:"หายาก",    color:"#6ec6ff", weight:14, need:9.5, tug:[1900, 2600], warn:720, grav:1.3,  drift:0.15, thrash:0.5 },
+  epic:      { label:"มหากาพย์", color:"#c792ff", weight:6,  need:9.9, tug:[1600, 2200], warn:660, grav:1.45, drift:0.22, thrash:0.7 },
+  legendary: { label:"ตำนาน",    color:"#ffd166", weight:2,  need:12.6, tug:[1300, 1800], warn:600, grav:1.6,  drift:0.28, thrash:0.9 }
 };
 // shape: body | betta | puffer | eel | tuna | catfish | koi · mark: none | line | stripes | spots | patches
 const FISH_DEFS = [
@@ -8783,7 +8784,7 @@ function drawFishing(now){
     c.fillStyle = pulling ? (good ? "#7CFFB2" : "#ff8080") : "#ffe27a"; c.fillText(txt, W * 0.45, H * 0.2);
   }
   // vertical tension bar (right)
-  const bw = 48, bh = H * 0.66, bxr = Math.round(W * 0.66 - bw / 2), byTop = H * 0.16; // v68: left of the right-side tug flash (W·0.7→W) so the red warning stays visible
+  const bw = 48, bh = H * 0.66, bxr = Math.round(((W - 150) + (W * 0.66 - bw / 2)) / 2), byTop = H * 0.16; // v69: halfway between the v66 spot (W−150, hid the red warning) and v68's (W·0.66)
   c.fillStyle = "rgba(8,12,24,.72)"; roundRect(c, bxr - 12, byTop - 14, bw + 24, bh + 28, 16); c.fill();
   c.fillStyle = "#1b2233"; c.fillRect(bxr, byTop, bw, bh);
   if(f.phase === "reel" || f.phase === "done"){
