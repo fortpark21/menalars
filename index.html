@@ -329,6 +329,11 @@
   .skill-btn.mad-locked .skill-content{ filter:grayscale(1) brightness(.55); }
   .skill-btn.mad-locked::before{ content:"🌀"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-size:22px; background:rgba(60,0,20,.45); border-radius:inherit; z-index:3; pointer-events:none; }
+  /* v70: skill of another weapon type — grey, with the weapon it needs in the corner */
+  .skill-btn.weapon-locked{ border-color:rgba(255,255,255,.15); background:rgba(20,16,40,.55); }
+  .skill-btn.weapon-locked .skill-content{ filter:grayscale(1) brightness(.5); opacity:.75; }
+  .skill-btn.weapon-locked::after{ content:attr(data-need); position:absolute; right:2px; bottom:1px; font-size:13px; z-index:3;
+    filter:drop-shadow(0 1px 2px #000); pointer-events:none; }
   .skill-btn{
     position:relative; width:56px; height:52px; border:2px solid rgba(255,255,255,.35);
     border-radius:10px; background:rgba(20,16,40,.78); color:#fff;
@@ -2959,6 +2964,9 @@ function monsterStatsForLevel(level){
 const BOSS_HP_MULT = 2.3;     // boss tankiness over a same-level trash monster
 const BOSS_REWARD_MULT = 2.8; // exp/gold over a same-level trash monster
 const BOSS_COMBO_MULT = 1.3;  // the combo bites a bit harder than the boss's regular single hit
+// v70: a boss is never weaker than its own map's toughest monster (map 1's Lv.9 had more HP and hit harder than
+// the boss): floors applied in getMapMonsterDefs — HP ≥ 1.3×, per-hit damage ≥ 1.1× the strongest non-boss.
+const BOSS_MIN_HP_OVER_MOB = 1.3, BOSS_MIN_DMG_OVER_MOB = 1.1;
 // v62: every map boss has ONE signature combo. groups = hits per burst; between bursts the boss pauses
 // (BOSS_COMBO_PAUSE_MS) and the player MAY attack/use skills — risky, the next burst comes right after.
 // Difficulty climbs by map: 3 slow hits → 5 hits with a feint and mirrored sides. Hits inside a burst keep
@@ -4873,6 +4881,13 @@ function getMapMonsterDefs(tier){
     maxHp: Math.round(def.maxHp * (def.isBoss ? BOSS_HP_MULT_BY_TIER[tier] : MONSTER_HP_MULT_BY_TIER[tier])),
     exp: Math.round(def.exp * MONSTER_REWARD_MULT), gold: Math.round(def.gold * MONSTER_REWARD_MULT)
   }));
+  const boss = defs.find(d => d.isBoss), mobs = defs.filter(d => !d.isBoss);
+  if(boss && mobs.length){ // v70 floors (see BOSS_MIN_HP_OVER_MOB)
+    const topHp = Math.max(...mobs.map(d => d.maxHp));
+    boss.maxHp = Math.max(boss.maxHp, Math.round(topHp * BOSS_MIN_HP_OVER_MOB));
+    boss.dmg = boss.dmg.map((v, i) => Math.max(v, Math.round(Math.max(...mobs.map(d => d.dmg[i])) * BOSS_MIN_DMG_OVER_MOB)));
+    boss.comboDamage = boss.dmg.map(v => Math.round(v * BOSS_COMBO_MULT));
+  }
   const d = game.dimension;
   if(d <= 1) return defs;
   const hpMult = (1 + (d - 1) * DIM_MONSTER_STEP) * dimRuleMult("stoneskin");
@@ -5099,7 +5114,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 69;
+const GAME_VERSION = 70;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -8148,13 +8163,13 @@ function renderOverworldScene(){
     ctx.fillStyle = "rgba(0,0,0,.4)"; ctx.fillRect(x, barY, w, h);
     ctx.fillStyle = m.isElite ? "#ffd166" : "#ef476f"; ctx.fillRect(x, barY, w * (m.hp/m.maxHp), h);
 
-    // Name + level — revealed only after the player has fought this map's version of the monster
-    // at least once (win or lose both count, see enterBattle); never-fought monsters stay unlabeled.
-    if(game.encounteredMonsters.has(game.mapTier + "_" + m.type)){
+    // Level is always shown (v70); the name only after the player has fought this map's version of the
+    // monster at least once (win or lose both count, see enterBattle) — never-fought ones read "??? Lv.x".
+    {
       const def = MONSTER_DEFS[m.type];
       ctx.font = "bold 11px 'Trebuchet MS', sans-serif"; ctx.textAlign = "center";
       ctx.fillStyle = "#fff"; ctx.strokeStyle = "rgba(0,0,0,.7)"; ctx.lineWidth = 3;
-      const label = `${def.name} Lv.${def.level}`;
+      const label = `${game.encounteredMonsters.has(game.mapTier + "_" + m.type) ? def.name : "???"} Lv.${def.level}`;
       ctx.strokeText(label, m.x, barY - 8);
       ctx.fillText(label, m.x, barY - 8);
     }
@@ -9703,6 +9718,14 @@ function renderSkillBar(){
     btn.draggable = true;
     btn.classList.toggle("mad-locked", sanityTier() >= 4 && !!SKILL_DEFS[skillId]); // v47: skills sealed below 7 Sanity
     const info = getActionBarSkillInfo(skillId) || { icon:"❓", name:"?" };
+    // v70: a skill of another weapon type is greyed out, with that weapon's icon in the corner
+    const wrongWeapon = !!info.weaponType && info.weaponType !== getEquippedWeaponMasteryType();
+    btn.classList.toggle("weapon-locked", wrongWeapon);
+    const needTip = wrongWeapon ? `ใช้ไม่ได้ตอนนี้ — ต้องถือ${WEAPON_CATEGORIES[info.weaponType].name}` : "";
+    if(btn.dataset.need !== (wrongWeapon ? WEAPON_CATEGORIES[info.weaponType].icon : "")){
+      btn.dataset.need = wrongWeapon ? WEAPON_CATEGORIES[info.weaponType].icon : "";
+      btn.title = needTip;
+    }
     setSlotContent(contentEl, `<span class="skill-icon">${info.icon}</span><span class="skill-name">${info.name}</span>`);
     btn.classList.toggle("empowered", !!(info.castable && info.weaponType && game.inBattle && game.battle
       && now < game.battle.skillEmpowerUntil && info.weaponType === getEquippedWeaponMasteryType()));
