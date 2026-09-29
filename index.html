@@ -1299,6 +1299,14 @@
   .talk-portrait img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
   .talk-portrait img[hidden]{ display:none; }
   .item-art{ width:1.6em; height:1.6em; object-fit:contain; vertical-align:middle; }
+  /* v73 painted icons (gear / items / skills): drop-in for an emoji, a bit bigger because the art has a margin */
+  .gi{ width:1.3em; height:1.3em; object-fit:contain; vertical-align:-0.32em; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+  .skt-node .ic .gi{ width:56px; height:56px; vertical-align:middle; }
+  .skill-btn .skill-icon .gi{ width:30px; height:30px; vertical-align:middle; }
+  #topMenu > .menu-btn .gi{ width:1.55em; height:1.55em; vertical-align:-0.45em; margin:-4px 0; }
+  #fishSpotBtn .fs-ic .gi{ width:34px; height:34px; vertical-align:middle; }
+  .hud-bar > i .gi{ width:1.35em; height:1.35em; vertical-align:-0.3em; }
+  #chatToggle .gi{ width:1.4em; height:1.4em; vertical-align:middle; }
   .talk-art{ height:150px; border-radius:10px; margin-bottom:10px; background-size:cover; box-shadow:inset 0 0 0 1px rgba(255,209,102,.35), inset 0 -30px 40px rgba(10,6,20,.45); }
   #artSplash{ position:fixed; inset:0; z-index:55; background:#07050f; cursor:pointer; animation:asIn .45s ease; }
   #artSplash[hidden]{ display:none; }
@@ -1431,6 +1439,7 @@
   .ttl-card.locked .ttl-ic{ filter:grayscale(1); opacity:.5; }
   .ttl-card.eq{ box-shadow:0 0 0 2px #4b3f8f; }
   .ttl-ic{ flex:0 0 38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; background:#f4efe0; }
+  .ttl-ic .gi{ width:34px; height:34px; vertical-align:middle; }
   .ttl-body{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
   .ttl-nm{ font-size:13px; font-weight:bold; color:#2d2a32; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .ttl-tier{ font-size:9px; font-weight:bold; color:#fff; background:var(--tc); border-radius:10px; padding:1px 6px; }
@@ -1985,6 +1994,256 @@
 // "?v=…" is a fingerprint of the file: when a picture changes, the fingerprint changes and players' browsers
 // fetch the new one instead of showing the old cached copy. Add/replace pictures with add_art.py.
 const ART = {
+  ic_wolf_card: "assets/ic_wolf_card.webp?v=4bce8fc8",
+  ic_tt_worlds_edge: "assets/ic_tt_worlds_edge.webp?v=55873890",
+  ic_tt_whisper_listener: "assets/ic_tt_whisper_listener.webp?v=6977ffc2",
+  ic_tt_weapon_scholar: "assets/ic_tt_weapon_scholar.webp?v=394f92ab",
+  ic_tt_weapon_master: "assets/ic_tt_weapon_master.webp?v=fcef97d9",
+  ic_tt_wanderer: "assets/ic_tt_wanderer.webp?v=6a485d38",
+  ic_tt_void_voyager: "assets/ic_tt_void_voyager.webp?v=18461aeb",
+  ic_tt_untouchable: "assets/ic_tt_untouchable.webp?v=ab0e06ef",
+  ic_tt_unscathed: "assets/ic_tt_unscathed.webp?v=ffaae2a5",
+  ic_tt_underworld_ruler: "assets/ic_tt_underworld_ruler.webp?v=d75d39b3",
+  ic_tt_tycoon: "assets/ic_tt_tycoon.webp?v=34b8870b",
+  ic_tt_treasure_hunter: "assets/ic_tt_treasure_hunter.webp?v=f1ee12ac",
+  ic_tt_treasure_bearer: "assets/ic_tt_treasure_bearer.webp?v=b88c4b08",
+  ic_tt_transcender: "assets/ic_tt_transcender.webp?v=758bdd59",
+  ic_tt_town_friend: "assets/ic_tt_town_friend.webp?v=d1b5ee0f",
+  ic_tt_throne_hunter: "assets/ic_tt_throne_hunter.webp?v=e160e428",
+  ic_tt_ten_kings: "assets/ic_tt_ten_kings.webp?v=a89e5751",
+  ic_tt_swaying_shadow: "assets/ic_tt_swaying_shadow.webp?v=9752f78b",
+  ic_tt_survivor: "assets/ic_tt_survivor.webp?v=4bd75c9b",
+  ic_tt_story_c7: "assets/ic_tt_story_c7.webp?v=3495e0e9",
+  ic_tt_story_c5: "assets/ic_tt_story_c5.webp?v=d810a6db",
+  ic_tt_story_c3: "assets/ic_tt_story_c3.webp?v=f60f49f9",
+  ic_tt_story_c2: "assets/ic_tt_story_c2.webp?v=34a35995",
+  ic_tt_story_c10: "assets/ic_tt_story_c10.webp?v=0e665623",
+  ic_tt_story_c1: "assets/ic_tt_story_c1.webp?v=5c89da2e",
+  ic_tt_still_water: "assets/ic_tt_still_water.webp?v=288dcf29",
+  ic_tt_star_breaker: "assets/ic_tt_star_breaker.webp?v=b8d27eb4",
+  ic_tt_star_assassin: "assets/ic_tt_star_assassin.webp?v=20329132",
+  ic_tt_slime_hunter: "assets/ic_tt_slime_hunter.webp?v=82356f81",
+  ic_tt_skill_student: "assets/ic_tt_skill_student.webp?v=bc489631",
+  ic_tt_shadowless: "assets/ic_tt_shadowless.webp?v=6780d05e",
+  ic_tt_shadow_unmasker: "assets/ic_tt_shadow_unmasker.webp?v=167b13c1",
+  ic_tt_secret_seeker: "assets/ic_tt_secret_seeker.webp?v=9ae163e4",
+  ic_tt_secret_keeper: "assets/ic_tt_secret_keeper.webp?v=dfb549e6",
+  ic_tt_rising_hero: "assets/ic_tt_rising_hero.webp?v=9ce8e1f0",
+  ic_tt_rhythm_sage: "assets/ic_tt_rhythm_sage.webp?v=a078f737",
+  ic_tt_reaper: "assets/ic_tt_reaper.webp?v=19762158",
+  ic_tt_perfect_warrior: "assets/ic_tt_perfect_warrior.webp?v=bacf978e",
+  ic_tt_peak: "assets/ic_tt_peak.webp?v=09e19624",
+  ic_tt_pathfinder: "assets/ic_tt_pathfinder.webp?v=7e1eeaa5",
+  ic_tt_one_beat: "assets/ic_tt_one_beat.webp?v=f2819959",
+  ic_tt_novice_collector: "assets/ic_tt_novice_collector.webp?v=d94f944d",
+  ic_tt_new_rich: "assets/ic_tt_new_rich.webp?v=518251d0",
+  ic_tt_never_give_up: "assets/ic_tt_never_give_up.webp?v=6c681fc0",
+  ic_tt_monster_master: "assets/ic_tt_monster_master.webp?v=17b55785",
+  ic_tt_monster_hunter: "assets/ic_tt_monster_hunter.webp?v=68137e13",
+  ic_tt_mirror_blade: "assets/ic_tt_mirror_blade.webp?v=50957c11",
+  ic_tt_mind_trainee: "assets/ic_tt_mind_trainee.webp?v=22b21c45",
+  ic_tt_menalars_hero: "assets/ic_tt_menalars_hero.webp?v=f656a0d7",
+  ic_tt_letter_reader: "assets/ic_tt_letter_reader.webp?v=8cfa122a",
+  ic_tt_letter_keeper: "assets/ic_tt_letter_keeper.webp?v=0d298752",
+  ic_tt_letter_all: "assets/ic_tt_letter_all.webp?v=7f433408",
+  ic_tt_legend_vault: "assets/ic_tt_legend_vault.webp?v=1e45a50d",
+  ic_tt_legend_chosen: "assets/ic_tt_legend_chosen.webp?v=6d7b7baf",
+  ic_tt_labyrinth_lord: "assets/ic_tt_labyrinth_lord.webp?v=69784526",
+  ic_tt_king_of_kings: "assets/ic_tt_king_of_kings.webp?v=b897571b",
+  ic_tt_keen_eye: "assets/ic_tt_keen_eye.webp?v=b1ca28e2",
+  ic_tt_invisible_armor: "assets/ic_tt_invisible_armor.webp?v=d3c9df92",
+  ic_tt_half_collector: "assets/ic_tt_half_collector.webp?v=4adc2b4b",
+  ic_tt_gold_king: "assets/ic_tt_gold_king.webp?v=ac8c8c35",
+  ic_tt_full_deck: "assets/ic_tt_full_deck.webp?v=32694b89",
+  ic_tt_full_collector: "assets/ic_tt_full_collector.webp?v=6fb5ed36",
+  ic_tt_four_arms: "assets/ic_tt_four_arms.webp?v=d99722ca",
+  ic_tt_fortune_chosen: "assets/ic_tt_fortune_chosen.webp?v=423193ad",
+  ic_tt_formless_wind: "assets/ic_tt_formless_wind.webp?v=b4c433a0",
+  ic_tt_forge_master: "assets/ic_tt_forge_master.webp?v=31aedb63",
+  ic_tt_flawless_blade: "assets/ic_tt_flawless_blade.webp?v=2c5f500d",
+  ic_tt_five_realms: "assets/ic_tt_five_realms.webp?v=fd4a9e53",
+  ic_tt_fish_sage: "assets/ic_tt_fish_sage.webp?v=cd0bee08",
+  ic_tt_fish_novice: "assets/ic_tt_fish_novice.webp?v=9e1f0b53",
+  ic_tt_fish_master: "assets/ic_tt_fish_master.webp?v=3429c99d",
+  ic_tt_first_blood: "assets/ic_tt_first_blood.webp?v=38c9bdad",
+  ic_tt_elite_hunter: "assets/ic_tt_elite_hunter.webp?v=583c5c4b",
+  ic_tt_elite_bane: "assets/ic_tt_elite_bane.webp?v=dd605d89",
+  ic_tt_dungeon_diver: "assets/ic_tt_dungeon_diver.webp?v=f912ef8e",
+  ic_tt_dimension_walker: "assets/ic_tt_dimension_walker.webp?v=cb096dc8",
+  ic_tt_death_walker: "assets/ic_tt_death_walker.webp?v=a14da881",
+  ic_tt_curator: "assets/ic_tt_curator.webp?v=842a7667",
+  ic_tt_courier: "assets/ic_tt_courier.webp?v=6a94e218",
+  ic_tt_counter_art: "assets/ic_tt_counter_art.webp?v=40e0115e",
+  ic_tt_card_collector: "assets/ic_tt_card_collector.webp?v=4c790905",
+  ic_tt_calamity: "assets/ic_tt_calamity.webp?v=c76ef188",
+  ic_tt_boss_slayer: "assets/ic_tt_boss_slayer.webp?v=fe0611b5",
+  ic_tt_barrier_breaker: "assets/ic_tt_barrier_breaker.webp?v=549b8b11",
+  ic_tt_artisan: "assets/ic_tt_artisan.webp?v=f575551e",
+  ic_tt_apprentice_smith: "assets/ic_tt_apprentice_smith.webp?v=9a1638bc",
+  ic_stone_king_card: "assets/ic_stone_king_card.webp?v=0dda52d9",
+  ic_skeleton_card: "assets/ic_skeleton_card.webp?v=842c2947",
+  ic_pink_slime_card: "assets/ic_pink_slime_card.webp?v=47b0d77a",
+  ic_kings_oath_secret: "assets/ic_kings_oath_secret.webp?v=cac3a289",
+  ic_green_slime_card: "assets/ic_green_slime_card.webp?v=0b0638a2",
+  ic_goblin_card: "assets/ic_goblin_card.webp?v=8837e92b",
+  ic_wolf_fang: "assets/ic_wolf_fang.webp?v=ed0edb07",
+  ic_ui_status: "assets/ic_ui_status.webp?v=250b5849",
+  ic_ui_skills: "assets/ic_ui_skills.webp?v=490e2062",
+  ic_ui_settings: "assets/ic_ui_settings.webp?v=a4778712",
+  ic_ui_quest: "assets/ic_ui_quest.webp?v=a0b202d2",
+  ic_ui_party: "assets/ic_ui_party.webp?v=ef30d673",
+  ic_ui_meditate: "assets/ic_ui_meditate.webp?v=9511511e",
+  ic_ui_map: "assets/ic_ui_map.webp?v=fb555cfd",
+  ic_ui_help: "assets/ic_ui_help.webp?v=1b9a6d06",
+  ic_ui_heart: "assets/ic_ui_heart.webp?v=b2478ae8",
+  ic_ui_gold: "assets/ic_ui_gold.webp?v=6e34cc0f",
+  ic_ui_fish: "assets/ic_ui_fish.webp?v=901681c7",
+  ic_ui_exp: "assets/ic_ui_exp.webp?v=f157977e",
+  ic_ui_collection: "assets/ic_ui_collection.webp?v=f04a72b8",
+  ic_ui_chat: "assets/ic_ui_chat.webp?v=ec4d78c2",
+  ic_ui_bag: "assets/ic_ui_bag.webp?v=77749c6e",
+  ic_sword_9: "assets/ic_sword_9.webp?v=524cc7f4",
+  ic_sword_8: "assets/ic_sword_8.webp?v=0f984874",
+  ic_sword_7: "assets/ic_sword_7.webp?v=6aba0e7c",
+  ic_sword_6: "assets/ic_sword_6.webp?v=60828015",
+  ic_sword_5: "assets/ic_sword_5.webp?v=7c5c9bcc",
+  ic_sword_4: "assets/ic_sword_4.webp?v=072f1989",
+  ic_sword_3: "assets/ic_sword_3.webp?v=03bcabfb",
+  ic_sword_2: "assets/ic_sword_2.webp?v=6cc0c3e0",
+  ic_sword_10: "assets/ic_sword_10.webp?v=22cbd1bd",
+  ic_sword_1: "assets/ic_sword_1.webp?v=a0d5085f",
+  ic_stone_fragment: "assets/ic_stone_fragment.webp?v=26e1f344",
+  ic_slime_jelly: "assets/ic_slime_jelly.webp?v=81b180cf",
+  ic_sk_wind_step: "assets/ic_sk_wind_step.webp?v=7e5317f8",
+  ic_sk_will_arrow: "assets/ic_sk_will_arrow.webp?v=b421ecd6",
+  ic_sk_war_cry: "assets/ic_sk_war_cry.webp?v=a5fc4072",
+  ic_sk_unified_mind: "assets/ic_sk_unified_mind.webp?v=e09dd96c",
+  ic_sk_twin_arrow: "assets/ic_sk_twin_arrow.webp?v=f5402249",
+  ic_sk_true_will: "assets/ic_sk_true_will.webp?v=3c7722f7",
+  ic_sk_true_sight: "assets/ic_sk_true_sight.webp?v=4c300898",
+  ic_sk_true_circle: "assets/ic_sk_true_circle.webp?v=28957077",
+  ic_sk_triple_slash: "assets/ic_sk_triple_slash.webp?v=17619e34",
+  ic_sk_thousand_blades: "assets/ic_sk_thousand_blades.webp?v=8392bff6",
+  ic_sk_swift_blade: "assets/ic_sk_swift_blade.webp?v=29b362f8",
+  ic_sk_storm_eye: "assets/ic_sk_storm_eye.webp?v=c76b0087",
+  ic_sk_stone_skin: "assets/ic_sk_stone_skin.webp?v=ceacba8d",
+  ic_sk_still_mind: "assets/ic_sk_still_mind.webp?v=7c8e0b7d",
+  ic_sk_steady_breath: "assets/ic_sk_steady_breath.webp?v=f14925e1",
+  ic_sk_stand_firm: "assets/ic_sk_stand_firm.webp?v=ef8dca2f",
+  ic_sk_sky_breaker: "assets/ic_sk_sky_breaker.webp?v=189c078f",
+  ic_sk_shatter_arrow: "assets/ic_sk_shatter_arrow.webp?v=cb1db81e",
+  ic_sk_shadowless: "assets/ic_sk_shadowless.webp?v=35dbf2d5",
+  ic_sk_shadow_veil: "assets/ic_sk_shadow_veil.webp?v=d61bb88d",
+  ic_sk_safe_range: "assets/ic_sk_safe_range.webp?v=aa8d0a5a",
+  ic_sk_riposte: "assets/ic_sk_riposte.webp?v=aa2712f5",
+  ic_sk_rift: "assets/ic_sk_rift.webp?v=60a08fdd",
+  ic_sk_reverse_flow: "assets/ic_sk_reverse_flow.webp?v=dd4ae10d",
+  ic_sk_retreat_shot: "assets/ic_sk_retreat_shot.webp?v=92658ff6",
+  ic_sk_read_intent: "assets/ic_sk_read_intent.webp?v=6c028562",
+  ic_sk_rapid_flurry: "assets/ic_sk_rapid_flurry.webp?v=461c9b50",
+  ic_sk_quick_eye: "assets/ic_sk_quick_eye.webp?v=4be11120",
+  ic_sk_quake_slam: "assets/ic_sk_quake_slam.webp?v=d04a8b07",
+  ic_sk_pound: "assets/ic_sk_pound.webp?v=590f9c7d",
+  ic_sk_pinning_arrow: "assets/ic_sk_pinning_arrow.webp?v=b2d455b0",
+  ic_sk_parry_stance: "assets/ic_sk_parry_stance.webp?v=4c626d05",
+  ic_sk_overflow: "assets/ic_sk_overflow.webp?v=7295e95a",
+  ic_sk_mountain: "assets/ic_sk_mountain.webp?v=ca1bc6ca",
+  ic_sk_momentum: "assets/ic_sk_momentum.webp?v=37a3b584",
+  ic_sk_mana_surge: "assets/ic_sk_mana_surge.webp?v=bdf49746",
+  ic_sk_mana_storm: "assets/ic_sk_mana_storm.webp?v=db74e09f",
+  ic_sk_mana_seal: "assets/ic_sk_mana_seal.webp?v=f23d19e4",
+  ic_sk_mana_flow: "assets/ic_sk_mana_flow.webp?v=763dd979",
+  ic_sk_mana_drain: "assets/ic_sk_mana_drain.webp?v=28b943f2",
+  ic_sk_lethal_counter: "assets/ic_sk_lethal_counter.webp?v=1dcee9c5",
+  ic_sk_layered_circle: "assets/ic_sk_layered_circle.webp?v=45c0010b",
+  ic_sk_kiting_step: "assets/ic_sk_kiting_step.webp?v=dadeebc8",
+  ic_sk_keen_edge: "assets/ic_sk_keen_edge.webp?v=e924b005",
+  ic_sk_juggernaut: "assets/ic_sk_juggernaut.webp?v=56160b7b",
+  ic_sk_hunter: "assets/ic_sk_hunter.webp?v=8531a378",
+  ic_sk_heavy_attack: "assets/ic_sk_heavy_attack.webp?v=a42460ce",
+  ic_sk_heaven_eye: "assets/ic_sk_heaven_eye.webp?v=fb98e3e9",
+  ic_sk_heal: "assets/ic_sk_heal.webp?v=d6ff442f",
+  ic_sk_haste: "assets/ic_sk_haste.webp?v=6790c205",
+  ic_sk_guard: "assets/ic_sk_guard.webp?v=527e87be",
+  ic_sk_ground_slam: "assets/ic_sk_ground_slam.webp?v=11125734",
+  ic_sk_flow_rhythm: "assets/ic_sk_flow_rhythm.webp?v=59a65884",
+  ic_sk_expose_weakness: "assets/ic_sk_expose_weakness.webp?v=9bb2d24f",
+  ic_sk_earthshaker: "assets/ic_sk_earthshaker.webp?v=be771c3c",
+  ic_sk_eagle_eye: "assets/ic_sk_eagle_eye.webp?v=b3f5c3fd",
+  ic_sk_double_riposte: "assets/ic_sk_double_riposte.webp?v=03ba95d0",
+  ic_sk_deadeye_shot: "assets/ic_sk_deadeye_shot.webp?v=0572d49b",
+  ic_sk_crush: "assets/ic_sk_crush.webp?v=4f6360e2",
+  ic_sk_calm_mind: "assets/ic_sk_calm_mind.webp?v=34b4ff4f",
+  ic_sk_brace: "assets/ic_sk_brace.webp?v=423686c1",
+  ic_sk_blink_step: "assets/ic_sk_blink_step.webp?v=be0c85e9",
+  ic_sk_barrier_ward: "assets/ic_sk_barrier_ward.webp?v=707a6d02",
+  ic_sk_armor_break: "assets/ic_sk_armor_break.webp?v=37f3f53c",
+  ic_secret_key: "assets/ic_secret_key.webp?v=e371391d",
+  ic_sample_t9: "assets/ic_sample_t9.webp?v=e5e0207e",
+  ic_sample_t8: "assets/ic_sample_t8.webp?v=ea8b12e0",
+  ic_sample_t7: "assets/ic_sample_t7.webp?v=d3ddbf91",
+  ic_sample_t6: "assets/ic_sample_t6.webp?v=44c6f915",
+  ic_sample_t5: "assets/ic_sample_t5.webp?v=173f7335",
+  ic_sample_t4: "assets/ic_sample_t4.webp?v=624a1c29",
+  ic_sample_t3: "assets/ic_sample_t3.webp?v=657fe16e",
+  ic_sample_t2: "assets/ic_sample_t2.webp?v=fc64c05c",
+  ic_sample_t10: "assets/ic_sample_t10.webp?v=8ea74329",
+  ic_sample_t1: "assets/ic_sample_t1.webp?v=9f709224",
+  ic_potion: "assets/ic_potion.webp?v=b515bbc9",
+  ic_orb_9: "assets/ic_orb_9.webp?v=d5ceb621",
+  ic_orb_8: "assets/ic_orb_8.webp?v=c364518f",
+  ic_orb_7: "assets/ic_orb_7.webp?v=df8c732c",
+  ic_orb_6: "assets/ic_orb_6.webp?v=b9284aeb",
+  ic_orb_5: "assets/ic_orb_5.webp?v=3adbf9d3",
+  ic_orb_4: "assets/ic_orb_4.webp?v=93f87ae5",
+  ic_orb_3: "assets/ic_orb_3.webp?v=ac30a175",
+  ic_orb_2: "assets/ic_orb_2.webp?v=1d962b07",
+  ic_orb_10: "assets/ic_orb_10.webp?v=12106d16",
+  ic_orb_1: "assets/ic_orb_1.webp?v=109979a6",
+  ic_old_letter: "assets/ic_old_letter.webp?v=2102bc12",
+  ic_mana_stone: "assets/ic_mana_stone.webp?v=94f19aee",
+  ic_kings_armor: "assets/ic_kings_armor.webp?v=2cfe2ebd",
+  ic_junk_scrap: "assets/ic_junk_scrap.webp?v=2a53bf43",
+  ic_inscribed_wrap: "assets/ic_inscribed_wrap.webp?v=0cc7c61f",
+  ic_herb: "assets/ic_herb.webp?v=15b99776",
+  ic_heavy_9: "assets/ic_heavy_9.webp?v=1cd8f917",
+  ic_heavy_8: "assets/ic_heavy_8.webp?v=a13cd420",
+  ic_heavy_7: "assets/ic_heavy_7.webp?v=f9e3b99e",
+  ic_heavy_6: "assets/ic_heavy_6.webp?v=8b34736a",
+  ic_heavy_5: "assets/ic_heavy_5.webp?v=b888177e",
+  ic_heavy_4: "assets/ic_heavy_4.webp?v=c9b7f150",
+  ic_heavy_3: "assets/ic_heavy_3.webp?v=06dd45ee",
+  ic_heavy_2: "assets/ic_heavy_2.webp?v=f62e635f",
+  ic_heavy_10: "assets/ic_heavy_10.webp?v=6c2e620e",
+  ic_heavy_1: "assets/ic_heavy_1.webp?v=be6a9702",
+  ic_headgear_5: "assets/ic_headgear_5.webp?v=94d5a6b6",
+  ic_headgear_4: "assets/ic_headgear_4.webp?v=5fea94f1",
+  ic_headgear_3: "assets/ic_headgear_3.webp?v=a89d2289",
+  ic_headgear_2: "assets/ic_headgear_2.webp?v=a97c48ef",
+  ic_headgear_1: "assets/ic_headgear_1.webp?v=3ab8f1e3",
+  ic_collector_medal: "assets/ic_collector_medal.webp?v=471e8c4e",
+  ic_bow_9: "assets/ic_bow_9.webp?v=568e9623",
+  ic_bow_8: "assets/ic_bow_8.webp?v=1e4b3a28",
+  ic_bow_7: "assets/ic_bow_7.webp?v=cc788d79",
+  ic_bow_6: "assets/ic_bow_6.webp?v=57adaa97",
+  ic_bow_5: "assets/ic_bow_5.webp?v=ea5e2147",
+  ic_bow_4: "assets/ic_bow_4.webp?v=e3f04d09",
+  ic_bow_3: "assets/ic_bow_3.webp?v=e78e7400",
+  ic_bow_2: "assets/ic_bow_2.webp?v=eafcc294",
+  ic_bow_10: "assets/ic_bow_10.webp?v=b4e72046",
+  ic_bow_1: "assets/ic_bow_1.webp?v=ec1c9599",
+  ic_barrier_lantern: "assets/ic_barrier_lantern.webp?v=e3aae9d1",
+  ic_bark_tag: "assets/ic_bark_tag.webp?v=7f9df3c8",
+  ic_armor_5: "assets/ic_armor_5.webp?v=43b19090",
+  ic_armor_4: "assets/ic_armor_4.webp?v=f53ebab8",
+  ic_armor_3: "assets/ic_armor_3.webp?v=f6300b3f",
+  ic_armor_2: "assets/ic_armor_2.webp?v=e47c1ad5",
+  ic_armor_1: "assets/ic_armor_1.webp?v=42fbf268",
+  ic_accessory_5: "assets/ic_accessory_5.webp?v=b5228ad4",
+  ic_accessory_4: "assets/ic_accessory_4.webp?v=deac7e2d",
+  ic_accessory_3: "assets/ic_accessory_3.webp?v=307e776a",
+  ic_accessory_2: "assets/ic_accessory_2.webp?v=c1e09b01",
+  ic_accessory_1: "assets/ic_accessory_1.webp?v=188dcd05",
   fish_unagi: "assets/fish_unagi.webp?v=22a92171",
   fish_tu: "assets/fish_tu.webp?v=ccfc44aa",
   fish_takhian: "assets/fish_takhian.webp?v=93029bc7",
@@ -2086,26 +2345,26 @@ const ART = {
   mon_1_3: "assets/mon_1_3.webp?v=f177f493",
   mon_1_4: "assets/mon_1_4.webp?v=22e9d59c",
   mon_1_2: "assets/mon_1_2.webp?v=bc8fed4f",
-  f2: "assets/f2.webp?v=b085f6b6",
-  f3: "assets/f3.webp?v=ebfb472f",
-  f4: "assets/f4.webp?v=7e7a038d",
-  f5: "assets/f5.webp?v=7114d1b4",
-  f6: "assets/f6.webp?v=104edb74",
-  f7: "assets/f7.webp?v=4675bb0b",
-  f8: "assets/f8.webp?v=ec950cbc",
-  f9: "assets/f9.webp?v=39b1c77d",
-  f10: "assets/f10.webp?v=6c3707e2",
-  map2: "assets/map2.webp?v=31af3a76",
-  map3: "assets/map3.webp?v=45c8c927",
-  map4: "assets/map4.webp?v=c46e162a",
-  map5: "assets/map5.webp?v=ef1c72be",
-  map6: "assets/map6.webp?v=872ba178",
-  map7: "assets/map7.webp?v=f0025487",
-  map8: "assets/map8.webp?v=fcf80d25",
-  map9: "assets/map9.webp?v=6838893e",
-  map10: "assets/map10.webp?v=df0e14b1",
-  f1: "assets/f1.webp?v=0b8a6d45",
-  t1: "assets/t1.webp?v=0dd96645",
+  f2: "assets/f2.webp?v=05c902cd",
+  f3: "assets/f3.webp?v=f7432009",
+  f4: "assets/f4.webp?v=d8943d89",
+  f5: "assets/f5.webp?v=c619dce2",
+  f6: "assets/f6.webp?v=30b3e4d3",
+  f7: "assets/f7.webp?v=e0f9c5e8",
+  f8: "assets/f8.webp?v=b3928e86",
+  f9: "assets/f9.webp?v=2a5a7d95",
+  f10: "assets/f10.webp?v=bdbda250",
+  map2: "assets/map2.webp?v=418257a9",
+  map3: "assets/map3.webp?v=1abe17ae",
+  map4: "assets/map4.webp?v=b93cc557",
+  map5: "assets/map5.webp?v=cb55e071",
+  map6: "assets/map6.webp?v=1aac7a8b",
+  map7: "assets/map7.webp?v=94489087",
+  map8: "assets/map8.webp?v=e953b306",
+  map9: "assets/map9.webp?v=02fd0f16",
+  map10: "assets/map10.webp?v=abfec5ec",
+  f1: "assets/f1.webp?v=c5d3c58a",
+  t1: "assets/t1.webp?v=0ee52444",
   key: "assets/key.webp?v=1c39c056",
   town: "assets/town.webp?v=807d1246",
   boss1: "assets/boss1.webp?v=b93f0e46",
@@ -2125,7 +2384,7 @@ const ART = {
   p3_side: "assets/p3_side.webp?v=197dff78",
   p3_back: "assets/p3_back.webp?v=d4fbf5a7",
   w_researcher: "assets/w_researcher.webp?v=2e8a74b8",
-  map1: "assets/map1.webp?v=9387cd2b",
+  map1: "assets/map1.webp?v=6c1b36fb",
   w_town_lord: "assets/w_town_lord.webp?v=a41f9c64",
   w_merchant: "assets/w_merchant.webp?v=c3efb4e3",
   w_blacksmith: "assets/w_blacksmith.webp?v=056c7016",
@@ -2556,7 +2815,7 @@ const AUDIO_TITLE = {"bgm_boss": "Wrath of the Ancient Demon", "bgm_boss_story":
 // v44: every player option lives here (⚙️ ออฟชั่น window) — saved per device/browser, never in the cloud save
 const OPT_KEY = "menalars_options_v1", AUDIO_CFG_KEY = OPT_KEY;
 const OPT_DEFAULTS = { master:1, masterOn:true, music:0.5, musicOn:true, sfx:0.8, sfxOn:true, ui:0.7, uiOn:true, bgPlay:false,
-  uiScale:1, minimap:true, hint:true, talkSpeed:"normal", lowPower:false,
+  uiScale:1, minimap:true, hint:true, talkSpeed:"normal", lowPower:false, sharp:true,
   shake:true, dmgNums:true, callouts:true,
   others:true, otherNames:true, bubbles:true };
 const OPT = (()=>{
@@ -5135,7 +5394,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 71;
+const GAME_VERSION = 73;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -6530,8 +6789,46 @@ function gearArtSvg(art){
   }[art.shape] || "";
   return `<svg viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-0.15em" aria-hidden="true">${body}</svg>`;
 }
-// Any equipment/item def → HTML for its icon: the drawn weapon if it has `art`, else its emoji. Use only in innerHTML spots.
-function equipIconHtml(def){ return def && def.art ? gearArtSvg(def.art) : (def ? def.icon : "❓"); }
+// v73 painted icons: ART["ic_<key>"] (dev/tools/icon_sheet.py cuts them from Gemini 4×4 sheets). Missing → old icon.
+function iconImgHtml(key, fallback){
+  const src = ART["ic_" + key];
+  return src ? `<img class="gi" src="${src}" alt="" draggable="false">` : fallback;
+}
+const equipIdCache = new Map();
+function equipDefId(def){
+  if(!equipIdCache.has(def)) for(const [k, d] of Object.entries(EQUIPMENT_DEFS)) equipIdCache.set(d, k);
+  return equipIdCache.get(def) || "";
+}
+// Any equipment/item def → HTML for its icon: the painted icon (map variants "_tN" share the base picture),
+// else the drawn weapon if it has `art`, else its emoji. Use only in innerHTML spots.
+function equipIconHtml(def){
+  if(!def) return "❓";
+  const painted = iconImgHtml(equipDefId(def).replace(/_t\d+$/, ""), "");
+  return painted || (def.art ? gearArtSvg(def.art) : def.icon);
+}
+function itemIconHtml(def){ return def ? iconImgHtml(def.id, def.icon) : "❓"; }
+const WEAPON_CAT_ICON = { sword:"sword_3", heavy:"heavy_3", bow:"bow_3", orb:"orb_4" }; // tab/rank picture per weapon type
+function weaponCatIconHtml(type){ const c = WEAPON_CATEGORIES[type]; return c ? iconImgHtml(WEAPON_CAT_ICON[type], c.icon) : ""; }
+function titleIconHtml(d){ return d ? iconImgHtml("tt_" + d.id, d.icon) : "❓"; }
+// HUD / menu buttons: swap the leading emoji of each button for its painted icon (text and badges stay)
+const UI_ICON_SPOTS = [["#statusBtn", "ui_status"], ["#bagBtn", "ui_bag"], ["#collectionBtn", "ui_collection"], ["#weaponSkillBtn", "ui_skills"],
+  ["#meditateBtn", "ui_meditate"], ["#tutorialBtn", "ui_help"], ["#optionsBtn", "ui_settings"], ["#friendsBtn", "ui_party"],
+  ["#fishSpotBtn .fs-ic", "ui_fish"], ["#chatToggle", "ui_chat"], [".hud-bar > i", "ui_heart", 0], [".hud-bar > i", "ui_exp", 1],
+  [".hud-bar > i", "ui_meditate", 2], ["#hud .gold", "ui_gold"]];
+function applyUiIcons(){
+  for(const [sel, key, idx] of UI_ICON_SPOTS){
+    const el = document.querySelectorAll(sel)[idx || 0], src = ART["ic_" + key];
+    if(!el || !src || el.querySelector(":scope > img.gi")) continue;
+    const t = [...el.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+    if(!t) continue;
+    const img = document.createElement("img"); img.className = "gi"; img.src = src; img.alt = ""; img.draggable = false;
+    t.textContent = t.textContent.replace(/^\s*(\p{Extended_Pictographic}\uFE0F?(\u200D\p{Extended_Pictographic}\uFE0F?)*)\s*/u, "");
+    el.insertBefore(img, t);
+    if(t.textContent) el.insertBefore(document.createTextNode(" "), t);
+  }
+}
+applyUiIcons();
+function skillIconHtml(id, d){ return iconImgHtml("sk_" + id, iconImgHtml(id, d ? d.icon : "❓")); } // skills, or items dragged onto the bar
 
 /* ============================================================
    EQUIPMENT PROGRESSION ACROSS MAPS — re-themes the tier-1 gear
@@ -7728,10 +8025,35 @@ function applyUiZoom(){
   document.documentElement.style.setProperty("--uiz", UI_ZOOM);
   document.body.style.zoom = UI_ZOOM === 1 ? "" : UI_ZOOM;
 }
+// v72 sharp rendering: the scene is still laid out in the same 720-tall space (all game code reads
+// canvas.width/height as that LOGICAL size), but the canvas' real pixel buffer is RENDER_SCALE× bigger
+// (= the screen's true pixels, up to 2× = 1440p) and every frame is drawn through a matching scale,
+// so painted art and text come out crisp on 2K screens instead of a stretched 720p picture.
+// ⚙️ "ภาพคมชัดสูง" off (or lowPower) → 1× like before.
+const RENDER_SCALE_MAX = 2;
+let RENDER_SCALE = 1;
+function hiDpiCanvas(cv, c){
+  const P = window.HTMLCanvasElement && HTMLCanvasElement.prototype, C = window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype;
+  const dW = P && Object.getOwnPropertyDescriptor(P, "width"), dH = P && Object.getOwnPropertyDescriptor(P, "height");
+  if(!dW || !dH || !dW.set || !c.setTransform) return; // test harness / very old browser: plain canvas
+  let lw = cv.width, lh = cv.height;
+  const fit = () => { c.setTransform(RENDER_SCALE, 0, 0, RENDER_SCALE, 0, 0); c.imageSmoothingQuality = "high"; }; // resizing a canvas resets its transform
+  Object.defineProperty(cv, "width", { configurable:true, get(){ return lw; }, set(v){ lw = v; dW.set.call(cv, Math.max(1, Math.round(v * RENDER_SCALE))); fit(); } });
+  Object.defineProperty(cv, "height", { configurable:true, get(){ return lh; }, set(v){ lh = v; dH.set.call(cv, Math.max(1, Math.round(v * RENDER_SCALE))); fit(); } });
+  // glow size (shadowBlur) and filter blur are measured in real pixels, not scaled by the transform → scale by hand
+  const dSB = C && Object.getOwnPropertyDescriptor(C, "shadowBlur");
+  if(dSB && dSB.set) Object.defineProperty(c, "shadowBlur", { configurable:true, get(){ return dSB.get.call(c) / RENDER_SCALE; }, set(v){ dSB.set.call(c, v * RENDER_SCALE); } });
+  const dF = C && Object.getOwnPropertyDescriptor(C, "filter");
+  if(dF && dF.set) Object.defineProperty(c, "filter", { configurable:true, get(){ return dF.get.call(c); },
+    set(v){ dF.set.call(c, String(v).replace(/blur\(([\d.]+)px\)/g, (m, n) => `blur(${+n * RENDER_SCALE}px)`)); } });
+}
+hiDpiCanvas(canvas, ctx); hiDpiCanvas(battleCanvas, bctx);
 function resizeCanvas(){
   applyUiZoom();
   const vw = Math.max(1, window.innerWidth), vh = Math.max(1, window.innerHeight);
   const W = Math.round(vw * VIEW_H / vh);
+  const sharp = OPT.sharp !== false && !OPT.lowPower;
+  RENDER_SCALE = sharp ? clamp(vh * (window.devicePixelRatio || 1) / VIEW_H, 1, RENDER_SCALE_MAX) : 1;
   canvas.width = W; canvas.height = VIEW_H;
   battleCanvas.width = W; battleCanvas.height = VIEW_H;
 }
@@ -8034,7 +8356,7 @@ function labelFlush(ops){
   if(labelCanvas.width !== w || labelCanvas.height !== h){ labelCanvas.width = w; labelCanvas.height = h; }
   lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, w, h);
   if(!ops || !ops.length) return;
-  const kx = w / canvas.width, ky = h / canvas.height;
+  const kx = w / (canvas.width * RENDER_SCALE), ky = h / (canvas.height * RENDER_SCALE); // v72: recorded transforms include RENDER_SCALE
   for(const o of ops){
     const m = o.m;
     lctx.setTransform(m[0] * kx, m[1] * ky, m[2] * kx, m[3] * ky, m[4] * kx, m[5] * ky);
@@ -9760,7 +10082,7 @@ function renderSkillBar(){
       btn.dataset.need = wrongWeapon ? WEAPON_CATEGORIES[info.weaponType].icon : "";
       btn.title = needTip;
     }
-    setSlotContent(contentEl, `<span class="skill-icon">${info.icon}</span><span class="skill-name">${info.name}</span>`);
+    setSlotContent(contentEl, `<span class="skill-icon">${skillIconHtml(skillId, info)}</span><span class="skill-name">${info.name}</span>`);
     btn.classList.toggle("empowered", !!(info.castable && info.weaponType && game.inBattle && game.battle
       && now < game.battle.skillEmpowerUntil && info.weaponType === getEquippedWeaponMasteryType()));
     const remaining = Math.max(0, (game.player.skillCooldowns[skillId] || 0) - now);
@@ -10121,14 +10443,14 @@ function renderDropRow(drop){
   let icon, name, rarity;
   if(drop.kind === "consumable"){
     const def = ITEM_TABLE.find(i => i.id === drop.id);
-    icon = def.icon; name = def.name; rarity = "common";
+    icon = itemIconHtml(def); name = def.name; rarity = "common";
   } else if(drop.kind === "equipment"){
     const base = EQUIPMENT_DEFS[drop.defId];
     icon = equipIconHtml(base); name = base.name; rarity = base.rarity;
   } else { // card
     const base = CARD_DEFS[drop.defId];
     const discovered = game.discoveredItems.has("card:" + drop.defId);
-    icon = (base.isSecret && !discovered) ? (base.secretIcon || "❓") : base.icon;
+    icon = (base.isSecret && !discovered) ? (base.secretIcon || "❓") : iconImgHtml(drop.defId, base.icon);
     name = (base.isSecret && !discovered) ? (base.secretName || "???") : base.name;
     rarity = base.rarity;
   }
@@ -12439,7 +12761,7 @@ function renderBuyPanel(){
   SHOP_BUY_ITEMS.forEach(shopItem => {
     const def = ITEM_TABLE.find(i => i.id === shopItem.id);
     const have = (game.inventory.find(e => e.id === shopItem.id) || {}).qty || 0;
-    list.appendChild(shopRow(def.icon, def.name, `มีอยู่ ${have}`, shopItem.price,
+    list.appendChild(shopRow(itemIconHtml(def), def.name, `มีอยู่ ${have}`, shopItem.price,
       ()=> buyItem(shopItem.id, shopItem.price), ()=> buyItemMany(shopItem.id, shopItem.price, 5)));
   });
 }
@@ -13859,11 +14181,11 @@ function itemLabel(entry){
     const rarityDef = RARITY_DEFS[base.rarity];
     const discovered = game.discoveredItems.has("card:" + entry.id);
     const name = (base.isSecret && !discovered) ? (base.secretName || "???") : base.name;
-    const icon = (base.isSecret && !discovered) ? (base.secretIcon || "❓") : base.icon;
+    const icon = (base.isSecret && !discovered) ? (base.secretIcon || "❓") : iconImgHtml(entry.id, base.icon);
     return `${icon} ${name} <span style="color:${rarityDef.color}; font-weight:bold;">[${rarityDef.label}]</span> x${entry.qty}`;
   }
   const def = ITEM_TABLE.find(i => i.id === entry.id);
-  return def ? `${def.icon} ${def.name} x${entry.qty}` : `${entry.id} x${entry.qty}`;
+  return def ? `${itemIconHtml(def)} ${def.name} x${entry.qty}` : `${entry.id} x${entry.qty}`;
 }
 
 function transferItem(fromArr, toArr, idx, toMax, fullMsg, qty){
@@ -14107,9 +14429,10 @@ function getItemIcon(entry){
   if(entry.kind === "card"){
     const base = CARD_DEFS[entry.id];
     const discovered = game.discoveredItems.has("card:" + entry.id);
-    return (base.isSecret && !discovered) ? (base.secretIcon || "❓") : base.icon;
+    return (base.isSecret && !discovered) ? (base.secretIcon || "❓") : (ART["ic_" + entry.id] ? `<img class="item-art" src="${ART["ic_" + entry.id]}" alt="">` : base.icon);
   }
   const def = ITEM_TABLE.find(i => i.id === entry.id);
+  if(def && ART["ic_" + def.id]) return `<img class="item-art" src="${ART["ic_" + def.id]}" alt="">`; // v73 painted icon
   if(def && ITEM_ART[def.id] && ART[ITEM_ART[def.id]]) return `<img class="item-art" src="${ART[ITEM_ART[def.id]]}" alt="">`;
   return def ? def.icon : "❓";
 }
@@ -14230,7 +14553,7 @@ function renderBagDetail(entry){
     `;
   } else {
     const def = ITEM_TABLE.find(i => i.id === entry.id);
-    detail.innerHTML = `<h4>${def.icon} ${def.name} x${entry.qty}</h4><div class="effect-line">${netEsc(def.desc || "ไอเทมฟื้นฟู — ฝากไว้กับ NPC ได้จากช่องฝากของ")}</div>`;
+    detail.innerHTML = `<h4>${itemIconHtml(def)} ${def.name} x${entry.qty}</h4><div class="effect-line">${netEsc(def.desc || "ไอเทมฟื้นฟู — ฝากไว้กับ NPC ได้จากช่องฝากของ")}</div>`;
     if(entry.id === "old_letter"){
       const btn = document.createElement("button");
       btn.className = "btn-primary"; btn.style.cssText = "padding:8px 14px; font-size:13px;";
@@ -14373,7 +14696,7 @@ function renderSellDetail(entry){
     descHtml = `มีอยู่ x${entry.qty}`;
   } else {
     const def = ITEM_TABLE.find(i => i.id === entry.id);
-    nameHtml = `${def.icon} ${def.name} x${entry.qty}`;
+    nameHtml = `${itemIconHtml(def)} ${def.name} x${entry.qty}`;
     descHtml = def.desc || "ไอเทมฟื้นฟู";
   }
 
@@ -14543,7 +14866,7 @@ function renderStatusPanel(){
   const p = game.player;
   const stats = computePlayerBattleStats(p.level);
   const rows = [
-    statusRow("ฉายา", p.titleId && TITLE_BY_ID[p.titleId] ? `${TITLE_BY_ID[p.titleId].icon} ${p.title} (${titleBonusText(TITLE_BY_ID[p.titleId].bonus).join(", ")})` : (p.title || "ยังไม่ได้สวมฉายา — เลือกได้ในคอลเลกชัน (J)")),
+    statusRow("ฉายา", p.titleId && TITLE_BY_ID[p.titleId] ? `${titleIconHtml(TITLE_BY_ID[p.titleId])} ${p.title} (${titleBonusText(TITLE_BY_ID[p.titleId].bonus).join(", ")})` : (p.title || "ยังไม่ได้สวมฉายา — เลือกได้ในคอลเลกชัน (J)")),
     statusRow("ชื่อ", p.name),
     statusRow("เพศ", p.look.gender === "male" ? "ชาย" : "หญิง"),
     statusRow("เลเวล", p.level),
@@ -14693,7 +15016,7 @@ function renderCollectionPanel(){
       <div class="col-pct"><b>${progress.percent}%</b><span>ค้นพบแล้ว</span><small>มอน ${progress.monsterDiscovered}/${progress.monsterTotal} · การ์ด ${progress.cardDiscovered}/${progress.cardTotal}</small><small>อุปกรณ์ ${progress.equipDiscovered}/${progress.equipTotal}</small></div>
     </div>
     <div class="col-eq">${worn
-      ? `<span class="ic">${worn.icon}</span><span>ฉายาที่สวม: <span class="nm">${worn.name}</span></span><span class="ttl-bonus">${titleBonusText(worn.bonus).map(t => `<span>${t}</span>`).join("")}</span><button type="button" data-unequip="1">ถอดฉายา</button>`
+      ? `<span class="ic">${titleIconHtml(worn)}</span><span>ฉายาที่สวม: <span class="nm">${worn.name}</span></span><span class="ttl-bonus">${titleBonusText(worn.bonus).map(t => `<span>${t}</span>`).join("")}</span><button type="button" data-unequip="1">ถอดฉายา</button>`
       : `<span class="ic">🏅</span><span class="none">ยังไม่ได้สวมฉายา — เลือกสวมได้ 1 ฉายา รับโบนัสสเตตัสของฉายานั้น</span>`}</div>
   </div>`;
 
@@ -14704,7 +15027,7 @@ function renderCollectionPanel(){
     <div class="ttl-recent-row">${log.map(id => {
       const d = TITLE_BY_ID[id], on = game.player.titleId === id;
       return `<div class="ttl-mini" style="--tc:${TITLE_TIERS[d.tier].color}">${game.newTitles.has(id) ? '<span class="ttl-new">NEW</span>' : ""}
-        <div class="h"><span class="ic">${d.icon}</span><b>${d.name}</b></div>
+        <div class="h"><span class="ic">${titleIconHtml(d)}</span><b>${d.name}</b></div>
         <span class="ttl-bonus">${titleBonusText(d.bonus).map(t => `<span>${t}</span>`).join("")}</span>
         <button type="button" ${on ? 'class="on" disabled' : `data-equip="${d.id}"`}>${on ? "✓ สวมอยู่" : "สวมฉายา"}</button></div>`;
     }).join("")}</div></div>` : "";
@@ -14735,7 +15058,7 @@ function renderTitleTab(){
     const pctDone = Math.round(cur / d.goal * 100);
     return `<div class="ttl-card${on ? "" : " locked"}${worn ? " eq" : ""}" style="--tc:${tier.color}">
       ${game.newTitles.has(d.id) ? '<span class="ttl-new">NEW</span>' : ""}
-      <div class="ttl-ic">${hidden ? "❔" : d.icon}</div>
+      <div class="ttl-ic">${hidden ? "❔" : titleIconHtml(d)}</div>
       <div class="ttl-body">
         <div class="ttl-nm">${hidden ? "??? ฉายาลับ" : d.name}<span class="ttl-tier">${tier.label} · ${tier.cp} CP</span></div>
         <div class="ttl-desc">${hidden ? d.hint : d.desc}</div>
@@ -14776,7 +15099,7 @@ function renderWeaponSkillPanel(){
     btn.className = "choice-btn" + (weaponSkillActiveCategory === type ? " selected" : "");
     btn.type = "button";
     const pts = getWeaponSkillPointsAvailable(type);
-    btn.textContent = cat.icon + " " + cat.name + (categoryHasEquipment(type) ? "" : " 🔒") + (pts > 0 && countUnlockableInType(type) ? " ✦" : "");
+    btn.innerHTML = weaponCatIconHtml(type) + " " + cat.name + (categoryHasEquipment(type) ? "" : " 🔒") + (pts > 0 && countUnlockableInType(type) ? " ✦" : "");
     btn.addEventListener("click", ()=>{ sfx.click(); weaponSkillActiveCategory = type; renderWeaponSkillPanel(); });
     tabsEl.appendChild(btn);
   });
@@ -14791,7 +15114,7 @@ function renderWeaponSkillPanel(){
   const sub = !categoryHasEquipment(type) ? "ยังไม่มีอาวุธประเภทนี้"
     : nextRank ? `${entry.exp} / ${nextRank.expNeeded} EXP · ถัดไป ${nextRank.name}` : "Rank สูงสุดแล้ว";
   document.getElementById("weaponSkillRankInfo").innerHTML = `<div class="skt-rank">
-      <div class="bar"><div class="name">${WEAPON_CATEGORIES[type].icon} ${rank.name}</div>
+      <div class="bar"><div class="name">${weaponCatIconHtml(type)} ${rank.name}</div>
         <div class="sub">${sub}</div><div class="track"><div class="fill" style="width:${Math.round(pct*100)}%"></div></div></div>
       <div class="skt-points${points > 0 ? " has" : ""}"><b>${points}</b><span>แต้มสกิล</span></div>
     </div>`;
@@ -14816,7 +15139,7 @@ function renderWeaponSkillPanel(){
       node.dataset.skill = skill.id;
       const lvl = state === "owned" ? getSkillProficiencyLevel(entry.unlockedSkills[skill.id]) : 0;
       const badge = state === "ready" ? `<span class="badge">+</span>` : "";
-      node.innerHTML = `<span class="ic">${d.icon}${badge}${lvl ? `<span class="lv">Lv.${lvl}</span>` : ""}</span><span class="nm">${d.name}</span>`;
+      node.innerHTML = `<span class="ic">${skillIconHtml(skill.id, d)}${badge}${lvl ? `<span class="lv">Lv.${lvl}</span>` : ""}</span><span class="nm">${d.name}</span>`;
       node.addEventListener("mouseenter", ()=>{ if(!skillTipPinned) showSkillTip(node, type, tier, skill); });
       node.addEventListener("mouseleave", ()=>{ if(!skillTipPinned) hideSkillTip(); });
       node.addEventListener("click", (e)=>{ e.stopPropagation(); sfx.click(); showSkillTip(node, type, tier, skill, true); });
@@ -14853,7 +15176,7 @@ function showSkillTip(node, type, tier, skill, pin){
   const state = getSkillNodeState(type, tier, skill.id, points);
   const d = skill.active ? SKILL_DEFS[skill.id] : skill;
   const lvl = state === "owned" ? getSkillProficiencyLevel(entry.unlockedSkills[skill.id]) : 1;
-  let html = `<div class="h"><span class="i">${d.icon}</span><div><b>${d.name}</b>` +
+  let html = `<div class="h"><span class="i">${skillIconHtml(skill.id, d)}</span><div><b>${d.name}</b>` +
     (skill.active ? `<span class="ty act">สกิลกดใช้ · คูลดาวน์ ${(getSkillCooldownMs(skill.id, d)/1000).toFixed(1)} วิ</span>` : `<span class="ty pas">ติดตัว</span>`) +
     `</div></div><div class="d">${d.desc}</div>`;
   if(skill.active){
@@ -16573,7 +16896,8 @@ const OPT_TABS = [
     { type:"choice", key:"talkSpeed", label:"ความเร็วข้อความบทสนทนา", options:[["slow", "ช้า"], ["normal", "ปกติ"], ["fast", "เร็ว"], ["instant", "ทันที"]] },
     { type:"toggle", key:"minimap", label:"แผนที่ย่อ", note:"มุมขวาล่างตอนเดินสำรวจ" },
     { type:"toggle", key:"hint", label:"แถบคำแนะนำด้านล่างจอ" },
-    { type:"toggle", key:"lowPower", label:"โหมดประหยัดพลังงาน", note:"จำกัด 30 เฟรมต่อวินาที ช่วยลดความร้อนและประหยัดแบตเตอรี่ แต่อาจลดความลื่นไหลของภาพ" } ]},
+    { type:"toggle", key:"sharp", label:"ภาพคมชัดสูง", note:"วาดฉากตามความละเอียดจริงของจอ (สูงสุด 1440p) — ปิดได้ถ้าเครื่องกระตุก" },
+    { type:"toggle", key:"lowPower", label:"โหมดประหยัดพลังงาน", note:"จำกัด 30 เฟรมต่อวินาที และปิดภาพคมชัดสูง ช่วยลดความร้อนและประหยัดแบตเตอรี่ แต่อาจลดความลื่นไหลของภาพ" } ]},
   { id:"battle", label:"⚔️ การต่อสู้", rows:[
     { type:"toggle", key:"shake", label:"ภาพสั่นเมื่อตีโดนหรือโดนตี", note:"ปิดได้ถ้าเวียนหัว" },
     { type:"toggle", key:"dmgNums", label:"ตัวเลขดาเมจลอยขึ้น", note:"รวมตัวเลขฟื้นเลือด" },
@@ -16634,6 +16958,7 @@ function applyOptions(){
   document.body.classList.toggle("opt-no-minimap", !OPT.minimap);
   document.body.classList.toggle("opt-no-hint", !OPT.hint);
   if(typeof applyUiZoom === "function") applyUiZoom();
+  try{ resizeCanvas(); }catch(e){ /* called before the canvas setup ran */ }
   const tb = document.getElementById("titleSoundBtn");
   if(tb) tb.textContent = musicVolume() > 0 ? "🔊" : "🔇";
   musicTick();
