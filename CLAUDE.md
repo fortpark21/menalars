@@ -2,7 +2,7 @@
 
 เกม RPG บนเบราว์เซอร์ **ไฟล์เดียว** `index.html` (HTML/CSS/JS ล้วน ไม่มี framework/npm) + โฟลเดอร์ `assets/` (รูป .webp, เสียง .mp3)
 ออนไลน์ด้วย **Supabase** และโฮสต์บน **GitHub Pages** จาก repo นี้ (`fortpark21/menalars`, branch `main`) — ตอนนี้เป็น **เบต้า** (จะล้างเซิร์ฟก่อนเปิดจริง)
-เวอร์ชันล่าสุด: **`GAME_VERSION = 71`** (29 ก.ย. 2026) · ประวัติงานละเอียด v52–v67: `dev/docs/history-v52-v67.md`
+เวอร์ชันล่าสุด: **`GAME_VERSION = 73`** (30 ก.ย. 2026) · ประวัติงานละเอียด v52–v67: `dev/docs/history-v52-v67.md`
 
 ## 👤 เจ้าของ (Andy)
 - **ไม่ใช่โปรแกรมเมอร์** — อธิบายเป็น **ภาษาไทยง่ายๆ ทีละขั้น** ห้ามใช้ศัพท์เทคนิคโดยไม่อธิบาย
@@ -49,6 +49,7 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 - ลานฝึก (tutorial) `TUT`, `tutBuildSteps`, `tutFrame` (ลูกศรชี้ใช้ getBoundingClientRect หาร zoom)
 - เสียง: `AUDIO` (บรรทัดเดียว), `sfx.*`, `playJingle` (`JINGLE_MAX_S` ตัดเพลงชนะ 3 วิ), `SFX_FILE_GAIN` · v63: ระหว่าง jingle เพลงเงียบ + เสียงรางวัลเข้าคิว (`sfxHoldBegin`, `SFX_AFTER_JINGLE`)
 - ชื่อบนหัว (v61): ทุก `fillText/strokeText` ของ world ctx ระหว่าง `renderOverworld()` ถูกวาดซ้ำที่ `#labelCanvas` ความละเอียดจอจริง (`labelFlush`) — แคนวาสโลกสูง 720 แล้วยืด
+- ภาพคมชัด (v72): `gameCanvas`/`battleCanvas` มีบัฟเฟอร์จริง `RENDER_SCALE`× (ความละเอียดจอจริง ≤2 = 1440p) แต่ `canvas.width/height` ยังคืนขนาด "ตรรกะ" W×720 (`hiDpiCanvas` ครอบ getter/setter + ctx ถูก scale ไว้, shadowBlur/filter blur คูณให้) · ห้ามเรียก `ctx.setTransform(1,0,0,1,…)` บน ctx/bctx (จะหลุดสเกล — ใช้ save/restore) · ⚙️ `OPT.sharp` / lowPower → 1×
 - UI zoom: `document.body.style.zoom = UI_ZOOM` (จอใหญ่เมนูโต) — ระวังเวลาคำนวณตำแหน่ง DOM
 - ชื่อคล้ายกัน: "สมาธิ" (สเตตัส MEDITATE) / "สติ" (sanity) / "ทำสมาธิ" (โหมด) / "เจตจำนง" (STR + สีออร่า) · ใช้ "แต้มสเตตัส" (ไม่ใช่ "แต้มสถานะ"), "แมพ" (ไม่ใช่ "แผนที่"), "ตั้งค่า", "ติดตัว" (passive), "แถบสกิล"
 - TDZ: `const` ที่ประกาศทีหลังใช้ในโค้ดที่รันตอนโหลดไม่ได้
@@ -64,6 +65,8 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 ## 🎨 assets
 - รูป: `python3 tools/add_art.py <key> <ไฟล์>` (รันใน /tmp/mw → เขียน assets/ + บรรทัด `ART` ใน /tmp/mw/index.html → `bash dev/deliver.sh`)
 - เสียง: `python3 tools/add_audio.py <bgm_|jgl_|sfx_key> <ไฟล์> ["ชื่อ"]` (ffmpeg ตัดเงียบ + loudnorm → assets/*.mp3 + บรรทัด `AUDIO`) แล้ว `dev/deliver.sh`
+- ไอคอนวาด (v73): ART key `ic_<id>` (อุปกรณ์ = id ฐานไม่มี `_tN`, ไอเทม = item id, สกิล `ic_sk_<id>`, ฉายา `ic_tt_<id>`, การ์ด = card id, ปุ่มเมนู/HUD `ic_ui_*`) · ฟังก์ชัน `iconImgHtml` / `equipIconHtml` / `itemIconHtml` / `skillIconHtml` / `titleIconHtml` / `weaponCatIconHtml` / `applyUiIcons` (ไม่มีภาพ = อีโมจิเดิม) · เจนเป็นแผ่น 4×4 ใน Gemini Pro แล้วตัดด้วย `dev/tools/icon_sheet.py <sheet> <out> key×16` (INSET=0.02 ถ้ามีเส้นกริด) → `dev/tools/add_art_many.py ic_ out/*.png`
+- แมพ/ฉากหลัง 2K (v73): t1, f1–f10 (2528×1696 ตำแหน่งตรงเดิม — ผูกกับ walk mask ใน FIELD_ART ห้ามเปลี่ยน composition), map1–10 (2752×1536) · วิธี: อัปภาพเดิมเข้า Gemini Pro (Chrome extension file_upload จาก /mnt/user-data/uploads) + สั่ง "Redraw this exact … keep EXACT same composition" → ตรวจด้วย `align.py` (offset 0)
 - ภาพปลา (v71): เจนใน Gemini พื้นขาว หันขวา → `python3 dev/tools/fish_key.py <in.png> <out.png> [--flip]` (ตัดพื้นขาว+ครอป 640px) → add_art.py key = id ปลา
 - เคยสร้างเพลงด้วย Gemini (Lyria), SFX ด้วย ElevenLabs, รูปมอน/ฉากด้วย Gemini — Andy ต้องเป็นคนกดในบัญชีตัวเอง
 - เมื่อเพิ่มไฟล์ใน assets/ ต้องบอก Andy ว่ามีไฟล์ใหม่ (เขาเคยอัปโหลดไม่ครบ)
