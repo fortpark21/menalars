@@ -2,7 +2,7 @@
 
 เกม RPG บนเบราว์เซอร์ **ไฟล์เดียว** `index.html` (HTML/CSS/JS ล้วน ไม่มี framework/npm) + โฟลเดอร์ `assets/` (รูป .webp, เสียง .mp3)
 ออนไลน์ด้วย **Supabase** และโฮสต์บน **GitHub Pages** จาก repo นี้ (`fortpark21/menalars`, branch `main`) — ตอนนี้เป็น **เบต้า** (จะล้างเซิร์ฟก่อนเปิดจริง)
-เวอร์ชันล่าสุด: **`GAME_VERSION = 70`** (27 ก.ย. 2026) · ประวัติงานละเอียด v52–v67: `dev/docs/history-v52-v67.md`
+เวอร์ชันล่าสุด: **`GAME_VERSION = 71`** (29 ก.ย. 2026) · ประวัติงานละเอียด v52–v67: `dev/docs/history-v52-v67.md`
 
 ## 👤 เจ้าของ (Andy)
 - **ไม่ใช่โปรแกรมเมอร์** — อธิบายเป็น **ภาษาไทยง่ายๆ ทีละขั้น** ห้ามใช้ศัพท์เทคนิคโดยไม่อธิบาย
@@ -44,7 +44,7 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 - หน้าต่างคุยทุกอย่าง: `openTalk({ npcKind | emoji, name, role, bg, text, extra, choices, anchor })` — `**คำ**` = ตัวทอง, `\n` ขึ้นบรรทัด
 - จุดลับ (v60): `SECRET_LOCATION_DEFS` 13 defs (จุดจดหมาย 2 แบบใช้ช่องเดียว → 12 แบบ), สุ่ม 5 จุด/แมพ `generateRandomSecretLocations`, บันทึกลงเซฟ `game.secretSaved` ผ่าน `secretSpotsFor`, ตัวจัดการ `interactWithLocation` / `secretSpotInteract`, มิมิก `m.mimic` → `mimicWon`
 - เนื้อเรื่องหลัก 10 บท `STORY_QUESTS` (54 เควส), จดหมาย 60 ฉบับ `LETTER_DEFS` (L60 = จดหมายสายลับ มีรหัสลับคำแรกของบรรทัด ห้ามแก้), ฉายา `TITLE_DEFS`
-- ตกปลา (v66): `FISH_DEFS`/`FISH_RARITY`/`FISH_SPOTS`, `startFishing` → `fishStep` (เทสต์ขับได้), `drawFishArt`, สมุด `game.player.fishBook` · ระบบที่ต้องมี SQL ใหม่เปิดด้วย `serverHas("fish")` ← RPC `game_features()`
+- ตกปลา (v66): `FISH_DEFS`/`FISH_RARITY`/`FISH_SPOTS`, `startFishing` → `fishStep` (เทสต์ขับได้), `drawFishArt` (v71 ใช้ภาพ ART fish_* ถ้ามี + เงาดำจากภาพ `fishSilhouette`), สมุด `game.player.fishBook` · ระบบที่ต้องมี SQL ใหม่เปิดด้วย `serverHas("fish")` ← RPC `game_features()`
 - ปาร์ตี้ (v67): `party` state ← `net_poll().pt` → `partyApply`, `#partyBox`/`#partyInvite`, `partyExpMult()` (เพื่อนใน `rt.peers` = แมพเดียวกัน), RPC party_invite/answer/leave/kick · เซิร์ฟเวอร์ `party_mates_allowed(me)` ใน econ_check
 - ลานฝึก (tutorial) `TUT`, `tutBuildSteps`, `tutFrame` (ลูกศรชี้ใช้ getBoundingClientRect หาร zoom)
 - เสียง: `AUDIO` (บรรทัดเดียว), `sfx.*`, `playJingle` (`JINGLE_MAX_S` ตัดเพลงชนะ 3 วิ), `SFX_FILE_GAIN` · v63: ระหว่าง jingle เพลงเงียบ + เสียงรางวัลเข้าคิว (`sfxHoldBegin`, `SFX_AFTER_JINGLE`)
@@ -64,6 +64,7 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 ## 🎨 assets
 - รูป: `python3 tools/add_art.py <key> <ไฟล์>` (รันใน /tmp/mw → เขียน assets/ + บรรทัด `ART` ใน /tmp/mw/index.html → `bash dev/deliver.sh`)
 - เสียง: `python3 tools/add_audio.py <bgm_|jgl_|sfx_key> <ไฟล์> ["ชื่อ"]` (ffmpeg ตัดเงียบ + loudnorm → assets/*.mp3 + บรรทัด `AUDIO`) แล้ว `dev/deliver.sh`
+- ภาพปลา (v71): เจนใน Gemini พื้นขาว หันขวา → `python3 dev/tools/fish_key.py <in.png> <out.png> [--flip]` (ตัดพื้นขาว+ครอป 640px) → add_art.py key = id ปลา
 - เคยสร้างเพลงด้วย Gemini (Lyria), SFX ด้วย ElevenLabs, รูปมอน/ฉากด้วย Gemini — Andy ต้องเป็นคนกดในบัญชีตัวเอง
 - เมื่อเพิ่มไฟล์ใน assets/ ต้องบอก Andy ว่ามีไฟล์ใหม่ (เขาเคยอัปโหลดไม่ครบ)
 - เซสชันคลาวด์ (Claude Code): เข้าเบราว์เซอร์ของ Andy ไม่ได้ → Andy เจนเอง แล้วอัปไฟล์ดิบที่หน้าแรก repo (Add file → Upload files) · ffmpeg: `pip install imageio-ffmpeg` + symlink/shim ffprobe · python http.server ไม่รองรับ Range (เพลงกระโดดกลางไม่ได้ในเทสต์ — ของจริงได้)
@@ -76,4 +77,4 @@ W=sword NODE_PATH=$(npm root -g) node t/tut_e2e.js               # ลานฝ�
 ## 🗺️ ยังไม่ได้ทำ / ข้อสังเกต
 - มอนธรรมดาแทบไม่ได้ตีผู้เล่น (ไฟต์สั้น), ค้อน DPS ต่ำกว่าอาวุธอื่น ~15%, วงกลมสื่อเวทย์ยาก, คริเพดาน 85% จากเลเวล, ยังไม่รัน sim รวมโบนัสฉายา
 - บอสโลก (มิติสูง), ปุ่มใช้ยา/สมุนไพร (ตอนนี้ขายได้อย่างเดียว), Realtime private channels, CAPTCHA สำหรับ Guest, SMTP ของตัวเองก่อนเปิดจริง
-- เพลงแพ้ยังยาวเต็มเพลง (ชนะบอสตัด 7 วิแล้ว, ชนะมอนธรรมดาไม่มีเพลง — v64) · บอสทุกแมพยังใช้ bgm_boss เพลงเดียว
+- เพลงแพ้ยังยาวเต็มเพลง (ชนะบอสตัด 7 วิแล้ว, ชนะมอนธรรมดาไม่มีเพลง — v64) · บอสทุกแมพยังใช้ bgm_boss เพลงเดียว (Andy บอกว่ายังไม่ต้องทำ — 29 ก.ย.)

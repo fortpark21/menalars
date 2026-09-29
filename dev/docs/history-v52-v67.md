@@ -195,3 +195,10 @@
 - เจ้าของรู้สึกมอน Lv.9 แมพ 1 เก่งกว่าบอส → จริง: มอน HP 2,294 ดาเมจ 21–33 vs บอส HP 1,677 ดาเมจ 15–24 (tier 1 เป็นค่าทำมือ) · แมพ 2–4 บอสก็แค่ 1.1–1.4× · แก้ใน `getMapMonsterDefs`: บอส HP ≥ 1.3× และดาเมจ/ครั้ง ≥ 1.1× ของมอนที่แรงสุดในแมพ (`BOSS_MIN_HP_OVER_MOB`, `BOSS_MIN_DMG_OVER_MOB`), comboDamage = dmg × 1.3 · ผล: บอสแมพ 1 HP 2,982 ดาเมจ 23–36, แมพ 2 5,981 / 41–77, แมพ 3 ดาเมจ 61–116 (HP เดิม), แมพ 4+ HP เดิม ดาเมจขึ้นเล็กน้อย · มอนธรรมดาไม่เปลี่ยน · รางวัลไม่เปลี่ยน (ไม่ต้องรัน SQL)
 - แถบสกิล: สกิลของอาวุธอื่น (SKILL_DEFS.weaponType / สกิลในต้นไม้อาวุธ) เป็นสีเทา `.weapon-locked` + ไอคอนอาวุธที่ต้องใช้มุมขวาล่าง + tooltip "ใช้ไม่ได้ตอนนี้ — ต้องถือ…"
 - ทดสอบ: t/v70_shots.js, story_test, story_db_test 209 rejects [], boss_move, music, fish, party, tut_e2e sword+orb, secret
+
+## v71 (29 ก.ย. 2026, Cowork) — 🐟 ภาพวาดปลา 18 ชนิด
+- เจนใน Gemini (เบราว์เซอร์ในแอปของ Andy, แชท "Betta Fish JRPG Item Icon") สไตล์เดียวกับมอน: "Game item icon of … Full side view facing RIGHT … plain pure white background … Hand-painted fantasy JRPG style: bold dark ink outlines, muted colors, soft painterly shading" · ภาพต่อไปขึ้นต้น "Generate another image in exactly the same art style:"
+- ดึงภาพ: blob <img> → canvas.toBlob เก็บ window.__imgs → รวมไฟล์เดียว (หัว 4 ไบต์ความยาว + JSON [key,off,size]) ดาวน์โหลด → .tmp ใน Downloads (ขอสิทธิ์โฟลเดอร์ Downloads) → device_stage_files · browser_batch มีเส้นตาย 50 วิ ทำทีละภาพ (`__waitTake` รอภาพใหม่)
+- `dev/tools/fish_key.py`: ตัดพื้นขาวที่ต่อขอบ (flood fill) + ขอบนุ่ม + ครอป → กว้าง 640 · อุนางิหันซ้าย ใช้ --flip → add_art.py → assets/fish_*.webp (18 ไฟล์ ~690KB)
+- `drawFishArt`: ภาพพอดีกรอบ (กว้าง L สูง ≤0.56L) · ยังไม่เคยได้ = เงาดำจากรูปจริง (`fishSilhouette`, source-in) · สมุดปลาแคนวาส 2× (360×180) คมขึ้น · โหลดภาพปลาล่วงหน้าตอนเริ่มตกปลา + วาดสมุดใหม่เมื่อภาพโหลดเสร็จ
+- ไม่ต้องรัน SQL · ทดสอบ: story_test, fish_test, music_test, v66_shots (ภาพสมุด/การ์ดจับได้)
