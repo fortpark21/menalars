@@ -1985,6 +1985,24 @@
 // "?v=…" is a fingerprint of the file: when a picture changes, the fingerprint changes and players' browsers
 // fetch the new one instead of showing the old cached copy. Add/replace pictures with add_art.py.
 const ART = {
+  fish_unagi: "assets/fish_unagi.webp?v=22a92171",
+  fish_tu: "assets/fish_tu.webp?v=ccfc44aa",
+  fish_takhian: "assets/fish_takhian.webp?v=93029bc7",
+  fish_siw: "assets/fish_siw.webp?v=5d3d9ac8",
+  fish_salid: "assets/fish_salid.webp?v=e2a42490",
+  fish_saba: "assets/fish_saba.webp?v=cb4b4294",
+  fish_nil: "assets/fish_nil.webp?v=cb00f638",
+  fish_maguro: "assets/fish_maguro.webp?v=664365fe",
+  fish_madai: "assets/fish_madai.webp?v=f307b315",
+  fish_koi: "assets/fish_koi.webp?v=9df2fb59",
+  fish_katsuo: "assets/fish_katsuo.webp?v=b97ae959",
+  fish_kaphong: "assets/fish_kaphong.webp?v=129c599c",
+  fish_kad: "assets/fish_kad.webp?v=49873b8b",
+  fish_fugu: "assets/fish_fugu.webp?v=02b7d7b6",
+  fish_duk: "assets/fish_duk.webp?v=69247a65",
+  fish_chon: "assets/fish_chon.webp?v=46a03943",
+  fish_buek: "assets/fish_buek.webp?v=ac0f9937",
+  fish_ayu: "assets/fish_ayu.webp?v=0b11c493",
   mon_10_4: "assets/mon_10_4.webp?v=e271c245",
   mon_10_3: "assets/mon_10_3.webp?v=ed6cbbf6",
   mon_10_2: "assets/mon_10_2.webp?v=6be700b7",
@@ -2220,7 +2238,10 @@ function spriteImg(key){
   let im = spriteImgs[key];
   if(!im){
     im = spriteImgs[key] = new Image();
-    im.onload = () => { if(document.getElementById("creation-screen").style.display !== "none") renderPreview(); };
+    im.onload = () => {
+      if(document.getElementById("creation-screen").style.display !== "none") renderPreview();
+      if(key.startsWith("fish_") && !document.getElementById("fishBookPanel").hidden) renderFishBook(); // painted fish arrived while the book is open
+    };
     im.onerror = () => artMissingWarn(key);
     im.src = ART[key];
   }
@@ -5114,7 +5135,7 @@ const NET_CONFIG = { url: "https://oidvrclhnndjnhjfcvyp.supabase.co", anonKey: "
 const NET_ONLINE = !!(NET_CONFIG.url && NET_CONFIG.anonKey);
 // Bump by 1 on EVERY upload. Open tabs notice a newer file and offer a refresh; the server's
 // app_config.min_version (SQL block) can force everything below it to refresh before saving again.
-const GAME_VERSION = 70;
+const GAME_VERSION = 71;
 const NET_AUTH_KEY = "menalars_auth_v1";  // this browser's login (refresh token) — the save itself lives on the server
 const NET_MOVE_SEND_MS = 250;   // position updates while walking (4/s) — the main Realtime message cost
 const NET_MIN_SEND_MS = 100;    // floor between any two presence messages
@@ -8576,6 +8597,7 @@ function serverHas(feature){ return !NET_ONLINE || !!(net.features && net.featur
 function startFishing(){
   if(!game || game.inBattle || fishing.active || !fishNearSpot()) return;
   if(!serverHas("fish")){ showToast("🎣 ท่าน้ำยังไม่เปิดให้ตกปลา — รอผู้ดูแลอัปเดตเซิร์ฟเวอร์อีกนิด"); return; }
+  FISH_DEFS.forEach(f => spriteImg(f.id)); // preload painted fish so the catch card shows the picture, not the drawn fallback
   if(game.inventory.length >= BAG_CAPACITY && (game.storage || []).length >= STORAGE_CAPACITY){ showToast("🎒 กระเป๋าและกล่องเก็บของเต็ม — ขายหรือฝากของก่อนตกปลา"); return; }
   if(talk.open) closeTalk();
   closeAllPanels(); if(game.player.isMeditating) stopMeditating();
@@ -8693,12 +8715,23 @@ function closeFishing(){
   updateHud();
 }
 // ---- procedural fish picture (used until painted art exists: ART["fish_xxx"] replaces it automatically) ----
+// dark "not caught yet" version of a painted fish: same outline, filled with the silhouette colour (cached per fish)
+const fishSilCache = {};
+function fishSilhouette(id, art){
+  if(fishSilCache[id]) return fishSilCache[id];
+  const cv = document.createElement("canvas"); cv.width = art.naturalWidth; cv.height = art.naturalHeight;
+  const x = cv.getContext("2d"); x.drawImage(art, 0, 0);
+  x.globalCompositeOperation = "source-in"; x.fillStyle = "rgba(10,14,24,.85)"; x.fillRect(0, 0, cv.width, cv.height);
+  return (fishSilCache[id] = cv);
+}
 function drawFishArt(c, fish, cx, cy, L, opt){
   opt = opt || {};
   const art = ART[fish.id] && spriteImg(fish.id);
   c.save();
-  if(art && art.complete && art.naturalWidth && !opt.silhouette){
-    const k = L / art.naturalWidth; c.drawImage(art, cx - L / 2, cy - art.naturalHeight * k / 2, L, art.naturalHeight * k); c.restore(); return;
+  if(art && art.complete && art.naturalWidth){
+    // painted art (v71): fit inside L wide × 0.56·L tall so tall fish (ปักเป้า/ปลากัด) don't spill out of the card
+    const k = Math.min(L / art.naturalWidth, L * 0.56 / art.naturalHeight), w = art.naturalWidth * k, h = art.naturalHeight * k;
+    c.drawImage(opt.silhouette ? fishSilhouette(fish.id, art) : art, cx - w / 2, cy - h / 2, w, h); c.restore(); return;
   }
   const sil = opt.silhouette, dark = "rgba(10,14,24,.85)";
   const shape = fish.shape;
@@ -8849,14 +8882,15 @@ function renderFishBook(){
   grid.innerHTML = FISH_DEFS.map(f => {
     const e = book[f.id], R = FISH_RARITY[f.rarity];
     return `<div class="fb-card${e ? "" : " locked"}" style="--rc:${R.color}" data-id="${f.id}">
-      <canvas width="180" height="90"></canvas>
+      <canvas width="360" height="180"></canvas>
       <div class="fb-name">${e ? f.name : "???"}</div>
       <div class="fb-tip"><b style="color:${R.color}">${e ? f.name : "ปลาปริศนา"}</b><br>${R.label} · ${f.from}<br>` +
       (e ? `ตกได้ ${e.n} ตัว · ใหญ่สุด ${e.best} ซม.<br>ขาย ${f.price} 💰<br><i>${f.desc}</i>` : `ยังไม่เคยตกได้ · ยาว ${f.size[0]}–${f.size[1]} ซม.`) + `</div></div>`;
   }).join("");
   grid.querySelectorAll(".fb-card").forEach(el => {
     const f = FISH_BY_ID[el.dataset.id], cv = el.querySelector("canvas");
-    drawFishArt(cv.getContext("2d"), f, 90, 45, 150, { silhouette: !book[f.id] });
+    const c2 = cv.getContext("2d"); c2.scale(2, 2); // canvas is 2× for sharp painted art; draw in the old 180×90 space
+    drawFishArt(c2, f, 90, 45, 150, { silhouette: !book[f.id] });
   });
 }
 function openFishBook(){ fishing.hold = false; fishing.keyL = fishing.keyR = false; renderFishBook(); document.getElementById("fishBookPanel").hidden = false; sfx.click(); }
